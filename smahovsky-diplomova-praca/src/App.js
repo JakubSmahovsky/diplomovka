@@ -1,24 +1,28 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+      <header className="Temp_header">
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Toto je stránka diplomovej práce
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
+      <table className="Temp_info">
+        <tr>
+          <th> Meno: </th>
+          <th> Jakub Šmahovský </th>
+        </tr>
+        <tr>
+          <td> Mail: </td>
+          <td> jakubsmahovsky@gmail.com </td>
+        </tr>
+        <tr>
+          <td> Školiteľ a téma: </td> 
+          <td> comming soon </td>
+        </tr>
+      </table>
     </div>
   );
 }
