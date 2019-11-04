@@ -73,11 +73,6 @@ export default class App extends Component {
     return (
       <div className="App">
         <div className="BaseInfo">
-          <header className="Temp_header">
-            <p>
-              Toto je stránka diplomovej práce
-            </p>
-          </header>
           <table className="Temp_info">
             <tr>
               <th> Meno: </th>
@@ -88,20 +83,31 @@ export default class App extends Component {
               <td> jakubsmahovsky@gmail.com </td>
             </tr>
             <tr>
-              <td> Školiteľ a téma: </td> 
-              <td> comming soon </td>
+              <td> Školiteľ: </td> 
+              <td> doc. RNDr. Martin Stanek PhD. (môže sa zmeniť) </td>
             </tr>
+            <tr>
+              <td> Téma: </td>
+              <td> Znenie zatiaľ nemám ale cieľ je prispieť do aplikácie Verifpal</td>
+            </tr>
+            <tr>
+              <td> Stav: </td>
+              <td> Komunikácia s tvorcom aplikácie Verifpal</td>
+            </tr>
+
           </table>
         </div>
         <div className="ExtraInfo">
-          {!this.state.loggedIn?
-            <form onSubmit={this.handleSubmit}>
+          <h2>Zdroje</h2>
+          {this.state.loggedIn?
+            <td> Zatiaľ tu nič nie je, do stredy bude.</td>
+            : <form onSubmit={this.handleSubmit}>
               <input value={this.state.login} onChange={this.handleChange} type="text" id="login"/>
               <input value={this.state.password} onChange={this.handleChange} type="password" id="password"/>
               <button type="submit" id="loginBtn">Login</button>
               {this.state.errStatus ? <p>Please log in with valid credetials.</p> : ''}
             </form> 
-          : ''}
+          }
         </div>
       </div>
     );}
