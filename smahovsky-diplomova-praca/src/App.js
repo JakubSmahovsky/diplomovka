@@ -73,22 +73,28 @@ export default class App extends Component {
   }
 
   requestFile_temp1 = event => {
+    window.open("https://verifpal.com/res/pdf/manual.pdf")
+    /*
     event.preventDefault()
     axios.post('/api/resource', {
       filename: "verifpal_manual.pdf"
     }).then(res => {
       fileDownload(res.data, "verifpal_manual.pdf")
     })
+    */
   }
 
 
   requestFile_temp2 = event => {
+    window.open("https://prosecco.gforge.inria.fr/personal/bblanche/proverif/manual.pdf")
+    /*
     event.preventDefault()
     axios.post('/api/resource', {
       filename: "proverif_manual.pdf"
     }).then(res => {
       fileDownload(res.data, "proverif_manual.pdf")
     })
+    */
   }
 
   render () {
@@ -123,7 +129,7 @@ export default class App extends Component {
           <h2>Zdroje</h2>
           {this.state.loggedIn?
             <div>
-              <p>Dialógové okno sa otvára až po stiahnutí, to môže trvať dlho (5s-30s). Keď budem mať čas to opravím.</p>
+              <p>Sťahovanie z lokálnych kópií sa mi nedarilo spojazdniť, preto sa dočasne súbory stiahnu zo zdrojov.</p>
               <button onClick={this.requestFile_temp1}>Verifpal manual</button>
               <button onClick={this.requestFile_temp2}>ProVerif manual</button>
             </div>
