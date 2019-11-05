@@ -42,6 +42,13 @@ app.get('/api/loginStatus', function(req, res) {
   res.send({loggedIn: (req.session.login && req.cookies.sid)})
 })
 
+app.post('/api/resource', function(req,res){
+  if (req.session.login.login != 'dipl' || req.session.login.password != 'dipl')
+    res.send()
+  else
+    res.download(__dirname + '/resources/' + req.body.filename, req.body.filename)
+})
+
 app.get('/', function(req, res) {
   res.sendFile('/build/index.html')
 })
