@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
+import HeadInfo from './HeadInfo/HeadInfo.js';
 import fileDownload from 'js-file-download';
 
 export default class App extends Component {
@@ -100,31 +101,7 @@ export default class App extends Component {
   render () {
     return (
       <div className="App">
-        <div className="BaseInfo">
-          <table className="Temp_info">
-            <tr>
-              <th> Meno: </th>
-              <th> Jakub Šmahovský </th>
-            </tr>
-            <tr>
-              <td> Mail: </td>
-              <td> jakubsmahovsky@gmail.com </td>
-            </tr>
-            <tr>
-              <td> Školiteľ: </td> 
-              <td> doc. RNDr. Martin Stanek PhD. (môže sa zmeniť) </td>
-            </tr>
-            <tr>
-              <td> Téma: </td>
-              <td> Znenie zatiaľ nemám ale cieľ je prispieť do aplikácie Verifpal</td>
-            </tr>
-            <tr>
-              <td> Stav: </td>
-              <td> Komunikácia s tvorcom aplikácie Verifpal</td>
-            </tr>
-
-          </table>
-        </div>
+        <HeadInfo/>
         <div className="ExtraInfo">
           <h2>Zdroje</h2>
           {this.state.loggedIn?
