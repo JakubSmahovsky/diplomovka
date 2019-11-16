@@ -12,23 +12,32 @@ export default class HeadInfo extends Component {
         <table className="Temp_info">
           <tr>
             <th> Meno </th>
-            <th> Jakub Šmahovský </th>
+            <td> Jakub Šmahovský </td>
           </tr>
           <tr>
-            <td> Mail </td>
+            <th> Mail </th>
             <td> jakubsmahovsky@gmail.com </td>
           </tr>
           <tr>
-            <td> Školiteľ </td> 
-            <td> doc. RNDr. Martin Stanek PhD. (môže sa zmeniť) </td>
+            <th> Školiteľ </th> 
+            <td> doc. RNDr. Martin Stanek PhD. (pravdepodobne) </td>
           </tr>
           <tr>
-            <td> Téma </td>
-            <td> Znenie zatiaľ nemám ale cieľ je prispieť do aplikácie Verifpal</td>
+            <th> Téma </th>
+            <td> 
+              Potrebujem vymyslieť znenie. Cieľom je prispieť do programu Verifpal, 
+              ktorý slúži na automatickú formálnu verifikáciu kryptografických protokolov. 
+              To môže predstavovať napríklad napísanie formálneho dôkazu úplnosti a/alebo korektnosti programu, 
+              rozšírenie triedy útokov, ktoré program odhaľuje alebo opravu závažnejších chýb.
+            </td>
           </tr>
           <tr>
-            <td> Stav </td>
-            <td> Komunikácia s tvorcom aplikácie Verifpal</td>
+            <th> Stav </th>
+            <td> 
+              Skontaktoval som sa s tvorcom Verifpal, dohodli sme sa na spolupráci. 
+              Potrebujem vymyslieť zadanie a zadať ho oficiálne do AiS-u. 
+              Oboznamujem sa s fungovaním Verifpal tým, že v ňom modelujem rôzne Protokoly.
+            </td>
           </tr>
 
         </table>
