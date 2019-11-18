@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import './HeadInfo.css';
 
 export default class HeadInfo extends Component {
-  constructor(props) {
-    super(props)
-  }
   render () {
     return (
       <div className="HeadInfo">

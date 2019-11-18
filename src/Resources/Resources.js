@@ -3,11 +3,6 @@ import Resource from './Resource/Resource.js';
 import "./Resources.css"
 
 export default class Resources extends Component {
-  constructor(props) {
-  super(props)
-
-  }
-
   render () {
     const linkress=[
       {
