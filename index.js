@@ -39,7 +39,7 @@ app.post('/api/login', function(req, res) {
 })
 
 app.get('/api/loginStatus', function(req, res) {
-  res.send({loggedIn: (req.session.login && req.cookies.sid)})
+  res.send({loggedIn: (req.session.login && req.cookies.sid) ? true : false})
 })
 
 app.post('/api/resource', function(req,res){
