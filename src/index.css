@@ -8,10 +8,10 @@ body {
   margin-bottom: 160px;
 }
 
-#root {
+#root {  
+  background-color: #282c34;
   margin: auto;
-  padding-left: 5%;
-  padding-right: 5%;
+  padding: 20px;
   max-width: 1000px;
 }
 

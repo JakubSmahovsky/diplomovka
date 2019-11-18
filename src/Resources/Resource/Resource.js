@@ -32,6 +32,7 @@ export default class Resource extends Component {
     return (
       <tr>
         <td>{this.props.name}</td>
+        {this.props.org ? <td>{this.props.org}</td> : ''}
         <td>{this.props.desc}</td>
         <td>
           <p className="Link" onClick={this.handleLink}>{this.props.srcdesc}</p>

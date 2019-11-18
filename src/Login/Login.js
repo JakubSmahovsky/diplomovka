@@ -72,7 +72,7 @@ export default class Login extends Component {
   render () {
     return (
       <div>
-        <h2>Login</h2>
+        <h2 className="Title">Login</h2>
         <p>Na sťahovanie lokálnych kópií je nutné sa prihlásiť</p>
         <form onSubmit={this.handleSubmit}>
           <input value={this.state.login} onChange={this.handleChange} type="text" id="login"/>
