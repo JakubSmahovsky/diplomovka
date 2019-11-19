@@ -64,6 +64,15 @@ export default class Resources extends Component {
       }
     ]
 
+    const du = [
+      {
+        name: "Predbežná kostra",
+        desc: "Domáca úloha nie je kompletná. Testujem, či mi ide download na hostingu.",
+        srcdesc: "kostra.pdf",
+        srclink: "kostra.pdf"
+      }
+    ]
+
     return (
       <div>
         <h2 className="Title">Zdroje</h2>
@@ -108,6 +117,22 @@ export default class Resources extends Component {
           </tr>
           {journals.map(ress => {return <Resource name={ress.name} org={ress.org} desc={ress.desc} srcdesc={ress.srcdesc} srclink={ress.srclink}/>})}
         </table>
+        {du.length ?
+          <table>
+            <tr>
+              <th className="TableTitle" colSpan="4">
+                Domáce Úlohy
+              </th>
+            </tr>
+            <tr>
+              <th>Názov</th>
+              <th>Popis</th>
+              <th>Odkaz</th>
+            </tr>
+            {du.map(ress => {return <Resource name={ress.name} org={ress.org} desc={ress.desc} srcdesc={ress.srcdesc} srclink={ress.srclink}/>})}
+          </table>
+        : ''
+        }
       </div>
   );}
 }
