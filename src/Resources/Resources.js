@@ -67,7 +67,7 @@ export default class Resources extends Component {
     const du = [
       {
         name: "Predbežná kostra",
-        desc: "Domáca úloha nie je kompletná. Testujem, či mi ide download na hostingu.",
+        desc: "",
         srcdesc: "kostra.pdf",
         srclink: "kostra.pdf"
       }
