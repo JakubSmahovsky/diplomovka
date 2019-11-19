@@ -12,6 +12,12 @@ export default class Resources extends Component {
         srclink: "https://verifpal.com/res/pdf/manual.pdf"
       },
       {
+        name: "Veripal scipaper",
+        desc: "\"Scientific paper\" k aplikácii Verifpal. Jeden z možných cieľov práce je rozšítiť ho o dôkaz úplnosti programu Verifpal, potom ako bude analýza vo Verifpal úplná.",
+        srcdesc: "scipaper",
+        srclink: "https://eprint.iacr.org/2019/971"
+      },
+      {
         name: "ProVerif manuál",
         desc: "ProVerif je momentálny \"state of the art\" program na automatickú formálnu verifikáciu kryptografických protokolov. Ideálom tejto práce je priviesť Verifpal aspoň na rovnakú úroveň s programom ProVerif",
         srcdesc: "manual.pdf",
@@ -43,6 +49,21 @@ export default class Resources extends Component {
       }
     ]
 
+    const journals = [
+      {
+        name: "IEEE Xplore",
+        desc: "IEEE \"publikovalo\" veľa článkov o automatickej formálnej verifikácii protokolov, napríklad aj o programe ProVerif.",
+        srcdesc: "Xplore",
+        srclink: "https://ieeexplore.ieee.org/Xplore/home.jsp"
+      },
+      {
+        name: "IJACT",
+        desc: "Nepoznám som tento časopis ale je to o kryptografii, možno bude užitočný, keď mi ostatné zdroje nebudú stačiť.",
+        srcdesc: "IJACT",
+        srclink: "https://www.inderscience.com/jhome.php?jcode=ijact"
+      }
+    ]
+
     return (
       <div>
         <h2 className="Title">Zdroje</h2>
@@ -70,9 +91,22 @@ export default class Resources extends Component {
             <th>Názov</th>
             <th>Organizátor</th>
             <th>Popis</th>
-            <th>Zdroj</th>
+            <th>Odkaz</th>
           </tr>
           {conferences.map(ress => {return <Resource name={ress.name} org={ress.org} desc={ress.desc} srcdesc={ress.srcdesc} srclink={ress.srclink}/>})}
+        </table>
+        <table>
+          <tr>
+            <th className="TableTitle" colSpan="4">
+              Časopisy
+            </th>
+          </tr>
+          <tr>
+            <th>Názov</th>
+            <th>Popis</th>
+            <th>Odkaz</th>
+          </tr>
+          {journals.map(ress => {return <Resource name={ress.name} org={ress.org} desc={ress.desc} srcdesc={ress.srcdesc} srclink={ress.srclink}/>})}
         </table>
       </div>
   );}
