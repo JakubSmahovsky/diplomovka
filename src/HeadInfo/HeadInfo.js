@@ -17,23 +17,29 @@ export default class HeadInfo extends Component {
           </tr>
           <tr>
             <th> Školiteľ </th> 
-            <td> doc. RNDr. Martin Stanek PhD. (pravdepodobne) </td>
+            <td> doc. RNDr. Martin Stanek PhD.</td>
           </tr>
           <tr>
             <th> Téma </th>
             <td> 
-              Potrebujem vymyslieť znenie. Cieľom je prispieť do programu Verifpal, 
-              ktorý slúži na automatickú formálnu verifikáciu kryptografických protokolov. 
-              To môže predstavovať napríklad napísanie formálneho dôkazu úplnosti a/alebo korektnosti programu, 
-              rozšírenie triedy útokov, ktoré program odhaľuje alebo opravu závažnejších chýb.
+              Automatická verifikácia kryptografických protokolov v programe Verifpal
+            </td>
+          </tr>
+          <tr>
+            <th> Anotácia </th>
+            <td> 
+              Program Verifpal umožňuje analýzu bezpečnostných vlastností kryptografických protokolov spôsobom,
+              ktorý je podstatne jednoduchší ako u iných súčasných nástrojov s rovnakým zameraním.
+              Cieľom práce je rozšíriť Verifpal o chýbajúcu funkčnosť, umožniť modelovať širšiu triedu protokolov
+              a zároveň prispieť k dôkazom úplnosti a korektnosti analýzy.
             </td>
           </tr>
           <tr>
             <th> Stav </th>
             <td> 
-              Skontaktoval som sa s tvorcom Verifpal, dohodli sme sa na spolupráci. 
-              Potrebujem vymyslieť zadanie a zadať ho oficiálne do AiS-u. 
-              Oboznamujem sa s fungovaním Verifpal tým, že v ňom modelujem rôzne Protokoly.
+              Skontaktoval som sa s tvorcom Verifpal, dohodli sme sa na spolupráci.
+              Nasledujúci krok je poriadne sa oboznámiť z programom Verifpal, aby som sa mohol zapojiť do jeho vývoja.
+              Modelovanie v momentálom stave programu neviedlo k dobrým výsledkom. V programe ešte výrazne chýbajú niektoré potrebné konštrukcie.
             </td>
           </tr>
 
