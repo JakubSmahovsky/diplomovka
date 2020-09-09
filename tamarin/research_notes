@@ -1,0 +1,10 @@
+This file contains notes I gathered during research on tamarin prover.
+It references other notes within this repository.
+The purpose of this document is to aid me in writing my thesis.
+Most entries are not relevant to the current state of the project,
+but rather document failed attempts allong the research process.
+
+Created 9/9/20
+
+Working on Needham Schroeder Secret Key protocol model.
+

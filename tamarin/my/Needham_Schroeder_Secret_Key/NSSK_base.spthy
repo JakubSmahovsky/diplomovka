@@ -63,8 +63,4 @@ lemma executable:
   exists-trace
     "Ex A B S Nb Kbs Kab #i . Bob_done(A, B, S, Nb, Kbs, Kab)@#i"
 
-lemma authentication:
-  all-traces:
-    "
-
 end
