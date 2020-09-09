@@ -1,0 +1,92 @@
+/*
+  Needham-Schroeder Symmetric Key protocol as described in http://www.lsv.fr/Software/spore/nssk.html
+  Following syntax from template instead of usual Tamarin syntax 
+*/
+
+theory NSSK
+begin
+
+builtins: symmetric-encryption
+functions: succ/1
+
+rule Shared_secret:
+  [Fr(~K)] --[Neq($X, $Y)]-> [!SK($X, $Y, ~K)]
+
+rule Shared_reveal:
+  [!SK(X, Y, K)] --[Reveal(X)]-> [Out(K)] 
+
+rule Shared_reveal2:
+  [!SK(X, Y, K)] --[Reveal(Y)]-> [Out(K)]
+
+rule Alice1:
+// msg 1: A -> S: <A, B, Na>
+  [Fr(~Na)] --> [Out(<$A, $B, ~Na>), Alice1($A, $B, ~Na)]
+
+rule Server:
+  let
+    mb = senc(<~Kab, A>, Kbs)
+    ma = senc(<Na, B, ~Kab, mb>, Kas)
+  in
+// msg 2: S -> A: {Na, B, Kab, {Kab, A}Kbs, Na}Kas
+  [ In(<A, B, Na>)
+  , !SK(A, $S, Kas)
+  , !SK(B, $S, Kbs)
+  , Fr(~Kab)]
+  -->[ Out(ma)]
+
+rule Alice2:
+// msg 3: A -> B: {Kab, A}Kbs
+  [ In(senc(<Na, B, Kab, mb>, Kas))
+  , !SK(A, $S, Kas)
+  , Alice1(A, B, Na)] --> 
+  [ Out(mb)
+  , Alice2(A, B, $S, Na, Kas, Kab)]
+
+rule Bob1:
+// msg 4: B -> A: {Nb}Kab
+  [ In(senc(<Kab, A>, Kbs))
+  , !SK($B, $S, Kbs)
+  , Fr(~Nb)] 
+  --[Id(A)]->
+  [ Out(senc(~Nb, Kab))
+  , Bob1(A, $B, $S, ~Nb, Kbs, Kab)]
+
+rule Alice3:
+// msg 5: A -> B: {succ(Nb)}Kab
+  [ In(senc(Nb, Kab))
+  , Alice2(A, B, S, Na, Kas, Kab)] 
+  --[Alice_done(A, B, S, Na, Nb, Kas, Kab)]-> 
+  [ Out(senc(<succ(Nb)>, Kab))]
+
+rule Bob2:
+  [ In(senc(<succ(Nb)>, Kab))
+  , Bob1(A, B, S, Nb, Kbs, Kab)]
+  --[Bob_done(A, B, S, Nb, Kbs, Kab)]-> []
+
+restriction Inequality:
+  "All x #i. Neq(x,x) @ #i ==> F"
+
+/* I'm trying to make rules that allow me to verify certain properties
+   of an identity value without assuming too much. 
+   Eg. "identity cannot be cofused with concatenated messages", 
+   but "identity doesn't have to be public, since some participants may not know each other".
+*/
+restriction Id_not_pair:
+  "All x y #i . Id(<x, y>) @ #i ==> F"
+
+lemma executable:
+  exists-trace
+    "Ex A B S Na Nb Kas Kbs Kab #i #j.
+      Bob_done(A, B, S, Nb, Kbs, Kab)@#i &
+      Alice_done(A, B, S, Na, Nb, Kas, Kab)@j"
+end
+
+/* DEVELOPER NOTES:
+--prove and interactive autoprove agree on solution in a few seconds
+Neither one should find it.
+My change was not supposed to be enough to solve the other issues,
+especially alice2 -> alice2 loop.
+
+It is possible that the change only affected the heuristics in a good way,
+but it's unlikely and I will have to double check why the loop was broken.
+*/

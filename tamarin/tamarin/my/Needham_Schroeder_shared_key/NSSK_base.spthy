@@ -1,0 +1,70 @@
+/*
+  Needham-Schroeder Symmetric Key protocol as described in http://www.lsv.fr/Software/spore/nssk.html
+  Following syntax from template instead of usual Tamarin syntax 
+*/
+
+theory NSSK
+begin
+
+builtins: symmetric-encryption
+functions: succ/1
+
+rule Shared_secret:
+  [Fr(~K)] --[Neq($X, $Y)]-> [!SK($X, $Y, ~K)]
+
+rule Alice1:
+// msg 1: A -> S: <A, B, Na>
+  [Fr(~Na)] --> [Out(<$A, $B, ~Na>), Alice1($A, $B, ~Na)]
+
+rule Server:
+  let
+    mb = senc(<~Kab, A>, Kbs)
+    ma = senc(<Na, B, ~Kab, mb>, Kas)
+  in
+// msg 2: S -> A: {Na, B, Kab, {Kab, A}Kbs, Na}Kas
+  [ In(<A, B, Na>)
+  , !SK(A, $S, Kas)
+  , !SK(B, $S, Kbs)
+  , Fr(~Kab)]
+  -->[ Out(ma)]
+
+rule Alice2:
+// msg 3: A -> B: {Kab, A}Kbs
+  [ In(senc(<Na, B, Kab, mb>, Kas))
+  , !SK(A, $S, Kas)
+  , Alice1(A, B, Na)] --> 
+  [ Out(mb)
+  , Alice2(A, B, $S, Na, Kas, Kab)]
+
+rule Bob1:
+// msg 4: B -> A: {Nb}Kab
+  [ In(senc(<Kab, A>, Kbs))
+  , !SK($B, $S, Kbs)
+  , Fr(~Nb)] -->
+  [ Out(senc(~Nb, Kab))
+  , Bob1(A, $B, $S, ~Nb, Kbs, Kab)]
+
+rule Alice3:
+// msg 5: A -> B: {succ(Nb)}Kab
+  [ In(senc(Nb, Kab))
+  , Alice2(A, B, S, Na, Kas, Kab)] 
+  --[Alice_done(A, B, S, Na, Nb, Kas, Kab)]-> 
+  [ Out(senc(<succ(Nb)>, Kab))]
+
+rule Bob2:
+  [ In(senc(<succ(Nb)>, Kab))
+  , Bob1(A, B, S, Nb, Kbs, Kab)] 
+  --[Bob_done(A, B, S, Nb, Kbs, Kab)]-> []
+
+restriction Inequality:
+  "All x #i. Neq(x,x) @ #i ==> F"
+
+lemma executable:
+  exists-trace
+    "Ex A B S Nb Kbs Kab #i . Bob_done(A, B, S, Nb, Kbs, Kab)@#i"
+
+lemma authentication:
+  all-traces:
+    "
+
+end

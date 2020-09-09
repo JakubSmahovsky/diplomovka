@@ -1,0 +1,105 @@
+/*
+  Needham-Schroeder Public Key protocol as described in http://www.lsv.fr/Software/spore/nspk.html
+  Following syntax from template instead of usual Tamarin syntax 
+*/
+
+theory NSPK
+begin
+
+builtins: asymmetric-encryption, revealing-signing
+
+rule Register_KP:
+  let 
+    KP = pk(~KS)
+  in
+  [ Fr(~KS) 
+  ]-->
+  [ !Ltk($X, ~KS)
+  , !Pk($X, KP)
+  , Out(KP)
+  ]
+/*
+rule Reveal_KS:
+  [!Ltk( $X, KS)] --[KSReveal($X)]-> [Out(KS)]
+*/
+rule Server:
+  [ In(<$X, $Y>)
+  , !Pk($Y, KPy)
+  , !Ltk($S, KSs)] -->
+  [ Out(revealSign(<KPy, $Y>, KSs))]
+
+rule Alice_1:
+  [] --> 
+  [ Out(<$A, $B>)
+  , Alice_st1($A, $B, $S)]
+
+rule Alice_2:
+  let 
+    m = getMessage(ms)
+    KPb = fst(m)
+    b = snd(m)
+  in
+  [ Alice_st1($A, $B, $S)
+  , !Pk($S, KPs)
+  , In(ms)
+  , Fr(~Na) ] 
+  --[Eq(revealVerify(ms, m, KPs),true)
+  , Eq(b, $B)]-> 
+  [ Out(aenc(<~Na, $A>, KPb))
+  , Alice_st2($A, $B, $S, KPb, ~Na)
+  ]
+
+rule Bob_1:
+  let 
+    m = adec(me, KSb)
+    Na = fst(m)
+    A = snd(m)
+  in
+  [ In(me)
+  , !Ltk($B, KSb)] -->
+  [ Out(<$B, A>)
+  , Bob_st1(A, $B, $S, Na)
+  ]
+
+rule Bob_2:
+  let
+    m = getMessage(ms)
+    KPa = fst(m)
+  in
+  [ Bob_st1(A, $B, $S, Na)
+  , !Pk($S, KPs)
+  , In(ms)
+  , Fr(~Nb)
+  ] 
+  --[Eq(revealVerify(ms, m, KPs), true)
+  , Eq(snd(m), A)]->
+  [ Out(aenc(<Na, ~Nb>,KPa))
+  , Bob_st2(A, $B, $S, KPa, Na, ~Nb)]
+
+rule Alice_3:
+  let
+    m = adec(me, KSa)
+    Nb = snd(m)
+  in 
+  [ Alice_st2($A, $B, $S, KPb, Na)
+  , !Ltk($A, KSa)
+  , In(me)] 
+  --[Eq(fst(m), Na)]->
+  [ Out(aenc(Nb, KPb))
+  , Alice_st3($A, $B, $S, KPb, Na, Nb)]
+
+rule Bob_3:
+  [ Bob_st2(A, $B, $S, KPa, Na, Nb)
+  , !Ltk($B, KSb)
+  , In(me)] 
+  --[Eq(adec(me, KSb), Nb)
+  , Bob_st3(A, $B, $S, KPa, Na, Nb)]-> 
+  []
+
+restriction Equality:
+  "All x y #i. Eq(x,y) @i ==> x = y"
+
+lemma executable:
+  exists-trace
+    "Ex A B S KPa Na Nb #i . Bob_st3(A, B, S, KPa, Na, Nb)@#i "
+end

@@ -1,0 +1,20 @@
+theory small
+begin
+
+builtins: symmetric-encryption
+
+rule Shared_secret:
+  [Fr(~Kab)] --> [!Sk($A, $B, ~Kab)]
+
+rule Alice1:
+  [Fr(~Na), !Sk($A, $B, Kab)] --[A_send($A, $B, ~Na, Kab)]-> [Out(senc(~Na, Kab))]
+
+rule Bob1:
+  [In(senc(Na, Kab)), !Sk($A, $B, Kab)] --[B_rcv($A, $B, Na, Kab)]-> []
+
+/*
+lemma executable:
+  exists-trace
+    "Ex A B Na Kab #i . B_rcv(A, B, Na, Kab)@#i"
+*/
+end
