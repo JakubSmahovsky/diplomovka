@@ -6,5 +6,28 @@ but rather document failed attempts allong the research process.
 
 Created 9/9/20
 
-Working on Needham Schroeder Secret Key protocol model.
+TARGET 0: Working on Needham Schroeder Secret Key protocol model.
 
+Fail 1:
+Bob deasn't know Alice's identity to verify it.
+Enemy initiales protocol as follows:
+E -> S: B, E, Ke
+S -> B: {Ke, E, Kab, {Kab, B}Kes }Kbs
+Bob missunderstands <E, Kab, {Kab, B}Kes> as Alice's identity in expected message {Kab, A}Kbs
+At the moment can be found in tamarin/my/Needham_Schroeder_Secret_Key/NSSK_fail1.spthy
+
+Thaught 2: 
+Would Bob know not to accept a pair (or tripple) as a peer's identity?
+Maybe I need a way to refuse accepting pairs instead of simple values?
+
+Attempt 3:
+Added a restriction, that forces identity not to be a pair funtion.
+Merged with main protocol.
+This may be assuming too much. When writing the compiler,
+it may be a  better ide to add this as an optional check instead of assuming it's done.
+
+Attempt 4:
+Added key reveal rule as is the case in all public examples I've seen so far.
+Changed sanity lemma to require both parties to correctly finish protocol.
+Merged with main protocol.
+Results unchanged.

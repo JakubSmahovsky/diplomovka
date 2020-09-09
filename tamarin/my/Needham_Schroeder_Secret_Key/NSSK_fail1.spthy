@@ -66,50 +66,8 @@ end
 
 /*
 Bob deasn't know Alice's identity to verify it.
-E -> S: B, E, Ne
-S -> B: {Ne, E, Kab, {Kab, B}Kes }Kbs
-Bob missunderstands <E, Kab, {Kab, B}Kes> as Alice's identity.
-Maybe I need a way to refuse accepting pairs instead of simple values?
-
-simplify
-solve( Bob1( A, B, S, Nb, Kbs, Kab ) ▶₁ #i )
-  case Bob1
-  solve( !KU( senc(succ(~Nb), Kab) ) @ #vk )
-    case Alice2
-    by sorry
-  next
-    case Alice3
-    by sorry
-  next
-    case c_senc
-    solve( !KU( senc(<Kab, A>, ~K) ) @ #vk.1 )
-      case Alice2
-      by sorry
-    next
-      case Server_case_1
-      solve( !KU( succ(~Nb) ) @ #vk.2 )
-        case Alice2
-        by sorry
-      next
-        case Alice3
-        by sorry
-      next
-        case c_succ
-        solve( !KU( ~Nb ) @ #vk.8 )
-          case Alice2
-          by sorry
-        next
-          case Bob1
-          SOLVED // trace found
-        qed
-      qed
-    next
-      case Server_case_2
-      by sorry
-    next
-      case c_senc
-      by sorry
-    qed
-  qed
-qed
+Enemy initiales protocol as follows:
+E -> S: B, E, Ke
+S -> B: {Ke, E, Kab, {Kab, B}Kes }Kbs
+Bob missunderstands <E, Kab, {Kab, B}Kes> as Alice's identity in expected message {Kab, A}Kbs
 */
