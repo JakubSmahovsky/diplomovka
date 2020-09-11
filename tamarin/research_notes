@@ -39,4 +39,10 @@ should not exist, unless the messages are encoded in cbc mode.
 I don't yet know if tamarin may terminate and prove that the attack is impossible.
 I may come back to this in the future.
 
-TARGET 1: Working on Needham Schoreder Public Key protocol model.
+Thaught 6:
+I will model short term key compromise like this:
+Make a rule to compromise any variable.
+Make a restriction to forbid compromise of long term keys.
+Add actions Continuation_start(constant), Continuation_end(constant)
+to mark rules which follow one after another and implicitly have a timeout.
+Make a restriction to forbid combromise between cont. start and end.
