@@ -73,5 +73,22 @@ lemma executable:
   exists-trace
     "Ex A B S Na Nb Kas Kbs Kab #i #j.
       Bob_done(A, B, S, Nb, Kbs, Kab)@#i &
-      Alice_done(A, B, S, Na, Nb, Kas, Kab)@j"
+      Alice_done(A, B, S, Na, Nb, Kas, Kab)@#j"
+
+/*
+  This lemma does not terminate as an attack under these conditions
+  should not exist. I don't yet know if tamarin may terminate and
+  prove that the attack is impossible.
+  I may come back to this in the future.
+*/
+lemma authentication:
+  all-traces
+    "All A B S Nb Kbs Kab #i.
+      Bob_done(A, B, S, Nb, Kbs, Kab)@#i &
+      (not Ex #t. Reveal(A)@#t) &
+      (not Ex #t. Reveal(B)@#t) &
+      (not Ex #t. Reveal(S)@#t)
+      ==> 
+        Ex Na Kas #j. Alice_done(A, B, S, Na, Nb, Kas, Kab)@#j &
+        #j < #i"
 end

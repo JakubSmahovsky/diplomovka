@@ -31,3 +31,12 @@ Added key reveal rule as is the case in all public examples I've seen so far.
 Changed sanity lemma to require both parties to correctly finish protocol.
 Merged with main protocol.
 Results unchanged.
+
+Attempt 5:
+Added authentication lemma for nssk protocol.
+This lemma does not terminate as an attack under these conditions
+should not exist, unless the messages are encoded in cbc mode.
+I don't yet know if tamarin may terminate and prove that the attack is impossible.
+I may come back to this in the future.
+
+TARGET 1: Working on Needham Schoreder Public Key protocol model.
