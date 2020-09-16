@@ -45,4 +45,8 @@ Make a rule to compromise any variable.
 Make a restriction to forbid compromise of long term keys.
 Add actions Continuation_start(constant), Continuation_end(constant)
 to mark rules which follow one after another and implicitly have a timeout.
-Make a restriction to forbid combromise between cont. start and end.
+Make a restriction to forbid combromise between continution start and end.
+Found attack, imposter makes alice finish the protocol with fake nonce,
+which is unnecessary, but still correct.
+
+TARGET 1: Start writing the compiler.
