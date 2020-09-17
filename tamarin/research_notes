@@ -49,4 +49,4 @@ Make a restriction to forbid combromise between continution start and end.
 Found attack, imposter makes alice finish the protocol with fake nonce,
 which is unnecessary, but still correct.
 
-TARGET 1: Start writing the compiler.
+TARGET 1: Needham Schroeder Public Key protocol model

@@ -12,12 +12,10 @@ rule Register_KP:
   let 
     KP = pk(~KS)
   in
-  [ Fr(~KS) 
-  ]-->
+  [ Fr(~KS) ] -->
   [ !Ltk($X, ~KS)
   , !Pk($X, KP)
-  , Out(KP)
-  ]
+  , Out(KP) ]
 /*
 rule Reveal_KS:
   [!Ltk( $X, KS)] --[KSReveal($X)]-> [Out(KS)]
@@ -25,8 +23,8 @@ rule Reveal_KS:
 rule Server:
   [ In(<$X, $Y>)
   , !Pk($Y, KPy)
-  , !Ltk($S, KSs)] -->
-  [ Out(revealSign(<KPy, $Y>, KSs))]
+  , !Ltk($S, KSs)]-->
+  [ Out(revealSign(<KPy, $Y>, KSs)) ]
 
 rule Alice_1:
   [] --> 
@@ -46,8 +44,7 @@ rule Alice_2:
   --[Eq(revealVerify(ms, m, KPs),true)
   , Eq(b, $B)]-> 
   [ Out(aenc(<~Na, $A>, KPb))
-  , Alice_st2($A, $B, $S, KPb, ~Na)
-  ]
+  , Alice_st2($A, $B, $S, KPb, ~Na)]
 
 rule Bob_1:
   let 
@@ -58,8 +55,7 @@ rule Bob_1:
   [ In(me)
   , !Ltk($B, KSb)] -->
   [ Out(<$B, A>)
-  , Bob_st1(A, $B, $S, Na)
-  ]
+  , Bob_st1(A, $B, $S, Na) ]
 
 rule Bob_2:
   let
@@ -69,8 +65,7 @@ rule Bob_2:
   [ Bob_st1(A, $B, $S, Na)
   , !Pk($S, KPs)
   , In(ms)
-  , Fr(~Nb)
-  ] 
+  , Fr(~Nb) ] 
   --[Eq(revealVerify(ms, m, KPs), true)
   , Eq(snd(m), A)]->
   [ Out(aenc(<Na, ~Nb>,KPa))
@@ -91,10 +86,9 @@ rule Alice_3:
 rule Bob_3:
   [ Bob_st2(A, $B, $S, KPa, Na, Nb)
   , !Ltk($B, KSb)
-  , In(me)] 
+  , In(me)]
   --[Eq(adec(me, KSb), Nb)
-  , Bob_st3(A, $B, $S, KPa, Na, Nb)]-> 
-  []
+  , Bob_st3(A, $B, $S, KPa, Na, Nb)]-> []
 
 restriction Equality:
   "All x y #i. Eq(x,y) @i ==> x = y"
