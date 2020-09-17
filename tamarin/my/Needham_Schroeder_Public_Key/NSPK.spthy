@@ -12,14 +12,23 @@ rule Register_KP:
   let 
     KP = pk(~KS)
   in
-  [ Fr(~KS) ] -->
+  [ Fr(~KS) ] 
+  --[Unique(<'Register_PK', $X>)]->
   [ !Ltk($X, ~KS)
   , !Pk($X, KP)
   , Out(KP) ]
+
 /*
 rule Reveal_KS:
   [!Ltk( $X, KS)] --[KSReveal($X)]-> [Out(KS)]
 */
+
+rule Announce_Server_Identity:
+  [ !Pk($S, KS) ]
+  --[Unique('Announce_Server_Identity')]->
+  [ Alice_0($S),
+    Bob_0($S) ]
+
 rule Server:
   [ In(<$X, $Y>)
   , !Pk($Y, KPy)
@@ -27,9 +36,9 @@ rule Server:
   [ Out(revealSign(<KPy, $Y>, KSs)) ]
 
 rule Alice_1:
-  [] --> 
+  [ Alice_0($S) ] -->
   [ Out(<$A, $B>)
-  , Alice_st1($A, $B, $S)]
+  , Alice_1($A, $B, $S)]
 
 rule Alice_2:
   let 
@@ -37,14 +46,14 @@ rule Alice_2:
     KPb = fst(m)
     b = snd(m)
   in
-  [ Alice_st1($A, $B, $S)
+  [ Alice_1($A, $B, $S)
   , !Pk($S, KPs)
   , In(ms)
-  , Fr(~Na) ] 
+  , Fr(~Na) ]
   --[Eq(revealVerify(ms, m, KPs),true)
   , Eq(b, $B)]-> 
   [ Out(aenc(<~Na, $A>, KPb))
-  , Alice_st2($A, $B, $S, KPb, ~Na)]
+  , Alice_2($A, $B, $S, KPb, ~Na)]
 
 rule Bob_1:
   let 
@@ -52,48 +61,48 @@ rule Bob_1:
     Na = fst(m)
     A = snd(m)
   in
-  [ In(me)
+  [ Bob_0(S)
+  , In(me)
   , !Ltk($B, KSb)] -->
   [ Out(<$B, A>)
-  , Bob_st1(A, $B, $S, Na) ]
+  , Bob_1(A, $B, S, Na) ]
 
 rule Bob_2:
   let
     m = getMessage(ms)
     KPa = fst(m)
   in
-  [ Bob_st1(A, $B, $S, Na)
+  [ Bob_1(A, $B, $S, Na)
   , !Pk($S, KPs)
   , In(ms)
-  , Fr(~Nb) ] 
+  , Fr(~Nb) ]
   --[Eq(revealVerify(ms, m, KPs), true)
   , Eq(snd(m), A)]->
   [ Out(aenc(<Na, ~Nb>,KPa))
-  , Bob_st2(A, $B, $S, KPa, Na, ~Nb)]
+  , Bob_2(A, $B, $S, KPa, Na, ~Nb)]
 
 rule Alice_3:
-  let
-    m = adec(me, KSa)
-    Nb = snd(m)
-  in 
-  [ Alice_st2($A, $B, $S, KPb, Na)
+  [ Alice_2($A, $B, $S, KPb, Na)
   , !Ltk($A, KSa)
-  , In(me)] 
-  --[Eq(fst(m), Na)]->
-  [ Out(aenc(Nb, KPb))
-  , Alice_st3($A, $B, $S, KPb, Na, Nb)]
+  , In(aenc(<Na, Nb>,KPa))] 
+  --[Alice_3($A, $B, $S, KPb, Na, Nb)]->
+  [ Out(aenc(Nb, KPb)) ]
 
 rule Bob_3:
-  [ Bob_st2(A, $B, $S, KPa, Na, Nb)
+  [ Bob_2(A, $B, $S, KPa, Na, Nb)
   , !Ltk($B, KSb)
-  , In(me)]
-  --[Eq(adec(me, KSb), Nb)
-  , Bob_st3(A, $B, $S, KPa, Na, Nb)]-> []
+  , In(aenc(Nb, KPb))]
+  --[Bob_3(A, $B, $S, KPa, Na, Nb)]-> []
 
 restriction Equality:
-  "All x y #i. Eq(x,y) @i ==> x = y"
+  "All x y #i. Eq(x,y) @#i ==> x = y"
+
+restriction Unique:
+  "All x #i #j . Unique(x) @#i & Unique(x) @#j ==> #i = #j"
 
 lemma executable:
   exists-trace
-    "Ex A B S KPa Na Nb #i . Bob_st3(A, B, S, KPa, Na, Nb)@#i "
+    "Ex A B S KPa KPb Na Nb #i #j.
+      Bob_3(A, B, S, KPa, Na, Nb) @#i &
+      Alice_3(A, B, S, KPb, Na, Nb) @#j"
 end
