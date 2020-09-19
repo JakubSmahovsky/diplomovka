@@ -50,3 +50,10 @@ Found attack, imposter makes alice finish the protocol with fake nonce,
 which is unnecessary, but still correct.
 
 TARGET 1: Needham Schroeder Public Key protocol model
+
+Thaught 1:
+In the attack, honest principals need to treat the imposter
+as an honest principal, knowing his identity. I'm starting to think
+this is not possible to model the usual way.
+I will try to make a minimalistic protocol 
+to find a way to model this behaviour.

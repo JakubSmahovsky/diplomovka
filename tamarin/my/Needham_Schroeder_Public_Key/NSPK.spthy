@@ -26,8 +26,8 @@ rule Reveal_KS:
 rule Announce_Server_Identity:
   [ !Pk($S, KS) ]
   --[Unique('Announce_Server_Identity')]->
-  [ Alice_0($S),
-    Bob_0($S) ]
+  [ !Alice_0($S),
+    !Bob_0($S) ]
 
 rule Server:
   [ In(<$X, $Y>)
@@ -36,7 +36,7 @@ rule Server:
   [ Out(revealSign(<KPy, $Y>, KSs)) ]
 
 rule Alice_1:
-  [ Alice_0($S) ] -->
+  [ !Alice_0($S) ] -->
   [ Out(<$A, $B>)
   , Alice_1($A, $B, $S)]
 
@@ -61,7 +61,7 @@ rule Bob_1:
     Na = fst(m)
     A = snd(m)
   in
-  [ Bob_0(S)
+  [ !Bob_0(S)
   , In(me)
   , !Ltk($B, KSb)] -->
   [ Out(<$B, A>)
@@ -85,14 +85,14 @@ rule Alice_3:
   [ Alice_2($A, $B, $S, KPb, Na)
   , !Ltk($A, KSa)
   , In(aenc(<Na, Nb>,KPa))] 
-  --[Alice_3($A, $B, $S, KPb, Na, Nb)]->
+  --[Alice_done($A, $B, $S, KPb, Na, Nb)]->
   [ Out(aenc(Nb, KPb)) ]
 
 rule Bob_3:
   [ Bob_2(A, $B, $S, KPa, Na, Nb)
   , !Ltk($B, KSb)
   , In(aenc(Nb, KPb))]
-  --[Bob_3(A, $B, $S, KPa, Na, Nb)]-> []
+  --[Bob_done(A, $B, $S, KPa, Na, Nb)]-> []
 
 restriction Equality:
   "All x y #i. Eq(x,y) @#i ==> x = y"
@@ -103,6 +103,22 @@ restriction Unique:
 lemma executable:
   exists-trace
     "Ex A B S KPa KPb Na Nb #i #j.
-      Bob_3(A, B, S, KPa, Na, Nb) @#i &
-      Alice_3(A, B, S, KPb, Na, Nb) @#j"
+      Bob_done(A, B, S, KPa, Na, Nb) @#i &
+      Alice_done(A, B, S, KPb, Na, Nb) @#j"
+
+lemma authentication:
+  all-traces
+    "All A B S KPa Na Nb #i .
+      Bob_done(A, B, S, KPa, Na, Nb) @#i    
+    ==>
+    Ex KPb #j .
+      Alice_done(A, B, S, KPb, Na, Nb) @j
+    "
+
+lemma claimed_attack:
+  exists-trace
+    "Ex A B S I KPi Na Nb #i #j .
+      Bob_done(I, B, S, KPi, Na, Nb) @#i &
+      Alice_done(A, I, S, KPi, Na, Nb) @#j
+    "
 end
