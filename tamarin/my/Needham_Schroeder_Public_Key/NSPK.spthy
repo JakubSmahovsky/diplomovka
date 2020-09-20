@@ -13,15 +13,13 @@ rule Register_KP:
     KP = pk(~KS)
   in
   [ Fr(~KS) ] 
-  --[Unique(<'Register_PK', $X>)]->
+  --[Unique(<'Register_KP', $X>)]->
   [ !Ltk($X, ~KS)
   , !Pk($X, KP)
   , Out(KP) ]
 
-/*
 rule Reveal_KS:
-  [!Ltk( $X, KS)] --[KSReveal($X)]-> [Out(KS)]
-*/
+  [!Ltk($X, KS)] --[KSReveal($X)]-> [Out(KS)]
 
 rule Announce_Server_Identity:
   [ !Pk($S, KS) ]
@@ -109,16 +107,15 @@ lemma executable:
 lemma authentication:
   all-traces
     "All A B S KPa Na Nb #i .
-      Bob_done(A, B, S, KPa, Na, Nb) @#i    
+      Bob_done(A, B, S, KPa, Na, Nb) @#i
     ==>
-    Ex KPb #j .
-      Alice_done(A, B, S, KPb, Na, Nb) @j
-    "
-
-lemma claimed_attack:
-  exists-trace
-    "Ex A B S I KPi Na Nb #i #j .
-      Bob_done(I, B, S, KPi, Na, Nb) @#i &
-      Alice_done(A, I, S, KPi, Na, Nb) @#j
+    (Ex KPb #j.
+      Alice_done(A, B, S, KPb, Na, Nb) @#j)
+    | (Ex #j .
+      KSReveal(A) @#j)
+    | (Ex #j .
+      KSReveal(B) @#j)
+    | (Ex #j .
+      KSReveal(S) @#j)
     "
 end

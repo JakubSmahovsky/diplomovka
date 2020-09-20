@@ -57,3 +57,16 @@ as an honest principal, knowing his identity. I'm starting to think
 this is not possible to model the usual way.
 I will try to make a minimalistic protocol 
 to find a way to model this behaviour.
+
+Result 2: 
+I've reinvented the wheel! At least now I know why all protocols in the maual
+had a rule for revealing long term keys.
+
+Fail 3:
+I managed to find an attack manually,
+it's huge and automatic metrics are way off in most cases.
+The attack is close enough to be considered valid although more complicated.
+At the moment can be found in tamarin/my/Needham_Schroeder_Public_Key/NSPK_fail1.spthy
+I will try to model a simpler version of the protocol first and may return later.
+
+TARGET 2: Simplified Needham Schroeder Public Key protocol model
