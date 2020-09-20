@@ -70,3 +70,9 @@ At the moment can be found in tamarin/my/Needham_Schroeder_Public_Key/NSPK_fail1
 I will try to model a simpler version of the protocol first and may return later.
 
 TARGET 2: Simplified Needham Schroeder Public Key protocol model
+
+Fail 1:
+The protocol is  much sipler than original NSPK. I found the attack manually.
+Autoprove does not find the attack.
+At the moment can be found in
+tamarin/my/Simplified_Needham_Schroeder_Public_Key/Simplified_NSPK_fail1.spthy
