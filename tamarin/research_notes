@@ -98,6 +98,11 @@ tamarin/my/Simplified_Needham_Schroeder_Public_Key/Simplified_NSPK_fail3.spthy
 TARGET 3: Andrew Secure RPC protocol model
 
 Fail 1:
-I seem tohave hit the same wall as with Simplified NSPK.
+I seem to have hit the same wall as with Simplified NSPK.
 The impostor is trying to learn a key by decoding a message,
 that doesn't contain it, resulting in a loop.
+
+Result 2:
+I've also coppied and modeled BAN modified Andrew Secure RPC.
+The results are unchanged, obviously an attack is not known,
+however the proof is getting stuckin the same (bugged?) loop.
