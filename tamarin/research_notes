@@ -94,3 +94,10 @@ I've made a restriction to see if the loop from previous result uses
 the nonce from Alice's message as a key. It doesn't. 
 At the moment can be found in
 tamarin/my/Simplified_Needham_Schroeder_Public_Key/Simplified_NSPK_fail3.spthy
+
+TARGET 3: Andrew Secure RPC protocol model
+
+Fail 1:
+I seem tohave hit the same wall as with Simplified NSPK.
+The impostor is trying to learn a key by decoding a message,
+that doesn't contain it, resulting in a loop.

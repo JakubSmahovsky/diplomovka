@@ -1,0 +1,65 @@
+/*
+  Andrew Secure RPC protocol as described in http://www.lsv.fr/Software/spore/andrew.html
+  Following syntax from template instead of usual Tamarin syntax 
+*/
+
+theory Andrew
+begin
+
+builtins: symmetric-encryption
+functions: succ/1,  pred/1
+equations: pred(succ(x)) = x
+
+rule Initiate_symkey:
+  [ Fr(~Kab)] -->
+  [ !Alice_0($A, $B, ~Kab)
+  , !Bob_0($A, $B, ~Kab) ]
+
+rule Alice_1:
+  [ !Alice_0($A, $B, Kab)
+  , Fr(~Na) ] -->
+  [ Out(<$A, senc(~Na, Kab)> )
+  , Alice_1($A, $B, Kab, ~Na) ]
+
+rule Bob_1:
+  [ !Bob_0($A, $B, Kab)
+  , In(<$A, senc(Na, Kab)>)
+  , Fr(~Nb) ] -->
+  [ Out(senc(<succ(Na), ~Nb>, Kab))
+  , Bob_1($A, $B, Kab, Na, ~Nb) ]
+
+rule Alice_2:
+  [ Alice_1($A, $B, Kab, Na)
+  , In(senc(<succ(Na), Nb>, Kab)) ] --> 
+  [ Out(senc(succ(Nb), Kab))
+  , Alice_2($A, $B, Kab, Na, Nb) ]
+
+rule Bob_2:
+  [ Bob_1($A, $B, Kab, Na, Nb) 
+  , In(senc(succ(Nb), Kab))
+  , Fr(~Kab2)
+  , Fr(~Nb2)] // Nb2 is sent for use in future sessions and is not particularly uefull
+  --[Bob_done($A, $B, Kab, Na, Nb, ~Kab2)]->
+  [ Out(senc(<~Kab2, ~Nb2>, Kab))]
+
+rule Alice_3:
+  [ Alice_2($A, $B, Kab, Na, Nb)
+  , In(senc(<Kab2, Nb2>, Kab)) ]
+  --[Alice_done($A, $B, Kab, Na, Nb, Kab2)]->[]
+
+lemma executable:
+  exists-trace
+    "Ex A B Kab Na Nb Kab2 #i #j.
+      Alice_done(A, B, Kab, Na, Nb, Kab2) @#i &
+      Bob_done(A, B, Kab, Na, Nb, Kab2) @#j
+    "
+
+lemma replay:
+  all-traces
+    "All A B Kab Na Na2 Nb Nb2 Kab2 #i #j.
+      Alice_done(A, B, Kab, Na, Nb, Kab2) @#i &
+      Alice_done(A, B, Kab, Na2, Nb2, Kab2) @#j
+    ==> #i = #j
+    "
+
+end
