@@ -76,91 +76,28 @@ simplify
 solve( Bob_1( $A, $B, KPa, KPb, Na, Nb ) ▶₀ #i )
   case Bob_1
   solve( !KU( aenc(~Nb, pk(~KS.1)) ) @ #vk )
-    case Alice_2_case_1
-    by sorry
-  next
-    case Alice_2_case_2
-    by sorry
-  next
-    case Bob_1
-    by sorry
-  next
     case c_aenc
     solve( !KU( ~Nb ) @ #vk.2 )
       case Alice_2
       solve( !KU( ~KS.2 ) @ #vk.5 )
-        case Alice_2
-        by sorry
-      next
-        case Bob_1
-        by sorry
-      next
         case Reveal_KS
         solve( !KU( aenc(<Na, $A>, pk(~KS.1)) ) @ #vk.3 )
-          case Alice_1
-          by sorry
-        next
-          case Alice_2_case_1
-          by sorry
-        next
-          case Alice_2_case_2
-          by sorry
-        next
-          case Bob_1
-          by sorry
-        next
           case c_aenc
           solve( !KU( aenc(<~Na.1, Nb.1>, pk(~KS.3)) ) @ #vk.5 )
-            case Alice_1
-            by contradiction /* forbidden KD-fact */
-          next
-            case Alice_2_case_1
-            by sorry
-          next
-            case Alice_2_case_2
-            by sorry
-          next
             case Bob_1_case_1
             solve( (#vr.4, 0) ~~> (#vk.1, 0) )
               case Var_fresh_1_Nb
               solve( !KU( ~Na ) @ #vk.7 )
                 case Alice_1
                 solve( !KU( pk(~KS.1) ) @ #vk.6 )
-                  case Alice_2
-                  by sorry
-                next
-                  case Bob_1
-                  by sorry
-                next
                   case Register_KP
                   SOLVED // trace found
-                next
-                  case c_pk
-                  by sorry
                 qed
-              next
-                case Alice_2
-                by sorry
-              next
-                case Bob_1
-                by sorry
               qed
             qed
-          next
-            case Bob_1_case_2
-            by sorry
-          next
-            case c_aenc
-            by contradiction /* cyclic */
           qed
         qed
       qed
-    next
-      case Bob_1_case_1
-      by sorry
-    next
-      case Bob_1_case_2
-      by sorry
     qed
   qed
 qed
