@@ -76,3 +76,15 @@ The protocol is  much sipler than original NSPK. I found the attack manually.
 Autoprove does not find the attack.
 At the moment can be found in
 tamarin/my/Simplified_Needham_Schroeder_Public_Key/Simplified_NSPK_fail1.spthy
+
+Result 2:
+I've added a rule to forbid mistaking pairs for simple values.
+I've made it weaker compared to the one I used previously in TARGET 0 Attempt 3
+by only requiring simple values not to be pairs containing values of their kind.
+This still removes the loop where Alice keeps sending messages to another Alice
+in the same stage of the protocol.
+Autoprove still does not find the attack.
+There is a loop, where the Impostor finds a secret key by decoding a 
+message which doesn't contain it. I'm starting to suspect a bug in Tamarin.
+It canbe found in source 5 of !KU(t.1), named "Alice_2" in
+tamarin/my/Simplified_Needham_Schroeder_Public_Key/Simplified_NSPK_attempt1.spthy
