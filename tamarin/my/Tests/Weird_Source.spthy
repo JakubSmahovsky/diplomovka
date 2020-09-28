@@ -1,0 +1,41 @@
+/*
+  I'm trying to find a minimal case of a weird soucre where the impostor
+  finds a value, by decoding a message, that doesn't contain it.
+*/
+
+theory Weird_Source
+begin
+
+builtins: asymmetric-encryption
+
+rule Register_KP:
+  let
+    KP = pk(~KS)
+  in
+  [ Fr(~KS) ]-->
+  [ !Ltk($X, ~KS)
+  , !Pk($X, KP)
+  , Out(KP) ]
+
+rule Source:
+  [ In(aenc(<N>, KPa))
+  , !Pk($A, KPa)
+  , !Pk($B, KPb) ]
+  --[Yes(N)]->
+  [ Out(aenc(N, KPb)) ]
+
+rule Secret:
+  [ Fr(~s)
+  , !Ltk($X, KS)
+  , !Pk($X, KP) ]
+  --[No(KS), Secret(~s)]-> 
+  [ Out(aenc(~s, KP)) ]
+
+restriction r:
+  "All x #i #j . Yes(x) @#i & No(x) @#j ==> F"
+
+lemma secrecy:
+  all-traces
+  "All s #i #j . Secret(s) @#i & K(s) @#j ==> F"
+
+end
