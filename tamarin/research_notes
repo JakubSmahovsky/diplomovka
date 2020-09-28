@@ -106,3 +106,5 @@ Result 2:
 I've also coppied and modeled BAN modified Andrew Secure RPC.
 The results are unchanged, obviously an attack is not known,
 however the proof is getting stuckin the same (bugged?) loop.
+
+TARGET 4: BAN concrete Andrew Secure RPC protocol model
