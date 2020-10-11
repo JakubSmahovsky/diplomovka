@@ -24,3 +24,6 @@ yarn-error.log*
 
 # tamarin weird file
 client_session_key.aes
+
+# java build
+compiler/simple_tamarin/target

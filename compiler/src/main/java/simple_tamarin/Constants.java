@@ -7,6 +7,8 @@ public final class Constants{
     "principals",
     "knows",
     "queries",
-    "generates"
+    "generates",
+    "public",
+    "private"
   };
 }

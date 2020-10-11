@@ -12,7 +12,7 @@ principalBlock: principal=IDENTIFIER '[' command* ']';
 
 command: knows;
 
-knows: 'knows' IDENTIFIER;
+knows: 'knows' modifier=('public' | 'private') IDENTIFIER;
 
 messageBlock: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' message=IDENTIFIER (',' message=IDENTIFIER)*;
 
