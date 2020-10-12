@@ -2,10 +2,14 @@ package simple_tamarin.dataStructures;
 
 import java.util.ArrayList;
 
-public class ProtocolModel {
+/**
+ * Simple_tamarin Model
+ */
+public class StModel {
   public ArrayList<Principal> principals;
+  public ArrayList<Variable> variables;
 
-  public ProtocolModel(){
+  public StModel(){
     this.principals = new ArrayList<>();
   }
 
@@ -22,7 +26,7 @@ public class ProtocolModel {
   };
 
   /**
-   * does NOT check for name collision, for that use addIfPrincipal
+   * does NOT check for name collisions
    * @return newly created principal with name==name
    */
   public Principal addPrincipal(String name) {
@@ -32,14 +36,24 @@ public class ProtocolModel {
   }
 
   /**
-   * Returns pointer to principal with name==name or adds a new one if it doesn't exist.
-   * @return principal with name==name (existing or new)
+   * @return variable with name==name or void if it doesn't exist
    */
-  public Principal addIfPrincipal(String name) {
-    Principal principal = findPrincipal(name);
-    if (principal == null) {
-      principal = addPrincipal(name);
+  public Variable findVariable(String name){
+    for (Variable variable : variables) {
+      if (variable.name.equals(name)) {
+        return variable;
+      }
     }
-    return principal;
+    return null;
+  };
+
+  /**
+   * does NOT check for name collisions
+   * @return newly created Variable with name==name
+   */
+  public Variable addVariable(String name, boolean pub) {
+    Variable variable = new Variable(name, pub);
+    variables.add(variable);
+    return variable;
   }
 }

@@ -14,7 +14,7 @@ command: knows;
 
 knows: 'knows' modifier=('public' | 'private') IDENTIFIER;
 
-messageBlock: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' message=IDENTIFIER (',' message=IDENTIFIER)*;
+messageBlock: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' message+=IDENTIFIER (',' message+=IDENTIFIER)*;
 
 queriesBlock: 'queries' '[' query* ']';
 

@@ -17,8 +17,8 @@ public class Simple_tamarinParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, IDENTIFIER=9, 
-		WHITESPACE=10;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
+		T__9=10, IDENTIFIER=11, WHITESPACE=12;
 	public static final int
 		RULE_model = 0, RULE_segment = 1, RULE_principalBlock = 2, RULE_command = 3, 
 		RULE_knows = 4, RULE_messageBlock = 5, RULE_queriesBlock = 6, RULE_query = 7;
@@ -32,13 +32,15 @@ public class Simple_tamarinParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'['", "']'", "'knows'", "'->'", "':'", "','", "'queries'", "'executable?'"
+			null, "'['", "']'", "'knows'", "'public'", "'private'", "'->'", "':'", 
+			"','", "'queries'", "'executable?'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, null, null, null, null, "IDENTIFIER", "WHITESPACE"
+			null, null, null, null, null, null, null, null, null, null, null, "IDENTIFIER", 
+			"WHITESPACE"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -120,7 +122,7 @@ public class Simple_tamarinParser extends Parser {
 			setState(19);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==T__6 || _la==IDENTIFIER) {
+			while (_la==T__8 || _la==IDENTIFIER) {
 				{
 				{
 				setState(16);
@@ -303,6 +305,7 @@ public class Simple_tamarinParser extends Parser {
 	}
 
 	public static class KnowsContext extends ParserRuleContext {
+		public Token modifier;
 		public TerminalNode IDENTIFIER() { return getToken(Simple_tamarinParser.IDENTIFIER, 0); }
 		public KnowsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -318,12 +321,24 @@ public class Simple_tamarinParser extends Parser {
 	public final KnowsContext knows() throws RecognitionException {
 		KnowsContext _localctx = new KnowsContext(_ctx, getState());
 		enterRule(_localctx, 8, RULE_knows);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(39);
 			match(T__2);
 			setState(40);
+			((KnowsContext)_localctx).modifier = _input.LT(1);
+			_la = _input.LA(1);
+			if ( !(_la==T__3 || _la==T__4) ) {
+				((KnowsContext)_localctx).modifier = (Token)_errHandler.recoverInline(this);
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
+				consume();
+			}
+			setState(41);
 			match(IDENTIFIER);
 			}
 		}
@@ -341,7 +356,8 @@ public class Simple_tamarinParser extends Parser {
 	public static class MessageBlockContext extends ParserRuleContext {
 		public Token sender;
 		public Token receiver;
-		public Token message;
+		public Token IDENTIFIER;
+		public List<Token> message = new ArrayList<Token>();
 		public List<TerminalNode> IDENTIFIER() { return getTokens(Simple_tamarinParser.IDENTIFIER); }
 		public TerminalNode IDENTIFIER(int i) {
 			return getToken(Simple_tamarinParser.IDENTIFIER, i);
@@ -364,29 +380,31 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(42);
-			((MessageBlockContext)_localctx).sender = match(IDENTIFIER);
 			setState(43);
-			match(T__3);
+			((MessageBlockContext)_localctx).sender = match(IDENTIFIER);
 			setState(44);
-			((MessageBlockContext)_localctx).receiver = match(IDENTIFIER);
+			match(T__5);
 			setState(45);
-			match(T__4);
+			((MessageBlockContext)_localctx).receiver = match(IDENTIFIER);
 			setState(46);
-			((MessageBlockContext)_localctx).message = match(IDENTIFIER);
-			setState(51);
+			match(T__6);
+			setState(47);
+			((MessageBlockContext)_localctx).IDENTIFIER = match(IDENTIFIER);
+			((MessageBlockContext)_localctx).message.add(((MessageBlockContext)_localctx).IDENTIFIER);
+			setState(52);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==T__5) {
+			while (_la==T__7) {
 				{
 				{
-				setState(47);
-				match(T__5);
 				setState(48);
-				((MessageBlockContext)_localctx).message = match(IDENTIFIER);
+				match(T__7);
+				setState(49);
+				((MessageBlockContext)_localctx).IDENTIFIER = match(IDENTIFIER);
+				((MessageBlockContext)_localctx).message.add(((MessageBlockContext)_localctx).IDENTIFIER);
 				}
 				}
-				setState(53);
+				setState(54);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -428,25 +446,25 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(54);
-			match(T__6);
 			setState(55);
+			match(T__8);
+			setState(56);
 			match(T__0);
-			setState(59);
+			setState(60);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==T__7) {
+			while (_la==T__9) {
 				{
 				{
-				setState(56);
+				setState(57);
 				query();
 				}
 				}
-				setState(61);
+				setState(62);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(62);
+			setState(63);
 			match(T__1);
 			}
 		}
@@ -479,8 +497,8 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(64);
-			match(T__7);
+			setState(65);
+			match(T__9);
 			}
 		}
 		catch (RecognitionException re) {
@@ -495,23 +513,24 @@ public class Simple_tamarinParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\fE\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\16F\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\3\2\7\2\24\n\2\f\2"+
 		"\16\2\27\13\2\3\3\3\3\3\3\5\3\34\n\3\3\4\3\4\3\4\7\4!\n\4\f\4\16\4$\13"+
-		"\4\3\4\3\4\3\5\3\5\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\7\3\7\7\7\64\n\7"+
-		"\f\7\16\7\67\13\7\3\b\3\b\3\b\7\b<\n\b\f\b\16\b?\13\b\3\b\3\b\3\t\3\t"+
-		"\3\t\2\2\n\2\4\6\b\n\f\16\20\2\2\2B\2\25\3\2\2\2\4\33\3\2\2\2\6\35\3\2"+
-		"\2\2\b\'\3\2\2\2\n)\3\2\2\2\f,\3\2\2\2\168\3\2\2\2\20B\3\2\2\2\22\24\5"+
-		"\4\3\2\23\22\3\2\2\2\24\27\3\2\2\2\25\23\3\2\2\2\25\26\3\2\2\2\26\3\3"+
-		"\2\2\2\27\25\3\2\2\2\30\34\5\6\4\2\31\34\5\f\7\2\32\34\5\16\b\2\33\30"+
-		"\3\2\2\2\33\31\3\2\2\2\33\32\3\2\2\2\34\5\3\2\2\2\35\36\7\13\2\2\36\""+
-		"\7\3\2\2\37!\5\b\5\2 \37\3\2\2\2!$\3\2\2\2\" \3\2\2\2\"#\3\2\2\2#%\3\2"+
-		"\2\2$\"\3\2\2\2%&\7\4\2\2&\7\3\2\2\2\'(\5\n\6\2(\t\3\2\2\2)*\7\5\2\2*"+
-		"+\7\13\2\2+\13\3\2\2\2,-\7\13\2\2-.\7\6\2\2./\7\13\2\2/\60\7\7\2\2\60"+
-		"\65\7\13\2\2\61\62\7\b\2\2\62\64\7\13\2\2\63\61\3\2\2\2\64\67\3\2\2\2"+
-		"\65\63\3\2\2\2\65\66\3\2\2\2\66\r\3\2\2\2\67\65\3\2\2\289\7\t\2\29=\7"+
-		"\3\2\2:<\5\20\t\2;:\3\2\2\2<?\3\2\2\2=;\3\2\2\2=>\3\2\2\2>@\3\2\2\2?="+
-		"\3\2\2\2@A\7\4\2\2A\17\3\2\2\2BC\7\n\2\2C\21\3\2\2\2\7\25\33\"\65=";
+		"\4\3\4\3\4\3\5\3\5\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\7\3\7\7\7\65"+
+		"\n\7\f\7\16\78\13\7\3\b\3\b\3\b\7\b=\n\b\f\b\16\b@\13\b\3\b\3\b\3\t\3"+
+		"\t\3\t\2\2\n\2\4\6\b\n\f\16\20\2\3\3\2\6\7\2C\2\25\3\2\2\2\4\33\3\2\2"+
+		"\2\6\35\3\2\2\2\b\'\3\2\2\2\n)\3\2\2\2\f-\3\2\2\2\169\3\2\2\2\20C\3\2"+
+		"\2\2\22\24\5\4\3\2\23\22\3\2\2\2\24\27\3\2\2\2\25\23\3\2\2\2\25\26\3\2"+
+		"\2\2\26\3\3\2\2\2\27\25\3\2\2\2\30\34\5\6\4\2\31\34\5\f\7\2\32\34\5\16"+
+		"\b\2\33\30\3\2\2\2\33\31\3\2\2\2\33\32\3\2\2\2\34\5\3\2\2\2\35\36\7\r"+
+		"\2\2\36\"\7\3\2\2\37!\5\b\5\2 \37\3\2\2\2!$\3\2\2\2\" \3\2\2\2\"#\3\2"+
+		"\2\2#%\3\2\2\2$\"\3\2\2\2%&\7\4\2\2&\7\3\2\2\2\'(\5\n\6\2(\t\3\2\2\2)"+
+		"*\7\5\2\2*+\t\2\2\2+,\7\r\2\2,\13\3\2\2\2-.\7\r\2\2./\7\b\2\2/\60\7\r"+
+		"\2\2\60\61\7\t\2\2\61\66\7\r\2\2\62\63\7\n\2\2\63\65\7\r\2\2\64\62\3\2"+
+		"\2\2\658\3\2\2\2\66\64\3\2\2\2\66\67\3\2\2\2\67\r\3\2\2\28\66\3\2\2\2"+
+		"9:\7\13\2\2:>\7\3\2\2;=\5\20\t\2<;\3\2\2\2=@\3\2\2\2><\3\2\2\2>?\3\2\2"+
+		"\2?A\3\2\2\2@>\3\2\2\2AB\7\4\2\2B\17\3\2\2\2CD\7\f\2\2D\21\3\2\2\2\7\25"+
+		"\33\"\66>";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
