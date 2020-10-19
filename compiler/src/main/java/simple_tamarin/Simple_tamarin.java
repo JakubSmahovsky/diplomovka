@@ -12,7 +12,9 @@ public class Simple_tamarin {
 
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     Simple_tamarinParser parser = new Simple_tamarinParser(tokens);
-    VisitorImp visitor = new VisitorImp();
+    File out = new File("out.spthy"); // TODO: take name from arguments
+    FileWriter writer = new FileWriter(out);
+    VisitorImp visitor = new VisitorImp(writer);
 
     visitor.visitModel(parser.model());
   }

@@ -1,6 +1,12 @@
 package simple_tamarin;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 import org.antlr.v4.runtime.Token;
+
+import simple_tamarin.Constants.CommandType;
+import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.*;
 import simple_tamarin.parser.*;
 
@@ -8,17 +14,36 @@ import simple_tamarin.parser.*;
  * This class implements all visitor methods of the Simple_tamarin compiler
  */
 public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
+	private FileWriter writer;
 	private StModel model;
 
 	// focused objects - objects that are currently being worked on
 	private Principal curPrincipal;
 	private StBlock curBlock;
 
-	public VisitorImp(){
-		model = new StModel();
+	public VisitorImp(FileWriter writer) {
+		this.writer = writer;
+		this.model = new StModel();
 	};
-	
-	@Override public Integer visitModel(Simple_tamarinParser.ModelContext ctx) { return visitChildren(ctx); }
+
+	@Override
+	public Integer visitModel(Simple_tamarinParser.ModelContext ctx) {
+		int status = visitChildren(ctx);
+		if (status != 0) {
+			return status;
+		}
+
+		Builder builder = new Builder(model);
+		try {
+			writer.write(builder.output());
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return 0;
+	}
 
 	@Override public Integer visitSegment(Simple_tamarinParser.SegmentContext ctx) { return visitChildren(ctx); }
 
@@ -33,7 +58,12 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		Principal principal = model.findPrincipal(principalName);
 		if (principal == null) {
 			// TODO info message "It is recommended to declare all principals..."
+			if (model.findVariable(principalName) != null) {
+				// TODO error message "Name of principal is reserved for a variable"
+				return 1;
+			}
 			principal = model.addPrincipal(principalName);
+			model.pubVariables.add(new Variable(principalName, VariableSort.PUBLIC));
 		}
 
 		// init focused objects
@@ -56,21 +86,40 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 
 	@Override public Integer visitKnows(Simple_tamarinParser.KnowsContext ctx) {
 		String name = ctx.IDENTIFIER().getText();
-		Variable variable = model.findVariable(name);
 		boolean pub = (ctx.modifier.getText().equals("public")) ? true : false;
+		// TODO if (!curPrincipal.blocks.isEmpty) info message: "recommend knows the first block"
 
-		if (variable == null) {
-			// TODO info message "new variable ... it is recommended to declare variables..."
-			variable = model.addVariable(name, pub);
-		} else if (variable.pub != pub) {
-			// TODO error message "new variable ... declared as pub, but already exists as variable.pub ..."
-			return 1;
-		} // else everything is allready correct
+		if (pub) {
+			if (curPrincipal.findVariable(name) != null) {
+				// TODO error message: "principal allready knows variable with that name as private"
+				return 1;
+			}
 
-		if (curPrincipal.variables.contains(variable)) {
-			// TODO warning message "principal allready knows variable ..."
+			Variable variable = model.findVariable(name);
+			if (variable == null) {
+				// TODO info message: "recommend declaring variable"
+				variable = new Variable(name, VariableSort.PUBLIC);
+				model.pubVariables.add(variable);
+			}
+
+			curPrincipal.initState.add(variable);
 		} else {
-			curPrincipal.variables.add(variable);
+			// TODO info message if there is a public variable with the same name
+			if (curPrincipal.findVariable(name) != null) {
+				// TODO warning message: principal allready knows it
+			} else {
+				Variable variable = new Variable(name, VariableSort.FRESH);
+				for (Principal principal : model.principals) {
+					for (Variable existing : principal.variables) {
+						if (existing.name.equals(name) && existing.cratedBy == null) {
+							variable = existing;
+						}
+					}
+				}
+
+				curPrincipal.variables.add(variable);
+				curPrincipal.initState.add(variable);
+			}
 		}
 		return 0;
 	}
@@ -83,35 +132,35 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		}
 		Principal receiver = model.findPrincipal(ctx.receiver.getText());
 		if (receiver == null) {
-			// TODO error message "receiver principal does not exist at this point ..."
+			System.out.println("error: Receiver \"" + ctx.receiver.getText() + "\" does not exist at this point!"); // TODO
 			return 1;
 		}
 
 		for (Token message : ctx.message) {
 			String msg = message.getText();
-			Variable variable = model.findVariable(msg);
-			
-			if (variable == null) {
-				// TODO error message "variable doesn't exist..."
-				return 1;
-			}
 
-			if (!(sender.knows(msg) || variable.pub)) {
-				// TODO error message "principal is trying to send a variable despite not knowing it..."
-				return 1;
+			Variable variable = model.findVariable(msg);
+			if (variable == null) {
+				variable = sender.findVariable(msg);
+				if (variable == null) {
+					System.out.println("error: Principal \"" + sender.name + "\" is trying to send variable \"" + msg + "\" despite not knowing it."); // TODO 
+					return 1;
+				}
+
+				if (receiver.findVariable(msg) == null) {
+					// only add variable to receiver knowledge if it's not public nor allready known
+					receiver.variables.add(variable);
+				}
 			}
 
 			if (sender.blocks.isEmpty()) {
 				// sender may send a public variable before doing anything else, in that case it needs an initial block
 				sender.blocks.add(new StBlock(sender));
 			}
-			StBlock sendersLastBlock = sender.blocks.get(sender.blocks.size()-1);
-			sendersLastBlock.commands.add(new Command(Command.out, variable));
-			receiver.nextBlock.commands.add(new Command(Command.in, variable));
 
-			if (!(receiver.knows(msg) || variable.pub)) {
-				receiver.variables.add(variable);
-			}
+			StBlock sendersLastBlock = sender.blocks.get(sender.blocks.size()-1);
+			sendersLastBlock.result.add(new Command(CommandType.OUT, variable));
+			receiver.nextBlock.premise.add(new Command(CommandType.IN, variable));
 		}
 
 		return 0;

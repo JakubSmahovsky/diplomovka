@@ -1,0 +1,14 @@
+Bob []
+
+Alice [
+  knows public X
+  knows private bla
+  knows private cla
+]
+Alice -> Bob: bla, cla
+
+Bob [
+  knows private bla
+  knows public X
+]
+Bob -> Alice: bla, cla

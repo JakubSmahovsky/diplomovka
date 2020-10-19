@@ -1,0 +1,36 @@
+theory temp
+begin
+
+rule init: [
+Fr(~bla),
+Fr(~cla)
+]-->[
+Bob_0($X),
+Alice_0($X,~bla,~cla)
+]
+
+rule Bob_1: [
+Bob_0($X)
+]-->[
+Bob_1($X)
+]
+
+rule Bob_2: [
+Bob_1($X),
+In(bla),
+In(cla)
+]-->[
+Out(bla),
+Out(cla),
+Bob_2($X,bla,cla)
+]
+
+rule Alice_1: [
+Alice_0($X,bla,cla)
+]-->[
+Out(bla),
+Out(cla),
+Alice_1($X,bla,cla)
+]
+
+end

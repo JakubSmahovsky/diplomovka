@@ -7,10 +7,11 @@ import java.util.ArrayList;
  */
 public class StModel {
   public ArrayList<Principal> principals;
-  public ArrayList<Variable> variables;
+  public ArrayList<Variable> pubVariables; // long term public variables
 
   public StModel(){
     this.principals = new ArrayList<>();
+    this.pubVariables = new ArrayList<>();
   }
 
   /**
@@ -36,10 +37,10 @@ public class StModel {
   }
 
   /**
-   * @return variable with name==name or void if it doesn't exist
+   * @return variable with given parameters or void if it doesn't exist
    */
   public Variable findVariable(String name){
-    for (Variable variable : variables) {
+    for (Variable variable : pubVariables) {
       if (variable.name.equals(name)) {
         return variable;
       }
@@ -48,12 +49,14 @@ public class StModel {
   };
 
   /**
-   * does NOT check for name collisions
-   * @return newly created Variable with name==name
+   * @return variable with given parameters or void if it doesn't exist
    */
-  public Variable addVariable(String name, boolean pub) {
-    Variable variable = new Variable(name, pub);
-    variables.add(variable);
-    return variable;
-  }
+  public Variable findVariable(String name, Principal createdBy){
+    for (Variable variable : pubVariables) {
+      if (variable.name.equals(name) && variable.cratedBy == createdBy) {
+        return variable;
+      }
+    }
+    return null;
+  };
 }
