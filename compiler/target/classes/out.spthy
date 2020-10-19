@@ -2,41 +2,42 @@ theory temp
 begin
 
 rule init: [
-Fr(~bla),
-Fr(~cla)
+Fr(~C),
+Fr(~D)
 ]-->[
-Bob_0($X),
-Alice_0($X,~bla,~cla)
+Bob_0(~D,$B),
+Alice_0($B,~C,~D)
 ]
 
 rule Bob_1: [
-Bob_0($X)
+Bob_0($B,D),
+Fr(~A)
 ]--[
-Bob_1($X)
+Bob_1(~A,$B,D)
 ]->[
-Bob_1($X)
+Bob_1(~A,$B,D)
 ]
 
 rule Bob_2: [
-Bob_1($X),
-In(bla),
-In(cla)
+Bob_1(A,$B,D),
+In($B),
+In(C)
 ]--[
-Bob_2($X,bla,cla)
+Bob_2(C,A,$B,D)
 ]->[
-Out(bla),
-Out(cla),
-Bob_2($X,bla,cla)
+Out(A),
+Out(D),
+Bob_2(C,A,$B,D)
 ]
 
 rule Alice_1: [
-Alice_0($X,bla,cla)
+Alice_0(C,$B,D)
 ]--[
-Alice_1($X,bla,cla)
+Alice_1(C,$B,D)
 ]->[
-Out(bla),
-Out(cla),
-Alice_1($X,bla,cla)
+Out($B),
+Out(C),
+Alice_1(C,$B,D)
 ]
 
 end

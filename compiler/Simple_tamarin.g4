@@ -10,9 +10,12 @@ segment:
 
 principalBlock: principal=IDENTIFIER '[' command* ']';
 
-command: knows;
+command: 
+  knows |
+  generates;
 
 knows: 'knows' modifier=('public' | 'private') IDENTIFIER;
+generates: 'generates' IDENTIFIER;
 
 messageBlock: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' message+=IDENTIFIER (',' message+=IDENTIFIER)*;
 

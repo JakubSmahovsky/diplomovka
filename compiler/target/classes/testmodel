@@ -1,14 +1,16 @@
-Bob []
+Bob [
+  generates A
+]
 
 Alice [
-  knows public X
-  knows private bla
-  knows private cla
+  knows public B
+  knows private C
+  knows private D
 ]
-Alice -> Bob: bla, cla
+Alice -> Bob: B, C
 
 Bob [
-  knows private bla
-  knows public X
+  knows private D
+  knows public B
 ]
-Bob -> Alice: bla, cla
+Bob -> Alice: A, D

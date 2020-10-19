@@ -82,6 +82,10 @@ public class Builder {
               facts.add(fact("In", Arrays.asList(command.variable)));
               currState.add(command.variable);
               break;
+            case FRESH:
+              facts.add(fact("Fr", Arrays.asList(command.variable)));
+              currState.add(command.variable);
+              break;
             default: System.out.println("Debug: Unexpected command type in premises.");
           }
         }
@@ -96,11 +100,19 @@ public class Builder {
             case OUT: 
               facts.add(fact("Out", Arrays.asList(command.variable)));
               break;
-            default: System.out.println("Debug: Unexpected command type in premises.");
+            default: System.out.println("Debug: Unexpected command type in results.");
           }
         }
         facts.add(resultStateFact);
         ruleResult(facts);
+        
+        // remove fresh sort from generated variables
+        for (Variable variable : currState) {
+          if (variable.sort == VariableSort.FRESH) {
+            variable.sort = VariableSort.NOSORT;
+          }
+        }
+
         blocki+=1;
       }
     }

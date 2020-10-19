@@ -12,4 +12,10 @@ public class Variable {
     this.cratedBy = null;
     this.sort = sort;
   }
+
+  public Variable(String name, Principal createdBy, VariableSort sort) {
+    this.name = name;
+    this.cratedBy = createdBy;
+    this.sort = sort;
+  }
 }

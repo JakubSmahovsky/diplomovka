@@ -124,6 +124,22 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		return 0;
 	}
 
+	@Override public Integer visitGenerates(Simple_tamarinParser.GeneratesContext ctx) {
+		String name = ctx.IDENTIFIER().getText();
+		if (model.findVariable(name) != null) {
+			// TODO info message: shadowed variable
+		}
+		if (curPrincipal.findVariable(name) != null) {
+			// TODO error message: private variable ... allready exists
+			return 1;
+		}
+
+		Variable variable = new Variable(name, curPrincipal, VariableSort.FRESH);
+		curPrincipal.variables.add(variable);
+		curBlock.premise.add(new Command(CommandType.FRESH, variable));
+		return 0;
+	}
+
 	@Override public Integer visitMessageBlock(Simple_tamarinParser.MessageBlockContext ctx) {
 		Principal sender = model.findPrincipal(ctx.sender.getText());
 		if (sender == null) {
