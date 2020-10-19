@@ -87,6 +87,9 @@ public class Builder {
         }
         rulePremise(principal.name + "_" + (blocki+1), facts);
 
+        String resultStateFact = fact(principal.name + "_" + (blocki+1), currState);
+        ruleAction(Arrays.asList(resultStateFact));
+
         facts = new ArrayList<>();
         for (Command command : block.result) {
           switch (command.type) {
@@ -96,7 +99,7 @@ public class Builder {
             default: System.out.println("Debug: Unexpected command type in premises.");
           }
         }
-        facts.add(fact(principal.name + "_" + (blocki+1), currState));
+        facts.add(resultStateFact);
         ruleResult(facts);
         blocki+=1;
       }
@@ -108,11 +111,11 @@ public class Builder {
     ruleBody(facts);
     output.append("]-");
   }
-/*  private void ruleAction(List<String> facts){
+  private void ruleAction(List<String> facts){
     output.append("-[\r\n");
     ruleBody(facts);
     output.append("]");
-  }*/
+  }
   private void ruleResult(List<String> facts){
     output.append("->[\r\n");
     ruleBody(facts);
