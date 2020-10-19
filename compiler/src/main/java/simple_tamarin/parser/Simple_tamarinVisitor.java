@@ -64,4 +64,10 @@ public interface Simple_tamarinVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitQuery(Simple_tamarinParser.QueryContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Simple_tamarinParser#executable}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExecutable(Simple_tamarinParser.ExecutableContext ctx);
 }

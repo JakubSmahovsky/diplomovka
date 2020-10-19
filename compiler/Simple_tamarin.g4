@@ -21,7 +21,9 @@ messageBlock: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' message+=IDENTIFIER
 
 queriesBlock: 'queries' '[' query* ']';
 
-query: 'executable?';
+query: executable;
+
+executable: 'executable?';
 
 IDENTIFIER : [a-zA-Z0-9]+;
 WHITESPACE : [ \t\r\n]+ -> skip;

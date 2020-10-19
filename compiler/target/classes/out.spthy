@@ -5,39 +5,46 @@ rule init: [
 Fr(~C),
 Fr(~D)
 ]-->[
-Bob_0(~D,$B),
-Alice_0($B,~C,~D)
+!Bob_0(~D,$B),
+!Alice_0($B,~C,~D)
 ]
 
 rule Bob_1: [
-Bob_0($B,D),
+!Bob_0(D,$B),
 Fr(~A)
 ]--[
-Bob_1(~A,$B,D)
+Bob_1(D,$B,~A)
 ]->[
-Bob_1(~A,$B,D)
+Bob_1(D,$B,~A)
 ]
 
 rule Bob_2: [
-Bob_1(A,$B,D),
+Bob_1(D,$B,A),
 In($B),
 In(C)
 ]--[
-Bob_2(C,A,$B,D)
+Bob_2(D,$B,A,C)
 ]->[
 Out(A),
 Out(D),
-Bob_2(C,A,$B,D)
+Bob_2(D,$B,A,C)
 ]
 
 rule Alice_1: [
-Alice_0(C,$B,D)
+!Alice_0($B,C,D)
 ]--[
-Alice_1(C,$B,D)
+Alice_1($B,C,D)
 ]->[
 Out($B),
 Out(C),
-Alice_1(C,$B,D)
+Alice_1($B,C,D)
 ]
+
+lemma executable: 
+exists-trace "
+Ex C A D B #time0 #time1 .
+Bob_2(D,B,A,C) @#time0 &
+Alice_1(B,C,D) @#time1
+"
 
 end

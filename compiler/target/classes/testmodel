@@ -14,3 +14,7 @@ Bob [
   knows public B
 ]
 Bob -> Alice: A, D
+
+queries [
+  executable?
+]

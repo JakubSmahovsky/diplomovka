@@ -9,6 +9,7 @@ import simple_tamarin.Constants.CommandType;
 import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.*;
 import simple_tamarin.parser.*;
+import simple_tamarin.parser.Simple_tamarinParser.QueryContext;
 
 /**
  * This class implements all visitor methods of the Simple_tamarin compiler
@@ -28,9 +29,10 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 
 	@Override
 	public Integer visitModel(Simple_tamarinParser.ModelContext ctx) {
-		int status = visitChildren(ctx);
-		if (status != 0) {
-			return status;
+		for (Simple_tamarinParser.SegmentContext segment : ctx.segment()) {
+			if (visitSegment(segment) != 0) {
+				return 1;
+			}
 		}
 
 		Builder builder = new Builder(model);
@@ -45,7 +47,17 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		return 0;
 	}
 
-	@Override public Integer visitSegment(Simple_tamarinParser.SegmentContext ctx) { return visitChildren(ctx); }
+	@Override public Integer visitSegment(Simple_tamarinParser.SegmentContext ctx) { 
+		if (visitChildren(ctx) == null) {
+			System.out.println(ctx.getText());
+		}
+		/*
+		if (visitChildren(ctx) != 0) {
+			return 1;
+		}
+		*/
+		return 0;
+	}
 
 	@Override public Integer visitPrincipalBlock(Simple_tamarinParser.PrincipalBlockContext ctx) { 
 		String principalName = ctx.principal.getText();
@@ -126,6 +138,10 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 
 	@Override public Integer visitGenerates(Simple_tamarinParser.GeneratesContext ctx) {
 		String name = ctx.IDENTIFIER().getText();
+		if (!identifierNameValid(name)) {
+			// TODO error message: identifier name is reserverd
+		}
+		
 		if (model.findVariable(name) != null) {
 			// TODO info message: shadowed variable
 		}
@@ -177,6 +193,31 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 			StBlock sendersLastBlock = sender.blocks.get(sender.blocks.size()-1);
 			sendersLastBlock.result.add(new Command(CommandType.OUT, variable));
 			receiver.nextBlock.premise.add(new Command(CommandType.IN, variable));
+		}
+
+		return 0;
+	}
+
+	@Override public Integer visitQueriesBlock(Simple_tamarinParser.QueriesBlockContext ctx) {
+		for (QueryContext query : ctx.query()) {
+			if (visitQuery(query) != 0)
+			return 1;
+		}
+		return 0;
+	}
+
+	@Override public Integer visitQuery(Simple_tamarinParser.QueryContext ctx) {
+		if (visitChildren(ctx) != 0) {
+			return 1;
+		}
+		return 0;
+	}
+
+	@Override public Integer visitExecutable(Simple_tamarinParser.ExecutableContext ctx) {
+		if (model.queries.executable == true) {
+			// TODO warning message: duplicite executable query declaration
+		} else {
+			model.queries.executable = true;
 		}
 
 		return 0;

@@ -27,6 +27,7 @@ public class Builder {
     initProtocol();
     initRule();
     blocks();
+    queries();
     endProtocol();
   }
 
@@ -53,7 +54,7 @@ public class Builder {
 
     facts = new ArrayList<>();
     for (Principal principal : model.principals) {
-      facts.add(fact(principal.name + "_0", principal.initState));
+      facts.add(persistentFact(principal.name + "_0", principal.initState));
     }
     ruleResult(facts);
 
@@ -71,27 +72,35 @@ public class Builder {
    */
   private void blocks() {
     for (Principal principal : model.principals) {
-      HashSet<Variable> currState = new HashSet<>(principal.initState);
-      int blocki = 0;
+      ArrayList<Variable> currState = new ArrayList<>(principal.initState);
+      int blockNo = 0;
       for (StBlock block : principal.blocks) {
         ArrayList<String> facts = new ArrayList<>();
-        facts.add(fact(principal.name + "_" + blocki, currState));
+        if (blockNo == 0) {
+          facts.add(persistentFact(principal.name + "_" + blockNo, currState));
+        } else {
+          facts.add(fact(principal.name + "_" + blockNo, currState));  
+        }
         for (Command command : block.premise) {
           switch (command.type) {
             case IN: 
               facts.add(fact("In", Arrays.asList(command.variable)));
-              currState.add(command.variable);
+              if (!currState.contains(command.variable)) {
+                currState.add(command.variable);
+              }
               break;
             case FRESH:
               facts.add(fact("Fr", Arrays.asList(command.variable)));
-              currState.add(command.variable);
+              if (!currState.contains(command.variable)) {
+                currState.add(command.variable);
+              }
               break;
             default: System.out.println("Debug: Unexpected command type in premises.");
           }
         }
-        rulePremise(principal.name + "_" + (blocki+1), facts);
+        rulePremise(principal.name + "_" + (blockNo+1), facts);
 
-        String resultStateFact = fact(principal.name + "_" + (blocki+1), currState);
+        String resultStateFact = fact(principal.name + "_" + (blockNo+1), currState);
         ruleAction(Arrays.asList(resultStateFact));
 
         facts = new ArrayList<>();
@@ -112,10 +121,50 @@ public class Builder {
             variable.sort = VariableSort.NOSORT;
           }
         }
-
-        blocki+=1;
+        block.finalState = new ArrayList<>(currState);
+        blockNo+=1;
       }
     }
+  }
+
+  private void queries() {
+    if (model.queries.executable) {
+      executable();
+    }
+  }
+
+  private void executable() {
+    output.append("lemma executable: \r\n");
+    output.append("exists-trace \"\r\n");
+    HashSet<Variable> variables = new HashSet<>();
+    for (Principal principal : model.principals) {
+      for (Variable variable : principal.blocks.get(principal.blocks.size()-1).finalState) {
+        variables.add(variable);
+      }
+    }
+    output.append("Ex");
+    for (Variable variable : variables) {
+      output.append(" " + variable.name);
+    }
+    for (int principalNo = 0; principalNo < model.principals.size(); principalNo ++) {
+      output.append(" #time" + principalNo);
+    }
+    output.append(" .\r\n");
+
+    int principalNo = 0;
+    Iterator<Principal> it = model.principals.iterator();
+    while (it.hasNext()) {
+      Principal principal = it.next();
+      int lastBlockIndex = principal.blocks.size()-1;
+      String factName = principal.name + "_" + (lastBlockIndex+1);
+      String timeName = "#time" + principalNo;
+      ArrayList<Variable> finalState = principal.blocks.get(lastBlockIndex).finalState;
+      String conjunction = it.hasNext() ? " &" : "";
+      output.append(queryFact(factName, finalState, timeName) + conjunction + "\r\n");
+      principalNo += 1;
+    }
+    output.append("\"\r\n");
+    output.append("\r\n");
   }
 
   private void rulePremise(String name, List<String> facts) {
@@ -167,8 +216,30 @@ public class Builder {
       result.append("," + sortString(variable.sort) + variable.name);
     }
 
-    result.append(')');
+    result.append(")");
     return result.toString();
+  }
+
+  private String queryFact(String name, Iterable<Variable> variables, String time) {
+    StringBuilder result = new StringBuilder();
+    result.append(name + "(");
+
+    Iterator<Variable> it = variables.iterator();
+    if (it.hasNext()) {
+      Variable variable = it.next();
+      result.append(variable.name);
+    }
+    while (it.hasNext()) {
+      Variable variable = it.next();
+      result.append(","+ variable.name);
+    }
+
+    result.append(") @" + time);
+    return result.toString();
+  }
+
+  private String persistentFact(String name, Iterable<Variable> variables) {
+    return "!" + fact(name, variables);
   }
 
   private String sortString(VariableSort sort) {

@@ -74,4 +74,11 @@ public class Simple_tamarinBaseVisitor<T> extends AbstractParseTreeVisitor<T> im
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitQuery(Simple_tamarinParser.QueryContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitExecutable(Simple_tamarinParser.ExecutableContext ctx) { return visitChildren(ctx); }
 }

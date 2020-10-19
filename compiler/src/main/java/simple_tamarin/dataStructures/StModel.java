@@ -8,10 +8,12 @@ import java.util.ArrayList;
 public class StModel {
   public ArrayList<Principal> principals;
   public ArrayList<Variable> pubVariables; // long term public variables
+  public Queries queries;
 
   public StModel(){
     this.principals = new ArrayList<>();
     this.pubVariables = new ArrayList<>();
+    this.queries = new Queries();
   }
 
   /**
