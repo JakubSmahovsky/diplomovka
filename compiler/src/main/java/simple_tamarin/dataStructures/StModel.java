@@ -17,7 +17,7 @@ public class StModel {
   }
 
   /**
-   * @return principal with name==name or void if it doesn't exist
+   * @return principal with given parameters or null if it doesn't exist
    */
   public Principal findPrincipal(String name){
     for (Principal principal : principals) {
@@ -26,11 +26,11 @@ public class StModel {
       }
     }
     return null;
-  };
+  }
 
   /**
    * does NOT check for name collisions
-   * @return newly created principal with name==name
+   * @return newly created principal with given parameters
    */
   public Principal addPrincipal(String name) {
     Principal principal = new Principal(name);
@@ -39,7 +39,7 @@ public class StModel {
   }
 
   /**
-   * @return variable with given parameters or void if it doesn't exist
+   * @return variable with given parameters or null if it doesn't exist
    */
   public Variable findVariable(String name){
     for (Variable variable : pubVariables) {
@@ -48,17 +48,5 @@ public class StModel {
       }
     }
     return null;
-  };
-
-  /**
-   * @return variable with given parameters or void if it doesn't exist
-   */
-  public Variable findVariable(String name, Principal createdBy){
-    for (Variable variable : pubVariables) {
-      if (variable.name.equals(name) && variable.cratedBy == createdBy) {
-        return variable;
-      }
-    }
-    return null;
-  };
+  }
 }

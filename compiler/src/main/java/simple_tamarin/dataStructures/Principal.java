@@ -15,7 +15,7 @@ public class Principal {
     this.blocks = new ArrayList<>();
     this.nextBlock = new StBlock(this);
     this.initState = new ArrayList<>();
-  };
+  }
 
   /**
    * @return known variable with given parameters or null if it doesn't exist

@@ -1,0 +1,8 @@
+Alice []
+Bob [knows public X]
+Bob -> Alice: Bob, Alice, X
+Alice []
+
+queries [
+  executable?
+]

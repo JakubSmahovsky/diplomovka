@@ -25,7 +25,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	public VisitorImp(FileWriter writer) {
 		this.writer = writer;
 		this.model = new StModel();
-	};
+	}
 
 	@Override
 	public Integer visitModel(Simple_tamarinParser.ModelContext ctx) {

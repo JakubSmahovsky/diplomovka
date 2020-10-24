@@ -1,50 +1,42 @@
-theory temp
-begin
-
 rule init: [
-Fr(~C),
-Fr(~D)
 ]-->[
-!Bob_0(~D,$B),
-!Alice_0($B,~C,~D)
+!Alice_init(),
+!Bob_init()
 ]
 
-rule Bob_1: [
-!Bob_0(D,$B),
-Fr(~A)
+rule Alice_0: [
+!Alice_init()
 ]--[
-Bob_1(D,$B,~A)
+Alice_1()
 ]->[
-Bob_1(D,$B,~A)
-]
-
-rule Bob_2: [
-Bob_1(D,$B,A),
-In($B),
-In(C)
-]--[
-Bob_2(D,$B,A,C)
-]->[
-Out(A),
-Out(D),
-Bob_2(D,$B,A,C)
+Alice_1()
 ]
 
 rule Alice_1: [
-!Alice_0($B,C,D)
+Alice_1(),
+In($Bob),
+In($Alice),
+In($X)
 ]--[
-Alice_1($B,C,D)
+Alice_2($Bob,$Alice,$X)
 ]->[
-Out($B),
-Out(C),
-Alice_1($B,C,D)
+Alice_2($Bob,$Alice,$X)
 ]
 
-lemma executable: 
-exists-trace "
-Ex C A D B #time0 #time1 .
-Bob_2(D,B,A,C) @#time0 &
-Alice_1(B,C,D) @#time1
-"
+rule Bob_0: [
+!Bob_init()
+]--[
+Bob_1($X)
+]->[
+Out($Bob),
+Out($Alice),
+Out($X),
+Bob_1($X)
+]
 
-end
+lemma executable:
+exists-trace "
+Ex Alice #t1 #t0 Bob X.
+Alice_2($Bob,$Alice,$X)@ #t0 &
+Bob_1($X)@ #t1
+"

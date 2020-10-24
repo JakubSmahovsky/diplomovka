@@ -1,7 +1,7 @@
 package simple_tamarin;
 
 public final class Constants{
-  private Constants(){};
+  private Constants(){}
 
   public static enum VariableSort {
     NOSORT,
@@ -23,5 +23,9 @@ public final class Constants{
     "generates",
     "public",
     "private"
-  }; 
+  };
+
+  public static final String EXECUTABLE = "executable";
+  public static final String TEMPORAL = "t";
+  public static final String INIT = "init";
 }
