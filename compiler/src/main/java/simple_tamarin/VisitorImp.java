@@ -24,11 +24,11 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 
 	public VisitorImp(FileWriter writer) {
 		this.writer = writer;
-		this.model = new StModel();
 	}
 
 	@Override
 	public Integer visitModel(Simple_tamarinParser.ModelContext ctx) {
+		this.model = new StModel();
 		for (Simple_tamarinParser.SegmentContext segment : ctx.segment()) {
 			if (visitSegment(segment) != 0) {
 				return 1;
@@ -43,25 +43,15 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return 0;
 	}
 
 	@Override public Integer visitSegment(Simple_tamarinParser.SegmentContext ctx) { 
-		if (visitChildren(ctx) == null) {
-			System.out.println(ctx.getText());
-		}
-		/*
-		if (visitChildren(ctx) != 0) {
-			return 1;
-		}
-		*/
-		return 0;
+		return visitChildren(ctx);
 	}
 
 	@Override public Integer visitPrincipalBlock(Simple_tamarinParser.PrincipalBlockContext ctx) { 
 		String principalName = ctx.principal.getText();
-		
 		if (!identifierNameValid(principalName)) {
 			// TODO error message "name reserved..."
 			return 1;
@@ -99,7 +89,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	@Override public Integer visitKnows(Simple_tamarinParser.KnowsContext ctx) {
 		String name = ctx.IDENTIFIER().getText();
 		boolean pub = (ctx.modifier.getText().equals("public")) ? true : false;
-		// TODO if (!curPrincipal.blocks.isEmpty) info message: "recommend knows the first block"
+		// TODO if (curPrincipal.blocks.get(0) != currBlock) info message: "recommend knows the first block"
 
 		if (pub) {
 			if (curPrincipal.findVariable(name) != null) {
