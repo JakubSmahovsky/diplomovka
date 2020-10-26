@@ -10,20 +10,32 @@ segment:
 
 principalBlock: principal=IDENTIFIER '[' command* ']';
 
-command: 
+command:
   knows |
-  generates;
+  generates |
+  assignment;
 
-knows: 'knows' modifier=('public' | 'private') IDENTIFIER;
-generates: 'generates' IDENTIFIER;
+knows: 'knows' modifier=('public' | 'private') variable;
+generates: 'generates' variable;
+assignment: variable '=' term;
 
-messageBlock: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' message+=IDENTIFIER (',' message+=IDENTIFIER)*;
+messageBlock: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' variable (',' variable)*;
 
 queriesBlock: 'queries' '[' query* ']';
+
+term:
+  variable |
+  functionCall;
+
+variable: IDENTIFIER;
+functionCall: FUNCTION '(' (argument+=term)? (',' argument+=term)* ')';
 
 query: executable;
 
 executable: 'executable?';
 
+FUNCTION:
+  'ENC' |
+  'DEC';
 IDENTIFIER : [a-zA-Z0-9]+;
 WHITESPACE : [ \t\r\n]+ -> skip;

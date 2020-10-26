@@ -7,7 +7,7 @@ import java.util.List;
 
 import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.Principal;
-import simple_tamarin.dataStructures.Variable;
+import simple_tamarin.dataStructures.term.*;
 
 public abstract class BuilderFormatting {
   
@@ -15,6 +15,13 @@ public abstract class BuilderFormatting {
     return principal.name + "_" + blockNo;
   }
   
+  public static String alias(Variable variable) {
+    if (variable.subterm == null) {
+      System.out.println("Debug: Aliased variable " + variable.name + " has no subterm");
+    }
+    return variable + "=" + variable.subterm;
+  }
+
   public static String fact(String name, List<Variable> variables) {
     StringBuilder result = new StringBuilder();
     result.append(name + "(");
@@ -64,7 +71,7 @@ public abstract class BuilderFormatting {
   }
 
   public static String initStateFact(Principal principal) {
-    return persistentFact(principal.name + "_init", principal.variables);
+    return persistentFact(principal.name + "_init", principal.initState);
   }
 
   public static String freshFact(Variable variable) {
@@ -79,8 +86,12 @@ public abstract class BuilderFormatting {
     return fact("Out", variable);
   }
 
-  public static String rulePremise(String name, List<String> facts) {
-    return "rule " + name + ": [\r\n" + ruleBody(facts) + "]-";
+  public static String ruleAliases(String name, List<String> aliases) {
+    return "rule " + name + ":\r\n" + (aliases.isEmpty()? "" : ("let\r\n" + ruleBody(aliases) + "in\r\n"));
+  }
+
+  public static String rulePremise(List<String> facts) {
+    return "[\r\n" + ruleBody(facts) + "]-";
   }
   
   public static String ruleAction(List<String> facts){
@@ -96,7 +107,7 @@ public abstract class BuilderFormatting {
     Iterator<String> it = facts.iterator();
     while (it.hasNext()) {
       String fact = it.next();
-      result.append(fact + (it.hasNext() ? "," : "") + "\r\n");
+      result.append(Constants.INDENT + fact + (it.hasNext() ? "," : "") + "\r\n");
     }
     return result.toString();
   }
@@ -108,7 +119,6 @@ public abstract class BuilderFormatting {
   public static String endProtocol() {
     return "end\r\n";
   }
-
 
   public static String lemmaEx(String name) {
     return "lemma " + name + ":\r\n" + 

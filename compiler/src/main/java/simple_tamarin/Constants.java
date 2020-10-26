@@ -13,7 +13,8 @@ public final class Constants{
   public static enum CommandType {
     IN,
     OUT,
-    FRESH
+    FRESH,
+    SDEC
   }
   
   public static final String[] reservedNames = {
@@ -25,7 +26,12 @@ public final class Constants{
     "private"
   };
 
+  public static final String INDENT = "  ";
   public static final String EXECUTABLE = "executable";
   public static final String TEMPORAL = "t";
   public static final String INIT = "init";
+  public static final String SENC = "senc";
+  public static final String SDEC = "sdec";
+  public static final String VPSENC = "ENC";
+  public static final String VPSDEC = "DEC";
 }

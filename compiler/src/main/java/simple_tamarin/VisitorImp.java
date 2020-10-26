@@ -3,13 +3,12 @@ package simple_tamarin;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.antlr.v4.runtime.Token;
-
 import simple_tamarin.Constants.CommandType;
 import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.*;
+import simple_tamarin.dataStructures.term.*;
 import simple_tamarin.parser.*;
-import simple_tamarin.parser.Simple_tamarinParser.QueryContext;
+import simple_tamarin.parser.Simple_tamarinParser.*;
 
 /**
  * This class implements all visitor methods of the Simple_tamarin compiler
@@ -21,15 +20,16 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	// focused objects - objects that are currently being worked on
 	private Principal curPrincipal;
 	private StBlock curBlock;
+	private Term curTerm;
 
 	public VisitorImp(FileWriter writer) {
 		this.writer = writer;
 	}
 
 	@Override
-	public Integer visitModel(Simple_tamarinParser.ModelContext ctx) {
+	public Integer visitModel(ModelContext ctx) {
 		this.model = new StModel();
-		for (Simple_tamarinParser.SegmentContext segment : ctx.segment()) {
+		for (SegmentContext segment : ctx.segment()) {
 			if (visitSegment(segment) != 0) {
 				return 1;
 			}
@@ -46,11 +46,11 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		return 0;
 	}
 
-	@Override public Integer visitSegment(Simple_tamarinParser.SegmentContext ctx) { 
+	@Override public Integer visitSegment(SegmentContext ctx) { 
 		return visitChildren(ctx);
 	}
 
-	@Override public Integer visitPrincipalBlock(Simple_tamarinParser.PrincipalBlockContext ctx) { 
+	@Override public Integer visitPrincipalBlock(PrincipalBlockContext ctx) { 
 		String principalName = ctx.principal.getText();
 		if (!identifierNameValid(principalName)) {
 			// TODO error message "name reserved..."
@@ -74,7 +74,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		curPrincipal.nextBlock = new StBlock(curPrincipal);
 		principal.blocks.add(curBlock);
 
-		for (Simple_tamarinParser.CommandContext command : ctx.command()) {
+		for (CommandContext command : ctx.command()) {
 			if (visitCommand(command) != 0)
 				return 1;
 		}
@@ -82,12 +82,12 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		return 0;
 	}
 
-	@Override public Integer visitCommand(Simple_tamarinParser.CommandContext ctx) {
+	@Override public Integer visitCommand(CommandContext ctx) {
 		return visitChildren(ctx);
 	}
 
-	@Override public Integer visitKnows(Simple_tamarinParser.KnowsContext ctx) {
-		String name = ctx.IDENTIFIER().getText();
+	@Override public Integer visitKnows(KnowsContext ctx) {
+		String name = ctx.variable().IDENTIFIER().getText();
 		boolean pub = (ctx.modifier.getText().equals("public")) ? true : false;
 		// TODO if (curPrincipal.blocks.get(0) != currBlock) info message: "recommend knows the first block"
 
@@ -113,8 +113,13 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 				Variable variable = new Variable(name, VariableSort.FRESH);
 				for (Principal principal : model.principals) {
 					for (Variable existing : principal.variables) {
-						if (existing.name.equals(name) && existing.cratedBy == null) {
-							variable = existing;
+						if (existing.name.equals(name)) {
+							if (existing.cratedBy == null) {
+								variable = existing;
+							} else {
+								/* TODO warning messsage: "ephemeral variable name allready exists for some principal,
+									 curPrincipal will know a different, long-term variable name"*/
+							}
 						}
 					}
 				}
@@ -126,8 +131,8 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		return 0;
 	}
 
-	@Override public Integer visitGenerates(Simple_tamarinParser.GeneratesContext ctx) {
-		String name = ctx.IDENTIFIER().getText();
+	@Override public Integer visitGenerates(GeneratesContext ctx) {
+		String name = ctx.variable().IDENTIFIER().getText();
 		if (!identifierNameValid(name)) {
 			// TODO error message: identifier name is reserverd
 		}
@@ -146,7 +151,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		return 0;
 	}
 
-	@Override public Integer visitMessageBlock(Simple_tamarinParser.MessageBlockContext ctx) {
+	@Override public Integer visitMessageBlock(MessageBlockContext ctx) {
 		Principal sender = model.findPrincipal(ctx.sender.getText());
 		if (sender == null) {
 			// TODO error message "sender principal does not exist at this point ..."
@@ -158,7 +163,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 			return 1;
 		}
 
-		for (Token message : ctx.message) {
+		for (VariableContext message : ctx.variable()) {
 			String msg = message.getText();
 
 			Variable variable = model.findVariable(msg);
@@ -188,7 +193,104 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		return 0;
 	}
 
-	@Override public Integer visitQueriesBlock(Simple_tamarinParser.QueriesBlockContext ctx) {
+	@Override public Integer visitAssignment(AssignmentContext ctx) {
+		String name = ctx.variable().IDENTIFIER().getText();
+		if (curPrincipal.findVariable(name) != null) {
+			// TODO: error message: "principal allready knows a variable called name"
+			return 1;
+		}
+		if (model.findVariable(name) != null) {
+			// TODO: info message: "shadowed variable"
+		}
+		if (visitTerm(ctx.term()) != 0) {
+			return 1;
+		}
+		Variable alias = new Variable(name, curTerm, curPrincipal, VariableSort.NOSORT);
+		Variable variable = alias;
+		if (curTerm.getClass() == FunctionSdec.class) {
+			variable = new Variable(name, ((FunctionSdec)curTerm).value, curPrincipal, VariableSort.NOSORT);
+			curBlock.premise.add(new Command(CommandType.SDEC, variable));
+		}
+		curBlock.aliases.add(alias);
+		curPrincipal.variables.add(variable);
+		return 0;
+	}
+
+	@Override public Integer visitTerm(TermContext ctx) {
+		return visitChildren(ctx);
+	}
+
+	/**
+	 * Populate curTerm by existing variable accessible by currPrincipal with given name.
+	 * @return 1 if no variable with given name is accessible by currPrincipal
+	 */
+	@Override public Integer visitVariable(VariableContext ctx) {
+		String name = ctx.IDENTIFIER().getText();
+		Variable variable = curPrincipal.findVariable(name);
+		if (variable == null) {
+			variable = model.findVariable(name);
+			if (variable == null) {
+				// TODO error message: "principal curPrincipal doesn't know variable called name"
+				return 1;
+			}
+			// if we're using a public variable, principal should know it from initial state
+			if (!curPrincipal.initState.contains(variable)) {
+				curPrincipal.initState.add(variable);
+			}
+		}
+		curTerm = variable;
+		return 0;
+	}
+
+	@Override public Integer visitFunctionCall(FunctionCallContext ctx) {
+		switch (ctx.FUNCTION().getText()) {
+			case Constants.VPSENC: {
+				if (ctx.argument.size() != 2) {
+					// TODO: error "wrong number of arguments"
+				}
+				if (visitTerm(ctx.argument.get(0)) != 0 ) {
+					return 1;
+				}
+				Term key = curTerm;
+				if (visitTerm(ctx.argument.get(1)) != 0 ) {
+					return 1;
+				}
+				Term value = curTerm;
+				curTerm = new FunctionSenc(key, value);
+				return 0;
+			}
+			case Constants.VPSDEC: {
+				if (visitTerm(ctx.argument.get(0)) != 0 ) {
+					return 1;
+				}
+				Term key = curTerm;
+				if (visitTerm(ctx.argument.get(1)) != 0 ) {
+					return 1;
+				}
+				// if value is a variable find it's definition
+				Term realValue = curTerm;
+				while (realValue.getClass() == Variable.class) {
+					realValue = ((Variable)realValue).subterm;
+				}
+				if (realValue.getClass() != FunctionSenc.class) {
+					// TODO: error "value is not symmetrically encoded"
+					return 1;
+				}
+				if (!((FunctionSenc)realValue).key.equals(key)) {
+					// TODO error "wrong key"
+					return 1;
+				}
+				curTerm = new FunctionSdec(key, curTerm);
+				return 0;
+			}
+			default: {
+				System.out.println("Debug: Unexpected function type: " + ctx.FUNCTION().getText() + " in visitFunctionCall.");
+				return 1;
+			}
+		}
+	}
+
+	@Override public Integer visitQueriesBlock(QueriesBlockContext ctx) {
 		for (QueryContext query : ctx.query()) {
 			if (visitQuery(query) != 0)
 			return 1;
@@ -196,14 +298,14 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		return 0;
 	}
 
-	@Override public Integer visitQuery(Simple_tamarinParser.QueryContext ctx) {
+	@Override public Integer visitQuery(QueryContext ctx) {
 		if (visitChildren(ctx) != 0) {
 			return 1;
 		}
 		return 0;
 	}
 
-	@Override public Integer visitExecutable(Simple_tamarinParser.ExecutableContext ctx) {
+	@Override public Integer visitExecutable(ExecutableContext ctx) {
 		if (model.queries.executable == true) {
 			// TODO warning message: duplicite executable query declaration
 		} else {

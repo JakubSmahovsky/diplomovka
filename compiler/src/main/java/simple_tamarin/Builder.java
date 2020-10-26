@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import simple_tamarin.Constants.*;
 import simple_tamarin.dataStructures.*;
+import simple_tamarin.dataStructures.term.*;
 
 public class Builder extends BuilderFormatting{
   public StringBuilder output;
@@ -42,10 +43,11 @@ public class Builder extends BuilderFormatting{
     }
 
     ArrayList<String> facts = new ArrayList<>();
+    output.append(ruleAliases(Constants.INIT, facts));
     for (Variable variable : toGenerate) {
       facts.add(freshFact(variable));
     }
-    output.append(rulePremise(Constants.INIT, facts));
+    output.append(rulePremise(facts));
 
     facts = new ArrayList<>();
     for (Principal principal : model.principals) {
@@ -71,6 +73,11 @@ public class Builder extends BuilderFormatting{
       int blockNo = 0;
       for (StBlock block : principal.blocks) {
         ArrayList<String> facts = new ArrayList<>();
+        for (Variable variable : block.aliases) {
+          facts.add(alias(variable));
+        }
+        output.append(ruleAliases(blockName(principal, blockNo), facts));
+        facts = new ArrayList<>();
         if (blockNo == 0) {
           facts.add(initStateFact(principal));
         } else {
@@ -90,10 +97,15 @@ public class Builder extends BuilderFormatting{
                 currState.add(command.variable);
               }
               break;
+            case SDEC:
+              if (!currState.contains(command.variable)) {
+                currState.add(command.variable);
+              }
+              break;
             default: System.out.println("Debug: Unexpected command type in premises.");
           }
         }
-        output.append(rulePremise(blockName(principal, blockNo), facts));
+        output.append(rulePremise(facts));
         blockNo+=1; // after premises we're working with the "next message" block
 
         facts = new ArrayList<>();

@@ -1,6 +1,7 @@
 package simple_tamarin.dataStructures;
 
 import simple_tamarin.Constants;
+import simple_tamarin.dataStructures.term.Variable;
 
 public class Command {
   public Constants.CommandType type;

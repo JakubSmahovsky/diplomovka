@@ -2,6 +2,8 @@ package simple_tamarin.dataStructures;
 
 import java.util.ArrayList;
 
+import simple_tamarin.dataStructures.term.Variable;
+
 public class Principal {
   public String name;
   public ArrayList<Variable> variables;

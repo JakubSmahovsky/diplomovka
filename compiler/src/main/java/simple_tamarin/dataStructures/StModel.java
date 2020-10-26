@@ -2,6 +2,8 @@ package simple_tamarin.dataStructures;
 
 import java.util.ArrayList;
 
+import simple_tamarin.dataStructures.term.Variable;
+
 /**
  * Simple_tamarin Model
  */
@@ -9,11 +11,13 @@ public class StModel {
   public ArrayList<Principal> principals;
   public ArrayList<Variable> pubVariables; // long term public variables
   public Queries queries;
+  public Builtins builtins;
 
   public StModel(){
     this.principals = new ArrayList<>();
     this.pubVariables = new ArrayList<>();
     this.queries = new Queries();
+    this.builtins = new Builtins();
   }
 
   /**
@@ -39,6 +43,7 @@ public class StModel {
   }
 
   /**
+   * Finds a long term public variable with given parameters
    * @return variable with given parameters or null if it doesn't exist
    */
   public Variable findVariable(String name){

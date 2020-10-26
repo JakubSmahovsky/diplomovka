@@ -1,7 +1,12 @@
 Alice []
-Bob [knows public X]
-Bob -> Alice: Bob, Alice, X
-Alice []
+Bob [
+  knows public X
+  e = ENC(X, Alice)
+]
+Bob -> Alice: Bob, e, X
+Alice [
+  A = DEC(X, e)
+]
 
 queries [
   executable?
