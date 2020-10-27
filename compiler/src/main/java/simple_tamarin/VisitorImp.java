@@ -245,6 +245,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	@Override public Integer visitFunctionCall(FunctionCallContext ctx) {
 		switch (ctx.FUNCTION().getText()) {
 			case Constants.VPSENC: {
+				model.builtins.symmetric_encryption = true;
 				if (ctx.argument.size() != 2) {
 					// TODO: error "wrong number of arguments"
 				}
@@ -260,6 +261,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 				return 0;
 			}
 			case Constants.VPSDEC: {
+				model.builtins.symmetric_encryption = true;
 				if (visitTerm(ctx.argument.get(0)) != 0 ) {
 					return 1;
 				}

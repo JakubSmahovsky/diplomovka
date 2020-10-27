@@ -33,7 +33,7 @@ public class Variable extends Term {
   }
 
   @Override public String toString() {
-    return name;
+    return Constants.sortString(sort) + name;
   }
 
   @Override public boolean equals(Term term) {

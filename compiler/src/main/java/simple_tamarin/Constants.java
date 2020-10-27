@@ -26,7 +26,19 @@ public final class Constants{
     "private"
   };
 
+  public static String sortString(VariableSort sort) {
+    switch (sort) {
+      case NOSORT: return "";
+      case FRESH: return "~";
+      case PUBLIC: return "$";
+      case TEMPORAL: return "#";
+      default: return "Invalid sort, impossible!";
+    }
+  }
+
   public static final String INDENT = "  ";
+  public static final String DEFAULTTHEORYNAME = "spthy";
+  public static final String BUILTIN_SYMMETRIC_ENCRYPTION = "symmetric-encryption";
   public static final String EXECUTABLE = "executable";
   public static final String TEMPORAL = "t";
   public static final String INIT = "init";

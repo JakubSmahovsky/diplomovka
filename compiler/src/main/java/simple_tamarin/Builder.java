@@ -20,11 +20,21 @@ public class Builder extends BuilderFormatting{
     initRule();
     blocks();
     queries();
-    endProtocol();
+    output.append(endProtocol());
   }
 
   public String output(){
     return output.toString();
+  }
+
+  private void initProtocol() {
+    output.append(theoryHeader(Constants.DEFAULTTHEORYNAME));
+
+    ArrayList<String> builtins = new ArrayList<>();
+    if (model.builtins.symmetric_encryption = true) {
+      builtins.add(Constants.BUILTIN_SYMMETRIC_ENCRYPTION);
+    }
+    output.append(builtins(builtins));
   }
 
   /**

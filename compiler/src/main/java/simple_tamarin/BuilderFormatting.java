@@ -15,11 +15,29 @@ public abstract class BuilderFormatting {
     return principal.name + "_" + blockNo;
   }
   
+  public static String builtins(List<String> builtins) {
+    if (builtins.isEmpty()) {
+      return "";
+    }
+
+    StringBuilder result = new StringBuilder("builtins: ");
+    Iterator<String> it = builtins.iterator();
+    while (it.hasNext()) {
+      result.append(it.next());
+      if (it.hasNext()) {
+        result.append(", ");
+      }
+    }
+    result.append("\r\n");
+    result.append("\r\n");
+    return result.toString();
+  }
+
   public static String alias(Variable variable) {
     if (variable.subterm == null) {
       System.out.println("Debug: Aliased variable " + variable.name + " has no subterm");
     }
-    return variable + "=" + variable.subterm;
+    return variable + " = " + variable.subterm;
   }
 
   public static String fact(String name, List<Variable> variables) {
@@ -27,13 +45,11 @@ public abstract class BuilderFormatting {
     result.append(name + "(");
 
     Iterator<Variable> it = variables.iterator();
-    if (it.hasNext()) {
-      Variable variable = it.next();
-      result.append(sortString(variable.sort) + variable.name);
-    }
     while (it.hasNext()) {
-      Variable variable = it.next();
-      result.append("," + sortString(variable.sort) + variable.name);
+      result.append(it.next());
+      if (it.hasNext()) {
+        result.append(", ");
+      }
     }
 
     result.append(")");
@@ -42,24 +58,6 @@ public abstract class BuilderFormatting {
 
   public static String fact(String name, Variable variable) {
     return fact(name, Arrays.asList(variable));
-  }
-
-  public static String queryFact(String name, List<Variable> variables, String time) {
-    StringBuilder result = new StringBuilder();
-    result.append(name + "(");
-
-    Iterator<Variable> it = variables.iterator();
-    if (it.hasNext()) {
-      Variable variable = it.next();
-      result.append(variable.name);
-    }
-    while (it.hasNext()) {
-      Variable variable = it.next();
-      result.append(","+ variable.name);
-    }
-
-    result.append(") @" + time);
-    return result.toString();
   }
 
   public static String persistentFact(String name, List<Variable> variables) {
@@ -112,8 +110,8 @@ public abstract class BuilderFormatting {
     return result.toString();
   }
 
-  public static String initProtocol() {
-    return "theory temp\r\n" + "begin\r\n" + "\r\n";
+  public static String theoryHeader(String name) {
+    return "theory " + name + "\r\n" + "begin\r\n" + "\r\n";
   }
 
   public static String endProtocol() {
@@ -139,7 +137,20 @@ public abstract class BuilderFormatting {
     if (temporal.sort != VariableSort.TEMPORAL) {
       System.out.println("Debug: Argument temporal is not of sort TEMPORAL in lemmaStateFact!");
     }
-    return fact(blockName(principal, blockNo), state) + "@ #" + temporal.name;
+    
+    StringBuilder result = new StringBuilder();
+    result.append(blockName(principal, blockNo) + "(");
+
+    Iterator<Variable> it = state.iterator();
+    while (it.hasNext()) {
+      result.append(it.next().name);
+      if (it.hasNext()) {
+        result.append(", ");
+      }
+    }
+
+    result.append(")" + " @ #" + temporal.name);
+    return result.toString();
   }
 
   public static String conjunction(List<String> facts) {
@@ -158,14 +169,4 @@ public abstract class BuilderFormatting {
   public static String lemmaEnd() {
     return "\"\r\n";
   }
-
-  private static String sortString(VariableSort sort) {
-    switch (sort) {
-      case NOSORT: return "";
-      case FRESH: return "~";
-      case PUBLIC: return "$";
-      case TEMPORAL: return "#";
-      default: return "Invalid sort, impossible!";
-    }
-  }  
 }
