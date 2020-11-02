@@ -36,22 +36,24 @@ public class Variable extends Term {
     return Constants.sortString(sort) + name;
   }
 
-  @Override public boolean equals(Term term) {
-    if (this == term) {
-      return true;
+  @Override public boolean equals(Object term) {
+    if (!(term instanceof Term)) {
+      return false;
     }
-    if (subterm != null && subterm.equals(term)) {
-      return true;
-    }
-    if (term.getClass() == Variable.class && ((Variable)term).subterm != null && ((Variable)term).subterm.equals(this)) {
-      return true;
-    }
-    return false;
+    
+    return this.deconstructTerm() == ((Term)term).deconstructTerm();
   }
 
   public static Variable nextTemporal(){
     String tName = Constants.TEMPORAL + temporals;
     temporals ++;
     return new Variable(tName, VariableSort.TEMPORAL);
+  }
+
+  @Override public Term deconstructTerm() {
+    if (subterm != null) {
+      return subterm.deconstructTerm();
+    }
+    return this;
   }
 }

@@ -65,7 +65,6 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 				return 1;
 			}
 			principal = model.addPrincipal(principalName);
-			model.pubVariables.add(new Variable(principalName, VariableSort.PUBLIC));
 		}
 
 		// init focused objects
@@ -207,8 +206,8 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		}
 		Variable alias = new Variable(name, curTerm, curPrincipal, VariableSort.NOSORT);
 		Variable variable = alias;
-		if (curTerm.getClass() == FunctionSdec.class) {
-			variable = new Variable(name, ((FunctionSdec)curTerm).value, curPrincipal, VariableSort.NOSORT);
+		if (curTerm instanceof FunctionSdec) {
+			variable = new Variable(name, ((FunctionSdec)curTerm).decodedValue, curPrincipal, VariableSort.NOSORT);
 			curBlock.premise.add(new Command(CommandType.SDEC, variable));
 		}
 		curBlock.aliases.add(alias);
@@ -271,10 +270,10 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 				}
 				// if value is a variable find it's definition
 				Term realValue = curTerm;
-				while (realValue.getClass() == Variable.class) {
+				while (realValue instanceof Variable) {
 					realValue = ((Variable)realValue).subterm;
 				}
-				if (realValue.getClass() != FunctionSenc.class) {
+				if (!(realValue instanceof FunctionSenc)) {
 					// TODO: error "value is not symmetrically encoded"
 					return 1;
 				}
@@ -282,7 +281,8 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 					// TODO error "wrong key"
 					return 1;
 				}
-				curTerm = new FunctionSdec(key, curTerm);
+				realValue = ((FunctionSenc)realValue).value;
+				curTerm = new FunctionSdec(key, curTerm, realValue);
 				return 0;
 			}
 			default: {

@@ -154,10 +154,12 @@ public class Builder extends BuilderFormatting{
 
   private void executable() {
     output.append(lemmaEx(Constants.EXECUTABLE));
-    HashSet<Variable> variables = new HashSet<>();
+    ArrayList<Variable> variables = new ArrayList<>(); //TODO: find out which variables are really the same
     for (Principal principal : model.principals) {
       for (Variable variable : principal.blocks.get(principal.blocks.size()-1).finalState) {
-        variables.add(variable);
+        if (!variables.contains(variable)) {
+           variables.add(variable);
+        }
       }
     }
     ArrayList<Variable> temporals = new ArrayList<>();

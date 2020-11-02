@@ -12,18 +12,22 @@ public class FunctionSenc extends Term{
   }
 
   @Override public String toString() {
-    return Constants.SENC + "(" + key.toString() + ", " + value.toString() + ")";
+    return Constants.SENC + "(" + value.toString() + ", " + key.toString() + ")";
   }
 
-  @Override public boolean equals(Term term) {
+  @Override public boolean equals(Object term) {
     if (this == term) {
       return true;
     }
-    if (term.getClass() == FunctionSenc.class) {
+    if (term instanceof FunctionSenc) {
       if (key.equals(((FunctionSenc)term).key) && value.equals(((FunctionSenc)term).value)) {
         return true;
       }
     }
     return false;
+  }
+
+  @Override public Term deconstructTerm() {
+    return this;
   }
 }

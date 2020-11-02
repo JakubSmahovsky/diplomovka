@@ -85,7 +85,17 @@ public abstract class BuilderFormatting {
   }
 
   public static String ruleAliases(String name, List<String> aliases) {
-    return "rule " + name + ":\r\n" + (aliases.isEmpty()? "" : ("let\r\n" + ruleBody(aliases) + "in\r\n"));
+    StringBuilder result = new StringBuilder("rule " + name + ":\r\n");
+    if (aliases.isEmpty()) {
+      return result.toString();
+    }
+
+    result.append("let\r\n");
+    for (String alias : aliases) {
+      result.append(Constants.INDENT + alias + "\r\n");
+    }
+    result.append("in\r\n");
+    return result.toString();
   }
 
   public static String rulePremise(List<String> facts) {

@@ -1,11 +1,23 @@
-Alice []
 Bob [
-  knows public X
-  e = ENC(X, Alice)
+  knows private Kab
 ]
-Bob -> Alice: Bob, e, X
+
 Alice [
-  A = DEC(X, e)
+  knows private Kab
+  generates Na
+  m1 = ENC(Kab, Na)
+]
+Alice -> Bob: Alice, m1 
+
+Bob [
+  Na = DEC(Kab, m1)
+  generates Nb
+  m2 = ENC(Kab, Nb)
+]
+Bob -> Alice: Bob, m2
+
+Alice [
+  Nb = DEC(Kab, m2)
 ]
 
 queries [

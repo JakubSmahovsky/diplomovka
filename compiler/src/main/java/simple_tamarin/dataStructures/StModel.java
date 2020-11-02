@@ -2,6 +2,7 @@ package simple_tamarin.dataStructures;
 
 import java.util.ArrayList;
 
+import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.term.Variable;
 
 /**
@@ -39,6 +40,9 @@ public class StModel {
   public Principal addPrincipal(String name) {
     Principal principal = new Principal(name);
     principals.add(principal);
+    Variable principalID = new Variable(name, VariableSort.PUBLIC);
+    pubVariables.add(principalID);
+    principal.initState.add(principalID);
     return principal;
   }
 
