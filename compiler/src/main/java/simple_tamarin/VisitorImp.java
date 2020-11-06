@@ -38,6 +38,10 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 			}
 		}
 
+		for (Principal principal : model.principals) {
+			principal.squishBlocks();
+		}
+
 		Builder builder = new Builder(model);
 		try {
 			writer.write(builder.output());
@@ -74,8 +78,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		// init focused objects
 		curPrincipal = principal;
 		curBlock = curPrincipal.nextBlock;
-		curPrincipal.nextBlock = new StBlock(curPrincipal);
-		principal.blocks.add(curBlock);
+		curPrincipal.nextBlock();
 
 		for (CommandContext command : ctx.command()) {
 			if (visitCommand(command) != 0)
@@ -202,7 +205,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 
 			if (sender.blocks.isEmpty()) {
 				// sender may send a public variable before doing anything else, in that case it needs an initial block
-				sender.blocks.add(new StBlock(sender));
+				sender.nextBlock();
 			}
 
 			StBlock sendersLastBlock = sender.blocks.get(sender.blocks.size()-1);
