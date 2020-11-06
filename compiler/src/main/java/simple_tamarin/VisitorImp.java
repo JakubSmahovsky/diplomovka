@@ -39,6 +39,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		}
 
 		for (Principal principal : model.principals) {
+			principal.nextBlock(); // add last nextBlock, so that incomming messages are received
 			principal.squishBlocks();
 		}
 
