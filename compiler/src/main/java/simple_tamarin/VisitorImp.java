@@ -14,6 +14,8 @@ import simple_tamarin.parser.Simple_tamarinParser.*;
  * This class implements all visitor methods of the Simple_tamarin compiler
  */
 public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
+	public boolean quitOnWarning;
+	
 	private FileWriter writer;
 	private StModel model;
 
@@ -22,12 +24,13 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	private StBlock curBlock;
 	private Term curTerm;
 
-	public VisitorImp(FileWriter writer) {
+	public VisitorImp(FileWriter writer, boolean quitOnWarning, boolean showInfo) {
 		this.writer = writer;
+		this.quitOnWarning = quitOnWarning;
+		Errors.showInfo = showInfo;
 	}
 
-	@Override
-	public Integer visitModel(ModelContext ctx) {
+	@Override	public Integer visitModel(ModelContext ctx) {
 		this.model = new StModel();
 		for (SegmentContext segment : ctx.segment()) {
 			if (visitSegment(segment) != 0) {
@@ -50,18 +53,19 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		return visitChildren(ctx);
 	}
 
-	@Override public Integer visitPrincipalBlock(PrincipalBlockContext ctx) { 
+	@Override public Integer visitPrincipalBlock(PrincipalBlockContext ctx) {
 		String principalName = ctx.principal.getText();
 		if (!identifierNameValid(principalName)) {
-			// TODO error message "name reserved..."
+			Errors.ErrorReservedName(ctx.principal);
 			return 1;
 		}
 		
 		Principal principal = model.findPrincipal(principalName);
 		if (principal == null) {
-			// TODO info message "It is recommended to declare all principals..."
+			Errors.InfoDeclarePrincipal(ctx.principal);
+			// TODO allow declaring principals
 			if (model.findVariable(principalName) != null) {
-				// TODO error message "Name of principal is reserved for a variable"
+				Errors.ErrorPrincipalNameCollision(ctx.principal);
 				return 1;
 			}
 			principal = model.addPrincipal(principalName);
@@ -88,26 +92,37 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	@Override public Integer visitKnows(KnowsContext ctx) {
 		String name = ctx.variable().IDENTIFIER().getText();
 		boolean pub = (ctx.modifier.getText().equals("public")) ? true : false;
-		// TODO if (curPrincipal.blocks.get(0) != currBlock) info message: "recommend knows the first block"
+		if (curPrincipal.blocks.get(0) != curBlock) {
+			Errors.InfoKnowsInFirstBlock(ctx.getStart());
+		}
 
 		if (pub) {
 			if (curPrincipal.findVariable(name) != null) {
-				// TODO error message: "principal allready knows variable with that name as private"
+				Errors.ErrorVariableCollisionPrivate(curPrincipal, ctx.variable().getStart());
 				return 1;
 			}
 
 			Variable variable = model.findVariable(name);
 			if (variable == null) {
-				// TODO info message: "recommend declaring variable"
+				Errors.InfoDeclareLongTermPubVariable(ctx.variable().start);
+				// TODO allow declaring variables
 				variable = new Variable(name, VariableSort.PUBLIC);
 				model.pubVariables.add(variable);
 			}
 
 			curPrincipal.initState.add(variable);
 		} else {
-			// TODO info message if there is a public variable with the same name
+			if (model.findVariable(name) != null) {
+				Errors.WarningVariableShadowed(ctx.variable().start);
+				if (quitOnWarning) {
+					return 1;
+				}
+			}
 			if (curPrincipal.findVariable(name) != null) {
-				// TODO warning message: principal allready knows it
+				Errors.WarningVariableKnownPrivate(curPrincipal, ctx.variable().start);
+				if (quitOnWarning) {
+					return 1;
+				}
 			} else {
 				Variable variable = new Variable(name, VariableSort.FRESH);
 				for (Principal principal : model.principals) {
@@ -116,8 +131,10 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 							if (existing.cratedBy == null) {
 								variable = existing;
 							} else {
-								/* TODO warning messsage: "ephemeral variable name allready exists for some principal,
-									 curPrincipal will know a different, long-term variable name"*/
+								Errors.WarningVariableEphemeralShadowed(ctx.variable().start);
+								if (quitOnWarning) {
+									return 1;
+								}
 							}
 						}
 					}
@@ -131,16 +148,20 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	}
 
 	@Override public Integer visitGenerates(GeneratesContext ctx) {
-		String name = ctx.variable().IDENTIFIER().getText();
+		String name = ctx.variable().getText();
 		if (!identifierNameValid(name)) {
-			// TODO error message: identifier name is reserverd
+			Errors.ErrorReservedName(ctx.variable().start);
+			return 1;
 		}
 		
 		if (model.findVariable(name) != null) {
-			// TODO info message: shadowed variable
+			Errors.WarningVariableShadowed(ctx.variable().start);
+			if (quitOnWarning) {
+				return 1;
+			};
 		}
 		if (curPrincipal.findVariable(name) != null) {
-			// TODO error message: private variable ... allready exists
+			Errors.ErrorVariableCollisionPrivate(curPrincipal, ctx.variable().start);
 			return 1;
 		}
 
@@ -153,12 +174,12 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	@Override public Integer visitMessageBlock(MessageBlockContext ctx) {
 		Principal sender = model.findPrincipal(ctx.sender.getText());
 		if (sender == null) {
-			// TODO error message "sender principal does not exist at this point ..."
+			Errors.ErrorPrincipalDoesNotExist(ctx.sender);
 			return 1;
 		}
 		Principal receiver = model.findPrincipal(ctx.receiver.getText());
 		if (receiver == null) {
-			System.out.println("error: Receiver \"" + ctx.receiver.getText() + "\" does not exist at this point!"); // TODO
+			Errors.ErrorPrincipalDoesNotExist(ctx.receiver);
 			return 1;
 		}
 
@@ -169,7 +190,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 			if (variable == null) {
 				variable = sender.findVariable(msg);
 				if (variable == null) {
-					System.out.println("error: Principal \"" + sender.name + "\" is trying to send variable \"" + msg + "\" despite not knowing it."); // TODO 
+					Errors.ErrorVariableUnknown(curPrincipal, message.start);
 					return 1;
 				}
 
@@ -195,11 +216,14 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	@Override public Integer visitAssignment(AssignmentContext ctx) {
 		String name = ctx.variable().IDENTIFIER().getText();
 		if (curPrincipal.findVariable(name) != null) {
-			// TODO: error message: "principal allready knows a variable called name"
+			Errors.ErrorVariableCollisionPrivate(curPrincipal, ctx.variable().start);
 			return 1;
 		}
 		if (model.findVariable(name) != null) {
-			// TODO: info message: "shadowed variable"
+			Errors.WarningVariableShadowed(ctx.variable().start);
+			if (quitOnWarning) {
+				return 1;
+			}
 		}
 		if (visitTerm(ctx.term()) != 0) {
 			return 1;
@@ -229,7 +253,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		if (variable == null) {
 			variable = model.findVariable(name);
 			if (variable == null) {
-				// TODO error message: "principal curPrincipal doesn't know variable called name"
+				Errors.ErrorVariableUnknown(curPrincipal, ctx.start);
 				return 1;
 			}
 			// if we're using a public variable, principal should know it from initial state
@@ -246,7 +270,8 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 			case Constants.VPSENC: {
 				model.builtins.symmetric_encryption = true;
 				if (ctx.argument.size() != 2) {
-					// TODO: error "wrong number of arguments"
+					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
+					return 1;
 				}
 				if (visitTerm(ctx.argument.get(0)) != 0 ) {
 					return 1;
@@ -261,6 +286,10 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 			}
 			case Constants.VPSDEC: {
 				model.builtins.symmetric_encryption = true;
+				if (ctx.argument.size() != 2) {
+					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
+					return 1;
+				}
 				if (visitTerm(ctx.argument.get(0)) != 0 ) {
 					return 1;
 				}
@@ -274,11 +303,11 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 					realValue = ((Variable)realValue).subterm;
 				}
 				if (!(realValue instanceof FunctionSenc)) {
-					// TODO: error "value is not symmetrically encoded"
+					Errors.ErrorDecodingNotEncoded(ctx.argument.get(1));
 					return 1;
 				}
 				if (!((FunctionSenc)realValue).key.equals(key)) {
-					// TODO error "wrong key"
+					Errors.ErrorWrongKey(ctx.argument.get(0));
 					return 1;
 				}
 				realValue = ((FunctionSenc)realValue).value;
@@ -309,7 +338,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 
 	@Override public Integer visitExecutable(ExecutableContext ctx) {
 		if (model.queries.executable == true) {
-			// TODO warning message: duplicite executable query declaration
+			Errors.WarningQueryExecutableDuplicite(ctx.start);
 		} else {
 			model.queries.executable = true;
 		}

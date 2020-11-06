@@ -15,8 +15,10 @@ public class Simple_tamarin {
     
     File out = new File("out.spthy"); // TODO: take name from arguments
     FileWriter writer = new FileWriter(out);
-    VisitorImp visitor = new VisitorImp(writer);
-
+    boolean quitOnWarning = false; // TODO
+    boolean showInfo = true; // TODO
+    VisitorImp visitor = new VisitorImp(writer, quitOnWarning, showInfo);
+    
     visitor.visitModel(parser.model());
   }
 }

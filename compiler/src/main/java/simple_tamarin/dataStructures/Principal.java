@@ -29,5 +29,9 @@ public class Principal {
       }
     }
     return null;
-  }  
+  }
+
+  @Override public String toString() {
+    return name;
+  }
 }
