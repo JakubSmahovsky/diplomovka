@@ -44,6 +44,8 @@ public final class Constants{
   public static final String INIT = "init";
   public static final String SENC = "senc";
   public static final String SDEC = "sdec";
+  public static final String EQUALITY = "Eq";
   public static final String VPSENC = "ENC";
   public static final String VPSDEC = "DEC";
+  public static final String VPASSERT = "ASSERT";
 }

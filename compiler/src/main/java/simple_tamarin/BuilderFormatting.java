@@ -40,11 +40,11 @@ public abstract class BuilderFormatting {
     return variable + " = " + variable.subterm;
   }
 
-  public static String fact(String name, List<Variable> variables) {
+  public static String fact(String name, List<? extends Term> terms) {
     StringBuilder result = new StringBuilder();
     result.append(name + "(");
 
-    Iterator<Variable> it = variables.iterator();
+    Iterator<? extends Term> it = terms.iterator();
     while (it.hasNext()) {
       result.append(it.next());
       if (it.hasNext()) {
@@ -118,6 +118,13 @@ public abstract class BuilderFormatting {
       result.append(Constants.INDENT + fact + (it.hasNext() ? "," : "") + "\r\n");
     }
     return result.toString();
+  }
+
+  public static String restrictionEq() {
+    return 
+      "restriction Equality:\r\n" +
+      Constants.INDENT + "All x y #i. Eq(x,y) @i ==> x = y\r\n" +
+      "\r\n"; // empty line after every restriction
   }
 
   public static String theoryHeader(String name) {

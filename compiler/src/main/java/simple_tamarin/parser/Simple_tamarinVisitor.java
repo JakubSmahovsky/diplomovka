@@ -53,6 +53,12 @@ public interface Simple_tamarinVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAssignment(Simple_tamarinParser.AssignmentContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Simple_tamarinParser#check}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCheck(Simple_tamarinParser.CheckContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Simple_tamarinParser#messageBlock}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

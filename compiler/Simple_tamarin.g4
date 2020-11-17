@@ -13,11 +13,13 @@ principalBlock: principal=IDENTIFIER '[' command* ']';
 command:
   knows |
   generates |
-  assignment;
+  assignment |
+  check;
 
 knows: 'knows' modifier=('public' | 'private') variable;
 generates: 'generates' variable;
 assignment: variable '=' term;
+check: functionCall '?';
 
 messageBlock: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' variable (',' variable)*;
 
@@ -36,6 +38,9 @@ executable: 'executable?';
 
 FUNCTION:
   'ENC' |
-  'DEC';
+  'DEC' |
+  // checkables
+  'ASSERT';
+
 IDENTIFIER : [a-zA-Z0-9]+;
 WHITESPACE : [ \t\r\n]+ -> skip;

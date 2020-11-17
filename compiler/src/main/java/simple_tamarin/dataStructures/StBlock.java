@@ -2,6 +2,7 @@ package simple_tamarin.dataStructures;
 
 import java.util.ArrayList;
 
+import simple_tamarin.dataStructures.term.ActionFact;
 import simple_tamarin.dataStructures.term.Variable;
 
 /**
@@ -11,6 +12,7 @@ public class StBlock {
   public Principal principal;
   public ArrayList<Variable> aliases;
   public ArrayList<Command> premise;
+  public ArrayList<ActionFact> actions;
   public ArrayList<Command> result;
   public ArrayList<Variable> finalState;
   public int rangeBegin;
@@ -20,6 +22,7 @@ public class StBlock {
     this.principal = principal;
     this.aliases = new ArrayList<>();
     this.premise = new ArrayList<>();
+    this.actions = new ArrayList<>();
     this.result = new ArrayList<>();
     this.rangeBegin = index;
     this.rangeEnd = index;
@@ -31,6 +34,7 @@ public class StBlock {
   public void merge(StBlock block) {
     aliases.addAll(block.aliases);
     premise.addAll(block.premise);
+    actions.addAll(block.actions);
     result.addAll(block.result);
     rangeEnd = block.rangeEnd;
   }

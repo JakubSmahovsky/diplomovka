@@ -64,6 +64,11 @@ public final class Errors {
     print(WARNING, variable, message);
   }
 
+  public static void WarningAssertNeverTrue(Token assertStart) {
+    String message = "The terms being compared can never be equal! This likely means the model will not be executable!";
+    print(WARNING, assertStart, message);
+  }
+
   public static void WarningQueryExecutableDuplicite(Token query) {
     String message = "Duplicite request for executable query. The query will only be verified once.";
     print(WARNING, query, message);

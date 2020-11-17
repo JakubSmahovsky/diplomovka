@@ -2,6 +2,8 @@ package simple_tamarin;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import simple_tamarin.Constants.CommandType;
 import simple_tamarin.Constants.VariableSort;
@@ -175,6 +177,10 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		return 0;
 	}
 
+	@Override public Integer visitCheck(CheckContext ctx){
+		return visitChildren(ctx);
+	}
+
 	@Override public Integer visitMessageBlock(MessageBlockContext ctx) {
 		Principal sender = model.findPrincipal(ctx.sender.getText());
 		if (sender == null) {
@@ -317,6 +323,25 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 				realValue = ((FunctionSenc)realValue).value;
 				curTerm = new FunctionSdec(key, curTerm, realValue);
 				return 0;
+			}
+			case Constants.VPASSERT: {
+				if (ctx.argument.size() != 2) {
+					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
+					return 1;
+				}
+				if (visitTerm(ctx.argument.get(0)) != 0 ) {
+					return 1;
+				}
+				Term term1 = curTerm;
+				if (visitTerm(ctx.argument.get(1)) != 0 ) {
+					return 1;
+				}
+				Term term2 = curTerm;
+				if (!(term1.equals(term2))) {
+					Errors.WarningAssertNeverTrue(ctx.start);
+				}
+				model.builtins.restriction_eq = true;
+				curBlock.actions.add(new ActionFact(Constants.EQUALITY, new ArrayList<Term>(Arrays.asList(term1, term2))));
 			}
 			default: {
 				System.out.println("Debug: Unexpected function type: " + ctx.FUNCTION().getText() + " in visitFunctionCall.");

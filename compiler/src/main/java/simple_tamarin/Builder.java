@@ -19,6 +19,7 @@ public class Builder extends BuilderFormatting{
     initProtocol();
     initRule();
     blocks();
+    restrictions();
     queries();
     output.append(endProtocol());
   }
@@ -121,6 +122,9 @@ public class Builder extends BuilderFormatting{
         facts = new ArrayList<>();
         String resultStateFact = stateFact(principal, blockNo, currState);
         facts.add(resultStateFact);
+        for (ActionFact fact : block.actions) {
+          facts.add(fact.toString());
+        }
         output.append(ruleAction(facts));
 
         facts = new ArrayList<>();
@@ -143,6 +147,12 @@ public class Builder extends BuilderFormatting{
         }
         block.finalState = new ArrayList<>(currState);
       }
+    }
+  }
+
+  private void restrictions() {
+    if (model.builtins.restriction_eq) {
+      output.append(restrictionEq());
     }
   }
 
