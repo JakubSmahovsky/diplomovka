@@ -1,0 +1,28 @@
+theory Test
+begin
+
+builtins: asymmetric-encryption
+
+rule Register_KP:
+  [ Fr(~KS) ]-->
+  [ !Ltk($X, ~KS)
+  , !Pk($X, pk(~KS))
+  , Out(pk(~KS))]
+
+rule Repack:
+  [ In(aenc(N, KP1))
+  , !Pk($X1, KP1)
+  , !Pk($X2, KP2) ]
+  -->
+  [ Out(aenc(N, KP2))]
+
+rule Create:
+  [ Fr(~s)
+  , !Pk($X, KP)]
+  --[Secret(~s)]->
+  [ Out(aenc(~s, KP)) ]
+
+lemma secrecy:
+  all-traces
+  "All s #i #j . Secret(s) @#i & K(s) @#j ==> F"
+end
