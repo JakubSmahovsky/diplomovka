@@ -123,7 +123,7 @@ public class Builder extends BuilderFormatting{
         String resultStateFact = stateFact(principal, blockNo, currState);
         facts.add(resultStateFact);
         for (ActionFact fact : block.actions) {
-          facts.add(fact.toString());
+          facts.add(BuilderFormatting.fact(fact.name, fact.terms));
         }
         output.append(ruleAction(facts));
 

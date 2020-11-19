@@ -1,7 +1,5 @@
 package simple_tamarin.dataStructures.term;
 
-import simple_tamarin.Constants;
-
 /**
  * Term holding an instance of symmetric encoding.
  * Variable senc holds the term being decoded.
@@ -10,7 +8,7 @@ import simple_tamarin.Constants;
  * Variable decodedValue holds the value received by decoding (the deconstruction of) senc.
  * These conditions are not verified here, because we need to log more speciffic errors in VisitorImp.
  */
-public class FunctionSdec extends Term{
+public class FunctionSdec implements Term{
   public Term key;
   public Term senc;
   public Term decodedValue;
@@ -19,10 +17,6 @@ public class FunctionSdec extends Term{
     this.key = key;
     this.senc = senc;
     this.decodedValue = decodedValue;
-  }
-
-  @Override public String toString() {
-    return Constants.SDEC + "(" + senc.toString() + ", " + key.toString() + ")";
   }
 
   @Override public boolean equals(Object term) {

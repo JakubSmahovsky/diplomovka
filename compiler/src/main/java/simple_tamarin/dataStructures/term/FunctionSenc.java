@@ -1,18 +1,12 @@
 package simple_tamarin.dataStructures.term;
 
-import simple_tamarin.Constants;
-
-public class FunctionSenc extends Term{
+public class FunctionSenc implements Term{
   public Term key;
   public Term value;
 
   public FunctionSenc(Term key, Term value) {
     this.key = key;
     this.value = value;
-  }
-
-  @Override public String toString() {
-    return Constants.SENC + "(" + value.toString() + ", " + key.toString() + ")";
   }
 
   @Override public boolean equals(Object term) {

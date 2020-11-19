@@ -32,7 +32,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		Errors.showInfo = showInfo;
 	}
 
-	@Override	public Integer visitModel(ModelContext ctx) {
+	@Override public Integer visitModel(ModelContext ctx) {
 		this.model = new StModel();
 		for (SegmentContext segment : ctx.segment()) {
 			if (visitSegment(segment) != 0) {

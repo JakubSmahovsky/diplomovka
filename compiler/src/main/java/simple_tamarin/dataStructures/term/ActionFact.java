@@ -1,9 +1,8 @@
 package simple_tamarin.dataStructures.term;
 
 import java.util.ArrayList;
-import simple_tamarin.BuilderFormatting;
 
-public class ActionFact extends Term{
+public class ActionFact implements Term{
   public String name;
   public ArrayList<Term> terms;
 
@@ -12,13 +11,7 @@ public class ActionFact extends Term{
     this.terms = terms;
   }
 
-  @Override
-  public String toString() {
-    return BuilderFormatting.fact(name, terms);
-  }
-
-  @Override
-  public Term deconstructTerm() {
+  @Override public Term deconstructTerm() {
     return this;
   } 
 }

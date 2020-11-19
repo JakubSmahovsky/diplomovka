@@ -4,7 +4,7 @@ import simple_tamarin.Constants;
 import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.Principal;
 
-public class Variable extends Term {
+public class Variable implements Term {
   private static int temporals = 0;
   public String name;
   public Term subterm;
@@ -30,10 +30,6 @@ public class Variable extends Term {
     this.subterm = subterm;
     this.cratedBy = createdBy;
     this.sort = sort;
-  }
-
-  @Override public String toString() {
-    return Constants.sortString(sort) + name;
   }
 
   @Override public boolean equals(Object term) {
