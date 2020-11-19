@@ -9,18 +9,17 @@ rule Register_KP:
   , !Pk($X, pk(~KS))
   , Out(pk(~KS))]
 
-rule Repack:
-  [ In(aenc(N, KP1))
-  , !Pk($X1, KP1)
-  , !Pk($X2, KP2) ]
-  -->
-  [ Out(aenc(N, KP2))]
-
 rule Create:
   [ Fr(~s)
   , !Pk($X, KP)]
   --[Secret(~s)]->
   [ Out(aenc(~s, KP)) ]
+  
+rule Repack:
+  [ In(aenc(N, KP1))
+  , !Pk($X1, KP1)
+  , !Pk($X2, KP2) ]-->
+  [ Out(aenc(N, KP2))]
 
 lemma secrecy:
   all-traces
