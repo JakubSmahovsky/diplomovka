@@ -27,10 +27,12 @@ queriesBlock: 'queries' '[' query* ']';
 
 term:
   variable |
-  functionCall;
+  functionCall |
+  tuple;
 
 variable: IDENTIFIER;
 functionCall: FUNCTION '(' (argument+=term)? (',' argument+=term)* ')';
+tuple: '{' term (',' term)* '}';
 
 query: executable;
 

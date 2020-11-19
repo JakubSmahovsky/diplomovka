@@ -32,7 +32,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		Errors.showInfo = showInfo;
 	}
 
-	@Override public Integer visitModel(ModelContext ctx) {
+	@Override	public Integer visitModel(ModelContext ctx) {
 		this.model = new StModel();
 		for (SegmentContext segment : ctx.segment()) {
 			if (visitSegment(segment) != 0) {
@@ -348,6 +348,18 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 				return 1;
 			}
 		}
+	}
+
+	@Override public Integer visitTuple(TupleContext ctx) {
+		ArrayList<Term> subterms = new ArrayList<>();
+		for (TermContext tctx : ctx.term()) {
+			if (visitTerm(tctx) != 0 ) {
+				return 1;
+			}
+			subterms.add(curTerm);
+		}
+		curTerm = new Tuple(subterms);
+		return 0;
 	}
 
 	@Override public Integer visitQueriesBlock(QueriesBlockContext ctx) {
