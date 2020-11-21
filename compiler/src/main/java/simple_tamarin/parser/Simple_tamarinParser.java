@@ -247,7 +247,7 @@ public class Simple_tamarinParser extends Parser {
 			setState(48);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__5) | (1L << FUNCTION) | (1L << IDENTIFIER))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__5) | (1L << T__14) | (1L << FUNCTION) | (1L << IDENTIFIER))) != 0)) {
 				{
 				{
 				setState(45);
@@ -303,37 +303,35 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			setState(57);
 			_errHandler.sync(this);
-			switch (_input.LA(1)) {
-			case T__2:
+			switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
+			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(53);
 				knows();
 				}
 				break;
-			case T__5:
+			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(54);
 				generates();
 				}
 				break;
-			case IDENTIFIER:
+			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(55);
 				assignment();
 				}
 				break;
-			case FUNCTION:
+			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(56);
 				check();
 				}
 				break;
-			default:
-				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -437,11 +435,13 @@ public class Simple_tamarinParser extends Parser {
 	}
 
 	public static class AssignmentContext extends ParserRuleContext {
-		public VariableContext variable() {
-			return getRuleContext(VariableContext.class,0);
+		public TermContext left;
+		public TermContext right;
+		public List<TermContext> term() {
+			return getRuleContexts(TermContext.class);
 		}
-		public TermContext term() {
-			return getRuleContext(TermContext.class,0);
+		public TermContext term(int i) {
+			return getRuleContext(TermContext.class,i);
 		}
 		public AssignmentContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -461,11 +461,11 @@ public class Simple_tamarinParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(66);
-			variable();
+			((AssignmentContext)_localctx).left = term();
 			setState(67);
 			match(T__6);
 			setState(68);
-			term();
+			((AssignmentContext)_localctx).right = term();
 			}
 		}
 		catch (RecognitionException re) {
@@ -520,11 +520,11 @@ public class Simple_tamarinParser extends Parser {
 	public static class MessageBlockContext extends ParserRuleContext {
 		public Token sender;
 		public Token receiver;
-		public List<VariableContext> variable() {
-			return getRuleContexts(VariableContext.class);
+		public List<TermContext> term() {
+			return getRuleContexts(TermContext.class);
 		}
-		public VariableContext variable(int i) {
-			return getRuleContext(VariableContext.class,i);
+		public TermContext term(int i) {
+			return getRuleContext(TermContext.class,i);
 		}
 		public List<TerminalNode> IDENTIFIER() { return getTokens(Simple_tamarinParser.IDENTIFIER); }
 		public TerminalNode IDENTIFIER(int i) {
@@ -557,7 +557,7 @@ public class Simple_tamarinParser extends Parser {
 			setState(76);
 			match(T__9);
 			setState(77);
-			variable();
+			term();
 			setState(82);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -567,7 +567,7 @@ public class Simple_tamarinParser extends Parser {
 				setState(78);
 				match(T__10);
 				setState(79);
-				variable();
+				term();
 				}
 				}
 				setState(84);
@@ -968,9 +968,9 @@ public class Simple_tamarinParser extends Parser {
 		"\2\2\2\64\62\3\2\2\2\65\66\7\4\2\2\66\7\3\2\2\2\67<\5\n\6\28<\5\f\7\2"+
 		"9<\5\16\b\2:<\5\20\t\2;\67\3\2\2\2;8\3\2\2\2;9\3\2\2\2;:\3\2\2\2<\t\3"+
 		"\2\2\2=>\7\5\2\2>?\t\2\2\2?@\5\30\r\2@\13\3\2\2\2AB\7\b\2\2BC\5\30\r\2"+
-		"C\r\3\2\2\2DE\5\30\r\2EF\7\t\2\2FG\5\26\f\2G\17\3\2\2\2HI\5\32\16\2IJ"+
-		"\7\n\2\2J\21\3\2\2\2KL\7\25\2\2LM\7\13\2\2MN\7\25\2\2NO\7\f\2\2OT\5\30"+
-		"\r\2PQ\7\r\2\2QS\5\30\r\2RP\3\2\2\2SV\3\2\2\2TR\3\2\2\2TU\3\2\2\2U\23"+
+		"C\r\3\2\2\2DE\5\26\f\2EF\7\t\2\2FG\5\26\f\2G\17\3\2\2\2HI\5\32\16\2IJ"+
+		"\7\n\2\2J\21\3\2\2\2KL\7\25\2\2LM\7\13\2\2MN\7\25\2\2NO\7\f\2\2OT\5\26"+
+		"\f\2PQ\7\r\2\2QS\5\26\f\2RP\3\2\2\2SV\3\2\2\2TR\3\2\2\2TU\3\2\2\2U\23"+
 		"\3\2\2\2VT\3\2\2\2WX\7\16\2\2X\\\7\3\2\2Y[\5\36\20\2ZY\3\2\2\2[^\3\2\2"+
 		"\2\\Z\3\2\2\2\\]\3\2\2\2]_\3\2\2\2^\\\3\2\2\2_`\7\4\2\2`\25\3\2\2\2ae"+
 		"\5\30\r\2be\5\32\16\2ce\5\34\17\2da\3\2\2\2db\3\2\2\2dc\3\2\2\2e\27\3"+

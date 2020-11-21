@@ -1,14 +1,14 @@
 package simple_tamarin.dataStructures;
 
 import simple_tamarin.Constants;
-import simple_tamarin.dataStructures.term.Variable;
+import simple_tamarin.dataStructures.term.Term;
 
 public class Command {
   public Constants.CommandType type;
-  public Variable variable;
+  public Term term;
   
-  public Command(Constants.CommandType type, Variable variable){
+  public Command(Constants.CommandType type, Term term){
     this.type = type;
-    this.variable = variable;
+    this.term = term;
   }
 }

@@ -3,6 +3,7 @@ package simple_tamarin;
 import org.antlr.v4.runtime.Token;
 
 import simple_tamarin.dataStructures.Principal;
+import simple_tamarin.dataStructures.term.Term;
 import simple_tamarin.parser.Simple_tamarinParser.TermContext;
 
 public final class Errors {
@@ -40,7 +41,7 @@ public final class Errors {
   }
 
   public static void ErrorVariableUnknown(Principal principal, Token variable) {
-    String message = "Principal \"" + principal + "\" is trying to use a variable \"" + variable.getText() + "\", which he doesn't know!";
+    String message = "Principal \"" + principal + "\" is trying to use a variable \"" + variable.getText() + "\", which it doesn't know!";
     print(ERROR, variable, message);
   }
 
@@ -49,13 +50,13 @@ public final class Errors {
     print(ERROR, variable, message);
   }
 
-  public static void WarningVariableShadowed(Token variable) {
-    String message = "Variable \"" + variable.getText() + "\" shadows a public variable!";
-    print(WARNING, variable, message);
+  public static void ErrorVariableCollisionPublic(Term variable, Token posToken) {
+    String message = "Public variable \"" + variable + "\" allready exists!";
+    print(ERROR, posToken, message);
   }
 
-  public static void WarningVariableKnownPrivate(Principal principal, Token variable) {
-    String message = "Principal \"" + principal + "\" allready knows a private variable \"" + variable.getText() + "\"!";
+  public static void WarningVariableShadowed(Token variable) {
+    String message = "Variable \"" + variable.getText() + "\" shadows a public variable!";
     print(WARNING, variable, message);
   }
 
@@ -74,8 +75,8 @@ public final class Errors {
     print(WARNING, query, message);
   }
 
-  public static void InfoDeclareLongTermPubVariable(Token variable) {
-    String message = "Long term public variable \"" + variable.getText() + "\" is not declared. It is recommended to declare all long-term public variables.";
+  public static void InfoDeclareLongTermVariable(Token variable) {
+    String message = "Long term variable \"" + variable.getText() + "\" is not declared. It is recommended to declare all long-term variables.";
     print(INFO, variable, message);
   }
 

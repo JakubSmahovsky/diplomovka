@@ -6,15 +6,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import simple_tamarin.Constants.VariableSort;
+import simple_tamarin.dataStructures.Alias;
 import simple_tamarin.dataStructures.Principal;
+import simple_tamarin.dataStructures.StBlock;
 import simple_tamarin.dataStructures.term.*;
 
 public abstract class BuilderFormatting {
-  
-  public static String blockName(Principal principal, int blockNo) {
-    return principal.name + "_" + blockNo;
+  public static String blockName(StBlock block) {
+    return block.principal.name + "_" + block.rangeBegin;
   }
-  
+
   public static String builtins(List<String> builtins) {
     if (builtins.isEmpty()) {
       return "";
@@ -33,11 +34,8 @@ public abstract class BuilderFormatting {
     return result.toString();
   }
 
-  public static String alias(Variable variable) {
-    if (variable.subterm == null) {
-      System.out.println("Debug: Aliased variable " + variable.name + " has no subterm");
-    }
-    return variable + " = " + variable.subterm;
+  public static String alias(Alias alias) {
+    return alias.left.render() + " = " + alias.right.render();
   }
 
   public static String fact(String name, List<? extends Term> terms) {
@@ -46,7 +44,7 @@ public abstract class BuilderFormatting {
 
     Iterator<? extends Term> it = terms.iterator();
     while (it.hasNext()) {
-      result.append(it.next());
+      result.append(it.next().render());
       if (it.hasNext()) {
         result.append(", ");
       }
@@ -56,32 +54,32 @@ public abstract class BuilderFormatting {
     return result.toString();
   }
 
-  public static String fact(String name, Variable variable) {
-    return fact(name, Arrays.asList(variable));
+  public static String fact(String name, Term term) {
+    return fact(name, Arrays.asList(term));
   }
 
   public static String persistentFact(String name, List<Variable> variables) {
     return "!" + fact(name, variables);
   }
 
-  public static String stateFact(Principal principal, int blockNo, List<Variable> state) {
-    return fact(principal.name + "_" + blockNo, state);
+  public static String resultStateFact(StBlock block) {
+    return fact(blockName(block), block.completeState());
   }
 
   public static String initStateFact(Principal principal) {
     return persistentFact(principal.name + "_init", principal.initState);
   }
 
-  public static String freshFact(Variable variable) {
-    return fact("Fr", variable);
+  public static String freshFact(Term term) {
+    return fact("Fr", term);
   }
 
-  public static String inFact(Variable variable) {
-    return fact("In", variable);
+  public static String inFact(Term term) {
+    return fact("In", term);
   }
 
-  public static String outFact(Variable variable) {
-    return fact("Out", variable);
+  public static String outFact(Term term) {
+    return fact("Out", term);
   }
 
   public static String ruleAliases(String name, List<String> aliases) {
@@ -150,23 +148,26 @@ public abstract class BuilderFormatting {
     return result.toString();
   }
 
-  public static String lemmaStateFact(Principal principal, int blockNo, List<Variable> state, Variable temporal) {
+  public static String lemmaResultStateFact(StBlock block, Variable temporal) {
     if (temporal.sort != VariableSort.TEMPORAL) {
-      System.out.println("Debug: Argument temporal is not of sort TEMPORAL in lemmaStateFact!");
+      System.out.println("Debug: Argument temporal is not of sort TEMPORAL in lemmaResultStateFact!");
     }
-    
-    StringBuilder result = new StringBuilder();
-    result.append(blockName(principal, blockNo) + "(");
+    return lemmaFact(blockName(block), block.completeState()) + " @ " + temporal.render();
+  }
 
-    Iterator<Variable> it = state.iterator();
+  public static String lemmaFact(String name, List<? extends Term> terms) {
+    StringBuilder result = new StringBuilder();
+    result.append(name + "(");
+
+    Iterator<? extends Term> it = terms.iterator();
     while (it.hasNext()) {
-      result.append(it.next().name);
+      result.append(it.next().renderLemma());
       if (it.hasNext()) {
         result.append(", ");
       }
     }
 
-    result.append(")" + " @ #" + temporal.name);
+    result.append(")");
     return result.toString();
   }
 

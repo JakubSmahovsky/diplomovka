@@ -4,33 +4,55 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import simple_tamarin.Constants.CommandType;
+import simple_tamarin.dataStructures.term.Term;
 import simple_tamarin.dataStructures.term.Variable;
 
 public class Principal {
   public String name;
-  public ArrayList<Variable> variables;
+  public ArrayList<Term> knowledge;
   public ArrayList<StBlock> blocks;
   public StBlock nextBlock;
   public ArrayList<Variable> initState;
 
   public Principal(String name){
     this.name = name;
-    this.variables = new ArrayList<>();
+    this.knowledge = new ArrayList<>();
     this.blocks = new ArrayList<>();
     nextBlock();
     this.initState = new ArrayList<>();
   }
 
   /**
-   * @return known variable with given parameters or null if it doesn't exist
+   * @return known variable with given name or null if principal doesn't know it
    */
-  public Variable findVariable(String name) {
-    for (Variable variable : variables) {
-      if (variable.name.equals(name)) {
-        return variable;
+  public Variable knows(String name) {
+    for (Term term : knowledge) {
+      if (term instanceof Variable && ((Variable)term).name.equals(name)) {
+        return (Variable)term;
       }
     }
     return null;
+  }
+
+  /**
+   * @return equivalent known term or null if principal doesn't know it
+   */
+  public Term knows(Term term) {
+    for (Term known : knowledge) {
+      if (known.equals(term)) {
+        return known;
+      }
+    }
+    return null;
+  }
+
+  
+  public void learn(Term term) {
+    for (Term extracted : term.extractKnowledge()) {
+      if (!knowledge.contains(extracted)) {
+        knowledge.add(extracted);
+      }
+    }
   }
 
   /**
@@ -39,8 +61,10 @@ public class Principal {
   public void nextBlock() {
     if (nextBlock != null) {
       blocks.add(nextBlock);
+      nextBlock = new StBlock(this, blocks.size(), nextBlock.state);
+    } else {
+      nextBlock = new StBlock(this, 0);
     }
-    nextBlock = new StBlock(this, blocks.size());
     return;
   }
 
@@ -87,5 +111,4 @@ public class Principal {
   @Override public String toString() {
     return name;
   }
-
 }

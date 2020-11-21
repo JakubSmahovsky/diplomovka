@@ -18,10 +18,10 @@ command:
 
 knows: 'knows' modifier=('public' | 'private') variable;
 generates: 'generates' variable;
-assignment: variable '=' term;
+assignment: left=term '=' right=term;
 check: functionCall '?';
 
-messageBlock: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' variable (',' variable)*;
+messageBlock: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' term (',' term)*;
 
 queriesBlock: 'queries' '[' query* ']';
 

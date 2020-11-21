@@ -16,6 +16,14 @@ public final class Constants{
     FRESH,
     SDEC
   }
+
+  public static enum VariableDefined {
+    NO,
+    ONLY_SHADOW_PUBLIC,
+    ONLY_PUBLIC,
+    PLEASE,
+    YES
+  }
   
   public static final String[] reservedNames = {
     "principals",

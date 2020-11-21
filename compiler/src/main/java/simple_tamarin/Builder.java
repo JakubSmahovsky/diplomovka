@@ -66,12 +66,8 @@ public class Builder extends BuilderFormatting{
     }
     output.append(ruleResult(facts));
 
-    for (Principal principal : model.principals) {
-      for (Variable variable : principal.initState) {
-        if (variable.sort == VariableSort.FRESH) {
-          variable.sort = VariableSort.NOSORT;
-        }
-      }
+    for (Variable variable : toGenerate) {
+      variable.removeFresh();
     }
   }
 
@@ -80,73 +76,64 @@ public class Builder extends BuilderFormatting{
    */
   private void blocks() {
     for (Principal principal : model.principals) {
-      ArrayList<Variable> currState = new ArrayList<>(principal.initState);
-      int blockNo = 0;
-      for (StBlock block : principal.blocks) {
-        ArrayList<String> facts = new ArrayList<>();
-        for (Variable variable : block.aliases) {
-          facts.add(alias(variable));
-        }
-        output.append(ruleAliases(blockName(principal, blockNo), facts));
-        facts = new ArrayList<>();
-        if (blockNo == 0) {
-          facts.add(initStateFact(principal));
-        } else {
-          facts.add(stateFact(principal, blockNo, currState));
-        }
-        for (Command command : block.premise) {
-          switch (command.type) {
-            case IN:
-              facts.add(inFact(command.variable));
-              if (!currState.contains(command.variable)) {
-                currState.add(command.variable);
-              }
-              break;
-            case FRESH:
-              facts.add(freshFact(command.variable));
-              if (!currState.contains(command.variable)) {
-                currState.add(command.variable);
-              }
-              break;
-            case SDEC:
-              if (!currState.contains(command.variable)) {
-                currState.add(command.variable);
-              }
-              break;
-            default: System.out.println("Debug: Unexpected command type in premises.");
-          }
-        }
-        output.append(rulePremise(facts));
-        blockNo+=1; // after premises we're working with the "next message" block
-
-        facts = new ArrayList<>();
-        String resultStateFact = stateFact(principal, blockNo, currState);
-        facts.add(resultStateFact);
-        for (ActionFact fact : block.actions) {
-          facts.add(BuilderFormatting.fact(fact.name, fact.terms));
-        }
-        output.append(ruleAction(facts));
-
-        facts = new ArrayList<>();
-        for (Command command : block.result) {
-          switch (command.type) {
-            case OUT: 
-              facts.add(outFact(command.variable));
-              break;
-            default: System.out.println("Debug: Unexpected command type in results.");
-          }
-        }
-        facts.add(resultStateFact);
-        output.append(ruleResult(facts));
-        
-        // remove fresh sort from generated variables
-        for (Variable variable : currState) {
-          if (variable.sort == VariableSort.FRESH) {
-            variable.sort = VariableSort.NOSORT;
-          }
-        }
-        block.finalState = new ArrayList<>(currState);
+      StBlock previousBlock = null;
+      for (int i = 0; i < principal.blocks.size(); i++) {
+        block(previousBlock, principal.blocks.get(i));
+        previousBlock = principal.blocks.get(i);
       }
+    }
+  }
+
+  private void block(StBlock previousBlock,StBlock block){
+    ArrayList<String> facts = new ArrayList<>();
+    ArrayList<Term> generated = new ArrayList<>();
+    for (Alias alias : block.aliases) {
+      facts.add(alias(alias));
+    }
+    output.append(ruleAliases(blockName(block), facts));
+    facts = new ArrayList<>();
+    if (previousBlock == null) {
+      facts.add(initStateFact(block.principal));
+    } else {
+      facts.add(resultStateFact(previousBlock));
+    }
+    for (Command command : block.premise) {
+      switch (command.type) {
+        case IN:
+          facts.add(inFact(command.term));
+          break;
+        case FRESH:
+          facts.add(freshFact(command.term));
+          generated.add(command.term);
+          break;
+        default:
+        System.out.println("Debug: Unexpected command type in premises.");
+      }
+    }
+    output.append(rulePremise(facts));
+
+    facts = new ArrayList<>();
+    String resultStateFact = resultStateFact(block);
+    facts.add(resultStateFact);
+    for (ActionFact fact : block.actions) {
+      facts.add(BuilderFormatting.fact(fact.name, fact.terms));
+    }
+    output.append(ruleAction(facts));
+
+    facts = new ArrayList<>();
+    for (Command command : block.result) {
+      if (command.type == CommandType.OUT) {
+        facts.add(outFact(command.term));
+      } else {
+        System.out.println("Debug: Unexpected command type in results.");
+      }
+    }
+    facts.add(resultStateFact);
+    output.append(ruleResult(facts));
+    
+    // remove fresh sort from generated variables
+    for (Term term : generated) {
+      term.removeFresh();
     }
   }
 
@@ -164,11 +151,14 @@ public class Builder extends BuilderFormatting{
 
   private void executable() {
     output.append(lemmaEx(Constants.EXECUTABLE));
-    ArrayList<Variable> variables = new ArrayList<>(); //TODO: find out which variables are really the same
+    ArrayList<Variable> variables = new ArrayList<>();
     for (Principal principal : model.principals) {
-      for (Variable variable : principal.blocks.get(principal.blocks.size()-1).finalState) {
-        if (!variables.contains(variable)) {
-           variables.add(variable);
+      ArrayList<Term> finalState = principal.blocks.get(principal.blocks.size()-1).completeState();
+      for (Term term : finalState) {
+        for (Variable variable : term.unify(term)) { //TODO: this returns all variables as a side effect, don't be lazy implement it properly
+          if (!variables.contains(variable)) {
+              variables.add(variable);
+          }
         }
       }
     }
@@ -183,9 +173,8 @@ public class Builder extends BuilderFormatting{
     ArrayList<String> facts = new ArrayList<>();
     Iterator<Variable> tempIt = temporals.iterator();
     for (Principal principal : model.principals) {
-      int lastBlockNo = principal.blocks.size();
-      ArrayList<Variable> finalState = principal.blocks.get(lastBlockNo-1).finalState;
-      facts.add(lemmaStateFact(principal, lastBlockNo, finalState, tempIt.next()));
+      StBlock lastBlock = principal.blocks.get(principal.blocks.size()-1);
+      facts.add(lemmaResultStateFact(lastBlock, tempIt.next()));
     }
     output.append(conjunction(facts));
     output.append(lemmaEnd());

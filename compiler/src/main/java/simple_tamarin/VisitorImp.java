@@ -4,9 +4,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-import simple_tamarin.Constants.CommandType;
-import simple_tamarin.Constants.VariableSort;
+import simple_tamarin.Constants.*;
 import simple_tamarin.dataStructures.*;
 import simple_tamarin.dataStructures.term.*;
 import simple_tamarin.parser.*;
@@ -25,6 +25,9 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	private Principal curPrincipal;
 	private StBlock curBlock;
 	private Term curTerm;
+
+	// Changes behavior of visitVariable
+	private VariableDefined expectDefinedVariables;
 
 	public VisitorImp(FileWriter writer, boolean quitOnWarning, boolean showInfo) {
 		this.writer = writer;
@@ -96,84 +99,54 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	}
 
 	@Override public Integer visitKnows(KnowsContext ctx) {
-		String name = ctx.variable().IDENTIFIER().getText();
-		boolean pub = (ctx.modifier.getText().equals("public")) ? true : false;
 		if (curPrincipal.blocks.get(0) != curBlock) {
 			Errors.InfoKnowsInFirstBlock(ctx.getStart());
 		}
 
+		boolean pub = (ctx.modifier.getText().equals("public")) ? true : false;
+		expectDefinedVariables = pub ? VariableDefined.ONLY_PUBLIC : VariableDefined.ONLY_SHADOW_PUBLIC;
+		if (visitVariable(ctx.variable()) != 0) {
+			return 1;
+		} 
+		Variable variable = (Variable)curTerm;
+
 		if (pub) {
-			if (curPrincipal.findVariable(name) != null) {
-				Errors.ErrorVariableCollisionPrivate(curPrincipal, ctx.variable().getStart());
-				return 1;
-			}
-
-			Variable variable = model.findVariable(name);
-			if (variable == null) {
-				Errors.InfoDeclareLongTermPubVariable(ctx.variable().start);
-				// TODO allow declaring variables
-				variable = new Variable(name, VariableSort.PUBLIC);
-				model.pubVariables.add(variable);
-			}
-
+			variable.sort = VariableSort.PUBLIC;
 			curPrincipal.initState.add(variable);
 		} else {
-			if (model.findVariable(name) != null) {
-				Errors.WarningVariableShadowed(ctx.variable().start);
-				if (quitOnWarning) {
-					return 1;
-				}
-			}
-			if (curPrincipal.findVariable(name) != null) {
-				Errors.WarningVariableKnownPrivate(curPrincipal, ctx.variable().start);
-				if (quitOnWarning) {
-					return 1;
-				}
-			} else {
-				Variable variable = new Variable(name, VariableSort.FRESH);
-				for (Principal principal : model.principals) {
-					for (Variable existing : principal.variables) {
-						if (existing.name.equals(name)) {
-							if (existing.cratedBy == null) {
-								variable = existing;
-							} else {
-								Errors.WarningVariableEphemeralShadowed(ctx.variable().start);
-								if (quitOnWarning) {
-									return 1;
-								}
-							}
+			variable.sort = VariableSort.FRESH;
+			// unify the private variable with one known by another principal
+			for (Principal principal : model.principals) {
+				Variable existing = principal.knows(variable.name);
+				if (existing != null) {
+					if (existing.cratedBy == null) {
+						// created by null confirms it's a long term variable
+						variable = existing;
+					} else {
+						Errors.WarningVariableEphemeralShadowed(ctx.variable().start);
+						if (quitOnWarning) {
+							return 1;
 						}
 					}
 				}
-
-				curPrincipal.variables.add(variable);
-				curPrincipal.initState.add(variable);
 			}
 		}
+		curPrincipal.learn(variable);
+		curPrincipal.initState.add(variable);
 		return 0;
 	}
 
 	@Override public Integer visitGenerates(GeneratesContext ctx) {
-		String name = ctx.variable().getText();
-		if (!identifierNameValid(name)) {
-			Errors.ErrorReservedName(ctx.variable().start);
+		expectDefinedVariables = VariableDefined.ONLY_SHADOW_PUBLIC;
+		if (visitVariable(ctx.variable()) != 0) {
 			return 1;
 		}
-		
-		if (model.findVariable(name) != null) {
-			Errors.WarningVariableShadowed(ctx.variable().start);
-			if (quitOnWarning) {
-				return 1;
-			};
-		}
-		if (curPrincipal.findVariable(name) != null) {
-			Errors.ErrorVariableCollisionPrivate(curPrincipal, ctx.variable().start);
-			return 1;
-		}
-
-		Variable variable = new Variable(name, curPrincipal, VariableSort.FRESH);
-		curPrincipal.variables.add(variable);
+		Variable variable = (Variable)curTerm;
+		variable.cratedBy = curPrincipal;
+		variable.sort = VariableSort.FRESH;
+		curPrincipal.knowledge.add(variable);
 		curBlock.premise.add(new Command(CommandType.FRESH, variable));
+		curBlock.state.add(variable);
 		return 0;
 	}
 
@@ -193,21 +166,15 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 			return 1;
 		}
 
-		for (VariableContext message : ctx.variable()) {
-			String msg = message.getText();
+		curPrincipal = sender;
+		expectDefinedVariables = VariableDefined.YES;
+		for (TermContext message : ctx.term()) {
+			visitTerm(message);
 
-			Variable variable = model.findVariable(msg);
-			if (variable == null) {
-				variable = sender.findVariable(msg);
-				if (variable == null) {
-					Errors.ErrorVariableUnknown(curPrincipal, message.start);
-					return 1;
-				}
-
-				if (receiver.findVariable(msg) == null) {
-					// only add variable to receiver knowledge if it's not public nor allready known
-					receiver.variables.add(variable);
-				}
+			// if it's not a public variable
+			if (!(curTerm instanceof Variable) || model.findVariable(((Variable)curTerm).name) == null) {
+				// add all new variables to receiver's knowledge
+				receiver.learn(curTerm);
 			}
 
 			if (sender.blocks.isEmpty()) {
@@ -216,36 +183,38 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 			}
 
 			StBlock sendersLastBlock = sender.blocks.get(sender.blocks.size()-1);
-			sendersLastBlock.result.add(new Command(CommandType.OUT, variable));
-			receiver.nextBlock.premise.add(new Command(CommandType.IN, variable));
+			sendersLastBlock.result.add(new Command(CommandType.OUT, curTerm));
+			receiver.nextBlock.premise.add(new Command(CommandType.IN, curTerm));
+			if (!receiver.nextBlock.state.contains(curTerm)) {
+				// TODO: we're adding the entire message to state, some deconstruction or extraction may be in order
+				receiver.nextBlock.state.add(curTerm);
+			}
 		}
-
 		return 0;
 	}
 
 	@Override public Integer visitAssignment(AssignmentContext ctx) {
-		String name = ctx.variable().IDENTIFIER().getText();
-		if (curPrincipal.findVariable(name) != null) {
-			Errors.ErrorVariableCollisionPrivate(curPrincipal, ctx.variable().start);
+		expectDefinedVariables = VariableDefined.ONLY_SHADOW_PUBLIC;
+		if (visitTerm(ctx.left) != 0) {
 			return 1;
 		}
-		if (model.findVariable(name) != null) {
-			Errors.WarningVariableShadowed(ctx.variable().start);
-			if (quitOnWarning) {
-				return 1;
+		Term left = curTerm;
+
+		expectDefinedVariables = VariableDefined.YES;
+		if (visitTerm(ctx.right) != 0) {
+			return 1;
+		}
+		Term right = curTerm;
+
+		curBlock.aliases.add(new Alias(left, right));
+		curBlock.state.add(left);
+
+		List<Variable> learntVariables = left.unify(right);
+		for (Variable variable : learntVariables) {
+			if (!curPrincipal.knowledge.contains(variable)) {
+				curPrincipal.knowledge.add(variable);
 			}
 		}
-		if (visitTerm(ctx.term()) != 0) {
-			return 1;
-		}
-		Variable alias = new Variable(name, curTerm, curPrincipal, VariableSort.NOSORT);
-		Variable variable = alias;
-		if (curTerm instanceof FunctionSdec) {
-			variable = new Variable(name, ((FunctionSdec)curTerm).decodedValue, curPrincipal, VariableSort.NOSORT);
-			curBlock.premise.add(new Command(CommandType.SDEC, variable));
-		}
-		curBlock.aliases.add(alias);
-		curPrincipal.variables.add(variable);
 		return 0;
 	}
 
@@ -254,25 +223,57 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	}
 
 	/**
-	 * Populate curTerm by existing variable accessible by currPrincipal with given name.
-	 * @return 1 if no variable with given name is accessible by currPrincipal
+	 * Finds a variable if it should have existed or creates a new one otherwise.
 	 */
 	@Override public Integer visitVariable(VariableContext ctx) {
 		String name = ctx.IDENTIFIER().getText();
-		Variable variable = curPrincipal.findVariable(name);
-		if (variable == null) {
-			variable = model.findVariable(name);
-			if (variable == null) {
-				Errors.ErrorVariableUnknown(curPrincipal, ctx.start);
-				return 1;
-			}
-			// if we're using a public variable, principal should know it from initial state
-			if (!curPrincipal.initState.contains(variable)) {
-				curPrincipal.initState.add(variable);
+		
+		curTerm = curPrincipal.knows(name);
+		if (curTerm != null) {
+			switch (expectDefinedVariables) {
+				case NO:
+				case ONLY_SHADOW_PUBLIC:
+				case ONLY_PUBLIC:
+					Errors.ErrorVariableCollisionPrivate(curPrincipal, ctx.start);
+					return 1;
+				default:
+					return 0;
 			}
 		}
-		curTerm = variable;
-		return 0;
+
+		curTerm = model.findVariable(name);
+		if (curTerm != null) {
+			switch (expectDefinedVariables) {
+				case NO:
+					Errors.ErrorVariableCollisionPublic(curTerm, ctx.start);
+					return 1;
+				case ONLY_SHADOW_PUBLIC:
+					Errors.WarningVariableShadowed(ctx.start);
+					if (quitOnWarning) {
+						return 1;
+					}
+					break;
+				default:
+					return 0;
+			}
+		}
+
+		if (!identifierNameValid(name)) {
+			Errors.ErrorReservedName(ctx.start);
+			return 1;
+		}
+
+		switch (expectDefinedVariables) {
+			case ONLY_PUBLIC:
+			case YES:
+				Errors.ErrorVariableUnknown(curPrincipal, ctx.start);
+				return 1;
+			case PLEASE:
+				Errors.InfoDeclareLongTermVariable(ctx.start);
+			default:
+				curTerm = new Variable(name);
+				return 0;
+		}
 	}
 
 	@Override public Integer visitFunctionCall(FunctionCallContext ctx) {
@@ -283,10 +284,13 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
 					return 1;
 				}
+				VariableDefined restoreEDV = expectDefinedVariables;
+				expectDefinedVariables = VariableDefined.YES;
 				if (visitTerm(ctx.argument.get(0)) != 0 ) {
 					return 1;
 				}
 				Term key = curTerm;
+				expectDefinedVariables = restoreEDV;
 				if (visitTerm(ctx.argument.get(1)) != 0 ) {
 					return 1;
 				}
@@ -300,10 +304,13 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
 					return 1;
 				}
+				VariableDefined restoreEDV = expectDefinedVariables;
+				expectDefinedVariables = VariableDefined.YES;
 				if (visitTerm(ctx.argument.get(0)) != 0 ) {
 					return 1;
 				}
 				Term key = curTerm;
+				expectDefinedVariables = restoreEDV;
 				if (visitTerm(ctx.argument.get(1)) != 0 ) {
 					return 1;
 				}
@@ -325,6 +332,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 				return 0;
 			}
 			case Constants.VPASSERT: {
+				expectDefinedVariables = VariableDefined.YES;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
 					return 1;
@@ -339,6 +347,9 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 				Term term2 = curTerm;
 				if (!(term1.equals(term2))) {
 					Errors.WarningAssertNeverTrue(ctx.start);
+					if (quitOnWarning){
+						return 1;
+					}
 				}
 				model.builtins.restriction_eq = true;
 				curBlock.actions.add(new ActionFact(Constants.EQUALITY, new ArrayList<Term>(Arrays.asList(term1, term2))));
@@ -380,6 +391,9 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	@Override public Integer visitExecutable(ExecutableContext ctx) {
 		if (model.queries.executable == true) {
 			Errors.WarningQueryExecutableDuplicite(ctx.start);
+			if (quitOnWarning) {
+				return 1;
+			}
 		} else {
 			model.queries.executable = true;
 		}

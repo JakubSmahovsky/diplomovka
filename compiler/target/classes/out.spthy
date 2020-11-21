@@ -1,0 +1,67 @@
+theory spthy
+begin
+
+builtins: symmetric-encryption
+
+rule init:
+[
+  Fr(~Kab)
+]-->[
+  !Bob_init($Bob, ~Kab),
+  !Alice_init($Alice, ~Kab)
+]
+
+rule Bob_0:
+let
+  Na = sdec(m1, Kab)
+  m2 = senc(~Nb, Kab)
+in
+[
+  !Bob_init($Bob, Kab),
+  In($Alice),
+  In(m1),
+  Fr(~Nb)
+]--[
+  Bob_0($Bob, Kab, $Alice, m1, Na, ~Nb, m2)
+]->[
+  Out($Bob),
+  Out(m2),
+  Bob_0($Bob, Kab, $Alice, m1, Na, ~Nb, m2)
+]
+
+rule Alice_0:
+let
+  m1 = senc(~Na, Kab)
+in
+[
+  !Alice_init($Alice, Kab),
+  Fr(~Na)
+]--[
+  Alice_0($Alice, Kab, ~Na, m1)
+]->[
+  Out($Alice),
+  Out(m1),
+  Alice_0($Alice, Kab, ~Na, m1)
+]
+
+rule Alice_1:
+let
+  Nb = sdec(m2, Kab)
+in
+[
+  Alice_0($Alice, Kab, Na, m1),
+  In($Bob),
+  In(m2)
+]--[
+  Alice_1($Alice, Kab, $Bob, m2, Nb)
+]->[
+  Alice_1($Alice, Kab, $Bob, m2, Nb)
+]
+
+lemma executable:
+exists-trace "
+Ex Bob Kab Alice m1 Na Nb m2 #t0 #t1.
+Bob_0(Bob, Kab, Alice, m1, Na, Nb, m2) @ #t0 &
+Alice_1(Alice, Kab, Bob, m2, Nb) @ #t1
+"
+end
