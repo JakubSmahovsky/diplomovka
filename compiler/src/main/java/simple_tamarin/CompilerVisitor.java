@@ -20,14 +20,6 @@ public class CompilerVisitor {
 	private FileWriter writer;
 	private StModel model;
 
-	// focused objects - objects that are currently being worked on
-	private Principal curPrincipal;
-	private StBlock curBlock;
-	private Term curTerm;
-
-	// Changes behavior of visitVariable
-	private VariableDefined expectDefinedVariables;
-
 	public CompilerVisitor(FileWriter writer, boolean quitOnWarning, boolean showInfo) {
 		this.writer = writer;
 		Errors.quitOnWarning = quitOnWarning;
@@ -87,52 +79,50 @@ public class CompilerVisitor {
 		}
 
 		// init focused objects
-		curPrincipal = principal;
-		curBlock = curPrincipal.nextBlock;
-		curPrincipal.nextBlock();
+		StBlock block = principal.nextBlock;
+		principal.nextBlock();
 
 		for (CommandContext command : ctx.command()) {
-			visitCommand(command);
+			visitCommand(command, principal, block);
 		}
 	}
 
-	public void visitCommand(CommandContext ctx) {
+	public void visitCommand(CommandContext ctx, Principal principal, StBlock block) {
 		if (ctx.knows() != null) {
-			visitKnows(ctx.knows());
+			visitKnows(ctx.knows(), principal, block);
 			return;
 		}
 		if (ctx.generates() != null) {
-			visitGenerates(ctx.generates());
+			visitGenerates(ctx.generates(), principal, block);
 			return;
 		}
 		if (ctx.assignment() != null) {
-			visitAssignment(ctx.assignment());
+			visitAssignment(ctx.assignment(), principal, block);
 			return;
 		}
 		if (ctx.check() != null) {
-			visitCheck(ctx.check());
+			visitCheck(ctx.check(), principal, block);
 			return;
 		}
 	}
 
-	public void visitKnows(KnowsContext ctx) {
-		if (curPrincipal.blocks.get(0) != curBlock) {
+	public void visitKnows(KnowsContext ctx, Principal principal, StBlock block) {
+		if (principal.blocks.get(0) != block) {
 			Errors.InfoKnowsInFirstBlock(ctx.getStart());
 		}
 
 		boolean pub = (ctx.modifier.getText().equals("public")) ? true : false;
-		expectDefinedVariables = pub ? VariableDefined.ONLY_PUBLIC : VariableDefined.ONLY_SHADOW_PUBLIC;
-		visitVariable(ctx.variable());
-		Variable variable = (Variable)curTerm;
+		VariableDefined expectVD = pub ? VariableDefined.ONLY_PUBLIC : VariableDefined.ONLY_SHADOW_PUBLIC;
+		Variable variable = visitVariable(ctx.variable(), principal, expectVD);
 
 		if (pub) {
 			variable.sort = VariableSort.PUBLIC;
-			curPrincipal.initState.add(variable);
+			principal.initState.add(variable);
 		} else {
 			variable.sort = VariableSort.FRESH;
 			// unify the private variable with one known by another principal
-			for (Principal principal : model.principals) {
-				Variable existing = principal.knows(variable.name);
+			for (Principal anyPrincipal : model.principals) {
+				Variable existing = anyPrincipal.knows(variable.name);
 				if (existing != null) {
 					if (existing.cratedBy == null) {
 						// created by null confirms it's a long term variable
@@ -143,23 +133,22 @@ public class CompilerVisitor {
 				}
 			}
 		}
-		curPrincipal.learn(variable);
-		curPrincipal.initState.add(variable);
+		principal.learn(variable);
+		principal.initState.add(variable);
 	}
 
-	public void visitGenerates(GeneratesContext ctx) {
-		expectDefinedVariables = VariableDefined.ONLY_SHADOW_PUBLIC;
-		visitVariable(ctx.variable());
-		Variable variable = (Variable)curTerm;
-		variable.cratedBy = curPrincipal;
+	public void visitGenerates(GeneratesContext ctx, Principal principal, StBlock block) {
+		VariableDefined expectVD = VariableDefined.ONLY_SHADOW_PUBLIC;
+		Variable variable = visitVariable(ctx.variable(), principal, expectVD);
+		variable.cratedBy = principal;
 		variable.sort = VariableSort.FRESH;
-		curPrincipal.knowledge.add(variable);
-		curBlock.premise.add(new Command(CommandType.FRESH, variable));
-		curBlock.state.add(variable);
+		principal.knowledge.add(variable);
+		block.premise.add(new Command(CommandType.FRESH, variable));
+		block.state.add(variable);
 	}
 
-	public void visitCheck(CheckContext ctx){
-		visitFunctionCall(ctx.functionCall());
+	public void visitCheck(CheckContext ctx, Principal principal, StBlock block){
+		visitFunctionCall(ctx.functionCall(), principal, block, VariableDefined.YES);
 	}
 
 	public void visitMessageBlock(MessageBlockContext ctx) {
@@ -172,19 +161,18 @@ public class CompilerVisitor {
 			Errors.ErrorPrincipalDoesNotExist(ctx.receiver);
 		}
 
-		curPrincipal = sender;
-		expectDefinedVariables = VariableDefined.YES;
+		VariableDefined expectVD = VariableDefined.YES;
 		for (TermContext message : ctx.term()) {
-			visitTerm(message);
+			Term term = visitTerm(message, sender, null, expectVD);
 
-			if (!curTerm.canBeLearnt()) {
+			if (!term.canBeLearnt()) {
 				Errors.ErrorMessageContainsUnnamed(message);
 			}
 
 			// if it's not a public variable
-			if (!(curTerm instanceof Variable) || model.findVariable(((Variable)curTerm).name) == null) {
+			if (!(term instanceof Variable) || model.findVariable(((Variable)term).name) == null) {
 				// add all new variables to receiver's knowledge
-				receiver.learn(curTerm);
+				receiver.learn(term);
 			}
 
 			if (sender.blocks.isEmpty()) {
@@ -193,79 +181,72 @@ public class CompilerVisitor {
 			}
 
 			StBlock sendersLastBlock = sender.blocks.get(sender.blocks.size()-1);
-			sendersLastBlock.result.add(new Command(CommandType.OUT, curTerm));
-			receiver.nextBlock.premise.add(new Command(CommandType.IN, curTerm));
-			if (!receiver.nextBlock.state.contains(curTerm)) {
+			sendersLastBlock.result.add(new Command(CommandType.OUT, term));
+			receiver.nextBlock.premise.add(new Command(CommandType.IN, term));
+			if (!receiver.nextBlock.state.contains(term)) {
 				// TODO: we're adding the entire message to state, some deconstruction or extraction may be in order
-				receiver.nextBlock.state.add(curTerm);
+				receiver.nextBlock.state.add(term);
 			}
 		}
 	}
 
-	public void visitAssignment(AssignmentContext ctx) {
-		expectDefinedVariables = VariableDefined.ONLY_SHADOW_PUBLIC;
-		visitTerm(ctx.left);
-		Term left = curTerm;
+	public void visitAssignment(AssignmentContext ctx, Principal principal, StBlock block) {
+		Term left = visitTerm(ctx.left, principal, block, VariableDefined.ONLY_SHADOW_PUBLIC);
+		Term right = visitTerm(ctx.right, principal, block, VariableDefined.YES);
 
-		expectDefinedVariables = VariableDefined.YES;
-		visitTerm(ctx.right);
-		Term right = curTerm;
-
-		curBlock.aliases.add(new Alias(left, right));
-		curBlock.state.add(left);
+		block.aliases.add(new Alias(left, right));
+		block.state.add(left);
 
 		List<Variable> learntVariables = left.unify(right);
 		for (Variable variable : learntVariables) {
-			if (!curPrincipal.knowledge.contains(variable)) {
-				curPrincipal.knowledge.add(variable);
+			if (principal.knows(variable) == null) {
+				principal.knowledge.add(variable);
 			}
 		}
 	}
 
-	public void visitTerm(TermContext ctx) {
+	public Term visitTerm(TermContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
 		if (ctx.variable() != null) {
-			visitVariable(ctx.variable());
-			return;
+			return visitVariable(ctx.variable(), principal, expectVD);
 		}
 		if (ctx.functionCall() != null) {
-			visitFunctionCall(ctx.functionCall());
-			return;
+			return visitFunctionCall(ctx.functionCall(), principal, block, expectVD);
 		}
 		if (ctx.tuple() != null) {
-			visitTuple(ctx.tuple());
-			return;
+			return visitTuple(ctx.tuple(), principal, block, expectVD);
 		}
+		return null; // TODO debug message
 	}
 
 	/**
 	 * Finds a variable if it should have existed or creates a new one otherwise.
 	 */
-	public void visitVariable(VariableContext ctx) {
+	public Variable visitVariable(VariableContext ctx, Principal principal, VariableDefined expectVD) {
 		String name = ctx.IDENTIFIER().getText();
 		
-		curTerm = curPrincipal.knows(name);
-		if (curTerm != null) {
-			switch (expectDefinedVariables) {
+		Variable result = principal.knows(name);
+		if (result != null) {
+			switch (expectVD) {
 				case NO:
 				case ONLY_SHADOW_PUBLIC:
 				case ONLY_PUBLIC:
-					Errors.ErrorVariableCollisionPrivate(curPrincipal, ctx.start);
+					Errors.ErrorVariableCollisionPrivate(principal, ctx.start);
 				default:
-					return;
+					return result;
 			}
 		}
 
-		curTerm = model.findVariable(name);
-		if (curTerm != null) {
-			switch (expectDefinedVariables) {
+		result = model.findVariable(name);
+		if (result != null) {
+			switch (expectVD) {
 				case NO:
-					Errors.ErrorVariableCollisionPublic(curTerm, ctx.start);
-					return;
+					Errors.ErrorVariableCollisionPublic(result, ctx.start);
+					return result;
 				case ONLY_SHADOW_PUBLIC:
 					Errors.WarningVariableShadowed(ctx.start);
 					break;
 				default:
-					return;
+					return result;
 			}
 		}
 
@@ -273,75 +254,59 @@ public class CompilerVisitor {
 			Errors.ErrorReservedName(ctx.start);
 		}
 
-		switch (expectDefinedVariables) {
+		switch (expectVD) {
 			case ONLY_PUBLIC:
 			case YES:
-				Errors.ErrorVariableUnknown(curPrincipal, ctx.start);
+				Errors.ErrorVariableUnknown(principal, ctx.start);
 			case PLEASE:
 				Errors.InfoDeclareLongTermVariable(ctx.start);
 			default:
-				curTerm = new Variable(name);
-				return;
+				result = new Variable(name);
+				return result;
 		}
 	}
 
-	public void visitFunctionCall(FunctionCallContext ctx) {
+	public Term visitFunctionCall(FunctionCallContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
 		switch (ctx.FUNCTION().getText()) {
 			case Constants.VPSENC: {
 				model.builtins.symmetric_encryption = true;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
 				}
-				VariableDefined restoreEDV = expectDefinedVariables;
-				expectDefinedVariables = VariableDefined.YES;
-				visitTerm(ctx.argument.get(0));
-				Term key = curTerm;
-				expectDefinedVariables = restoreEDV;
-				visitTerm(ctx.argument.get(1));
-				Term value = curTerm;
-				curTerm = new FunctionSenc(key, value);
-				return;
+				Term key = visitTerm(ctx.argument.get(0), principal, block, VariableDefined.YES);
+				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
+				return new FunctionSenc(key, value);
 			}
 			case Constants.VPSDEC: {
 				model.builtins.symmetric_encryption = true;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
 				}
-				VariableDefined restoreEDV = expectDefinedVariables;
-				expectDefinedVariables = VariableDefined.YES;
-				visitTerm(ctx.argument.get(0));
-				Term key = curTerm;
-				expectDefinedVariables = restoreEDV;
-				visitTerm(ctx.argument.get(1));
+				Term key = visitTerm(ctx.argument.get(0), principal, block, VariableDefined.YES);
+				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
 				// if value is a variable find it's definition
-				Term realValue = curTerm;
-				while (realValue instanceof Variable) {
-					realValue = ((Variable)realValue).subterm;
-				}
-				if (!(realValue instanceof FunctionSenc)) {
+				Term decodedValue = value.deconstructTerm();
+				if (!(decodedValue instanceof FunctionSenc)) {
 					Errors.ErrorDecodingNotEncoded(ctx.argument.get(1));
 				}
-				if (!((FunctionSenc)realValue).key.equals(key)) {
+				if (!((FunctionSenc)decodedValue).key.equals(key)) {
 					Errors.ErrorWrongKey(ctx.argument.get(0));
 				}
-				realValue = ((FunctionSenc)realValue).value;
-				curTerm = new FunctionSdec(key, curTerm, realValue);
-				return;
+				decodedValue = ((FunctionSenc)decodedValue).value;
+				return new FunctionSdec(key, value, decodedValue);
 			}
 			case Constants.VPASSERT: {
-				expectDefinedVariables = VariableDefined.YES;
+				model.builtins.restriction_eq = true;
+				expectVD = VariableDefined.YES;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
 				}
-				visitTerm(ctx.argument.get(0));
-				Term term1 = curTerm;
-				visitTerm(ctx.argument.get(1));
-				Term term2 = curTerm;
+				Term term1 = visitTerm(ctx.argument.get(0), principal, block, expectVD);
+				Term term2 = visitTerm(ctx.argument.get(1), principal, block, expectVD);
 				if (!(term1.equals(term2))) {
 					Errors.WarningAssertNeverTrue(ctx.start);
 				}
-				model.builtins.restriction_eq = true;
-				curBlock.actions.add(new ActionFact(Constants.EQUALITY, new ArrayList<Term>(Arrays.asList(term1, term2))));
+				block.actions.add(new ActionFact(Constants.EQUALITY, new ArrayList<Term>(Arrays.asList(term1, term2))));
 			}
 			default: {
 				throw new STException("Debug: Unexpected function type: " + ctx.FUNCTION().getText() + " in visitFunctionCall.");
@@ -349,14 +314,12 @@ public class CompilerVisitor {
 		}
 	}
 
-	public void visitTuple(TupleContext ctx) {
+	public Term visitTuple(TupleContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
 		ArrayList<Term> subterms = new ArrayList<>();
 		for (TermContext termctx : ctx.term()) {
-			visitTerm(termctx);
-			subterms.add(curTerm);
+			subterms.add(visitTerm(termctx, principal, block, expectVD));
 		}
-		curTerm = new Tuple(subterms);
-		return;
+		return new Tuple(subterms);
 	}
 
 	public void visitQueriesBlock(QueriesBlockContext ctx) {
