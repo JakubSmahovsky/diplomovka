@@ -1,4 +1,4 @@
-package simple_tamarin;
+package simple_tamarin.errors;
 
 import org.antlr.v4.runtime.Token;
 
@@ -8,91 +8,110 @@ import simple_tamarin.parser.Simple_tamarinParser.TermContext;
 
 public final class Errors {
   public static boolean showInfo = true;
+  public static boolean quitOnWarning = false;
   private Errors(){};
 
   public static void ErrorWrongKey(TermContext got) {
     String message = "Key \"" + got.getText() + "\" does not match the key used for encoding!";
-    print(ERROR, got.start, message);
+    error(got.start, message);
   }
 
   public static void ErrorDecodingNotEncoded(TermContext value){
     String message = "Attempting to decode value \"" + value.getText() + "\" which is not symmetrically encoded!";
-    print(ERROR, value.start, message);
+    error(value.start, message);
   }
 
   public static void ErrorArgumentsCount(Token function, int expected, int got) {
     String message = "Wrong number of arguments for function \"" + function.getText() + "\" expected " + expected + ", but got " + got + "!";
-    print(ERROR, function, message); 
+    error(function, message);
   }
 
   public static void ErrorReservedName(Token name) {
     String message = "Name \"" + name.getText() + "\" is reserved!";
-    print(ERROR, name, message);
+    error(name, message);
   }
 
   public static void ErrorPrincipalNameCollision(Token principal) {
     String message = "Principal's name \"" + principal.getText() + "\" is allready used for a public variable!";
-    print(ERROR, principal, message);
+    error(principal, message);
   }
 
   public static void ErrorPrincipalDoesNotExist(Token principal) {
     String message = "Principal \"" + principal.getText() + "\" does not exist at this point!";
-    print(ERROR, principal, message); 
+    error(principal, message); 
   }
 
   public static void ErrorVariableUnknown(Principal principal, Token variable) {
     String message = "Principal \"" + principal + "\" is trying to use a variable \"" + variable.getText() + "\", which it doesn't know!";
-    print(ERROR, variable, message);
+    error(variable, message);
   }
 
   public static void ErrorVariableCollisionPrivate(Principal principal, Token variable) {
     String message = "Principal \"" + principal + "\" allready knows a variable with name \"" + variable.getText() + "\" as priate!";
-    print(ERROR, variable, message);
+    error(variable, message);
   }
 
   public static void ErrorVariableCollisionPublic(Term variable, Token posToken) {
     String message = "Public variable \"" + variable + "\" allready exists!";
-    print(ERROR, posToken, message);
+    error(posToken, message);
   }
 
   public static void ErrorMessageContainsUnnamed(TermContext ctx) {
     String message = "Attempting to send message \"" + ctx.getText() + "\" which contains a term that cannot be assigned a name!";
-    print(ERROR, ctx.start, message);
+    error(ctx.start, message);
   }
 
   public static void WarningVariableShadowed(Token variable) {
     String message = "Variable \"" + variable.getText() + "\" shadows a public variable!";
-    print(WARNING, variable, message);
+    warning(variable, message);
   }
 
   public static void WarningVariableEphemeralShadowed(Token variable) {
     String message = "Ephemeral variable \"" + variable.getText() + "\" allready exist for some principal, this will create a different, long-term variable + \"" + variable.getText() + "\"";
-    print(WARNING, variable, message);
+    warning(variable, message);
   }
 
   public static void WarningAssertNeverTrue(Token assertStart) {
     String message = "The terms being compared can never be equal! This likely means the model will not be executable!";
-    print(WARNING, assertStart, message);
+    warning(assertStart, message);
   }
 
   public static void WarningQueryExecutableDuplicite(Token query) {
     String message = "Duplicite request for executable query. The query will only be verified once.";
-    print(WARNING, query, message);
+    warning(query, message);
   }
 
   public static void InfoDeclareLongTermVariable(Token variable) {
     String message = "Long term variable \"" + variable.getText() + "\" is not declared. It is recommended to declare all long-term variables.";
-    print(INFO, variable, message);
+    info(variable, message);
   }
 
   public static void InfoDeclarePrincipal(Token principal) {
     String message = "Principal \"" + principal.getText() + "\" is not declared. It is recommended to declare all principals.";
-    print(INFO, principal, message);
+    info(principal, message);
   }
 
   public static void InfoKnowsInFirstBlock(Token start) {
     String message = "Effects of knows command are global, it is recommended to use it in the first block.";
-    print(INFO, start, message);
+    info(start, message);
+  }
+
+  public static void error(Token posToken, String message) {
+    print(ERROR, posToken, message);
+    throw new STException();
+  }
+
+  public static void warning(Token posToken, String message) {
+    print(WARNING, posToken, message);
+    if (quitOnWarning) {
+      throw new STException();
+    }
+  }
+
+  public static void info(Token posToken, String message) {
+    if (showInfo) {
+      print(INFO, posToken, message);
+    }
   }
 
   public static void print(String type, Token posToken, String message) {

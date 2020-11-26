@@ -11,13 +11,12 @@ import simple_tamarin.dataStructures.*;
 import simple_tamarin.dataStructures.term.*;
 import simple_tamarin.parser.*;
 import simple_tamarin.parser.Simple_tamarinParser.*;
+import simple_tamarin.errors.Errors;
 
 /**
  * This class implements all visitor methods of the Simple_tamarin compiler
  */
-public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
-	public boolean quitOnWarning;
-	
+public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {	
 	private FileWriter writer;
 	private StModel model;
 
@@ -31,7 +30,7 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 
 	public VisitorImp(FileWriter writer, boolean quitOnWarning, boolean showInfo) {
 		this.writer = writer;
-		this.quitOnWarning = quitOnWarning;
+		Errors.quitOnWarning = quitOnWarning;
 		Errors.showInfo = showInfo;
 	}
 
@@ -124,9 +123,6 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 						variable = existing;
 					} else {
 						Errors.WarningVariableEphemeralShadowed(ctx.variable().start);
-						if (quitOnWarning) {
-							return 1;
-						}
 					}
 				}
 			}
@@ -253,9 +249,6 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 					return 1;
 				case ONLY_SHADOW_PUBLIC:
 					Errors.WarningVariableShadowed(ctx.start);
-					if (quitOnWarning) {
-						return 1;
-					}
 					break;
 				default:
 					return 0;
@@ -351,9 +344,6 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 				Term term2 = curTerm;
 				if (!(term1.equals(term2))) {
 					Errors.WarningAssertNeverTrue(ctx.start);
-					if (quitOnWarning){
-						return 1;
-					}
 				}
 				model.builtins.restriction_eq = true;
 				curBlock.actions.add(new ActionFact(Constants.EQUALITY, new ArrayList<Term>(Arrays.asList(term1, term2))));
@@ -395,9 +385,6 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	@Override public Integer visitExecutable(ExecutableContext ctx) {
 		if (model.queries.executable == true) {
 			Errors.WarningQueryExecutableDuplicite(ctx.start);
-			if (quitOnWarning) {
-				return 1;
-			}
 		} else {
 			model.queries.executable = true;
 		}

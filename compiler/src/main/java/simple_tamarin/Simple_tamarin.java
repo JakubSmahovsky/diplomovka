@@ -2,6 +2,8 @@ package simple_tamarin;
 
 import java.io.*;
 import org.antlr.v4.runtime.CommonTokenStream;
+
+import simple_tamarin.errors.STException;
 import simple_tamarin.parser.*;
 
 public class Simple_tamarin {
@@ -19,6 +21,10 @@ public class Simple_tamarin {
     boolean showInfo = true; // TODO
     VisitorImp visitor = new VisitorImp(writer, quitOnWarning, showInfo);
     
-    visitor.visitModel(parser.model());
+    try {
+      visitor.visitModel(parser.model());
+    } catch (STException e) {
+      System.out.println("Terminating due to unrecoverable errors!");
+    }
   }
 }
