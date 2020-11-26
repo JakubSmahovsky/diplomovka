@@ -57,7 +57,7 @@ public class Variable extends Term {
     return Arrays.asList(this);
   }
 
-  @Override public List<Term> extractKnowledge() {
+  @Override public List<Variable> extractKnowledge() {
     return Arrays.asList(this);
   }
 
@@ -76,5 +76,9 @@ public class Variable extends Term {
     if (sort == VariableSort.FRESH) {
       sort = VariableSort.NOSORT;
     }
+  }
+
+  @Override public boolean canBeLearnt() {
+    return true;
   }
 }

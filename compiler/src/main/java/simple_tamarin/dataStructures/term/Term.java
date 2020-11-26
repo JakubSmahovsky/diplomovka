@@ -14,12 +14,10 @@ public abstract class Term{
   public abstract List<Variable> unify(Term right);
   
   /**
-   * Extracts subterms from source term, but doesn't deconstruct them.
-   * Eg. if "x" is a variable with subterm "y",
-   * then "x" is extracted from "DEC(k, x)", but "y" isn't (neither is "k")
-   * Eg2. "ENC(k, x)" is returned as is, neither "k" nor "x" is extracted
+   * Extracts variables (syntactically) from Terms that can be learnt
+   * TODO: throw runtimeException in Terms that cannot be learnt
    */
-  public abstract List<Term> extractKnowledge();
+  public abstract List<Variable> extractKnowledge();
 
   /**
    * Render Term to text in Tamarin syntax
@@ -35,4 +33,11 @@ public abstract class Term{
    * Removed Fresh tag (~) from variables in Term
    */
   public abstract void removeFresh();
+
+  /**
+   * Terms can be learnt if they are Variables
+   * or if they can be deconstructed and constructed again without a key
+   * @return true if Term can be learnt without missing any names of varibales
+   */
+  public abstract boolean canBeLearnt();
 }

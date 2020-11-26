@@ -9,7 +9,7 @@ import simple_tamarin.dataStructures.term.Variable;
 
 public class Principal {
   public String name;
-  public ArrayList<Term> knowledge;
+  public ArrayList<Variable> knowledge;
   public ArrayList<StBlock> blocks;
   public StBlock nextBlock;
   public ArrayList<Variable> initState;
@@ -26,9 +26,9 @@ public class Principal {
    * @return known variable with given name or null if principal doesn't know it
    */
   public Variable knows(String name) {
-    for (Term term : knowledge) {
-      if (term instanceof Variable && ((Variable)term).name.equals(name)) {
-        return (Variable)term;
+    for (Variable variable : knowledge) {
+      if (variable.name.equals(name)) {
+        return variable;
       }
     }
     return null;
@@ -48,7 +48,7 @@ public class Principal {
 
   
   public void learn(Term term) {
-    for (Term extracted : term.extractKnowledge()) {
+    for (Variable extracted : term.extractKnowledge()) {
       if (!knowledge.contains(extracted)) {
         knowledge.add(extracted);
       }

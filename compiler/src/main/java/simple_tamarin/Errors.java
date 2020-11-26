@@ -55,6 +55,11 @@ public final class Errors {
     print(ERROR, posToken, message);
   }
 
+  public static void ErrorMessageContainsUnnamed(TermContext ctx) {
+    String message = "Attempting to send message \"" + ctx.getText() + "\" which contains a term that cannot be assigned a name!";
+    print(ERROR, ctx.start, message);
+  }
+
   public static void WarningVariableShadowed(Token variable) {
     String message = "Variable \"" + variable.getText() + "\" shadows a public variable!";
     print(WARNING, variable, message);

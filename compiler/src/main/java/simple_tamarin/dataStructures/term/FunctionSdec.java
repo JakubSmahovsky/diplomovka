@@ -55,8 +55,8 @@ public class FunctionSdec extends Term{
     return result;
   }
 
-  @Override public List<Term> extractKnowledge() {
-    return senc.extractKnowledge();
+  @Override public List<Variable> extractKnowledge() {
+    return null;
   }
 
   @Override public String render(){
@@ -71,5 +71,9 @@ public class FunctionSdec extends Term{
     key.removeFresh();
     senc.removeFresh();
     decodedValue.removeFresh();    
+  }
+
+  @Override public boolean canBeLearnt() {
+    return false;
   }
 }

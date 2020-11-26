@@ -155,7 +155,7 @@ public class Builder extends BuilderFormatting{
     for (Principal principal : model.principals) {
       ArrayList<Term> finalState = principal.blocks.get(principal.blocks.size()-1).completeState();
       for (Term term : finalState) {
-        for (Variable variable : term.unify(term)) { //TODO: this returns all variables as a side effect, don't be lazy implement it properly
+        for (Variable variable : term.extractKnowledge()) {
           if (!variables.contains(variable)) {
               variables.add(variable);
           }

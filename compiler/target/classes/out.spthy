@@ -18,15 +18,14 @@ let
 in
 [
   !Bob_init($Bob, Kab),
-  In($Alice),
-  In(m1),
+  In(<$Alice, m1>),
   Fr(~Nb)
 ]--[
-  Bob_0($Bob, Kab, $Alice, m1, Na, ~Nb, m2)
+  Bob_0($Bob, Kab, <$Alice, m1>, Na, ~Nb, m2)
 ]->[
   Out($Bob),
   Out(m2),
-  Bob_0($Bob, Kab, $Alice, m1, Na, ~Nb, m2)
+  Bob_0($Bob, Kab, <$Alice, m1>, Na, ~Nb, m2)
 ]
 
 rule Alice_0:
@@ -39,8 +38,7 @@ in
 ]--[
   Alice_0($Alice, Kab, ~Na, m1)
 ]->[
-  Out($Alice),
-  Out(m1),
+  Out(<$Alice, m1>),
   Alice_0($Alice, Kab, ~Na, m1)
 ]
 
@@ -61,7 +59,7 @@ in
 lemma executable:
 exists-trace "
 Ex Bob Kab Alice m1 Na Nb m2 #t0 #t1.
-Bob_0(Bob, Kab, Alice, m1, Na, Nb, m2) @ #t0 &
+Bob_0(Bob, Kab, <Alice, m1>, Na, Nb, m2) @ #t0 &
 Alice_1(Alice, Kab, Bob, m2, Nb) @ #t1
 "
 end

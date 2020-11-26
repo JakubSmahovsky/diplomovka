@@ -171,6 +171,10 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		for (TermContext message : ctx.term()) {
 			visitTerm(message);
 
+			if (!curTerm.canBeLearnt()) {
+				Errors.ErrorMessageContainsUnnamed(message);
+			}
+
 			// if it's not a public variable
 			if (!(curTerm instanceof Variable) || model.findVariable(((Variable)curTerm).name) == null) {
 				// add all new variables to receiver's knowledge

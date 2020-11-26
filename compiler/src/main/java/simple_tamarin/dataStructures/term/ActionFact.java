@@ -30,7 +30,7 @@ public class ActionFact extends Term{
    * extractKnowledge does not make sense for action facts and should never be called.
    * TODO: refactor this somehow
    */
-  @Override public List<Term> extractKnowledge() {
+  @Override public List<Variable> extractKnowledge() {
     return null;
   }
 
@@ -46,5 +46,12 @@ public class ActionFact extends Term{
     for (Term term : terms) {
       term.removeFresh();
     }
+  }
+
+  /**
+   * TODO: this call doesn't make sense again, REMOVE THIS CLASS ALREADY!!!
+   */
+  @Override public boolean canBeLearnt() {
+    return false; 
   }
 }

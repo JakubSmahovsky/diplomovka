@@ -48,11 +48,11 @@ public class Tuple extends Term{
     return result;
   }
 
-  @Override public List<Term> extractKnowledge() {
-    List<Term> result = new ArrayList<>();
+  @Override public List<Variable> extractKnowledge() {
+    List<Variable> result = new ArrayList<>();
     for (Term term : subterms) {
       result.addAll(term.extractKnowledge());
-    }    
+    }
     return result;
   }
 
@@ -85,5 +85,14 @@ public class Tuple extends Term{
     for (Term term : subterms) {
       term.removeFresh();
     }
+  }
+
+  @Override public boolean canBeLearnt() {
+    for (Term term : subterms) {
+      if (!term.canBeLearnt()) {
+        return false;
+      }
+    }
+    return true;
   }
 }

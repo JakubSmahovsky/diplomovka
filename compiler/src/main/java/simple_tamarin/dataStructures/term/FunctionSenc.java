@@ -45,8 +45,8 @@ public class FunctionSenc extends Term {
     return result;
   }
   
-  @Override public List<Term> extractKnowledge() {
-    return Arrays.asList(this);
+  @Override public List<Variable> extractKnowledge() {
+    return null;
   }
 
   @Override public String render(){
@@ -60,5 +60,9 @@ public class FunctionSenc extends Term {
   @Override public void removeFresh() {
     key.removeFresh();
     value.removeFresh();
+  }
+
+  @Override public boolean canBeLearnt() {
+    return false;
   }
 }
