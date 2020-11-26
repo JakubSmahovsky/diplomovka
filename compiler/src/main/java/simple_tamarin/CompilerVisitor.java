@@ -9,14 +9,14 @@ import java.util.List;
 import simple_tamarin.Constants.*;
 import simple_tamarin.dataStructures.*;
 import simple_tamarin.dataStructures.term.*;
-import simple_tamarin.parser.*;
 import simple_tamarin.parser.Simple_tamarinParser.*;
 import simple_tamarin.errors.Errors;
+import simple_tamarin.errors.STException;
 
 /**
  * This class implements all visitor methods of the Simple_tamarin compiler
  */
-public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {	
+public class CompilerVisitor {	
 	private FileWriter writer;
 	private StModel model;
 
@@ -28,18 +28,16 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 	// Changes behavior of visitVariable
 	private VariableDefined expectDefinedVariables;
 
-	public VisitorImp(FileWriter writer, boolean quitOnWarning, boolean showInfo) {
+	public CompilerVisitor(FileWriter writer, boolean quitOnWarning, boolean showInfo) {
 		this.writer = writer;
 		Errors.quitOnWarning = quitOnWarning;
 		Errors.showInfo = showInfo;
 	}
 
-	@Override	public Integer visitModel(ModelContext ctx) {
+	public void visitModel(ModelContext ctx) {
 		this.model = new StModel();
 		for (SegmentContext segment : ctx.segment()) {
-			if (visitSegment(segment) != 0) {
-				return 1;
-			}
+			visitSegment(segment);
 		}
 
 		for (Principal principal : model.principals) {
@@ -55,18 +53,27 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return 0;
 	}
 
-	@Override public Integer visitSegment(SegmentContext ctx) { 
-		return visitChildren(ctx);
+	public void visitSegment(SegmentContext ctx) {
+		if (ctx.messageBlock() != null) {
+			visitMessageBlock(ctx.messageBlock());
+			return;
+		}
+		if (ctx.principalBlock() != null) {
+			visitPrincipalBlock(ctx.principalBlock());
+			return;
+		}
+		if (ctx.queriesBlock() != null) {
+			visitQueriesBlock(ctx.queriesBlock());
+			return;
+		}
 	}
 
-	@Override public Integer visitPrincipalBlock(PrincipalBlockContext ctx) {
+	public void visitPrincipalBlock(PrincipalBlockContext ctx) {
 		String principalName = ctx.principal.getText();
 		if (!identifierNameValid(principalName)) {
 			Errors.ErrorReservedName(ctx.principal);
-			return 1;
 		}
 		
 		Principal principal = model.findPrincipal(principalName);
@@ -75,7 +82,6 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 			// TODO allow declaring principals
 			if (model.findVariable(principalName) != null) {
 				Errors.ErrorPrincipalNameCollision(ctx.principal);
-				return 1;
 			}
 			principal = model.addPrincipal(principalName);
 		}
@@ -86,27 +92,37 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		curPrincipal.nextBlock();
 
 		for (CommandContext command : ctx.command()) {
-			if (visitCommand(command) != 0)
-				return 1;
+			visitCommand(command);
 		}
-
-		return 0;
 	}
 
-	@Override public Integer visitCommand(CommandContext ctx) {
-		return visitChildren(ctx);
+	public void visitCommand(CommandContext ctx) {
+		if (ctx.knows() != null) {
+			visitKnows(ctx.knows());
+			return;
+		}
+		if (ctx.generates() != null) {
+			visitGenerates(ctx.generates());
+			return;
+		}
+		if (ctx.assignment() != null) {
+			visitAssignment(ctx.assignment());
+			return;
+		}
+		if (ctx.check() != null) {
+			visitCheck(ctx.check());
+			return;
+		}
 	}
 
-	@Override public Integer visitKnows(KnowsContext ctx) {
+	public void visitKnows(KnowsContext ctx) {
 		if (curPrincipal.blocks.get(0) != curBlock) {
 			Errors.InfoKnowsInFirstBlock(ctx.getStart());
 		}
 
 		boolean pub = (ctx.modifier.getText().equals("public")) ? true : false;
 		expectDefinedVariables = pub ? VariableDefined.ONLY_PUBLIC : VariableDefined.ONLY_SHADOW_PUBLIC;
-		if (visitVariable(ctx.variable()) != 0) {
-			return 1;
-		} 
+		visitVariable(ctx.variable());
 		Variable variable = (Variable)curTerm;
 
 		if (pub) {
@@ -129,37 +145,31 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 		}
 		curPrincipal.learn(variable);
 		curPrincipal.initState.add(variable);
-		return 0;
 	}
 
-	@Override public Integer visitGenerates(GeneratesContext ctx) {
+	public void visitGenerates(GeneratesContext ctx) {
 		expectDefinedVariables = VariableDefined.ONLY_SHADOW_PUBLIC;
-		if (visitVariable(ctx.variable()) != 0) {
-			return 1;
-		}
+		visitVariable(ctx.variable());
 		Variable variable = (Variable)curTerm;
 		variable.cratedBy = curPrincipal;
 		variable.sort = VariableSort.FRESH;
 		curPrincipal.knowledge.add(variable);
 		curBlock.premise.add(new Command(CommandType.FRESH, variable));
 		curBlock.state.add(variable);
-		return 0;
 	}
 
-	@Override public Integer visitCheck(CheckContext ctx){
-		return visitChildren(ctx);
+	public void visitCheck(CheckContext ctx){
+		visitFunctionCall(ctx.functionCall());
 	}
 
-	@Override public Integer visitMessageBlock(MessageBlockContext ctx) {
+	public void visitMessageBlock(MessageBlockContext ctx) {
 		Principal sender = model.findPrincipal(ctx.sender.getText());
 		if (sender == null) {
 			Errors.ErrorPrincipalDoesNotExist(ctx.sender);
-			return 1;
 		}
 		Principal receiver = model.findPrincipal(ctx.receiver.getText());
 		if (receiver == null) {
 			Errors.ErrorPrincipalDoesNotExist(ctx.receiver);
-			return 1;
 		}
 
 		curPrincipal = sender;
@@ -190,20 +200,15 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 				receiver.nextBlock.state.add(curTerm);
 			}
 		}
-		return 0;
 	}
 
-	@Override public Integer visitAssignment(AssignmentContext ctx) {
+	public void visitAssignment(AssignmentContext ctx) {
 		expectDefinedVariables = VariableDefined.ONLY_SHADOW_PUBLIC;
-		if (visitTerm(ctx.left) != 0) {
-			return 1;
-		}
+		visitTerm(ctx.left);
 		Term left = curTerm;
 
 		expectDefinedVariables = VariableDefined.YES;
-		if (visitTerm(ctx.right) != 0) {
-			return 1;
-		}
+		visitTerm(ctx.right);
 		Term right = curTerm;
 
 		curBlock.aliases.add(new Alias(left, right));
@@ -215,17 +220,27 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 				curPrincipal.knowledge.add(variable);
 			}
 		}
-		return 0;
 	}
 
-	@Override public Integer visitTerm(TermContext ctx) {
-		return visitChildren(ctx);
+	public void visitTerm(TermContext ctx) {
+		if (ctx.variable() != null) {
+			visitVariable(ctx.variable());
+			return;
+		}
+		if (ctx.functionCall() != null) {
+			visitFunctionCall(ctx.functionCall());
+			return;
+		}
+		if (ctx.tuple() != null) {
+			visitTuple(ctx.tuple());
+			return;
+		}
 	}
 
 	/**
 	 * Finds a variable if it should have existed or creates a new one otherwise.
 	 */
-	@Override public Integer visitVariable(VariableContext ctx) {
+	public void visitVariable(VariableContext ctx) {
 		String name = ctx.IDENTIFIER().getText();
 		
 		curTerm = curPrincipal.knows(name);
@@ -235,9 +250,8 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 				case ONLY_SHADOW_PUBLIC:
 				case ONLY_PUBLIC:
 					Errors.ErrorVariableCollisionPrivate(curPrincipal, ctx.start);
-					return 1;
 				default:
-					return 0;
+					return;
 			}
 		}
 
@@ -246,71 +260,59 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 			switch (expectDefinedVariables) {
 				case NO:
 					Errors.ErrorVariableCollisionPublic(curTerm, ctx.start);
-					return 1;
+					return;
 				case ONLY_SHADOW_PUBLIC:
 					Errors.WarningVariableShadowed(ctx.start);
 					break;
 				default:
-					return 0;
+					return;
 			}
 		}
 
 		if (!identifierNameValid(name)) {
 			Errors.ErrorReservedName(ctx.start);
-			return 1;
 		}
 
 		switch (expectDefinedVariables) {
 			case ONLY_PUBLIC:
 			case YES:
 				Errors.ErrorVariableUnknown(curPrincipal, ctx.start);
-				return 1;
 			case PLEASE:
 				Errors.InfoDeclareLongTermVariable(ctx.start);
 			default:
 				curTerm = new Variable(name);
-				return 0;
+				return;
 		}
 	}
 
-	@Override public Integer visitFunctionCall(FunctionCallContext ctx) {
+	public void visitFunctionCall(FunctionCallContext ctx) {
 		switch (ctx.FUNCTION().getText()) {
 			case Constants.VPSENC: {
 				model.builtins.symmetric_encryption = true;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
-					return 1;
 				}
 				VariableDefined restoreEDV = expectDefinedVariables;
 				expectDefinedVariables = VariableDefined.YES;
-				if (visitTerm(ctx.argument.get(0)) != 0 ) {
-					return 1;
-				}
+				visitTerm(ctx.argument.get(0));
 				Term key = curTerm;
 				expectDefinedVariables = restoreEDV;
-				if (visitTerm(ctx.argument.get(1)) != 0 ) {
-					return 1;
-				}
+				visitTerm(ctx.argument.get(1));
 				Term value = curTerm;
 				curTerm = new FunctionSenc(key, value);
-				return 0;
+				return;
 			}
 			case Constants.VPSDEC: {
 				model.builtins.symmetric_encryption = true;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
-					return 1;
 				}
 				VariableDefined restoreEDV = expectDefinedVariables;
 				expectDefinedVariables = VariableDefined.YES;
-				if (visitTerm(ctx.argument.get(0)) != 0 ) {
-					return 1;
-				}
+				visitTerm(ctx.argument.get(0));
 				Term key = curTerm;
 				expectDefinedVariables = restoreEDV;
-				if (visitTerm(ctx.argument.get(1)) != 0 ) {
-					return 1;
-				}
+				visitTerm(ctx.argument.get(1));
 				// if value is a variable find it's definition
 				Term realValue = curTerm;
 				while (realValue instanceof Variable) {
@@ -318,29 +320,22 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 				}
 				if (!(realValue instanceof FunctionSenc)) {
 					Errors.ErrorDecodingNotEncoded(ctx.argument.get(1));
-					return 1;
 				}
 				if (!((FunctionSenc)realValue).key.equals(key)) {
 					Errors.ErrorWrongKey(ctx.argument.get(0));
-					return 1;
 				}
 				realValue = ((FunctionSenc)realValue).value;
 				curTerm = new FunctionSdec(key, curTerm, realValue);
-				return 0;
+				return;
 			}
 			case Constants.VPASSERT: {
 				expectDefinedVariables = VariableDefined.YES;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
-					return 1;
 				}
-				if (visitTerm(ctx.argument.get(0)) != 0 ) {
-					return 1;
-				}
+				visitTerm(ctx.argument.get(0));
 				Term term1 = curTerm;
-				if (visitTerm(ctx.argument.get(1)) != 0 ) {
-					return 1;
-				}
+				visitTerm(ctx.argument.get(1));
 				Term term2 = curTerm;
 				if (!(term1.equals(term2))) {
 					Errors.WarningAssertNeverTrue(ctx.start);
@@ -349,47 +344,40 @@ public class VisitorImp extends Simple_tamarinBaseVisitor<Integer> {
 				curBlock.actions.add(new ActionFact(Constants.EQUALITY, new ArrayList<Term>(Arrays.asList(term1, term2))));
 			}
 			default: {
-				System.out.println("Debug: Unexpected function type: " + ctx.FUNCTION().getText() + " in visitFunctionCall.");
-				return 1;
+				throw new STException("Debug: Unexpected function type: " + ctx.FUNCTION().getText() + " in visitFunctionCall.");
 			}
 		}
 	}
 
-	@Override public Integer visitTuple(TupleContext ctx) {
+	public void visitTuple(TupleContext ctx) {
 		ArrayList<Term> subterms = new ArrayList<>();
-		for (TermContext tctx : ctx.term()) {
-			if (visitTerm(tctx) != 0 ) {
-				return 1;
-			}
+		for (TermContext termctx : ctx.term()) {
+			visitTerm(termctx);
 			subterms.add(curTerm);
 		}
 		curTerm = new Tuple(subterms);
-		return 0;
+		return;
 	}
 
-	@Override public Integer visitQueriesBlock(QueriesBlockContext ctx) {
+	public void visitQueriesBlock(QueriesBlockContext ctx) {
 		for (QueryContext query : ctx.query()) {
-			if (visitQuery(query) != 0)
-			return 1;
+			visitQuery(query);
 		}
-		return 0;
 	}
 
-	@Override public Integer visitQuery(QueryContext ctx) {
-		if (visitChildren(ctx) != 0) {
-			return 1;
+	public void visitQuery(QueryContext ctx) {
+		if (ctx.executable() != null) {
+			visitExecutable(ctx.executable());
+			return;
 		}
-		return 0;
 	}
 
-	@Override public Integer visitExecutable(ExecutableContext ctx) {
+	public void visitExecutable(ExecutableContext ctx) {
 		if (model.queries.executable == true) {
 			Errors.WarningQueryExecutableDuplicite(ctx.start);
 		} else {
 			model.queries.executable = true;
 		}
-
-		return 0;
 	}
 
 	private boolean identifierNameValid(String id) {

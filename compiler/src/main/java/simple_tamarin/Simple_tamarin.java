@@ -19,12 +19,12 @@ public class Simple_tamarin {
     FileWriter writer = new FileWriter(out);
     boolean quitOnWarning = false; // TODO
     boolean showInfo = true; // TODO
-    VisitorImp visitor = new VisitorImp(writer, quitOnWarning, showInfo);
+    CompilerVisitor visitor = new CompilerVisitor(writer, quitOnWarning, showInfo);
     
     try {
       visitor.visitModel(parser.model());
     } catch (STException e) {
-      System.out.println("Terminating due to unrecoverable errors!");
+      e.print();
     }
   }
 }
