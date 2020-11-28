@@ -2,7 +2,6 @@ package simple_tamarin.dataStructures;
 
 import java.util.ArrayList;
 
-import simple_tamarin.dataStructures.term.ActionFact;
 import simple_tamarin.dataStructures.term.Term;
 
 /**
@@ -12,7 +11,7 @@ public class StBlock {
   public Principal principal;
   public ArrayList<Alias> aliases;
   public ArrayList<Command> premise;
-  public ArrayList<ActionFact> actions;
+  public ArrayList<Fact> actions;
   public ArrayList<Command> result;
   public ArrayList<Term> state;
   public int rangeBegin;

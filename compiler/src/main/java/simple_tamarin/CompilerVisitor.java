@@ -306,7 +306,7 @@ public class CompilerVisitor {
 				if (!(term1.equals(term2))) {
 					Errors.WarningAssertNeverTrue(ctx.start);
 				}
-				block.actions.add(new ActionFact(Constants.EQUALITY, new ArrayList<Term>(Arrays.asList(term1, term2))));
+				block.actions.add(new Fact(Constants.EQUALITY, new ArrayList<Term>(Arrays.asList(term1, term2))));
 			}
 			default: {
 				throw new STException("Debug: Unexpected function type: " + ctx.FUNCTION().getText() + " in visitFunctionCall.");

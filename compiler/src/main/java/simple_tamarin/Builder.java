@@ -115,8 +115,8 @@ public class Builder extends BuilderFormatting{
     facts = new ArrayList<>();
     String resultStateFact = resultStateFact(block);
     facts.add(resultStateFact);
-    for (ActionFact fact : block.actions) {
-      facts.add(BuilderFormatting.fact(fact.name, fact.terms));
+    for (Fact fact : block.actions) {
+      facts.add(fact.render());
     }
     output.append(ruleAction(facts));
 
