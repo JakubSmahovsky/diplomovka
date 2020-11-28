@@ -15,21 +15,21 @@ public class Tuple extends Term{
     if (this == obj) {
       return true;
     }
-
-    if (!(obj instanceof Tuple)) {
+    if (!(obj instanceof Term)) {
       return false;
     }
-
-    if (subterms.size() != ((Tuple)obj).subterms.size()) {
+    Term term = ((Term)obj).deconstructTerm();
+    if (!(term instanceof Tuple)) {
       return false;
     }
-
+    if (subterms.size() != ((Tuple)term).subterms.size()) {
+      return false;
+    }
     for (int i = 0; i < subterms.size(); i++) {
-      if (!subterms.get(i).equals(((Tuple)obj).subterms.get(i))) {
+      if (!subterms.get(i).equals(((Tuple)term).subterms.get(i))) {
         return false;
       }
     }
-
     return true;
   }
 
@@ -43,7 +43,11 @@ public class Tuple extends Term{
     }
     ArrayList<Variable> result = new ArrayList<>();
     for (int i = 0; i < subterms.size(); i++) {
-      result.addAll(subterms.get(i).unify(((Tuple)right).subterms.get(i)));
+      List<Variable> subresult = subterms.get(i).unify(((Tuple)right).subterms.get(i));
+      if (subresult == null) {
+        return null;
+      }
+      result.addAll(subresult);
     }
     return result;
   }

@@ -308,6 +308,17 @@ public class CompilerVisitor {
 				}
 				block.actions.add(new Fact(Constants.EQUALITY, new ArrayList<Term>(Arrays.asList(term1, term2))));
 			}
+			case Constants.VPHASH: {
+				model.builtins.hashing = true;
+				if (ctx.argument.size() < 1) {
+					Errors.ErrorArgumentsMinCount(ctx.FUNCTION().getSymbol(), 1, ctx.argument.size());
+				}
+				ArrayList<Term> subterms = new ArrayList<>();
+				for (TermContext termctx : ctx.argument) {
+					subterms.add(visitTerm(termctx, principal, block, expectVD));
+				}
+				return new FunctionHash(subterms);
+			}
 			default: {
 				throw new STException("Debug: Unexpected function type: " + ctx.FUNCTION().getText() + " in visitFunctionCall.");
 			}

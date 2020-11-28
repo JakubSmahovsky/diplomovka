@@ -16,16 +16,18 @@ public class FunctionSenc extends Term {
     this.value = value;
   }
 
-  @Override public boolean equals(Object term) {
-    if (this == term) {
+  @Override public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (term instanceof FunctionSenc) {
-      if (key.equals(((FunctionSenc)term).key) && value.equals(((FunctionSenc)term).value)) {
-        return true;
-      }
+    if (!(obj instanceof Term)) {
+      return false;
     }
-    return false;
+    Term term = ((Term)obj).deconstructTerm();
+    if (!(term instanceof FunctionSenc)) {
+      return false;
+    }
+    return (key.equals(((FunctionSenc)term).key) && value.equals(((FunctionSenc)term).value));
   }
 
   @Override public Term deconstructTerm() {

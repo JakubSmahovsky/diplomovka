@@ -28,12 +28,20 @@ public class Variable extends Term {
     this.sort = sort;
   }
 
-  @Override public boolean equals(Object term) {
-    if (!(term instanceof Term)) {
+  @Override public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof Term)) {
       return false;
     }
-    
-    return this.deconstructTerm() == ((Term)term).deconstructTerm();
+    Term term = ((Term)obj).deconstructTerm();
+    Term thisTerm = this.deconstructTerm();
+    if (thisTerm instanceof Variable) {
+      return thisTerm == term;
+    } else {
+      return thisTerm.equals(term);
+    }
   }
 
   public static Variable nextTemporal(){

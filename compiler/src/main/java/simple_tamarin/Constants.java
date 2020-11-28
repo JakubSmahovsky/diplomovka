@@ -46,14 +46,20 @@ public final class Constants{
 
   public static final String INDENT = "  ";
   public static final String DEFAULTTHEORYNAME = "spthy";
-  public static final String BUILTIN_SYMMETRIC_ENCRYPTION = "symmetric-encryption";
   public static final String EXECUTABLE = "executable";
   public static final String TEMPORAL = "t";
+  public static final String EQUALITY = "Eq";
+  // builtins
+  public static final String BUILTIN_SYMMETRIC_ENCRYPTION = "symmetric-encryption";
+  public static final String BUILTIN_HASHING = "hashing";
+  // Tamarin functions
   public static final String INIT = "init";
   public static final String SENC = "senc";
   public static final String SDEC = "sdec";
-  public static final String EQUALITY = "Eq";
+  public static final String HASH = "h";
+  // VP functions
   public static final String VPSENC = "ENC";
   public static final String VPSDEC = "DEC";
   public static final String VPASSERT = "ASSERT";
+  public static final String VPHASH = "HASH";
 }

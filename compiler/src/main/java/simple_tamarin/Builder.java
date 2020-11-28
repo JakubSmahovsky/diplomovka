@@ -35,6 +35,9 @@ public class Builder extends BuilderFormatting{
     if (model.builtins.symmetric_encryption = true) {
       builtins.add(Constants.BUILTIN_SYMMETRIC_ENCRYPTION);
     }
+    if (model.builtins.hashing = true) {
+      builtins.add(Constants.BUILTIN_HASHING);
+    }
     output.append(builtins(builtins));
   }
 

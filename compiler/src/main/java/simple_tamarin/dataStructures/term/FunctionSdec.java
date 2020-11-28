@@ -26,16 +26,14 @@ public class FunctionSdec extends Term{
     this.decodedValue = decodedValue;
   }
 
-  @Override public boolean equals(Object term) {
-    if (this == term) {
+  @Override public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (term instanceof FunctionSdec) {
-      if (key.equals(((FunctionSdec)term).key) && senc.equals(((FunctionSdec)term).senc)) {
-        return true;
-      }
+    if (!(obj instanceof Term)) {
+      return false;
     }
-    return false;
+    return this.deconstructTerm().equals(((Term)obj).deconstructTerm());
   }
 
   @Override public Term deconstructTerm() {

@@ -1,7 +1,7 @@
 theory spthy
 begin
 
-builtins: symmetric-encryption
+builtins: symmetric-encryption, hashing
 
 rule init:
 [
@@ -18,28 +18,30 @@ let
 in
 [
   !Bob_init($Bob, Kab),
-  In(<$Alice, m1>),
+  In(<m0, m1>),
   Fr(~Nb)
 ]--[
-  Bob_0($Bob, Kab, <$Alice, m1>, Na, ~Nb, m2)
+  Bob_0($Bob, Kab, <m0, m1>, Na, ~Nb, m2),
+  Eq(m0, h(<$Alice, Kab>))
 ]->[
   Out($Bob),
   Out(m2),
-  Bob_0($Bob, Kab, <$Alice, m1>, Na, ~Nb, m2)
+  Bob_0($Bob, Kab, <m0, m1>, Na, ~Nb, m2)
 ]
 
 rule Alice_0:
 let
   m1 = senc(~Na, Kab)
+  m0 = h(<$Alice, Kab>)
 in
 [
   !Alice_init($Alice, Kab),
   Fr(~Na)
 ]--[
-  Alice_0($Alice, Kab, ~Na, m1)
+  Alice_0($Alice, Kab, ~Na, m1, m0)
 ]->[
-  Out(<$Alice, m1>),
-  Alice_0($Alice, Kab, ~Na, m1)
+  Out(<m0, m1>),
+  Alice_0($Alice, Kab, ~Na, m1, m0)
 ]
 
 rule Alice_1:
@@ -47,7 +49,7 @@ let
   Nb = sdec(m2, Kab)
 in
 [
-  Alice_0($Alice, Kab, Na, m1),
+  Alice_0($Alice, Kab, Na, m1, m0),
   In($Bob),
   In(m2)
 ]--[
@@ -56,10 +58,13 @@ in
   Alice_1($Alice, Kab, $Bob, m2, Nb)
 ]
 
+restriction Equality:
+  "All x y #i. Eq(x,y) @i ==> x = y"
+
 lemma executable:
 exists-trace "
-Ex Bob Kab Alice m1 Na Nb m2 #t0 #t1.
-Bob_0(Bob, Kab, <Alice, m1>, Na, Nb, m2) @ #t0 &
+Ex Bob Kab m0 m1 Na Nb m2 Alice #t0 #t1.
+Bob_0(Bob, Kab, <m0, m1>, Na, Nb, m2) @ #t0 &
 Alice_1(Alice, Kab, Bob, m2, Nb) @ #t1
 "
 end

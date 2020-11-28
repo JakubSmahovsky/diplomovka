@@ -121,7 +121,7 @@ public abstract class BuilderFormatting {
   public static String restrictionEq() {
     return 
       "restriction Equality:\r\n" +
-      Constants.INDENT + "All x y #i. Eq(x,y) @i ==> x = y\r\n" +
+      Constants.INDENT + "\"All x y #i. Eq(x,y) @i ==> x = y\"\r\n" +
       "\r\n"; // empty line after every restriction
   }
 

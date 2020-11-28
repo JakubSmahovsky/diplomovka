@@ -41,6 +41,7 @@ executable: 'executable?';
 FUNCTION:
   'ENC' |
   'DEC' |
+  'HASH' |
   // checkables
   'ASSERT';
 

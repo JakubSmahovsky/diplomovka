@@ -6,10 +6,12 @@ Alice [
   knows private Kab
   generates Na
   m1 = ENC(Kab, Na)
+  m0 = HASH(Alice, Kab)
 ]
-Alice -> Bob: {Alice, m1}
+Alice -> Bob: {m0, m1}
 
 Bob [
+  ASSERT(m0, HASH(Alice, Kab))?
   Na = DEC(Kab, m1)
   generates Nb
   m2 = ENC(Kab, Nb)

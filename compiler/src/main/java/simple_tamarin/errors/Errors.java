@@ -26,6 +26,11 @@ public final class Errors {
     error(function, message);
   }
 
+  public static void ErrorArgumentsMinCount(Token function, int expected, int got) {
+    String message = "Insufficient number of arguments for function \"" + function.getText() + "\" expected at least" + expected + ", but got " + got + "!";
+    error(function, message);
+  }
+
   public static void ErrorReservedName(Token name) {
     String message = "Name \"" + name.getText() + "\" is reserved!";
     error(name, message);
