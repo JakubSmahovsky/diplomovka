@@ -18,8 +18,8 @@ public class Fact {
     this.terms = new ArrayList<>(terms);
   }
 
-  public String render(){
-    return BuilderFormatting.fact(name, terms);
+  public String render(StBlock block){
+    return BuilderFormatting.fact(name, terms, block);
   }
 
   public String renderLemma(){

@@ -38,13 +38,17 @@ public abstract class BuilderFormatting {
     return alias.left.render() + " = " + alias.right.render();
   }
 
-  public static String fact(String name, List<? extends Term> terms) {
+  public static String fact(String name, List<? extends Term> terms, StBlock block) {
     StringBuilder result = new StringBuilder();
     result.append(name + "(");
 
     Iterator<? extends Term> it = terms.iterator();
     while (it.hasNext()) {
-      result.append(it.next().render());
+      if (block == null) {
+        result.append(it.next().render());
+      } else {
+        result.append(it.next().render(block));
+      }
       if (it.hasNext()) {
         result.append(", ");
       }
@@ -54,32 +58,36 @@ public abstract class BuilderFormatting {
     return result.toString();
   }
 
-  public static String fact(String name, Term term) {
-    return fact(name, Arrays.asList(term));
+  public static String fact(String name, Term term, StBlock block) {
+    return fact(name, Arrays.asList(term), block);
   }
 
-  public static String persistentFact(String name, List<Variable> variables) {
-    return "!" + fact(name, variables);
+  public static String persistentFact(String name, List<Variable> variables, StBlock block) {
+    return "!" + fact(name, variables, block);
   }
 
-  public static String resultStateFact(StBlock block) {
-    return fact(blockName(block), block.completeState());
+  /**
+   * @param sourceBlock is block whose state we are rendering
+   * @param contextBlock is block whose body requires the state fact
+   */
+  public static String resultStateFact(StBlock sourceBlock, StBlock contextBlock) {
+    return fact(blockName(sourceBlock), sourceBlock.completeState(), contextBlock);
   }
 
-  public static String initStateFact(Principal principal) {
-    return persistentFact(principal.name + "_init", principal.initState);
+  public static String initStateFact(Principal principal, StBlock block) {
+    return persistentFact(principal.name + "_init", principal.initState, block);
   }
 
-  public static String freshFact(Term term) {
-    return fact("Fr", term);
+  public static String freshFact(Term term, StBlock block) {
+    return fact("Fr", term, block);
   }
 
-  public static String inFact(Term term) {
-    return fact("In", term);
+  public static String inFact(Term term, StBlock block) {
+    return fact("In", term, block);
   }
 
-  public static String outFact(Term term) {
-    return fact("Out", term);
+  public static String outFact(Term term, StBlock block) {
+    return fact("Out", term, block);
   }
 
   public static String ruleAliases(String name, List<String> aliases) {

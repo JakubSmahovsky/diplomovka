@@ -6,6 +6,7 @@ import java.util.List;
 
 import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
+import simple_tamarin.dataStructures.StBlock;
 
 public class FunctionHash extends Term {
   public ArrayList<Term> subterms;
@@ -51,7 +52,15 @@ public class FunctionHash extends Term {
     if (subterms.size() > 1) {
       tuple = Arrays.asList(new Tuple(subterms));
     }
-    return BuilderFormatting.fact(Constants.HASH, tuple);
+    return BuilderFormatting.fact(Constants.HASH, tuple, null);
+  }
+
+  @Override public String render(StBlock block) {
+    return render();
+  }
+
+  @Override public String render(List<Term> substitutions) {
+    return render();
   }
 
   @Override
@@ -69,5 +78,9 @@ public class FunctionHash extends Term {
     for (Term term : subterms) {
       term.removeFresh();
     }
+  }
+
+  @Override public boolean isDeconstructionTerm() {
+    return false;
   }
 }

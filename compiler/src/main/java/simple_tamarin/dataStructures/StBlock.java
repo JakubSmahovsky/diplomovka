@@ -10,6 +10,7 @@ import simple_tamarin.dataStructures.term.Term;
 public class StBlock {
   public Principal principal;
   public ArrayList<Alias> aliases;
+  public ArrayList<Deconstruction> deconstructed;
   public ArrayList<Command> premise;
   public ArrayList<Fact> actions;
   public ArrayList<Command> result;
@@ -20,6 +21,7 @@ public class StBlock {
   public StBlock(Principal principal, int index){
     this.principal = principal;
     this.aliases = new ArrayList<>();
+    this.deconstructed = new ArrayList<>();
     this.premise = new ArrayList<>();
     this.actions = new ArrayList<>();
     this.result = new ArrayList<>();
@@ -38,6 +40,7 @@ public class StBlock {
    */
   public void merge(StBlock block) {
     aliases.addAll(block.aliases);
+    deconstructed.addAll(block.deconstructed);
     premise.addAll(block.premise);
     actions.addAll(block.actions);
     result.addAll(block.result);

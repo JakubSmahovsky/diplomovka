@@ -4,7 +4,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import simple_tamarin.Constants.*;
 import simple_tamarin.dataStructures.*;
@@ -190,17 +189,10 @@ public class CompilerVisitor {
 		Term left = visitTerm(ctx.left, principal, block, VariableDefined.PRIVATE_LEFT);
 		Term right = visitTerm(ctx.right, principal, block, VariableDefined.USE_RIGHT);
 
-		block.aliases.add(new Alias(left, right));
 		block.state.add(left);
 
-		List<Variable> learntVariables = left.unify(right);
-		if (learntVariables == null) {
+		if (!left.unify(right, block, principal)) {
 			Errors.ErrorCannotUnify(ctx.left, ctx.right);
-		}
-		for (Variable variable : learntVariables) {
-			if (principal.knows(variable) == null) {
-				principal.knowledge.add(variable);
-			}
 		}
 	}
 

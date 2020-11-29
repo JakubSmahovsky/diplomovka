@@ -59,13 +59,13 @@ public class Builder extends BuilderFormatting{
     ArrayList<String> facts = new ArrayList<>();
     output.append(ruleAliases(Constants.INIT, facts));
     for (Variable variable : toGenerate) {
-      facts.add(freshFact(variable));
+      facts.add(freshFact(variable, null));
     }
     output.append(rulePremise(facts));
 
     facts = new ArrayList<>();
     for (Principal principal : model.principals) {
-      facts.add(initStateFact(principal));
+      facts.add(initStateFact(principal, null));
     }
     output.append(ruleResult(facts));
 
@@ -96,17 +96,17 @@ public class Builder extends BuilderFormatting{
     output.append(ruleAliases(blockName(block), facts));
     facts = new ArrayList<>();
     if (previousBlock == null) {
-      facts.add(initStateFact(block.principal));
+      facts.add(initStateFact(block.principal, null));
     } else {
-      facts.add(resultStateFact(previousBlock));
+      facts.add(resultStateFact(previousBlock, block));
     }
     for (Command command : block.premise) {
       switch (command.type) {
         case IN:
-          facts.add(inFact(command.term));
+          facts.add(inFact(command.term, block));
           break;
         case FRESH:
-          facts.add(freshFact(command.term));
+          facts.add(freshFact(command.term, null));
           generated.add(command.term);
           break;
         default:
@@ -116,17 +116,17 @@ public class Builder extends BuilderFormatting{
     output.append(rulePremise(facts));
 
     facts = new ArrayList<>();
-    String resultStateFact = resultStateFact(block);
+    String resultStateFact = resultStateFact(block, block);
     facts.add(resultStateFact);
     for (Fact fact : block.actions) {
-      facts.add(fact.render());
+      facts.add(fact.render(block));
     }
     output.append(ruleAction(facts));
 
     facts = new ArrayList<>();
     for (Command command : block.result) {
       if (command.type == CommandType.OUT) {
-        facts.add(outFact(command.term));
+        facts.add(outFact(command.term, block));
       } else {
         System.out.println("Debug: Unexpected command type in results.");
       }

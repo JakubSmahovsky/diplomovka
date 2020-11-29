@@ -13,34 +13,30 @@ rule init:
 
 rule Bob_0:
 let
-  Na = sdec(m1, Kab)
   SuccNa = h(Na)
   m2 = senc(<SuccNa, ~Nb>, Kab)
 in
 [
   !Bob_init($Bob, Kab),
   In($Alice),
-  In(m1),
+  In(senc(Na, Kab)),
   Fr(~Nb)
 ]--[
-  Bob_0($Bob, Kab, $Alice, m1, Na, SuccNa, ~Nb, m2)
+  Bob_0($Bob, Kab, $Alice, senc(Na, Kab), Na, SuccNa, ~Nb, m2)
 ]->[
   Out(m2),
-  Bob_0($Bob, Kab, $Alice, m1, Na, SuccNa, ~Nb, m2)
+  Bob_0($Bob, Kab, $Alice, senc(Na, Kab), Na, SuccNa, ~Nb, m2)
 ]
 
 rule Bob_2:
-let
-  SuccNb = sdec(m3, Kab)
-in
 [
   Bob_0($Bob, Kab, $Alice, m1, Na, SuccNa, Nb, m2),
-  In(m3)
+  In(senc(SuccNb, Kab))
 ]--[
-  Bob_2($Bob, Kab, $Alice, m1, m3, SuccNb),
+  Bob_2($Bob, Kab, $Alice, m1, senc(SuccNb, Kab), SuccNb),
   Eq(SuccNb, h(Nb))
 ]->[
-  Bob_2($Bob, Kab, $Alice, m1, m3, SuccNb)
+  Bob_2($Bob, Kab, $Alice, m1, senc(SuccNb, Kab), SuccNb)
 ]
 
 rule Alice_0:
@@ -60,19 +56,18 @@ in
 
 rule Alice_1:
 let
-  <SuccNa, Nb> = sdec(m2, Kab)
   SuccNb = h(Nb)
   m3 = senc(SuccNb, Kab)
 in
 [
   Alice_0($Alice, Kab, Na, m1),
-  In(m2)
+  In(senc(<SuccNa, Nb>, Kab))
 ]--[
-  Alice_1($Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3),
+  Alice_1($Alice, Kab, senc(<SuccNa, Nb>, Kab), <SuccNa, Nb>, SuccNb, m3),
   Eq(SuccNa, h(Na))
 ]->[
   Out(m3),
-  Alice_1($Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3)
+  Alice_1($Alice, Kab, senc(<SuccNa, Nb>, Kab), <SuccNa, Nb>, SuccNb, m3)
 ]
 
 restriction Equality:
