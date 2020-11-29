@@ -39,24 +39,6 @@ public class FunctionHash extends Term {
   }
 
   @Override
-  public List<Variable> unify(Term right) {
-    Term deconstructed = right.deconstructTerm();
-    if (!(deconstructed instanceof FunctionHash) || subterms.size() != ((FunctionHash)deconstructed).subterms.size()) {
-      return null;
-    }
-    
-    ArrayList<Variable> result = new ArrayList<>();
-    for (int i = 0; i < subterms.size(); i++) {
-      List<Variable> subresult = subterms.get(i).unify(((Tuple)deconstructed).subterms.get(i));
-      if (subresult == null) {
-        return null;
-      }
-      result.addAll(subresult);
-    }
-    return result;
-  }
-
-  @Override
   public List<Variable> extractKnowledge() {
     return new ArrayList<>();
   }

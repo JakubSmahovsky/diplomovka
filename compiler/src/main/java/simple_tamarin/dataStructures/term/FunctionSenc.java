@@ -1,6 +1,5 @@
 package simple_tamarin.dataStructures.term;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,20 +31,6 @@ public class FunctionSenc extends Term {
 
   @Override public Term deconstructTerm() {
     return this;
-  }
-
-  /**
-   * TODO: Info message - don't define variables this way, it's silly
-   */
-  @Override public List<Variable> unify(Term right) {
-    Term deconstructed = right.deconstructTerm();
-    if (!(deconstructed instanceof FunctionSenc)) {
-      return null;
-    }
-    ArrayList<Variable> result = new ArrayList<>();
-    result.addAll(key.unify(((FunctionSenc)deconstructed).key));
-    result.addAll(value.unify(((FunctionSenc)deconstructed).value));
-    return result;
   }
   
   @Override public List<Variable> extractKnowledge() {

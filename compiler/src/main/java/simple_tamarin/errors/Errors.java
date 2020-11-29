@@ -9,8 +9,7 @@ import simple_tamarin.parser.Simple_tamarinParser.TermContext;
 public final class Errors {
   public static boolean showInfo = true;
   public static boolean quitOnWarning = false;
-  private Errors(){};
-
+  private Errors(){};  
   public static void ErrorWrongKey(TermContext got) {
     String message = "Key \"" + got.getText() + "\" does not match the key used for encoding!";
     error(got.start, message);
@@ -61,9 +60,14 @@ public final class Errors {
     error(posToken, message);
   }
 
-  public static void ErrorMessageContainsUnnamed(TermContext ctx) {
-    String message = "Attempting to send message \"" + ctx.getText() + "\" which contains a term that cannot be assigned a name!";
+  public static void ErrorMessageNontransparent(TermContext ctx) {
+    String message = "Attempting to send message \"" + ctx.getText() + "\" which contains non-transparent name!";
     error(ctx.start, message);
+  }
+
+  public static void ErrorLeftNontransparent(Token start) {
+    String message = "Attempting to use a non-transparent term \"" + start.getText() + "\" on the left side of an assignment!";
+    error(start, message);
   }
 
   public static void ErrorCannotUnify(TermContext left, TermContext right) {
@@ -106,6 +110,10 @@ public final class Errors {
     info(start, message);
   }
 
+  public static void DebugUnexpectedFunction(String function, String where) {
+    debug("Unexpected function \"" + function + "\" found in \"" + where + "\"!");
+  }
+
   public static void error(Token posToken, String message) {
     print(ERROR, posToken, message);
     throw new STException();
@@ -124,6 +132,12 @@ public final class Errors {
     }
   }
 
+  public static void debug(String message) {
+    System.out.println(DEBUG + message);
+    System.out.println("This means an internal error occoured in our compiler, please report this error to: TODO");
+    throw new STException();
+  }
+
   public static void print(String type, Token posToken, String message) {
     if (type == INFO && !showInfo) {
       return;
@@ -138,4 +152,5 @@ public final class Errors {
   public static final String ERROR = "Error ";
   public static final String WARNING = "Warning ";
   public static final String INFO = "Info ";
+  public static final String DEBUG = "DEBUG ";
 }

@@ -112,7 +112,7 @@ public class CompilerVisitor {
 		}
 
 		boolean pub = (ctx.modifier.getText().equals("public")) ? true : false;
-		VariableDefined expectVD = pub ? VariableDefined.KNOWS : VariableDefined.PRIVATE_DEFINITION;
+		VariableDefined expectVD = pub ? VariableDefined.PUBLIC_KNOWS : VariableDefined.PRIVATE_DEFINITION;
 		Variable variable = visitVariable(ctx.variable(), principal, expectVD);
 
 		if (pub) {
@@ -166,7 +166,7 @@ public class CompilerVisitor {
 			Term term = visitTerm(message, sender, null, expectVD);
 
 			if (!term.canBeLearnt()) {
-				Errors.ErrorMessageContainsUnnamed(message);
+				Errors.ErrorMessageNontransparent(message);
 			}
 
 			// if it's not a public variable
@@ -191,7 +191,7 @@ public class CompilerVisitor {
 	}
 
 	public void visitAssignment(AssignmentContext ctx, Principal principal, StBlock block) {
-		Term left = visitTerm(ctx.left, principal, block, VariableDefined.PRIVATE_DEFINITION);
+		Term left = visitTerm(ctx.left, principal, block, VariableDefined.PRIVATE_LEFT);
 		Term right = visitTerm(ctx.right, principal, block, VariableDefined.ANY_USE);
 
 		block.aliases.add(new Alias(left, right));
@@ -232,7 +232,8 @@ public class CompilerVisitor {
 			switch (expectVD) {
 				case PUBLIC_DEFINITION:
 				case PRIVATE_DEFINITION:
-				case KNOWS:
+				case PUBLIC_KNOWS:
+				case PRIVATE_LEFT:
 					Errors.ErrorVariableCollisionPrivate(principal, ctx.start);
 				default:
 					return result;
@@ -246,8 +247,9 @@ public class CompilerVisitor {
 					Errors.ErrorVariableCollisionPublic(result, ctx.start);
 					return result;
 				case PRIVATE_DEFINITION:
+				case PRIVATE_LEFT:
 					Errors.WarningVariableShadowed(ctx.start);
-					break;
+					break; // and go define it as private
 				default:
 					return result;
 			}
@@ -258,7 +260,7 @@ public class CompilerVisitor {
 		}
 
 		switch (expectVD) {
-			case KNOWS:
+			case PUBLIC_KNOWS:
 				Errors.InfoDeclareLongTermVariable(ctx.start);
 			case ANY_USE:
 				Errors.ErrorVariableUnknown(principal, ctx.start);
@@ -269,6 +271,9 @@ public class CompilerVisitor {
 	}
 
 	public Term visitFunctionCall(FunctionCallContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
+		if (expectVD == VariableDefined.PRIVATE_LEFT) {
+			Errors.ErrorLeftNontransparent(ctx.start);
+		}		
 		switch (ctx.FUNCTION().getText()) {
 			case Constants.VPSENC: {
 				model.builtins.symmetric_encryption = true;

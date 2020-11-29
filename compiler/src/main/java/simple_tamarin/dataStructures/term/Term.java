@@ -2,6 +2,8 @@ package simple_tamarin.dataStructures.term;
 
 import java.util.List;
 
+import simple_tamarin.errors.Errors;
+
 public abstract class Term{
   public abstract Term deconstructTerm();
   /**
@@ -11,7 +13,10 @@ public abstract class Term{
    * @return list of all reassigned variables or null in case of error
    * TODO: throw runtimeException in case of errors
    */
-  public abstract List<Variable> unify(Term right);
+  public List<Variable> unify(Term right) {
+    Errors.DebugUnexpectedFunction(render(), "unify");
+    return null;
+  };
   
   /**
    * Extracts variables (syntactically) from Terms that can be learnt

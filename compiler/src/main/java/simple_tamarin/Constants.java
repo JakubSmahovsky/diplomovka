@@ -19,11 +19,12 @@ public final class Constants{
 
   public static enum VariableDefined {
     PUBLIC_DEFINITION,
-    PRIVATE_DEFINITION,
-    KNOWS,
+    PUBLIC_KNOWS,
+    PRIVATE_DEFINITION, // generates or knows private
+    PRIVATE_LEFT,
     ANY_USE
   }
-  
+
   public static final String[] reservedNames = {
     "principals",
     "knows",
