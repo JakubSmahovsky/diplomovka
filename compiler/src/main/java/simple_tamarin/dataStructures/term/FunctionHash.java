@@ -70,9 +70,4 @@ public class FunctionHash extends Term {
       term.removeFresh();
     }
   }
-
-  @Override
-  public boolean canBeLearnt() {
-    return false;
-  }
 }

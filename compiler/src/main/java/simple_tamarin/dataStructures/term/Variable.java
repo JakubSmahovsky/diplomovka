@@ -85,8 +85,4 @@ public class Variable extends Term {
       sort = VariableSort.NOSORT;
     }
   }
-
-  @Override public boolean canBeLearnt() {
-    return true;
-  }
 }

@@ -22,7 +22,8 @@ public final class Constants{
     PUBLIC_KNOWS,
     PRIVATE_DEFINITION, // generates or knows private
     PRIVATE_LEFT,
-    ANY_USE
+    USE_RIGHT,
+    USE_MESSAGE
   }
 
   public static final String[] reservedNames = {

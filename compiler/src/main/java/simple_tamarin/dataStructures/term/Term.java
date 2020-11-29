@@ -38,11 +38,4 @@ public abstract class Term{
    * Removed Fresh tag (~) from variables in Term
    */
   public abstract void removeFresh();
-
-  /**
-   * Terms can be learnt if they are Variables
-   * or if they can be deconstructed and constructed again without a key
-   * @return true if Term can be learnt without missing any names of varibales
-   */
-  public abstract boolean canBeLearnt();
 }

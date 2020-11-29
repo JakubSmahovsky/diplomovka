@@ -148,7 +148,7 @@ public class CompilerVisitor {
 	}
 
 	public void visitCheck(CheckContext ctx, Principal principal, StBlock block){
-		visitFunctionCall(ctx.functionCall(), principal, block, VariableDefined.ANY_USE);
+		visitFunctionCall(ctx.functionCall(), principal, block, VariableDefined.USE_RIGHT);
 	}
 
 	public void visitMessageBlock(MessageBlockContext ctx) {
@@ -161,13 +161,9 @@ public class CompilerVisitor {
 			Errors.ErrorPrincipalDoesNotExist(ctx.receiver);
 		}
 
-		VariableDefined expectVD = VariableDefined.ANY_USE;
+		VariableDefined expectVD = VariableDefined.USE_MESSAGE;
 		for (TermContext message : ctx.term()) {
 			Term term = visitTerm(message, sender, null, expectVD);
-
-			if (!term.canBeLearnt()) {
-				Errors.ErrorMessageNontransparent(message);
-			}
 
 			// if it's not a public variable
 			if (!(term instanceof Variable) || model.findVariable(((Variable)term).name) == null) {
@@ -192,7 +188,7 @@ public class CompilerVisitor {
 
 	public void visitAssignment(AssignmentContext ctx, Principal principal, StBlock block) {
 		Term left = visitTerm(ctx.left, principal, block, VariableDefined.PRIVATE_LEFT);
-		Term right = visitTerm(ctx.right, principal, block, VariableDefined.ANY_USE);
+		Term right = visitTerm(ctx.right, principal, block, VariableDefined.USE_RIGHT);
 
 		block.aliases.add(new Alias(left, right));
 		block.state.add(left);
@@ -235,6 +231,7 @@ public class CompilerVisitor {
 				case PUBLIC_KNOWS:
 				case PRIVATE_LEFT:
 					Errors.ErrorVariableCollisionPrivate(principal, ctx.start);
+					return null;
 				default:
 					return result;
 			}
@@ -260,10 +257,12 @@ public class CompilerVisitor {
 		}
 
 		switch (expectVD) {
+			case USE_RIGHT:
+			case USE_MESSAGE:
+				Errors.ErrorVariableUnknown(principal, ctx.start);
+				return null;
 			case PUBLIC_KNOWS:
 				Errors.InfoDeclareLongTermVariable(ctx.start);
-			case ANY_USE:
-				Errors.ErrorVariableUnknown(principal, ctx.start);
 			default:
 				result = new Variable(name);
 				return result;
@@ -273,14 +272,17 @@ public class CompilerVisitor {
 	public Term visitFunctionCall(FunctionCallContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
 		if (expectVD == VariableDefined.PRIVATE_LEFT) {
 			Errors.ErrorLeftNontransparent(ctx.start);
-		}		
+		}
+		if (expectVD == VariableDefined.USE_MESSAGE) {
+			Errors.ErrorMessageNontransparent(ctx.start);
+		}
 		switch (ctx.FUNCTION().getText()) {
 			case Constants.VPSENC: {
 				model.builtins.symmetric_encryption = true;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
 				}
-				Term key = visitTerm(ctx.argument.get(0), principal, block, VariableDefined.ANY_USE);
+				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
 				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
 				return new FunctionSenc(key, value);
 			}
@@ -289,7 +291,7 @@ public class CompilerVisitor {
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
 				}
-				Term key = visitTerm(ctx.argument.get(0), principal, block, VariableDefined.ANY_USE);
+				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
 				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
 				// if value is a variable find it's definition
 				Term decodedValue = value.deconstructTerm();
@@ -304,7 +306,6 @@ public class CompilerVisitor {
 			}
 			case Constants.VPASSERT: {
 				model.builtins.restriction_eq = true;
-				expectVD = VariableDefined.ANY_USE;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
 				}

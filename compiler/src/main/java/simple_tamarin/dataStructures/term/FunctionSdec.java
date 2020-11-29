@@ -56,8 +56,4 @@ public class FunctionSdec extends Term{
     senc.removeFresh();
     decodedValue.removeFresh();    
   }
-
-  @Override public boolean canBeLearnt() {
-    return false;
-  }
 }

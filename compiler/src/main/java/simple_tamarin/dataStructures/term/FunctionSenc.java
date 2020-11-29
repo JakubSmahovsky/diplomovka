@@ -49,8 +49,4 @@ public class FunctionSenc extends Term {
     key.removeFresh();
     value.removeFresh();
   }
-
-  @Override public boolean canBeLearnt() {
-    return false;
-  }
 }

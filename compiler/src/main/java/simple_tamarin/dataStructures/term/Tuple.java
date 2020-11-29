@@ -91,13 +91,4 @@ public class Tuple extends Term{
       term.removeFresh();
     }
   }
-
-  @Override public boolean canBeLearnt() {
-    for (Term term : subterms) {
-      if (!term.canBeLearnt()) {
-        return false;
-      }
-    }
-    return true;
-  }
 }

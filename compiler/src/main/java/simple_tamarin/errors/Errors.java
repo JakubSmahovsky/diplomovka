@@ -60,9 +60,9 @@ public final class Errors {
     error(posToken, message);
   }
 
-  public static void ErrorMessageNontransparent(TermContext ctx) {
-    String message = "Attempting to send message \"" + ctx.getText() + "\" which contains non-transparent name!";
-    error(ctx.start, message);
+  public static void ErrorMessageNontransparent(Token start) {
+    String message = "Attempting to send message with non-transparent term \"" + start.getText() + "\"!";
+    error(start, message);
   }
 
   public static void ErrorLeftNontransparent(Token start) {
