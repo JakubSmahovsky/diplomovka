@@ -38,12 +38,13 @@ public class Tuple extends Term{
   }
 
   @Override public List<Variable> unify (Term right) {
-    if (!(right instanceof Tuple) || subterms.size() != ((Tuple)right).subterms.size()) {
+    Term deconstructed = right.deconstructTerm();
+    if (!(deconstructed instanceof Tuple) || subterms.size() != ((Tuple)deconstructed).subterms.size()) {
       return null;
     }
     ArrayList<Variable> result = new ArrayList<>();
     for (int i = 0; i < subterms.size(); i++) {
-      List<Variable> subresult = subterms.get(i).unify(((Tuple)right).subterms.get(i));
+      List<Variable> subresult = subterms.get(i).unify(((Tuple)deconstructed).subterms.get(i));
       if (subresult == null) {
         return null;
       }

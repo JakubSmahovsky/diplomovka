@@ -14,48 +14,65 @@ rule init:
 rule Bob_0:
 let
   Na = sdec(m1, Kab)
-  m2 = senc(~Nb, Kab)
+  SuccNa = h(Na)
+  m2 = senc(<SuccNa, ~Nb>, Kab)
 in
 [
   !Bob_init($Bob, Kab),
-  In(<m0, m1>),
+  In($Alice),
+  In(m1),
   Fr(~Nb)
 ]--[
-  Bob_0($Bob, Kab, <m0, m1>, Na, ~Nb, m2),
-  Eq(m0, h(<$Alice, Kab>))
+  Bob_0($Bob, Kab, $Alice, m1, Na, SuccNa, ~Nb, m2)
 ]->[
-  Out($Bob),
   Out(m2),
-  Bob_0($Bob, Kab, <m0, m1>, Na, ~Nb, m2)
+  Bob_0($Bob, Kab, $Alice, m1, Na, SuccNa, ~Nb, m2)
+]
+
+rule Bob_2:
+let
+  SuccNb = sdec(m3, Kab)
+in
+[
+  Bob_0($Bob, Kab, $Alice, m1, Na, SuccNa, Nb, m2),
+  In(m3)
+]--[
+  Bob_2($Bob, Kab, $Alice, m1, m3, SuccNb),
+  Eq(SuccNb, h(Nb))
+]->[
+  Bob_2($Bob, Kab, $Alice, m1, m3, SuccNb)
 ]
 
 rule Alice_0:
 let
   m1 = senc(~Na, Kab)
-  m0 = h(<$Alice, Kab>)
 in
 [
   !Alice_init($Alice, Kab),
   Fr(~Na)
 ]--[
-  Alice_0($Alice, Kab, ~Na, m1, m0)
+  Alice_0($Alice, Kab, ~Na, m1)
 ]->[
-  Out(<m0, m1>),
-  Alice_0($Alice, Kab, ~Na, m1, m0)
+  Out($Alice),
+  Out(m1),
+  Alice_0($Alice, Kab, ~Na, m1)
 ]
 
 rule Alice_1:
 let
-  Nb = sdec(m2, Kab)
+  <SuccNa, Nb> = sdec(m2, Kab)
+  SuccNb = h(Nb)
+  m3 = senc(SuccNb, Kab)
 in
 [
-  Alice_0($Alice, Kab, Na, m1, m0),
-  In($Bob),
+  Alice_0($Alice, Kab, Na, m1),
   In(m2)
 ]--[
-  Alice_1($Alice, Kab, $Bob, m2, Nb)
+  Alice_1($Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3),
+  Eq(SuccNa, h(Na))
 ]->[
-  Alice_1($Alice, Kab, $Bob, m2, Nb)
+  Out(m3),
+  Alice_1($Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3)
 ]
 
 restriction Equality:
@@ -63,8 +80,8 @@ restriction Equality:
 
 lemma executable:
 exists-trace "
-Ex Bob Kab m0 m1 Na Nb m2 Alice #t0 #t1.
-Bob_0(Bob, Kab, <m0, m1>, Na, Nb, m2) @ #t0 &
-Alice_1(Alice, Kab, Bob, m2, Nb) @ #t1
+Ex Bob Kab Alice m1 m3 SuccNb m2 SuccNa Nb #t0 #t1.
+Bob_2(Bob, Kab, Alice, m1, m3, SuccNb) @ #t0 &
+Alice_1(Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3) @ #t1
 "
 end

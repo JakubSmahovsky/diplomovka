@@ -6,20 +6,28 @@ Alice [
   knows private Kab
   generates Na
   m1 = ENC(Kab, Na)
-  m0 = HASH(Alice, Kab)
 ]
-Alice -> Bob: {m0, m1}
+Alice -> Bob: Alice, m1
 
 Bob [
-  ASSERT(m0, HASH(Alice, Kab))?
   Na = DEC(Kab, m1)
+  SuccNa = HASH(Na)
   generates Nb
-  m2 = ENC(Kab, Nb)
+  m2 = ENC(Kab, {SuccNa, Nb})
 ]
-Bob -> Alice: Bob, m2
+Bob -> Alice: m2
 
 Alice [
-  Nb = DEC(Kab, m2)
+  {SuccNa, Nb} = DEC(Kab, m2)
+  ASSERT(SuccNa, HASH(Na))?
+  SuccNb = HASH(Nb)
+  m3 = ENC(Kab, SuccNb)
+]
+Alice -> Bob: m3
+
+Bob [
+  SuccNb = DEC(Kab, m3)
+  ASSERT(SuccNb, HASH(Nb))?
 ]
 
 queries [

@@ -198,6 +198,9 @@ public class CompilerVisitor {
 		block.state.add(left);
 
 		List<Variable> learntVariables = left.unify(right);
+		if (learntVariables == null) {
+			Errors.ErrorCannotUnify(ctx.left, ctx.right);
+		}
 		for (Variable variable : learntVariables) {
 			if (principal.knows(variable) == null) {
 				principal.knowledge.add(variable);

@@ -66,6 +66,11 @@ public final class Errors {
     error(ctx.start, message);
   }
 
+  public static void ErrorCannotUnify(TermContext left, TermContext right) {
+    String message = "Ubale to unify terms \"" + left.getText() + "\" with term \"" + right.getText() + "\"!";
+    error(left.start, message);
+  }
+
   public static void WarningVariableShadowed(Token variable) {
     String message = "Variable \"" + variable.getText() + "\" shadows a public variable!";
     warning(variable, message);

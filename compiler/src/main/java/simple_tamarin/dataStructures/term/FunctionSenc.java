@@ -38,12 +38,13 @@ public class FunctionSenc extends Term {
    * TODO: Info message - don't define variables this way, it's silly
    */
   @Override public List<Variable> unify(Term right) {
-    if (!(right instanceof FunctionSenc)) {
+    Term deconstructed = right.deconstructTerm();
+    if (!(deconstructed instanceof FunctionSenc)) {
       return null;
     }
     ArrayList<Variable> result = new ArrayList<>();
-    result.addAll(key.unify(((FunctionSenc)right).key));
-    result.addAll(value.unify(((FunctionSenc)right).value));
+    result.addAll(key.unify(((FunctionSenc)deconstructed).key));
+    result.addAll(value.unify(((FunctionSenc)deconstructed).value));
     return result;
   }
   
