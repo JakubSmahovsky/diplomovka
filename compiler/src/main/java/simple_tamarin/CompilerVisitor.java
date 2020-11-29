@@ -112,7 +112,7 @@ public class CompilerVisitor {
 		}
 
 		boolean pub = (ctx.modifier.getText().equals("public")) ? true : false;
-		VariableDefined expectVD = pub ? VariableDefined.ONLY_PUBLIC : VariableDefined.ONLY_SHADOW_PUBLIC;
+		VariableDefined expectVD = pub ? VariableDefined.KNOWS : VariableDefined.PRIVATE_DEFINITION;
 		Variable variable = visitVariable(ctx.variable(), principal, expectVD);
 
 		if (pub) {
@@ -138,7 +138,7 @@ public class CompilerVisitor {
 	}
 
 	public void visitGenerates(GeneratesContext ctx, Principal principal, StBlock block) {
-		VariableDefined expectVD = VariableDefined.ONLY_SHADOW_PUBLIC;
+		VariableDefined expectVD = VariableDefined.PRIVATE_DEFINITION;
 		Variable variable = visitVariable(ctx.variable(), principal, expectVD);
 		variable.cratedBy = principal;
 		variable.sort = VariableSort.FRESH;
@@ -148,7 +148,7 @@ public class CompilerVisitor {
 	}
 
 	public void visitCheck(CheckContext ctx, Principal principal, StBlock block){
-		visitFunctionCall(ctx.functionCall(), principal, block, VariableDefined.YES);
+		visitFunctionCall(ctx.functionCall(), principal, block, VariableDefined.ANY_USE);
 	}
 
 	public void visitMessageBlock(MessageBlockContext ctx) {
@@ -161,7 +161,7 @@ public class CompilerVisitor {
 			Errors.ErrorPrincipalDoesNotExist(ctx.receiver);
 		}
 
-		VariableDefined expectVD = VariableDefined.YES;
+		VariableDefined expectVD = VariableDefined.ANY_USE;
 		for (TermContext message : ctx.term()) {
 			Term term = visitTerm(message, sender, null, expectVD);
 
@@ -191,8 +191,8 @@ public class CompilerVisitor {
 	}
 
 	public void visitAssignment(AssignmentContext ctx, Principal principal, StBlock block) {
-		Term left = visitTerm(ctx.left, principal, block, VariableDefined.ONLY_SHADOW_PUBLIC);
-		Term right = visitTerm(ctx.right, principal, block, VariableDefined.YES);
+		Term left = visitTerm(ctx.left, principal, block, VariableDefined.PRIVATE_DEFINITION);
+		Term right = visitTerm(ctx.right, principal, block, VariableDefined.ANY_USE);
 
 		block.aliases.add(new Alias(left, right));
 		block.state.add(left);
@@ -230,9 +230,9 @@ public class CompilerVisitor {
 		Variable result = principal.knows(name);
 		if (result != null) {
 			switch (expectVD) {
-				case NO:
-				case ONLY_SHADOW_PUBLIC:
-				case ONLY_PUBLIC:
+				case PUBLIC_DEFINITION:
+				case PRIVATE_DEFINITION:
+				case KNOWS:
 					Errors.ErrorVariableCollisionPrivate(principal, ctx.start);
 				default:
 					return result;
@@ -242,10 +242,10 @@ public class CompilerVisitor {
 		result = model.findVariable(name);
 		if (result != null) {
 			switch (expectVD) {
-				case NO:
+				case PUBLIC_DEFINITION:
 					Errors.ErrorVariableCollisionPublic(result, ctx.start);
 					return result;
-				case ONLY_SHADOW_PUBLIC:
+				case PRIVATE_DEFINITION:
 					Errors.WarningVariableShadowed(ctx.start);
 					break;
 				default:
@@ -258,11 +258,10 @@ public class CompilerVisitor {
 		}
 
 		switch (expectVD) {
-			case ONLY_PUBLIC:
-			case YES:
-				Errors.ErrorVariableUnknown(principal, ctx.start);
-			case PLEASE:
+			case KNOWS:
 				Errors.InfoDeclareLongTermVariable(ctx.start);
+			case ANY_USE:
+				Errors.ErrorVariableUnknown(principal, ctx.start);
 			default:
 				result = new Variable(name);
 				return result;
@@ -276,7 +275,7 @@ public class CompilerVisitor {
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
 				}
-				Term key = visitTerm(ctx.argument.get(0), principal, block, VariableDefined.YES);
+				Term key = visitTerm(ctx.argument.get(0), principal, block, VariableDefined.ANY_USE);
 				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
 				return new FunctionSenc(key, value);
 			}
@@ -285,7 +284,7 @@ public class CompilerVisitor {
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
 				}
-				Term key = visitTerm(ctx.argument.get(0), principal, block, VariableDefined.YES);
+				Term key = visitTerm(ctx.argument.get(0), principal, block, VariableDefined.ANY_USE);
 				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
 				// if value is a variable find it's definition
 				Term decodedValue = value.deconstructTerm();
@@ -300,7 +299,7 @@ public class CompilerVisitor {
 			}
 			case Constants.VPASSERT: {
 				model.builtins.restriction_eq = true;
-				expectVD = VariableDefined.YES;
+				expectVD = VariableDefined.ANY_USE;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
 				}

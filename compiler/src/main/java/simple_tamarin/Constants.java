@@ -18,11 +18,10 @@ public final class Constants{
   }
 
   public static enum VariableDefined {
-    NO,
-    ONLY_SHADOW_PUBLIC,
-    ONLY_PUBLIC,
-    PLEASE,
-    YES
+    PUBLIC_DEFINITION,
+    PRIVATE_DEFINITION,
+    KNOWS,
+    ANY_USE
   }
   
   public static final String[] reservedNames = {
