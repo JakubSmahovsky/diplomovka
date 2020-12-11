@@ -15,7 +15,7 @@ rule Create:
   --[Secret(~s)]->
   [ Out(aenc(~s, KP)) ]
   
-rule Repack:
+rule c_snd:
   [ In(aenc(N, KP1))
   , !Pk($X1, KP1)
   , !Pk($X2, KP2) ]-->

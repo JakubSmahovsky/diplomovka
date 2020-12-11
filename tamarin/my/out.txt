@@ -1,0 +1,40 @@
+theory Test begin
+
+// Function signature and definition of the equational theory E
+
+functions: adec/2, aenc/2, fst/1, pair/2, pk/1, snd/1
+equations:
+    adec(aenc(x.1, pk(x.2)), x.2) = x.1,
+    fst(<x.1, x.2>) = x.1,
+    snd(<x.1, x.2>) = x.2
+
+
+
+rule (modulo E) Register_KP:
+   [ Fr( ~KS ) ] --> [ !Ltk( $X, ~KS ), !Pk( $X, pk(~KS) ), Out( pk(~KS) ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Create:
+   [ Fr( ~s ), !Pk( $X, KP ) ] --[ Secret( ~s ) ]-> [ Out( aenc(~s, KP) ) ]
+
+  /* has exactly the trivial AC variant */
+
+rule (modulo E) Repack:
+   [ In( aenc(N, KP1) ), !Pk( $X1, KP1 ), !Pk( $X2, KP2 ) ]
+  -->
+   [ Out( aenc(N, KP2) ) ]
+
+  /* has exactly the trivial AC variant */
+
+lemma secrecy:
+  all-traces "∀ s #i #j. ((Secret( s ) @ #i) ∧ (K( s ) @ #j)) ⇒ (⊥)"
+/*
+guarded formula characterizing all counter-examples:
+"∃ s #i #j. (Secret( s ) @ #i) ∧ (K( s ) @ #j)"
+*/
+by sorry
+
+/* All well-formedness checks were successful. */
+
+end
