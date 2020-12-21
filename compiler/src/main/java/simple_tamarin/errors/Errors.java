@@ -4,7 +4,7 @@ import org.antlr.v4.runtime.Token;
 
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.term.Term;
-import simple_tamarin.parser.Simple_tamarinParser.TermContext;
+import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 
 public final class Errors {
   public static boolean showInfo = true;

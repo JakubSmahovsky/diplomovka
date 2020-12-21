@@ -8,7 +8,7 @@ import java.util.Arrays;
 import simple_tamarin.Constants.*;
 import simple_tamarin.dataStructures.*;
 import simple_tamarin.dataStructures.term.*;
-import simple_tamarin.parser.Simple_tamarinParser.*;
+import simple_tamarin.stParser.Simple_tamarinParser.*;
 import simple_tamarin.errors.Errors;
 import simple_tamarin.errors.STException;
 

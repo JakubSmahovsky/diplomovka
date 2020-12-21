@@ -4,7 +4,7 @@ import java.io.*;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import simple_tamarin.errors.STException;
-import simple_tamarin.parser.*;
+import simple_tamarin.stParser.*;
 
 public class Simple_tamarin {
   public static void main(String[] args) throws IOException {

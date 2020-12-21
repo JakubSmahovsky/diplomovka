@@ -1,5 +1,5 @@
 // Generated from Simple_tamarin.g4 by ANTLR 4.8
-package simple_tamarin.parser;
+package simple_tamarin.stParser;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
