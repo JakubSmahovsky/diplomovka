@@ -25,7 +25,7 @@ public class CompilerVisitor {
 		Errors.showInfo = showInfo;
 	}
 
-	public void visitModel(ModelContext ctx) {
+	public StModel visitModel(ModelContext ctx) {
 		this.model = new StModel();
 		for (SegmentContext segment : ctx.segment()) {
 			visitSegment(segment);
@@ -44,6 +44,7 @@ public class CompilerVisitor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return model;
 	}
 
 	public void visitSegment(SegmentContext ctx) {

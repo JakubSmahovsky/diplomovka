@@ -63,4 +63,10 @@ public final class Constants{
   public static final String VPSDEC = "DEC";
   public static final String VPASSERT = "ASSERT";
   public static final String VPHASH = "HASH";
+
+  // miscelaneous
+  public static final String OUTPUTSEPARATOR =
+    "==============================================================================";
+  public static final String SOURCESHEADER =
+    OUTPUTSEPARATOR + "SOURCES" + OUTPUTSEPARATOR;
 }

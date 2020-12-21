@@ -88,26 +88,7 @@ guarded formula characterizing all satisfying traces:
   (Bob_2( Bob, Kab, Alice, m1, m3, SuccNb ) @ #t0) ∧
   (Alice_1( Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3 ) @ #t1)"
 */
-simplify
-solve( Bob_0( $Bob, Kab, $Alice, m1, Na, SuccNa, Nb, m2 ) ▶₀ #t0 )
-  case Bob_0
-  solve( Alice_0( $Alice, ~Kab, Na.1, m1 ) ▶₀ #t1 )
-    case Alice_0
-    solve( !KU( senc(<h(~Na.1), ~Nb>, ~Kab) ) @ #vk.1 )
-      case Bob_0
-      solve( !KU( senc(h(~Nb), ~Kab) ) @ #vk.1 )
-        case Alice_1
-        solve( !KU( senc(<h(~Na.1), ~Nb>, ~Kab) ) @ #vk.4 )
-          case Bob_0
-          solve( !KU( senc(~Na, ~Kab) ) @ #vk.3 )
-            case Alice_0
-            SOLVED // trace found
-          qed
-        qed
-      qed
-    qed
-  qed
-qed
+by sorry
 
 /* All well-formedness checks were successful. */
 
@@ -138,6 +119,7 @@ unsolved goals:
 
 solved goals: !Alice_init( $Alice.4, ~Kab.4 ) ▶₀ #i // nr: 0" (useful2)"
 
+json graph:
 {
     "graphs": [
         {
@@ -155,7 +137,7 @@ solved goals: !Alice_init( $Alice.4, ~Kab.4 ) ▶₀ #i // nr: 0" (useful2)"
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#vr.3",
@@ -282,6 +264,7 @@ unsolved goals:
 
 solved goals: !Bob_init( $Bob.4, ~Kab.4 ) ▶₀ #i // nr: 0" (useful2)"
 
+json graph:
 {
     "graphs": [
         {
@@ -299,7 +282,7 @@ solved goals: !Bob_init( $Bob.4, ~Kab.4 ) ▶₀ #i // nr: 0" (useful2)"
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#vr.3",
@@ -433,6 +416,7 @@ solved goals:
   !Alice_init( $Alice.6, ~Kab.9
   ) ▶₀ #vr.5 // nr: 2 (from rule Alice_0)" (useful2)"
 
+json graph:
 {
     "graphs": [
         {
@@ -460,7 +444,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#vr.5",
@@ -757,6 +741,7 @@ solved goals:
   !Alice_init( $Alice.8, ~Kab.15
   ) ▶₀ #vr.11 // nr: 5 (from rule Alice_0)" (useful2)"
 
+json graph:
 {
     "graphs": [
         {
@@ -799,7 +784,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#vr.7",
@@ -1572,6 +1557,7 @@ solved goals:
   !Bob_init( $Bob.10, ~Kab.17
   ) ▶₀ #vr.9 // nr: 2 (from rule Bob_0)" (useful2)"
 
+json graph:
 {
     "graphs": [
         {
@@ -1619,7 +1605,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#vr.9",
@@ -2221,6 +2207,7 @@ solved goals:
   !Bob_init( $Bob.8, ~Kab.19
   ) ▶₀ #vr.11 // nr: 5 (from rule Bob_0)" (useful2)"
 
+json graph:
 {
     "graphs": [
         {
@@ -2283,7 +2270,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#vr.7",
@@ -3258,6 +3245,7 @@ solved goals:
   !Bob_init( $Bob.7, ~Kab.21
   ) ▶₀ #vr.6 // nr: 4 (from rule Bob_0)" (useful2)"
 
+json graph:
 {
     "graphs": [
         {
@@ -3330,7 +3318,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#i",
@@ -4189,6 +4177,7 @@ solved goals:
   !Alice_init( $Alice.7, ~Kab.14
   ) ▶₀ #vr.6 // nr: 4 (from rule Alice_0)" (useful2)"
 
+json graph:
 {
     "graphs": [
         {
@@ -4236,7 +4225,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#i",
@@ -4681,6 +4670,7 @@ unsolved goals:
 solved goals:
   !KU( ~t.1 ) @ #i // nr: 0 (from rule FreshConstr)" (useful2)"
 
+json graph:
 {
     "graphs": [
         {
@@ -4693,7 +4683,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#i",
@@ -4796,6 +4786,7 @@ solved goals:
   !KU( fst(t.1)
   ) @ #i // nr: 0 (from rule Constrc_fst)" (probably constructible)"
 
+json graph:
 {
     "graphs": [
         {
@@ -4808,7 +4799,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#i",
@@ -4923,6 +4914,7 @@ solved goals:
   !KU( h(t.1)
   ) @ #i // nr: 0 (from rule Constrc_h)" (probably constructible)"
 
+json graph:
 {
     "graphs": [
         {
@@ -4935,7 +4927,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#i",
@@ -5056,6 +5048,7 @@ solved goals:
   !Bob_init( $Bob.7, ~Kab.21
   ) ▶₀ #vr.6 // nr: 4 (from rule Bob_0)" (useful2)"
 
+json graph:
 {
     "graphs": [
         {
@@ -5128,7 +5121,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#i",
@@ -6017,6 +6010,7 @@ solved goals:
   !Alice_init( $Alice.7, ~Kab.18
   ) ▶₀ #vr.14 // nr: 11 (from rule Alice_0)" (useful2)"
 
+json graph:
 {
     "graphs": [
         {
@@ -6079,7 +6073,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#i",
@@ -7046,6 +7040,7 @@ solved goals:
   !KU( sdec(t.1, t.2)
   ) @ #i // nr: 0 (from rule Constrc_sdec)" (probably constructible)"
 
+json graph:
 {
     "graphs": [
         {
@@ -7063,7 +7058,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#i",
@@ -7222,6 +7217,7 @@ solved goals:
   !KU( senc(t.1, t.2)
   ) @ #i // nr: 0 (from rule Constrc_senc)" (probably constructible)"
 
+json graph:
 {
     "graphs": [
         {
@@ -7239,7 +7235,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#i",
@@ -7402,6 +7398,7 @@ solved goals:
   !Bob_init( $Bob.10, ~Kab.17
   ) ▶₀ #vr.9 // nr: 4 (from rule Bob_0)" (useful2)"
 
+json graph:
 {
     "graphs": [
         {
@@ -7459,7 +7456,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#i",
@@ -8232,6 +8229,7 @@ solved goals:
   !Alice_init( $Alice.10, ~Kab.13
   ) ▶₀ #vr.9 // nr: 4 (from rule Alice_0)" (useful2)"
 
+json graph:
 {
     "graphs": [
         {
@@ -8269,7 +8267,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#i",
@@ -8671,6 +8669,7 @@ solved goals:
   !Alice_init( $Alice.10, ~Kab.17
   ) ▶₀ #vr.13 // nr: 7 (from rule Alice_0)" (useful2)"
 
+json graph:
 {
     "graphs": [
         {
@@ -8723,7 +8722,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#i",
@@ -9622,6 +9621,7 @@ solved goals:
   !KU( snd(t.1)
   ) @ #i // nr: 0 (from rule Constrc_snd)" (probably constructible)"
 
+json graph:
 {
     "graphs": [
         {
@@ -9634,7 +9634,7 @@ solved goals:
             ],
             "jgDirected": true,
             "jgType": "Tamarin prover constraint system",
-            "jgLabel": "HELLO WORLD",
+            "jgLabel": "SEQUENT",
             "jgNodes": [
                 {
                     "jgnId": "#i",
