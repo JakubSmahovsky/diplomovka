@@ -1,7 +1,12 @@
 package simple_tamarin;
 
 public final class Constants{
+  // private contrustor to forbid instances of Constants
   private Constants(){}
+
+  // compiler default values
+  public static final boolean showInfo = true;
+  public static final boolean quitOnWarning = false;
 
   public static enum VariableSort {
     NOSORT,

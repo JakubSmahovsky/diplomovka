@@ -5,13 +5,21 @@ import org.antlr.v4.runtime.Token;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.term.Term;
 import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
+import simple_tamarin.Constants;
 
-public final class Errors {
-  public static boolean showInfo = true;
-  public static boolean quitOnWarning = false;
-  private Errors(){};  
+/**
+ * A fully static class (with no instances - private constructor)
+ * containing methods for logging error messages. Logging that should
+ * quit the program throws runtime exception.
+ */
+
+public final class Errors{
+  public static boolean showInfo = Constants.showInfo;
+  public static boolean quitOnWarning = Constants.quitOnWarning;
+  private Errors(){};
+
   public static void ErrorWrongKey(TermContext got) {
-    String message = "Key \"" + got.getText() + "\" does not match the key used for encoding!";
+    String message = "Key \"" + got.getText() + "\" does not match the" + "key used for encoding!";
     error(got.start, message);
   }
 
@@ -42,7 +50,7 @@ public final class Errors {
 
   public static void ErrorPrincipalDoesNotExist(Token principal) {
     String message = "Principal \"" + principal.getText() + "\" does not exist at this point!";
-    error(principal, message); 
+    error(principal, message);
   }
 
   public static void ErrorVariableUnknown(Principal principal, Token variable) {
@@ -71,7 +79,7 @@ public final class Errors {
   }
 
   public static void ErrorCannotUnify(TermContext left, TermContext right) {
-    String message = "Ubale to unify terms \"" + left.getText() + "\" with term \"" + right.getText() + "\"!";
+    String message = "Ubale to unify term \"" + left.getText() + "\" with term \"" + right.getText() + "\"!";
     error(left.start, message);
   }
 
@@ -81,7 +89,7 @@ public final class Errors {
   }
 
   public static void WarningVariableEphemeralShadowed(Token variable) {
-    String message = "Ephemeral variable \"" + variable.getText() + "\" allready exist for some principal, this will create a different, long-term variable + \"" + variable.getText() + "\"";
+    String message = "Ephemeral variable \"" + variable.getText() + "\" allready exist for some principal, this will create a different long-term variable + \"" + variable.getText() + "\"!";
     warning(variable, message);
   }
 
@@ -91,7 +99,7 @@ public final class Errors {
   }
 
   public static void WarningQueryExecutableDuplicite(Token query) {
-    String message = "Duplicite request for executable query. The query will only be verified once.";
+    String message = "Duplicite request for executable query. The query will only be verified once!";
     warning(query, message);
   }
 
@@ -106,7 +114,7 @@ public final class Errors {
   }
 
   public static void InfoKnowsInFirstBlock(Token start) {
-    String message = "Effects of knows command are global, it is recommended to use it in the first block.";
+    String message = "Effects of the \"knows\" command are global, it is recommended to use it in the first block.";
     info(start, message);
   }
 
@@ -134,7 +142,7 @@ public final class Errors {
 
   public static void debug(String message) {
     System.out.println(DEBUG + message);
-    System.out.println("This means an internal error occoured in our compiler, please report this error to: TODO");
+    System.out.println("This means an internal error occoured in our compiler, please report this error to: smahovsky6@fmph.uniba.sk");
     throw new STException();
   }
 
