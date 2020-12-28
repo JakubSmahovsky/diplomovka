@@ -18,8 +18,7 @@ public final class Constants{
   public static enum CommandType {
     IN,
     OUT,
-    FRESH,
-    SDEC
+    FRESH
   }
 
   public static enum VariableDefined {
@@ -50,15 +49,19 @@ public final class Constants{
     }
   }
 
-  public static final String INDENT = "  ";
-  public static final String DEFAULTTHEORYNAME = "spthy";
-  public static final String EXECUTABLE = "executable";
-  public static final String TEMPORAL = "t";
-  public static final String EQUALITY = "Eq";
+  // restrictions; put an empty line after every restriction
+  public static final String RESTRICTION_EQUALITY = 
+    "restriction Equality:\r\n" +
+    Constants.INDENT + "\"All x y #i. Eq(x,y) @i ==> x = y\"\r\n" +
+    "\r\n";
+
   // builtins
   public static final String BUILTIN_SYMMETRIC_ENCRYPTION = "symmetric-encryption";
   public static final String BUILTIN_HASHING = "hashing";
   // Tamarin functions
+  public static final String COMMANDIN = "In";
+  public static final String COMMANDOUT = "Out";
+  public static final String COMMANDFRESH = "Fr";
   public static final String INIT = "init";
   public static final String SENC = "senc";
   public static final String SDEC = "sdec";
@@ -74,4 +77,9 @@ public final class Constants{
     "==============================================================================";
   public static final String SOURCESHEADER =
     OUTPUTSEPARATOR + "SOURCES" + OUTPUTSEPARATOR;
+  public static final String INDENT = "  ";
+  public static final String DEFAULTTHEORYNAME = "spthy";
+  public static final String EXECUTABLE = "executable";
+  public static final String TEMPORAL = "t";
+  public static final String EQUALITY = "Eq";
 }

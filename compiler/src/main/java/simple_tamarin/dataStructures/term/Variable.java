@@ -110,7 +110,7 @@ public class Variable extends Term {
   }
 
   @Override public String renderLemma() {
-    return name;
+    return sort == VariableSort.TEMPORAL ? render() : name;
   }
 
   @Override public void removeFresh() {

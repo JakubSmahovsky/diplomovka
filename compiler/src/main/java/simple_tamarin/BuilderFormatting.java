@@ -1,8 +1,8 @@
 package simple_tamarin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import simple_tamarin.Constants.VariableSort;
@@ -10,28 +10,23 @@ import simple_tamarin.dataStructures.Alias;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.StBlock;
 import simple_tamarin.dataStructures.term.*;
+import simple_tamarin.errors.Errors;
 
+/**
+ * Part of Builder (see Builder) used to define methods working with strings.
+ * Any constant strings should only used here. Builder itself works with logical
+ * parts of Tamarin code whereas this class handles all the speciffic
+ * formatting of those parts.
+ * Other classes should also use methods of this class for output formatting where
+ * needed in order to keep output uniform.
+ */
 public abstract class BuilderFormatting {
   public static String blockName(StBlock block) {
     return block.principal.name + "_" + block.rangeBegin;
   }
 
   public static String builtins(List<String> builtins) {
-    if (builtins.isEmpty()) {
-      return "";
-    }
-
-    StringBuilder result = new StringBuilder("builtins: ");
-    Iterator<String> it = builtins.iterator();
-    while (it.hasNext()) {
-      result.append(it.next());
-      if (it.hasNext()) {
-        result.append(", ");
-      }
-    }
-    result.append("\r\n");
-    result.append("\r\n");
-    return result.toString();
+    return "builtins: " + String.join(", ", builtins) + "\r\n\r\n";
   }
 
   public static String alias(Alias alias) {
@@ -39,23 +34,11 @@ public abstract class BuilderFormatting {
   }
 
   public static String fact(String name, List<? extends Term> terms, StBlock block) {
-    StringBuilder result = new StringBuilder();
-    result.append(name + "(");
-
-    Iterator<? extends Term> it = terms.iterator();
-    while (it.hasNext()) {
-      if (block == null) {
-        result.append(it.next().render());
-      } else {
-        result.append(it.next().render(block));
-      }
-      if (it.hasNext()) {
-        result.append(", ");
-      }
+    ArrayList<String> renders = new ArrayList<>();
+    for (Term term : terms) {
+      renders.add(block == null ? term.render() : term.render(block));
     }
-
-    result.append(")");
-    return result.toString();
+    return name + "(" + String.join(", ", renders) + ")";
   }
 
   public static String fact(String name, Term term, StBlock block) {
@@ -78,28 +61,13 @@ public abstract class BuilderFormatting {
     return persistentFact(principal.name + "_init", principal.initState, block);
   }
 
-  public static String freshFact(Term term, StBlock block) {
-    return fact("Fr", term, block);
-  }
-
-  public static String inFact(Term term, StBlock block) {
-    return fact("In", term, block);
-  }
-
-  public static String outFact(Term term, StBlock block) {
-    return fact("Out", term, block);
-  }
-
   public static String ruleAliases(String name, List<String> aliases) {
     StringBuilder result = new StringBuilder("rule " + name + ":\r\n");
     if (aliases.isEmpty()) {
       return result.toString();
     }
-
     result.append("let\r\n");
-    for (String alias : aliases) {
-      result.append(Constants.INDENT + alias + "\r\n");
-    }
+    result.append(String.join("\r\n", indent(aliases)) + "\r\n");
     result.append("in\r\n");
     return result.toString();
   }
@@ -117,26 +85,17 @@ public abstract class BuilderFormatting {
   }
 
   public static String ruleBody(List<String> facts) {
-    StringBuilder result = new StringBuilder("");
-    Iterator<String> it = facts.iterator();
-    while (it.hasNext()) {
-      String fact = it.next();
-      result.append(Constants.INDENT + fact + (it.hasNext() ? "," : "") + "\r\n");
-    }
-    return result.toString();
+    return String.join(",\r\n", indent(facts)) + "\r\n";
   }
 
   public static String restrictionEq() {
-    return 
-      "restriction Equality:\r\n" +
-      Constants.INDENT + "\"All x y #i. Eq(x,y) @i ==> x = y\"\r\n" +
-      "\r\n"; // empty line after every restriction
+    return Constants.RESTRICTION_EQUALITY;
   }
 
   public static String theoryHeader(String name) {
-    return "theory " + name + "\r\n" + "begin\r\n" + "\r\n";
+    return "theory " + name + "\r\nbegin\r\n\r\n";
   }
-
+  
   public static String endProtocol() {
     return "end\r\n";
   }
@@ -149,50 +108,44 @@ public abstract class BuilderFormatting {
   public static String ExVariables(Collection<Variable> variables){
     StringBuilder result = new StringBuilder("Ex");
     for (Variable variable : variables) {
-      String sortString = variable.sort == VariableSort.TEMPORAL ? "#" : "";
-      result.append(" " + sortString + variable.name);
+      result.append(" " + variable.renderLemma());
     }
     result.append(".\r\n");
     return result.toString();
   }
 
   public static String lemmaResultStateFact(StBlock block, Variable temporal) {
-    if (temporal.sort != VariableSort.TEMPORAL) {
-      System.out.println("Debug: Argument temporal is not of sort TEMPORAL in lemmaResultStateFact!");
-    }
-    return lemmaFact(blockName(block), block.completeState()) + " @ " + temporal.render();
+    return lemmaFact(blockName(block), block.completeState()) + " " + atTemporal(temporal);
   }
 
   public static String lemmaFact(String name, List<? extends Term> terms) {
-    StringBuilder result = new StringBuilder();
-    result.append(name + "(");
-
-    Iterator<? extends Term> it = terms.iterator();
-    while (it.hasNext()) {
-      result.append(it.next().renderLemma());
-      if (it.hasNext()) {
-        result.append(", ");
-      }
+    ArrayList<String> renders = new ArrayList<>();
+    for (Term term : terms) {
+      renders.add(term.renderLemma());
     }
-
-    result.append(")");
-    return result.toString();
+    return name + "(" + String.join(", ", renders) + ")";
   }
 
   public static String conjunction(List<String> facts) {
-    Iterator<String> it = facts.iterator();
-    StringBuilder result = new StringBuilder();
-    while (it.hasNext()) {
-      result.append(it.next());
-      if (it.hasNext()) {
-        result.append(" &");
-      }
-      result.append("\r\n");
-    }
-    return result.toString();
+    return String.join(" &\r\n", facts) + "\r\n";
   }
 
   public static String lemmaEnd() {
     return "\"\r\n";
+  }
+
+  public static String atTemporal(Variable temporal) {
+    if (temporal.sort != VariableSort.TEMPORAL) {
+      Errors.DebugNotTemporal("atTemporal");
+    }
+    return "@ " + temporal.render();
+  }
+
+  public static List<String> indent(List<String> strings) {
+    ArrayList<String> result = new ArrayList<>();
+    for (String string : strings) {
+      result.add(Constants.INDENT + string);
+    }
+    return result;
   }
 }

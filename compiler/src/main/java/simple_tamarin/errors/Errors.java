@@ -122,6 +122,14 @@ public final class Errors{
     debug("Unexpected function \"" + function + "\" found in \"" + where + "\"!");
   }
 
+  public static void DebugNotTemporal(String function) {
+    debug("Temporal variable argument is not of sort TEMPORAL in " + function + "!" );
+  }
+
+  public static void DebugCommandType(String command, String function) {
+    debug("Unexpected command type " + command + " in " + function + "!");
+  }
+
   public static void error(Token posToken, String message) {
     print(ERROR, posToken, message);
     throw new STException();
