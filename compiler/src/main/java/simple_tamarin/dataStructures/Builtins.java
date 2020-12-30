@@ -1,16 +1,12 @@
 package simple_tamarin.dataStructures;
 
+  /**
+   * A class hoding flags of builtins used by a protocol
+   */
 public class Builtins {
   // default
-  public boolean symmetric_encryption;
-  public boolean hashing;
+  public boolean symmetric_encryption = false;
+  public boolean hashing = false;
   // custom
-  public boolean restriction_eq;
-
-  public Builtins() {
-    symmetric_encryption = false;
-    hashing = false;
-
-    restriction_eq = false;
-  }
+  public boolean restriction_eq = false;
 }

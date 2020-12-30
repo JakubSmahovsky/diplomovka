@@ -1,9 +1,8 @@
 package simple_tamarin.dataStructures;
 
+/**
+ * A class holding info about queries requested by a protocol.
+ */
 public class Queries {
-  public boolean executable;
-
-  public Queries() {
-    this.executable = false;
-  }
+  public boolean executable = false;
 }

@@ -4,7 +4,7 @@ import simple_tamarin.dataStructures.term.Term;
 
 /**
  * When deconstructing a non-transparent Term, for example when decoding an encoded value,
- * we spread the Term in Tamarin code instead of using aliases. To support that we create
+ * we spread the Term in Tamarin code instead of using aliases. To do this we create
  * a decondtruction object in the corresponding block, so that all occourences of such term
  * are being spread out. The decoded calue inside this term needs to be substituted by
  * the resut of this deconstrution, therefore we remember this substiturion term.

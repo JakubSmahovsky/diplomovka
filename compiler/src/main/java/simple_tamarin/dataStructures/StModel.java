@@ -9,7 +9,7 @@ import simple_tamarin.dataStructures.term.Variable;
  * Simple_tamarin Model
  */
 public class StModel {
-  public ArrayList<Principal> principals;
+  private ArrayList<Principal> principals;
   public ArrayList<Variable> pubVariables; // long term public variables
   public Queries queries;
   public Builtins builtins;
@@ -57,5 +57,13 @@ public class StModel {
       }
     }
     return null;
+  }
+
+  /**
+   * Getter for private list of principals to indicate that changing
+   * should be done via methods of this class instead of directly.
+   */
+  public ArrayList<Principal> getPrincipals() {
+    return principals;
   }
 }

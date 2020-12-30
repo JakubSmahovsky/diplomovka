@@ -6,14 +6,14 @@ import simple_tamarin.BuilderFormatting;
 import simple_tamarin.dataStructures.term.Term;
 
 /**
- * A seldom used class used to store information needed to render an action fact
- * in Tamarin
+ * A seldom used class used to store information needed to render
+ * an action fact in Tamarin
  */
-public class Fact {
+public class ActionFact {
   public String name;
   public ArrayList<Term> terms;
 
-  public Fact(String name, ArrayList<Term> terms) {
+  public ActionFact(String name, ArrayList<Term> terms) {
     this.name = name;
     this.terms = new ArrayList<>(terms);
   }

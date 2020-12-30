@@ -59,7 +59,7 @@ public class Builder extends BuilderFormatting{
   private void initRule() {
     // gather fresh variables
     HashSet<Variable> toGenerate = new HashSet<>();
-    for (Principal principal : model.principals) {
+    for (Principal principal : model.getPrincipals()) {
       for (Variable variable : principal.initState) {
         // createdBy is null when variable is static
         if (variable.cratedBy == null && variable.sort == VariableSort.FRESH) {
@@ -78,7 +78,7 @@ public class Builder extends BuilderFormatting{
 
     // render init states of principals
     facts = new ArrayList<>();
-    for (Principal principal : model.principals) {
+    for (Principal principal : model.getPrincipals()) {
       facts.add(initStateFact(principal, null));
     }
     output.append(ruleResult(facts));
@@ -93,10 +93,9 @@ public class Builder extends BuilderFormatting{
    * Create all the regular principal blocks.
    */
   private void blocks() {
-    for (Principal principal : model.principals) {
+    for (Principal principal : model.getPrincipals()) {
       StBlock previousBlock = null;
-      for (int i = 0; i < principal.blocks.size(); i++) {
-        StBlock curBlock = principal.blocks.get(i);
+      for (StBlock curBlock : principal.getBlocks()) {
         block(previousBlock, curBlock);
         previousBlock = curBlock;
       }
@@ -139,7 +138,7 @@ public class Builder extends BuilderFormatting{
     facts = new ArrayList<>();
     String resultStateFact = resultStateFact(block, block);
     facts.add(resultStateFact);
-    for (Fact fact : block.actions) {
+    for (ActionFact fact : block.actions) {
       facts.add(fact.render(block));
     }
     output.append(ruleAction(facts));
@@ -181,8 +180,8 @@ public class Builder extends BuilderFormatting{
   private void executable() {
     output.append(lemmaEx(Constants.EXECUTABLE));
     ArrayList<Variable> variables = new ArrayList<>();
-    for (Principal principal : model.principals) {
-      ArrayList<Term> finalState = principal.blocks.get(principal.blocks.size()-1).completeState();
+    for (Principal principal : model.getPrincipals()) {
+      ArrayList<Term> finalState = principal.getLastBlock().completeState();
       for (Term term : finalState) {
         for (Variable variable : term.freeVariables()) {
           if (!variables.contains(variable)) {
@@ -192,7 +191,7 @@ public class Builder extends BuilderFormatting{
       }
     }
     ArrayList<Variable> temporals = new ArrayList<>();
-    for (int principalNo = 0; principalNo < model.principals.size(); principalNo ++) {
+    for (int principalNo = 0; principalNo < model.getPrincipals().size(); principalNo ++) {
       Variable t = Variable.nextTemporal();
       variables.add(t);
       temporals.add(t);
@@ -201,9 +200,8 @@ public class Builder extends BuilderFormatting{
 
     ArrayList<String> facts = new ArrayList<>();
     Iterator<Variable> tempIt = temporals.iterator();
-    for (Principal principal : model.principals) {
-      StBlock finalBlock = principal.blocks.get(principal.blocks.size()-1);
-      facts.add(lemmaResultStateFact(finalBlock, tempIt.next()));
+    for (Principal principal : model.getPrincipals()) {
+      facts.add(lemmaResultStateFact(principal.getLastBlock(), tempIt.next()));
     }
     output.append(conjunction(facts));
     output.append(lemmaEnd());

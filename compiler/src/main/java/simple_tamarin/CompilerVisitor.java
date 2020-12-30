@@ -31,7 +31,7 @@ public class CompilerVisitor {
 			visitSegment(segment);
 		}
 
-		for (Principal principal : model.principals) {
+		for (Principal principal : model.getPrincipals()) {
 			principal.nextBlock(); // add last nextBlock, so that incomming messages are received
 			principal.squishBlocks();
 		}
@@ -107,7 +107,7 @@ public class CompilerVisitor {
 	}
 
 	public void visitKnows(KnowsContext ctx, Principal principal, StBlock block) {
-		if (principal.blocks.get(0) != block) {
+		if (principal.getFirstBlock() != block) {
 			Errors.InfoKnowsInFirstBlock(ctx.getStart());
 		}
 
@@ -121,7 +121,7 @@ public class CompilerVisitor {
 		} else {
 			variable.sort = VariableSort.FRESH;
 			// unify the private variable with one known by another principal
-			for (Principal anyPrincipal : model.principals) {
+			for (Principal anyPrincipal : model.getPrincipals()) {
 				Variable existing = anyPrincipal.knows(variable.name);
 				if (existing != null) {
 					if (existing.cratedBy == null) {
@@ -171,13 +171,12 @@ public class CompilerVisitor {
 				receiver.learn(term);
 			}
 
-			if (sender.blocks.isEmpty()) {
+			if (sender.getBlocks().isEmpty()) {
 				// sender may send a public variable before doing anything else, in that case it needs an initial block
 				sender.nextBlock();
 			}
 
-			StBlock sendersLastBlock = sender.blocks.get(sender.blocks.size()-1);
-			sendersLastBlock.result.add(new Command(CommandType.OUT, term));
+			sender.getLastBlock().result.add(new Command(CommandType.OUT, term));
 			receiver.nextBlock.premise.add(new Command(CommandType.IN, term));
 			if (!receiver.nextBlock.state.contains(term)) {
 				// TODO: we're adding the entire message to state, some deconstruction or extraction may be in order
@@ -307,7 +306,7 @@ public class CompilerVisitor {
 				if (!(term1.equals(term2))) {
 					Errors.WarningAssertNeverTrue(ctx.start);
 				}
-				block.actions.add(new Fact(Constants.EQUALITY, new ArrayList<Term>(Arrays.asList(term1, term2))));
+				block.actions.add(new ActionFact(Constants.EQUALITY, new ArrayList<Term>(Arrays.asList(term1, term2))));
 			}
 			case Constants.VPHASH: {
 				model.builtins.hashing = true;
