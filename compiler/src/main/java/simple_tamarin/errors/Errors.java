@@ -118,8 +118,8 @@ public final class Errors{
     info(start, message);
   }
 
-  public static void DebugUnexpectedFunction(String function, String where) {
-    debug("Unexpected function \"" + function + "\" found in \"" + where + "\"!");
+  public static void DebugUnexpectedCall(String called, String where) {
+    debug("Unexpected call to function " + called + " in " + where + "!");
   }
 
   public static void DebugNotTemporal(String function) {
@@ -128,6 +128,10 @@ public final class Errors{
 
   public static void DebugCommandType(String command, String function) {
     debug("Unexpected command type " + command + " in " + function + "!");
+  }
+
+  public static void DebugMissingImplementation(String function, String where) {
+    debug("Missing implementation of function " + function + " iherited from " + where + "!");
   }
 
   public static void error(Token posToken, String message) {

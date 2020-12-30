@@ -161,9 +161,9 @@ public class CompilerVisitor {
 			Errors.ErrorPrincipalDoesNotExist(ctx.receiver);
 		}
 
-		VariableDefined expectVD = VariableDefined.USE_MESSAGE;
 		for (TermContext message : ctx.term()) {
-			Term term = visitTerm(message, sender, null, expectVD);
+			// visitTerm verifies that message is transparent (when expectVD is USE_MESSAGE)
+			Term term = visitTerm(message, sender, null, VariableDefined.USE_MESSAGE);
 
 			// if it's not a public variable
 			if (!(term instanceof Variable) || model.findVariable(((Variable)term).name) == null) {
@@ -287,7 +287,7 @@ public class CompilerVisitor {
 				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
 				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
 				// if value is a variable find it's definition
-				Term decodedValue = value.deconstructTerm();
+				Term decodedValue = value.toCanonical();
 				if (!(decodedValue instanceof FunctionSenc)) {
 					Errors.ErrorDecodingNotEncoded(ctx.argument.get(1));
 				}
@@ -314,11 +314,15 @@ public class CompilerVisitor {
 				if (ctx.argument.size() < 1) {
 					Errors.ErrorArgumentsMinCount(ctx.FUNCTION().getSymbol(), 1, ctx.argument.size());
 				}
+				// n-ary hash is syntactic sugar for unary hash of a tuple
+				if (ctx.argument.size() == 1) {
+					return new FunctionHash(visitTerm(ctx.argument.get(0), principal, block, expectVD));
+				}
 				ArrayList<Term> subterms = new ArrayList<>();
 				for (TermContext termctx : ctx.argument) {
 					subterms.add(visitTerm(termctx, principal, block, expectVD));
 				}
-				return new FunctionHash(subterms);
+				return new FunctionHash(new Tuple(subterms));
 			}
 			default: {
 				throw new STException("Debug: Unexpected function type: " + ctx.FUNCTION().getText() + " in visitFunctionCall.");

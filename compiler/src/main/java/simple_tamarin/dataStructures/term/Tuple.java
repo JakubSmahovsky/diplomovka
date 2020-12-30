@@ -1,8 +1,6 @@
 package simple_tamarin.dataStructures.term;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import simple_tamarin.dataStructures.Deconstruction;
@@ -16,6 +14,10 @@ public class Tuple extends Term{
     this.subterms = subterms;
   }
 
+  @Override public Term toCanonical() {
+    return this;
+  }
+
   @Override public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -23,57 +25,13 @@ public class Tuple extends Term{
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term term = ((Term)obj).deconstructTerm();
-    if (!(term instanceof Tuple)) {
-      return false;
-    }
-    if (subterms.size() != ((Tuple)term).subterms.size()) {
+    Term term = ((Term)obj).toCanonical();
+    if (!(term instanceof Tuple) || subterms.size() != ((Tuple)term).subterms.size()) {
       return false;
     }
     for (int i = 0; i < subterms.size(); i++) {
       if (!subterms.get(i).equals(((Tuple)term).subterms.get(i))) {
         return false;
-      }
-    }
-    return true;
-  }
-
-  @Override public Term deconstructTerm() {
-    return this;
-  }
-
-  @Override public boolean unify (Term right, StBlock block, Principal principal) {
-    Term deconstructed = right.deconstructTerm();
-    if (right.isDeconstructionTerm()) {
-      Deconstruction dec = new Deconstruction(right.encoded(), Arrays.asList(this));
-      if (!block.deconstructed.contains(dec)) {
-        block.deconstructed.add(dec);
-      }
-      deconstructed = right.deconstructTerm();
-    }
-    if (!(deconstructed instanceof Tuple) || subterms.size() != ((Tuple)deconstructed).subterms.size()) {
-      return false;
-    }
-
-    // unify subterms
-    for (int i = 0; i < subterms.size(); i++) {
-      if (!subterms.get(i).unify(((Tuple)deconstructed).subterms.get(i), block, principal)) {
-        return false;
-      }
-    }
-
-    /**
-     * Unifying tuple with non-tuple
-     * We want to spread this tuple instead of using the rendered value of deconstructed
-     */
-    if (!(right instanceof Tuple)) {
-      ArrayList<Term> substitutions = new ArrayList<>();
-      for (Term subterm : subterms) {
-        substitutions.add(subterm);
-      }
-      Deconstruction dec = new Deconstruction(deconstructed, substitutions);
-      if (!block.deconstructed.contains(dec)) {
-        block.deconstructed.add(dec);
       }
     }
     return true;
@@ -88,36 +46,24 @@ public class Tuple extends Term{
   }
 
   @Override public String render() {
-    return render(false);
+    ArrayList<String> renderedSubterms = new ArrayList<>();
+    for (Term subterm : subterms) {
+      renderedSubterms.add(subterm.render());
+    }
+    return "<" + String.join(", ", renderedSubterms) + ">";
   }
 
-  @Override public String render(StBlock block) {
-    return render();
-  }
-
-  @Override public String render(List<Term> substitutions) {
-    return (new Tuple(new ArrayList<>(substitutions))).render();
+  @Override public String render(Term substitution) {
+    // substitute this entire Tuple
+    return substitution.render();
   }
 
   @Override public String renderLemma() {
-    return render(true);
-  }
-
-  private String render(boolean asLemma) {
-    StringBuilder result = new StringBuilder();
-    result.append('<');
-
-    Iterator<? extends Term> it = subterms.iterator();
-    while (it.hasNext()) {
-      String subString = asLemma ? it.next().renderLemma() : it.next().render(); 
-      result.append(subString);
-      if (it.hasNext()) {
-        result.append(", ");
-      }
+    ArrayList<String> renderedSubterms = new ArrayList<>();
+    for (Term subterm : subterms) {
+      renderedSubterms.add(subterm.renderLemma());
     }
-  
-    result.append('>');
-    return result.toString();
+    return "<" + String.join(", ", renderedSubterms) + ">";
   }
 
   @Override public void removeFresh() {
@@ -128,5 +74,44 @@ public class Tuple extends Term{
 
   @Override public boolean isDeconstructionTerm() {
     return false;
+  }
+
+  @Override public List<Variable> freeVariables() {
+    ArrayList<Variable> result = new ArrayList<>();
+    for (Term subterm : subterms) {
+      result.addAll(subterm.freeVariables());
+    }
+    return result;
+  }
+
+  @Override public boolean unify(Term right, StBlock block, Principal principal) {
+    // spread Tuple to deconstruct a deconstruction Term
+    if (right.isDeconstructionTerm()) {
+      Deconstruction dec = new Deconstruction(right.encoded(), this);
+      if (!block.deconstructed.contains(dec)) {
+        block.deconstructed.add(dec);
+      }
+    }
+
+    // spread Tuple instead of making an Alias when assigning a Variable
+    if (right instanceof Variable) {
+      Deconstruction dec = new Deconstruction(right, this);
+      if (!block.deconstructed.contains(dec)) {
+        block.deconstructed.add(dec);
+      }
+    }
+    
+    // unify
+    Term canonical = right.toCanonical();
+    if (!(canonical instanceof Tuple) || subterms.size() != ((Tuple)canonical).subterms.size()) {
+      return false;
+    }
+    for (int i = 0; i < subterms.size(); i++) {
+      if (!subterms.get(i).unify(((Tuple)canonical).subterms.get(i), block, principal)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

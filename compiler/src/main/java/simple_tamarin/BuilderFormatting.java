@@ -126,6 +126,10 @@ public abstract class BuilderFormatting {
     return name + "(" + String.join(", ", renders) + ")";
   }
 
+  public static String lemmaFact(String name, Term term) {
+    return lemmaFact(name, Arrays.asList(term));
+  }
+
   public static String conjunction(List<String> facts) {
     return String.join(" &\r\n", facts) + "\r\n";
   }

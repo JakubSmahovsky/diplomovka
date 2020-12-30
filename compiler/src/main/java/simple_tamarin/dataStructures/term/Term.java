@@ -5,39 +5,17 @@ import java.util.List;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.StBlock;
 import simple_tamarin.errors.Errors;
-import simple_tamarin.errors.STException;
-
 public abstract class Term{
-  public abstract Term deconstructTerm();
+  public abstract Term toCanonical();
 
   /**
-   * Return contained encoded value for deconstruction terms
+   * Extracts variables that can be learnt from a transparent Term.
+   * Non-transparent Terms don't need to Override it.
    */
-  public Term encoded() {
-    if (isDeconstructionTerm()) {
-      throw new STException("DEBUG: Unimplemented required encoded() method");
-    }
-    throw new STException("DEBUG: Unexpected call to encoded() method");
-  }
-
-  /**
-   * Function for assigning variables from left side of an assignemt
-   * their respective values from the right side of the assignment.
-   * In case of complex terms on the right side, variables are
-   * substituted instead.
-   * The left term (this) is populated with correct variable.
-   * Aliases created during substitution are added to the block.
-   * @return false in case of errors
-   */
-  public boolean unify(Term right, StBlock block, Principal principal) {
-    Errors.DebugUnexpectedFunction(render(), "unify");
-    return false;
+  public List<Variable> extractKnowledge() {
+    Errors.DebugUnexpectedCall("extractKnowledge", render());
+    return null;
   };
-  
-  /**
-   * Extracts variables (syntactically) from Terms that can be learnt
-   */
-  public abstract List<Variable> extractKnowledge();
 
   /**
    * Render Term to text in Tamarin syntax
@@ -45,25 +23,35 @@ public abstract class Term{
   public abstract String render();
 
   /**
-   * Like render(); but with respect to a block.
+   * Like render, but with respect to a block.
    * The term may be deconstructed in which case it is rendered
    * as it's deconstruction with the substitutions given by the deconstruction.
+   * Should be overriden where it makes sense. See Decontrustion class for more info.
    */
-  public abstract String render(StBlock block);
+  public String render(StBlock block) {
+    return render();
+  };
 
   /**
-   * Like render, but substitute Variables which may be unnamed
-   * by Variables from the substitutions list
+   * Like render but substitute a value that may be subtituted.
+   * Only makes sense for Terms that may be canonical forms of Variables
+   * that are being deconstructed, e.g. Variable x with canoncical form
+   * of senc(k, v) may get deconstructed and assigned to substitution 
+   * in which case we want to render "senc(k, substitution)" instead of "x".
    */
-  public abstract String render(List<Term> substitutions);
+  public String render(Term substitution) {
+    Errors.DebugUnexpectedCall("render(substiturion)", render());
+    return null;
+  }
 
   /**
-   * Render Term for use in a lemma, removing all sorts from Variables
+   * Render Term for use in a lemma, rendering Variables without sorts
+   * other than temporal.
    */
   public abstract String renderLemma();
 
   /**
-   * Removed Fresh tag (~) from variables in Term
+   * Removed Fresh tag (~) from variables in Term.
    */
   public abstract void removeFresh();
 
@@ -74,4 +62,39 @@ public abstract class Term{
    * decryption functions.
    */
   public abstract boolean isDeconstructionTerm();
+
+  /**
+   * Generate list of free variables of a Term to be declared when
+   * rendering a lemma. Deconstruction Terms don't need to Override it.
+   */
+  public List<Variable> freeVariables(){
+    Errors.DebugUnexpectedCall("freeVariables", render());
+    return null;  
+  }
+
+  /**
+   * Return encoded value for deconstruction terms
+   * @return e for dec(k, e)
+   */
+  public Term encoded() {
+    if (isDeconstructionTerm()) {
+      Errors.DebugMissingImplementation("encoded()", render());
+    }
+    Errors.DebugUnexpectedCall("encoded()", render());
+    return null;
+  }
+
+  /**
+   * Function for assigning variables from left side of an assignemt
+   * their respective values from the right side of the assignment.
+   * Creates alises in case of construction right terms and
+   * deconstructions in case of deconstruction right terms.
+   * The left term (this) is populated with correct variable.
+   * This function should be overriden by "transparent" Terms and no other.
+   * @return false if left and right cannot be unified
+   */
+  public boolean unify(Term right, StBlock block, Principal principal) {
+    Errors.DebugUnexpectedCall("unify", render());
+    return false;
+  };
 }

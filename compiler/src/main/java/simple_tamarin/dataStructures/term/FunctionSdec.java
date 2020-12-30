@@ -1,11 +1,9 @@
 package simple_tamarin.dataStructures.term;
 
 import java.util.Arrays;
-import java.util.List;
 
 import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
-import simple_tamarin.dataStructures.StBlock;
 
 /**
  * Term holding an instance of symmetric encoding.
@@ -17,13 +15,17 @@ import simple_tamarin.dataStructures.StBlock;
  */
 public class FunctionSdec extends Term{
   public Term key;
-  public Term senc;
+  public Term encodedValue;
   public Term decodedValue;
 
-  public FunctionSdec(Term key, Term senc, Term decodedValue) {
+  public FunctionSdec(Term key, Term encodedValue, Term decodedValue) {
     this.key = key;
-    this.senc = senc;
+    this.encodedValue = encodedValue;
     this.decodedValue = decodedValue;
+  }
+
+  @Override public Term toCanonical() {
+    return decodedValue;
   }
 
   @Override public boolean equals(Object obj) {
@@ -33,44 +35,28 @@ public class FunctionSdec extends Term{
     if (!(obj instanceof Term)) {
       return false;
     }
-    return this.deconstructTerm().equals(((Term)obj).deconstructTerm());
-  }
-
-  @Override public Term deconstructTerm() {
-    return decodedValue;
-  }
-
-  @Override public Term encoded(){
-    return senc;
-  }
-
-  @Override public List<Variable> extractKnowledge() {
-    return null;
+    return this.toCanonical().equals(((Term)obj).toCanonical());
   }
 
   @Override public String render(){
-    return BuilderFormatting.fact(Constants.SDEC, Arrays.asList(senc, key), null);
-  }
-
-  @Override public String render(StBlock block) {
-    return render();
-  }
-
-  @Override public String render(List<Term> substitutions) {
-    return (new FunctionSenc(key, substitutions.get(0))).render();
+    return BuilderFormatting.fact(Constants.SDEC, Arrays.asList(encodedValue, key), null);
   }
 
   @Override public String renderLemma(){
-    return BuilderFormatting.lemmaFact(Constants.SDEC, Arrays.asList(senc, key));
+    return BuilderFormatting.lemmaFact(Constants.SDEC, Arrays.asList(encodedValue, key));
   }
 
   @Override public void removeFresh() {
     key.removeFresh();
-    senc.removeFresh();
+    encodedValue.removeFresh();
     decodedValue.removeFresh();    
   }
 
   @Override public boolean isDeconstructionTerm() {
     return true;
+  }
+
+  @Override public Term encoded(){
+    return encodedValue;
   }
 }

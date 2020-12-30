@@ -46,7 +46,10 @@ public class Principal {
     return null;
   }
 
-  
+  /**
+   * Add all variables from a transparent Term to knowledge.
+   * Undefined bahavior for non-transparent Terms (likely crash).
+   */
   public void learn(Term term) {
     for (Variable extracted : term.extractKnowledge()) {
       if (!knowledge.contains(extracted)) {

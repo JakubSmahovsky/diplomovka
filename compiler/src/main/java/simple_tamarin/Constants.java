@@ -73,13 +73,11 @@ public final class Constants{
   public static final String VPHASH = "HASH";
 
   // miscelaneous
-  public static final String OUTPUTSEPARATOR =
-    "==============================================================================";
-  public static final String SOURCESHEADER =
-    OUTPUTSEPARATOR + "SOURCES" + OUTPUTSEPARATOR;
+  public static final String OUTPUTSEPARATOR = "==============================================================================";
+  public static final String SOURCESHEADER = OUTPUTSEPARATOR + "SOURCES" + OUTPUTSEPARATOR;
   public static final String INDENT = "  ";
   public static final String DEFAULTTHEORYNAME = "spthy";
+  public static final String TEMPORAL_NAME = "t";
   public static final String EXECUTABLE = "executable";
-  public static final String TEMPORAL = "t";
   public static final String EQUALITY = "Eq";
 }

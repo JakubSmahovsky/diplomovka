@@ -1,11 +1,11 @@
 package simple_tamarin.dataStructures.term;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
-import simple_tamarin.dataStructures.StBlock;
 
 public class FunctionSenc extends Term {
   public Term key;
@@ -16,6 +16,10 @@ public class FunctionSenc extends Term {
     this.value = value;
   }
 
+  @Override public Term toCanonical() {
+    return this;
+  }
+
   @Override public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -23,31 +27,19 @@ public class FunctionSenc extends Term {
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term term = ((Term)obj).deconstructTerm();
+    Term term = ((Term)obj).toCanonical();
     if (!(term instanceof FunctionSenc)) {
       return false;
     }
     return (key.equals(((FunctionSenc)term).key) && value.equals(((FunctionSenc)term).value));
   }
 
-  @Override public Term deconstructTerm() {
-    return this;
-  }
-  
-  @Override public List<Variable> extractKnowledge() {
-    return null;
-  }
-
   @Override public String render(){
     return BuilderFormatting.fact(Constants.SENC, Arrays.asList(value, key), null);
   }
 
-  @Override public String render(StBlock block) {
-    return render();
-  }
-
-  @Override public String render(List<Term> substitutions){
-    return (new FunctionSenc(key, substitutions.get(0))).render();
+  @Override public String render(Term substitution){
+    return (new FunctionSenc(key, substitution).render());
   }
 
   @Override public String renderLemma(){
@@ -61,5 +53,12 @@ public class FunctionSenc extends Term {
 
   @Override public boolean isDeconstructionTerm() {
     return false;
+  }
+
+  @Override public List<Variable> freeVariables() {
+    ArrayList<Variable> result = new ArrayList<>();
+    result.addAll(key.freeVariables());
+    result.addAll(value.freeVariables());
+    return result;
   }
 }
