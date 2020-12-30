@@ -9,7 +9,7 @@ import simple_tamarin.dataStructures.term.Variable;
 
 public class Principal {
   public String name;
-  public ArrayList<Variable> knowledge;
+  private ArrayList<Variable> knowledge;
   private ArrayList<StBlock> blocks;
   public StBlock nextBlock;
   public ArrayList<Variable> initState;

@@ -122,6 +122,10 @@ public final class Errors{
     debug("Unexpected call to function " + called + " in " + where + "!");
   }
 
+  public static void DebugUnexpectedTokenType(String token, String where) {
+    debug("Unexpected token " + token + " found in " + where + "!");
+  }
+
   public static void DebugNotTemporal(String function) {
     debug("Temporal variable argument is not of sort TEMPORAL in " + function + "!" );
   }

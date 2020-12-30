@@ -32,7 +32,7 @@ public class CompilerVisitor {
 		}
 
 		for (Principal principal : model.getPrincipals()) {
-			principal.nextBlock(); // add last nextBlock, so that incomming messages are received
+			principal.nextBlock(); // add last nextBlock to blocks list
 			principal.squishBlocks();
 		}
 
@@ -41,8 +41,9 @@ public class CompilerVisitor {
 			writer.write(builder.output());
 			writer.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
 			e.printStackTrace();
+			throw new STException();
 		}
 		return model;
 	}
@@ -60,6 +61,8 @@ public class CompilerVisitor {
 			visitQueriesBlock(ctx.queriesBlock());
 			return;
 		}
+
+		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitSegment");
 	}
 
 	public void visitPrincipalBlock(PrincipalBlockContext ctx) {
@@ -70,20 +73,18 @@ public class CompilerVisitor {
 		
 		Principal principal = model.findPrincipal(principalName);
 		if (principal == null) {
-			Errors.InfoDeclarePrincipal(ctx.principal);
-			// TODO allow declaring principals
+			// TODO: allow declaring principals, then uncomment next line
+			// Errors.InfoDeclarePrincipal(ctx.principal);
 			if (model.findVariable(principalName) != null) {
 				Errors.ErrorPrincipalNameCollision(ctx.principal);
 			}
 			principal = model.addPrincipal(principalName);
 		}
 
-		// init focused objects
-		StBlock block = principal.nextBlock;
+		StBlock curBlock = principal.nextBlock;
 		principal.nextBlock();
-
 		for (CommandContext command : ctx.command()) {
-			visitCommand(command, principal, block);
+			visitCommand(command, principal, curBlock);
 		}
 	}
 
@@ -104,6 +105,7 @@ public class CompilerVisitor {
 			visitCheck(ctx.check(), principal, block);
 			return;
 		}
+		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitCommad");
 	}
 
 	public void visitKnows(KnowsContext ctx, Principal principal, StBlock block) {
@@ -111,7 +113,17 @@ public class CompilerVisitor {
 			Errors.InfoKnowsInFirstBlock(ctx.getStart());
 		}
 
-		boolean pub = (ctx.modifier.getText().equals("public")) ? true : false;
+		String modifier = ctx.modifier.getText();
+		boolean pub;
+		if (modifier.equals("public")){
+			pub = true;
+		} else if (modifier.equals("private")){
+			pub = false;
+		} else {
+			Errors.DebugUnexpectedTokenType(modifier, "modifier in knows");
+			return;
+		}
+
 		VariableDefined expectVD = pub ? VariableDefined.PUBLIC_KNOWS : VariableDefined.PRIVATE_DEFINITION;
 		Variable variable = visitVariable(ctx.variable(), principal, expectVD);
 
@@ -120,7 +132,7 @@ public class CompilerVisitor {
 			principal.initState.add(variable);
 		} else {
 			variable.sort = VariableSort.FRESH;
-			// unify the private variable with one known by another principal
+			// possibly unify the private variable with one known by another principal
 			for (Principal anyPrincipal : model.getPrincipals()) {
 				Variable existing = anyPrincipal.knows(variable.name);
 				if (existing != null) {
@@ -138,11 +150,10 @@ public class CompilerVisitor {
 	}
 
 	public void visitGenerates(GeneratesContext ctx, Principal principal, StBlock block) {
-		VariableDefined expectVD = VariableDefined.PRIVATE_DEFINITION;
-		Variable variable = visitVariable(ctx.variable(), principal, expectVD);
+		Variable variable = visitVariable(ctx.variable(), principal, VariableDefined.PRIVATE_DEFINITION);
 		variable.cratedBy = principal;
 		variable.sort = VariableSort.FRESH;
-		principal.knowledge.add(variable);
+		principal.learn(variable);
 		block.premise.add(new Command(CommandType.FRESH, variable));
 		block.state.add(variable);
 	}
@@ -179,7 +190,6 @@ public class CompilerVisitor {
 			sender.getLastBlock().result.add(new Command(CommandType.OUT, term));
 			receiver.nextBlock.premise.add(new Command(CommandType.IN, term));
 			if (!receiver.nextBlock.state.contains(term)) {
-				// TODO: we're adding the entire message to state, some deconstruction or extraction may be in order
 				receiver.nextBlock.state.add(term);
 			}
 		}
@@ -206,7 +216,8 @@ public class CompilerVisitor {
 		if (ctx.tuple() != null) {
 			return visitTuple(ctx.tuple(), principal, block, expectVD);
 		}
-		return null; // TODO debug message
+		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitTerm()");
+		return null;
 	}
 
 	/**
@@ -263,9 +274,11 @@ public class CompilerVisitor {
 
 	public Term visitFunctionCall(FunctionCallContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
 		if (expectVD == VariableDefined.PRIVATE_LEFT) {
+			// so far we have no transparent functions
 			Errors.ErrorLeftNontransparent(ctx.start);
 		}
 		if (expectVD == VariableDefined.USE_MESSAGE) {
+			// so far we have no transparent functions
 			Errors.ErrorMessageNontransparent(ctx.start);
 		}
 		switch (ctx.FUNCTION().getText()) {
@@ -285,16 +298,15 @@ public class CompilerVisitor {
 				}
 				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
 				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
-				// if value is a variable find it's definition
-				Term decodedValue = value.toCanonical();
-				if (!(decodedValue instanceof FunctionSenc)) {
+				// use canonical form in case value is not directly ENC function
+				Term encodedValue = value.toCanonical();
+				if (!(encodedValue instanceof FunctionSenc)) {
 					Errors.ErrorDecodingNotEncoded(ctx.argument.get(1));
 				}
-				if (!((FunctionSenc)decodedValue).key.equals(key)) {
+				if (!((FunctionSenc)encodedValue).key.equals(key)) {
 					Errors.ErrorWrongKey(ctx.argument.get(0));
 				}
-				decodedValue = ((FunctionSenc)decodedValue).value;
-				return new FunctionSdec(key, value, decodedValue);
+				return new FunctionSdec(key, value, ((FunctionSenc)encodedValue).value);
 			}
 			case Constants.VPASSERT: {
 				model.builtins.restriction_eq = true;
@@ -324,7 +336,8 @@ public class CompilerVisitor {
 				return new FunctionHash(new Tuple(subterms));
 			}
 			default: {
-				throw new STException("Debug: Unexpected function type: " + ctx.FUNCTION().getText() + " in visitFunctionCall.");
+				Errors.DebugUnexpectedTokenType(ctx.FUNCTION().getText(), "visitFunctionCall");
+				return null;
 			}
 		}
 	}
