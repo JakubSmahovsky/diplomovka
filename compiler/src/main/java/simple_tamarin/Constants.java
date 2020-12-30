@@ -49,7 +49,7 @@ public final class Constants{
     }
   }
 
-  // restrictions; put an empty line after every restriction
+  // restrictions; put an empty line in Tamarin code after every restriction
   public static final String RESTRICTION_EQUALITY = 
     "restriction Equality:\r\n" +
     Constants.INDENT + "\"All x y #i. Eq(x,y) @i ==> x = y\"\r\n" +
@@ -59,9 +59,9 @@ public final class Constants{
   public static final String BUILTIN_SYMMETRIC_ENCRYPTION = "symmetric-encryption";
   public static final String BUILTIN_HASHING = "hashing";
   // Tamarin functions
-  public static final String COMMANDIN = "In";
-  public static final String COMMANDOUT = "Out";
-  public static final String COMMANDFRESH = "Fr";
+  public static final String COMMAND_IN = "In";
+  public static final String COMMAND_OUT = "Out";
+  public static final String COMMAND_FRESH = "Fr";
   public static final String INIT = "init";
   public static final String SENC = "senc";
   public static final String SDEC = "sdec";
@@ -73,10 +73,10 @@ public final class Constants{
   public static final String VPHASH = "HASH";
 
   // miscelaneous
-  public static final String OUTPUTSEPARATOR = "==============================================================================";
-  public static final String SOURCESHEADER = OUTPUTSEPARATOR + "SOURCES" + OUTPUTSEPARATOR;
+  public static final String OUTPUT_SEPARATOR = "==============================================================================";
+  public static final String SOURCES_HEADER = OUTPUT_SEPARATOR + "SOURCES" + OUTPUT_SEPARATOR;
   public static final String INDENT = "  ";
-  public static final String DEFAULTTHEORYNAME = "spthy";
+  public static final String DEFAULT_THEORY_NAME = "spthy";
   public static final String TEMPORAL_NAME = "t";
   public static final String EXECUTABLE = "executable";
   public static final String EQUALITY = "Eq";

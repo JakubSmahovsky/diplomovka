@@ -59,16 +59,16 @@ public class Simple_tamarin {
     boolean sources = false;
     for (String line = reader.readLine(); line != null; line = reader.readLine()){
       // ignore untill sources heder
-      if (!sources && line.equals(Constants.OUTPUTSEPARATOR)) {
+      if (!sources && line.equals(Constants.OUTPUT_SEPARATOR)) {
         String maybeHeader = line + reader.readLine() + reader.readLine();
-        if (maybeHeader.equals(Constants.SOURCESHEADER)) {
+        if (maybeHeader.equals(Constants.SOURCES_HEADER)) {
           sources = true;
         }
         else {
           System.out.println("Unexpected lines in output:");
           System.out.println(maybeHeader);
         }
-      } else if (sources && line.equals(Constants.OUTPUTSEPARATOR)) {// ignore after sources
+      } else if (sources && line.equals(Constants.OUTPUT_SEPARATOR)) {// ignore after sources
         break;
       } else if (sources) {
         result.append(line);

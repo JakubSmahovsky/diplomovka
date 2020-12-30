@@ -40,7 +40,7 @@ public class Builder extends BuilderFormatting{
    * Render the protocol header and declarations.
    */
   private void initProtocol() {
-    output.append(theoryHeader(Constants.DEFAULTTHEORYNAME));
+    output.append(theoryHeader(Constants.DEFAULT_THEORY_NAME));
 
     ArrayList<String> builtins = new ArrayList<>();
     if (model.builtins.symmetric_encryption) {
@@ -72,7 +72,7 @@ public class Builder extends BuilderFormatting{
     ArrayList<String> facts = new ArrayList<>();
     output.append(ruleAliases(Constants.INIT, new ArrayList<>()));
     for (Variable variable : toGenerate) {
-      facts.add(fact(Constants.COMMANDFRESH, variable, null));
+      facts.add(fact(Constants.COMMAND_FRESH, variable, null));
     }
     output.append(rulePremise(facts));
 

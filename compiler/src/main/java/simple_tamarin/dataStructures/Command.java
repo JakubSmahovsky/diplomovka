@@ -21,11 +21,11 @@ public class Command {
   @Override public String toString() {
     switch (type) {
       case IN: 
-        return Constants.COMMANDIN;
+        return Constants.COMMAND_IN;
       case OUT:
-        return Constants.COMMANDOUT;
+        return Constants.COMMAND_OUT;
       case FRESH:
-        return Constants.COMMANDFRESH;
+        return Constants.COMMAND_FRESH;
       default:
         Errors.DebugCommandType("null", "Command.toString");
         return null;
