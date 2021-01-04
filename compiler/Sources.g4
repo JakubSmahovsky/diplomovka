@@ -19,7 +19,7 @@ source:
     (goal '// nr:' NUMBER USEFUL)*
   'solved goals:'
     (goal '// nr:' NUMBER ('(' 'from rule' IDENTIFIER ')')? USEFUL)*
-  'json graph:' json
+  'json graph:' jsonObj
   SEPARATOR;
 
 goal: fact ATTIMEPOINT variable;
@@ -45,14 +45,15 @@ lemmaStmt:
   variable '>' variable |
   lemmaStmt '⇒' lemmaStmt;
 
-jsonchars: '(' | ')' | '<' | '>' | '{' | '}' | '#' | ':' | '!' | '$' | '.' | ',' | '~';
-jsonword: 
-  '"' (jsonchars | IDENTIFIER | NUMBER)* '"' | 
-  'true' |
-  'false';
-json: '{' jsonKeyValue? (',' jsonKeyValue)* '}';
-jsonKeyValue: jsonword ':' (jsonValue | '[' jsonValue? (',' jsonValue)* ']');
-jsonValue: json | jsonword;
+jsonObj: '{' jsonKeyValue? (',' jsonKeyValue)* '}';
+jsonArray: '[' jsonValue? (',' jsonValue)* ']';
+jsonKeyValue: jsonKey ':' jsonValue;
+jsonKey: '"' jsonString '"';
+jsonValue: '"' jsonString '"' | jsonObj | jsonArray | 'true' | 'false'; // todo? number, null
+
+jsonChars: '(' | ')' | '<' | '>' | '{' | '}' | '#' | ':' | '!' | '$' | '.' | ',' | '~';
+jsonString: (jsonChars | IDENTIFIER | NUMBER)*;
+
 
 SEPARATOR: '------------------------------------------------------------------------------';
 ATTIMEPOINT: '▶₀' | '@';

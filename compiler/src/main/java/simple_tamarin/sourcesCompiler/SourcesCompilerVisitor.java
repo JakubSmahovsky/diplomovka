@@ -24,12 +24,12 @@ public class SourcesCompilerVisitor {
 
   public void visitGroup(GroupContext ctx) {
     Fact goal = visitFact(ctx.goal().fact());
-    System.out.println("group " + goal);
+    System.out.println("Group " + goal);
     ArrayList<Source> sources = new ArrayList<>();
     for (SourceContext sctx : ctx.source()) {
       Source source = visitSource(sctx);
       sources.add(source);
-      System.out.println("  source " + source);
+      System.out.println(source);
     }
 
     model.sourceGroups.add(new SourceGroup(goal, sources));
@@ -37,7 +37,8 @@ public class SourcesCompilerVisitor {
 
   public Source visitSource(SourceContext ctx) {
     String name = ctx.name.getText();
-    return new Source(name);
+    Graph graph = visitGraph(ctx.jsonObj());
+    return new Source(name, graph);
   }
 
   public Fact visitFact(FactContext ctx) {
@@ -108,5 +109,82 @@ public class SourcesCompilerVisitor {
     String name = ctx.IDENTIFIER().getText();
     String number = (ctx.NUMBER() != null) ? ("." + ctx.NUMBER().getText()) : "";
     return new Variable(name + number);
+  }
+
+  public Graph visitGraph(JsonObjContext ctx) {
+    // { "graph" : [ { graph } ] } // TODO assertions
+    JsonObjContext graph = ctx.jsonKeyValue(0).jsonValue().jsonArray().jsonValue(0).jsonObj();
+    
+    JsonArrayContext edgectxs = null;
+    JsonArrayContext nodectxs = null;
+    for (JsonKeyValueContext kvctx : graph.jsonKeyValue()) {
+      // TODO assert edges and nodes are only assigned once
+      switch (kvctx.jsonKey().jsonString().getText()) {
+        case Constants.JSON_EDGES:
+          edgectxs = kvctx.jsonValue().jsonArray();
+        case Constants.JSON_NODES:
+          nodectxs = kvctx.jsonValue().jsonArray();
+      }
+    }
+    // TODO assert edges and nodes aren't null
+
+    ArrayList<GraphNode> nodes = new ArrayList<>();
+    for (JsonValueContext nodectx : nodectxs.jsonValue()) {
+      nodes.add(visitGraphNode(nodectx.jsonObj()));
+    }
+    ArrayList<GraphEdge> edges = new ArrayList<>();
+    for (JsonValueContext edgectx : edgectxs.jsonValue()) {
+      edges.add(visitGraphEdge(edgectx.jsonObj(), nodes));
+    }
+    return new Graph(nodes, edges);
+  }
+
+  public GraphNode visitGraphNode(JsonObjContext ctx) {
+    String nodeID = null;
+    String nodeLabel = null;
+    for (JsonKeyValueContext kvctx : ctx.jsonKeyValue()) {
+      // TODO assert ID and label are only assigned once
+      switch (kvctx.jsonKey().jsonString().getText()) {
+        case (Constants.JSON_NODEID):
+          nodeID = kvctx.jsonValue().jsonString().getText();
+        case (Constants.JSON_NODELABEL):
+          nodeLabel = kvctx.jsonValue().jsonString().getText();
+      }
+    }
+    // TODO assert ID and label aren't null
+
+    return new GraphNode(nodeID, nodeLabel);
+  }
+
+  public GraphEdge visitGraphEdge(JsonObjContext ctx, ArrayList<GraphNode> nodes) {
+    String fromID = null;
+    String toID = null;
+    for (JsonKeyValueContext kvctx : ctx.jsonKeyValue()) {
+      // TODO assert IDs are only assigned once
+      switch (kvctx.jsonKey().jsonString().getText()) {
+        case (Constants.JSON_EDGEFROM):
+          fromID = kvctx.jsonValue().jsonString().getText().split(":")[0]; // TODO parse properly
+        case (Constants.JSON_EDGETO):
+          toID = kvctx.jsonValue().jsonString().getText().split(":")[0]; // TODO parse properly
+      }
+    }
+    // TODO assert IDs aren't null
+    GraphNode from = null;
+    GraphNode to = null;
+    for (GraphNode node : nodes) {
+      if (node.id.equals(fromID)) {
+        from = node;
+        break;
+      }
+    }
+    for (GraphNode node : nodes) {
+      if (node.id.equals(toID)) {
+        to = node;
+        break;
+      }
+    }
+    // TODO assert from and to aren't null
+    
+    return new GraphEdge(from, to);
   }
 }

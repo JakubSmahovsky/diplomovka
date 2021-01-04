@@ -89,23 +89,17 @@ public interface SourcesVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLemmaStmt(SourcesParser.LemmaStmtContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SourcesParser#jsonchars}.
+	 * Visit a parse tree produced by {@link SourcesParser#jsonObj}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitJsonchars(SourcesParser.JsoncharsContext ctx);
+	T visitJsonObj(SourcesParser.JsonObjContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link SourcesParser#jsonword}.
+	 * Visit a parse tree produced by {@link SourcesParser#jsonArray}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitJsonword(SourcesParser.JsonwordContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link SourcesParser#json}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitJson(SourcesParser.JsonContext ctx);
+	T visitJsonArray(SourcesParser.JsonArrayContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SourcesParser#jsonKeyValue}.
 	 * @param ctx the parse tree
@@ -113,9 +107,27 @@ public interface SourcesVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitJsonKeyValue(SourcesParser.JsonKeyValueContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SourcesParser#jsonKey}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitJsonKey(SourcesParser.JsonKeyContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SourcesParser#jsonValue}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitJsonValue(SourcesParser.JsonValueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SourcesParser#jsonChars}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitJsonChars(SourcesParser.JsonCharsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SourcesParser#jsonString}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitJsonString(SourcesParser.JsonStringContext ctx);
 }

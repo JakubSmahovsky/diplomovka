@@ -72,7 +72,14 @@ public final class Constants{
   public static final String VPSDEC = "DEC";
   public static final String VPASSERT = "ASSERT";
   public static final String VPHASH = "HASH";
-
+  // JSON Graph keys
+  public static final String JSON_EDGES = "jgEdges";
+  public static final String JSON_NODES = "jgNodes";
+  public static final String JSON_NODEID = "jgnId";
+  public static final String JSON_NODELABEL = "jgnLabel";
+  public static final String JSON_NODETYPE = "jgnType";
+  public static final String JSON_EDGEFROM = "jgeSource";
+  public static final String JSON_EDGETO = "jgeTarget";
   // miscelaneous
   public static final String OUTPUT_SEPARATOR = "==============================================================================";
   public static final String SOURCES_HEADER = OUTPUT_SEPARATOR + "SOURCES" + OUTPUT_SEPARATOR;
