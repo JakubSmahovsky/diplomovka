@@ -62,10 +62,11 @@ public final class Constants{
   public static final String COMMAND_IN = "In";
   public static final String COMMAND_OUT = "Out";
   public static final String COMMAND_FRESH = "Fr";
-  public static final String INIT = "init";
   public static final String SENC = "senc";
   public static final String SDEC = "sdec";
   public static final String HASH = "h";
+  public static final String FIRST = "fst";
+  public static final String SECOND = "snd";
   // VP functions
   public static final String VPSENC = "ENC";
   public static final String VPSDEC = "DEC";
@@ -77,6 +78,7 @@ public final class Constants{
   public static final String SOURCES_HEADER = OUTPUT_SEPARATOR + "SOURCES" + OUTPUT_SEPARATOR;
   public static final String INDENT = "  ";
   public static final String DEFAULT_THEORY_NAME = "spthy";
+  public static final String INIT = "init";
   public static final String TEMPORAL_NAME = "t";
   public static final String EXECUTABLE = "executable";
   public static final String EQUALITY = "Eq";

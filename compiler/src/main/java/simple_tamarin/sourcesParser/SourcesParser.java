@@ -234,13 +234,10 @@ public class SourcesParser extends Parser {
 	}
 
 	public static class SourceContext extends ParserRuleContext {
+		public Token name;
 		public List<TerminalNode> NUMBER() { return getTokens(SourcesParser.NUMBER); }
 		public TerminalNode NUMBER(int i) {
 			return getToken(SourcesParser.NUMBER, i);
-		}
-		public List<TerminalNode> IDENTIFIER() { return getTokens(SourcesParser.IDENTIFIER); }
-		public TerminalNode IDENTIFIER(int i) {
-			return getToken(SourcesParser.IDENTIFIER, i);
 		}
 		public List<GoalContext> goal() {
 			return getRuleContexts(GoalContext.class);
@@ -252,6 +249,10 @@ public class SourcesParser extends Parser {
 			return getRuleContext(JsonContext.class,0);
 		}
 		public TerminalNode SEPARATOR() { return getToken(SourcesParser.SEPARATOR, 0); }
+		public List<TerminalNode> IDENTIFIER() { return getTokens(SourcesParser.IDENTIFIER); }
+		public TerminalNode IDENTIFIER(int i) {
+			return getToken(SourcesParser.IDENTIFIER, i);
+		}
 		public List<SubstContext> subst() {
 			return getRuleContexts(SubstContext.class);
 		}
@@ -307,7 +308,7 @@ public class SourcesParser extends Parser {
 			setState(61);
 			match(T__1);
 			setState(62);
-			match(IDENTIFIER);
+			((SourceContext)_localctx).name = match(IDENTIFIER);
 			setState(63);
 			match(T__1);
 			setState(64);

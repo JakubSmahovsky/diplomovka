@@ -5,7 +5,7 @@ sources: group*;
 group: 'Sources of' '"' goal '"' '(' NUMBER 'cases)' source*;
 
 source:
-  'Source' NUMBER 'of' NUMBER '/' 'named' '"' IDENTIFIER '"' 
+  'Source' NUMBER 'of' NUMBER '/' 'named' '"' name=IDENTIFIER '"' 
     '"' goal '"'
   'last: none'
   'formulas:'

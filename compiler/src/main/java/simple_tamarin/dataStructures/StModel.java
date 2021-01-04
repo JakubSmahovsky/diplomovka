@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.term.Variable;
+import simple_tamarin.sourcesCompiler.SourceGroup;
 
 /**
  * Simple_tamarin Model
@@ -14,11 +15,15 @@ public class StModel {
   public Queries queries;
   public Builtins builtins;
 
+  public ArrayList<SourceGroup> sourceGroups;
+
   public StModel(){
     this.principals = new ArrayList<>();
     this.pubVariables = new ArrayList<>();
     this.queries = new Queries();
     this.builtins = new Builtins();
+
+    this.sourceGroups = new ArrayList<>();
   }
 
   /**
