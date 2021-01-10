@@ -11,6 +11,7 @@ import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.StBlock;
 import simple_tamarin.dataStructures.term.*;
 import simple_tamarin.errors.Errors;
+import simple_tamarin.groupedFunctions.BlockNames;
 
 /**
  * Part of Builder (see Builder) used to define methods working with strings.
@@ -21,10 +22,6 @@ import simple_tamarin.errors.Errors;
  * needed in order to keep output uniform.
  */
 public abstract class BuilderFormatting {
-  public static String blockName(StBlock block) {
-    return block.principal.name + "_" + block.rangeBegin;
-  }
-
   public static String builtins(List<String> builtins) {
     return "builtins: " + String.join(", ", builtins) + "\r\n\r\n";
   }
@@ -54,15 +51,19 @@ public abstract class BuilderFormatting {
    * @param contextBlock is block whose body requires the state fact
    */
   public static String resultStateFact(StBlock sourceBlock, StBlock contextBlock) {
-    return fact(blockName(sourceBlock), sourceBlock.completeState(), contextBlock);
+    return fact(BlockNames.render(sourceBlock), sourceBlock.completeState(), contextBlock);
   }
 
   public static String initStateFact(Principal principal, StBlock block) {
     return persistentFact(principal.name + "_init", principal.initState, block);
   }
 
-  public static String ruleAliases(String name, List<String> aliases) {
-    StringBuilder result = new StringBuilder("rule " + name + ":\r\n");
+  /**
+   * @param block is null for init block
+   */
+  public static String ruleAliases(StBlock block, List<String> aliases) {
+    String label = block == null ? Constants.INIT : BlockNames.render(block);
+    StringBuilder result = new StringBuilder("rule " + label + ":\r\n");
     if (aliases.isEmpty()) {
       return result.toString();
     }
@@ -115,7 +116,7 @@ public abstract class BuilderFormatting {
   }
 
   public static String lemmaResultStateFact(StBlock block, Variable temporal) {
-    return lemmaFact(blockName(block), block.completeState()) + " " + atTemporal(temporal);
+    return lemmaFact(BlockNames.render(block), block.completeState()) + " " + atTemporal(temporal);
   }
 
   public static String lemmaFact(String name, List<? extends Term> terms) {

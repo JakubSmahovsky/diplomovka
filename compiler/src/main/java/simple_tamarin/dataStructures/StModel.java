@@ -17,6 +17,9 @@ public class StModel {
 
   public ArrayList<SourceGroup> sourceGroups;
 
+  // lists of objects
+  public ArrayList<StBlock> blocks;
+
   public StModel(){
     this.principals = new ArrayList<>();
     this.pubVariables = new ArrayList<>();
@@ -24,6 +27,8 @@ public class StModel {
     this.builtins = new Builtins();
 
     this.sourceGroups = new ArrayList<>();
+
+    this.blocks = new ArrayList<>();
   }
 
   /**
@@ -43,7 +48,7 @@ public class StModel {
    * @return newly created principal with given parameters
    */
   public Principal addPrincipal(String name) {
-    Principal principal = new Principal(name);
+    Principal principal = new Principal(this, name);
     principals.add(principal);
     Variable principalID = new Variable(name, VariableSort.PUBLIC);
     pubVariables.add(principalID);
@@ -70,5 +75,11 @@ public class StModel {
    */
   public ArrayList<Principal> getPrincipals() {
     return principals;
+  }
+
+  public int registerBlock(StBlock block) {
+    int index = blocks.size();
+    blocks.add(block);
+    return index;
   }
 }

@@ -134,6 +134,10 @@ public final class Errors{
     debug("Unexpected command type " + command + " in " + function + "!");
   }
 
+  public static void DebugUnexpectedValueType(String typeDescription, String value, String where) {
+    debug("Unexpected " + typeDescription + " value " + value + " in " + where + "!");
+  }
+
   public static void DebugMissingImplementation(String function, String where) {
     debug("Missing implementation of function " + function + " iherited from " + where + "!");
   }

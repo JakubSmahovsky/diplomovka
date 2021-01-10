@@ -17,57 +17,57 @@ rule (modulo E) init:
 
   /* has exactly the trivial AC variant */
 
-rule (modulo E) Bob_0:
+rule (modulo E) Bob_0_0:
    [ !Bob_init( $Bob, Kab ), In( $Alice ), In( senc(Na, Kab) ), Fr( ~Nb ) ]
   --[
-  Bob_0( $Bob, Kab, $Alice, senc(Na, Kab), Na, h(Na), ~Nb,
-         senc(<h(Na), ~Nb>, Kab)
+  Bob_0_0( $Bob, Kab, $Alice, senc(Na, Kab), Na, h(Na), ~Nb,
+           senc(<h(Na), ~Nb>, Kab)
   )
   ]->
    [
    Out( senc(<h(Na), ~Nb>, Kab) ),
-   Bob_0( $Bob, Kab, $Alice, senc(Na, Kab), Na, h(Na), ~Nb,
-          senc(<h(Na), ~Nb>, Kab)
+   Bob_0_0( $Bob, Kab, $Alice, senc(Na, Kab), Na, h(Na), ~Nb,
+            senc(<h(Na), ~Nb>, Kab)
    )
    ]
 
   /* has exactly the trivial AC variant */
 
-rule (modulo E) Bob_2:
+rule (modulo E) Bob_2_4:
    [
-   Bob_0( $Bob, Kab, $Alice, m1, Na, SuccNa, Nb, m2 ),
+   Bob_0_0( $Bob, Kab, $Alice, m1, Na, SuccNa, Nb, m2 ),
    In( senc(SuccNb, Kab) )
    ]
   --[
-  Bob_2( $Bob, Kab, $Alice, m1, senc(SuccNb, Kab), SuccNb ),
+  Bob_2_4( $Bob, Kab, $Alice, m1, senc(SuccNb, Kab), SuccNb ),
   Eq( SuccNb, h(Nb) )
   ]->
-   [ Bob_2( $Bob, Kab, $Alice, m1, senc(SuccNb, Kab), SuccNb ) ]
+   [ Bob_2_4( $Bob, Kab, $Alice, m1, senc(SuccNb, Kab), SuccNb ) ]
 
   /* has exactly the trivial AC variant */
 
-rule (modulo E) Alice_0:
+rule (modulo E) Alice_0_2:
    [ !Alice_init( $Alice, Kab ), Fr( ~Na ) ]
-  --[ Alice_0( $Alice, Kab, ~Na, senc(~Na, Kab) ) ]->
+  --[ Alice_0_2( $Alice, Kab, ~Na, senc(~Na, Kab) ) ]->
    [
    Out( $Alice ), Out( senc(~Na, Kab) ),
-   Alice_0( $Alice, Kab, ~Na, senc(~Na, Kab) )
+   Alice_0_2( $Alice, Kab, ~Na, senc(~Na, Kab) )
    ]
 
   /* has exactly the trivial AC variant */
 
-rule (modulo E) Alice_1:
-   [ Alice_0( $Alice, Kab, Na, m1 ), In( senc(<SuccNa, Nb>, Kab) ) ]
+rule (modulo E) Alice_1_3:
+   [ Alice_0_2( $Alice, Kab, Na, m1 ), In( senc(<SuccNa, Nb>, Kab) ) ]
   --[
-  Alice_1( $Alice, Kab, senc(<SuccNa, Nb>, Kab), <SuccNa, Nb>, h(Nb),
-           senc(h(Nb), Kab)
+  Alice_1_3( $Alice, Kab, senc(<SuccNa, Nb>, Kab), <SuccNa, Nb>, h(Nb),
+             senc(h(Nb), Kab)
   ),
   Eq( SuccNa, h(Na) )
   ]->
    [
    Out( senc(h(Nb), Kab) ),
-   Alice_1( $Alice, Kab, senc(<SuccNa, Nb>, Kab), <SuccNa, Nb>, h(Nb),
-            senc(h(Nb), Kab)
+   Alice_1_3( $Alice, Kab, senc(<SuccNa, Nb>, Kab), <SuccNa, Nb>, h(Nb),
+              senc(h(Nb), Kab)
    )
    ]
 
@@ -80,13 +80,13 @@ restriction Equality:
 lemma executable:
   exists-trace
   "∃ Bob Kab Alice m1 m3 SuccNb m2 SuccNa Nb #t0 #t1.
-    (Bob_2( Bob, Kab, Alice, m1, m3, SuccNb ) @ #t0) ∧
-    (Alice_1( Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3 ) @ #t1)"
+    (Bob_2_4( Bob, Kab, Alice, m1, m3, SuccNb ) @ #t0) ∧
+    (Alice_1_3( Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3 ) @ #t1)"
 /*
 guarded formula characterizing all satisfying traces:
 "∃ Bob Kab Alice m1 m3 SuccNb m2 SuccNa Nb #t0 #t1.
-  (Bob_2( Bob, Kab, Alice, m1, m3, SuccNb ) @ #t0) ∧
-  (Alice_1( Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3 ) @ #t1)"
+  (Bob_2_4( Bob, Kab, Alice, m1, m3, SuccNb ) @ #t0) ∧
+  (Alice_1_3( Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3 ) @ #t1)"
 */
 by sorry
 
@@ -386,9 +386,9 @@ json graph:
 }
 
 ------------------------------------------------------------------------------
-Sources of "Alice_0( t.1, t.2, t.3, t.4 ) ▶₀ #i" (1 cases)
-Source 1 of 1  / named  "Alice_0" 
-  "Alice_0( t.1, t.2, t.3, t.4 ) ▶₀ #i"
+Sources of "Alice_0_2( t.1, t.2, t.3, t.4 ) ▶₀ #i" (1 cases)
+Source 1 of 1  / named  "Alice_0_2" 
+  "Alice_0_2( t.1, t.2, t.3, t.4 ) ▶₀ #i"
 last: none
 
 formulas:
@@ -410,11 +410,11 @@ solved formulas:
 unsolved goals:
 
 solved goals:
-  Alice_0( $Alice.6, ~Kab.9, ~Na.6, senc(~Na.6, ~Kab.9)
+  Alice_0_2( $Alice.6, ~Kab.9, ~Na.6, senc(~Na.6, ~Kab.9)
   ) ▶₀ #i // nr: 0" (useful2)"
   
   !Alice_init( $Alice.6, ~Kab.9
-  ) ▶₀ #vr.5 // nr: 2 (from rule Alice_0)" (useful2)"
+  ) ▶₀ #vr.5 // nr: 2 (from rule Alice_0_2)" (useful2)"
 
 json graph:
 {
@@ -484,8 +484,8 @@ json graph:
                                 "jgnFactId": "#vr.5:c1"
                             },
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.6, ~Kab.9, ~Na.6, senc(~Na.6, ~Kab.9) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.6, ~Kab.9, ~Na.6, senc(~Na.6, ~Kab.9) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -545,8 +545,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.6, ~Kab.9, ~Na.6, senc(~Na.6, ~Kab.9) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.6, ~Kab.9, ~Na.6, senc(~Na.6, ~Kab.9) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -576,7 +576,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Alice_0",
+                    "jgnLabel": "Alice_0_2",
                     "jgnType": "isProtocolRule"
                 },
                 {
@@ -704,9 +704,9 @@ json graph:
 }
 
 ------------------------------------------------------------------------------
-Sources of "Alice_1( t.1, t.2, t.3, t.4, t.5, t.6 ) ▶₀ #i" (1 cases)
-Source 1 of 1  / named  "Alice_1" 
-  "Alice_1( t.1, t.2, t.3, t.4, t.5, t.6 ) ▶₀ #i"
+Sources of "Alice_1_3( t.1, t.2, t.3, t.4, t.5, t.6 ) ▶₀ #i" (1 cases)
+Source 1 of 1  / named  "Alice_1_3" 
+  "Alice_1_3( t.1, t.2, t.3, t.4, t.5, t.6 ) ▶₀ #i"
 last: none
 
 formulas:
@@ -731,15 +731,15 @@ unsolved goals:
   !KU( senc(<h(~Na.12), Nb.8>, ~Kab.15) ) @ #vk.10 // nr: 3" (useful2)"
 
 solved goals:
-  Alice_1( $Alice.8, ~Kab.15, senc(<h(~Na.12), Nb.8>, ~Kab.15),
-           <h(~Na.12), Nb.8>, h(Nb.8), senc(h(Nb.8), ~Kab.15)
+  Alice_1_3( $Alice.8, ~Kab.15, senc(<h(~Na.12), Nb.8>, ~Kab.15),
+             <h(~Na.12), Nb.8>, h(Nb.8), senc(h(Nb.8), ~Kab.15)
   ) ▶₀ #i // nr: 0" (useful2)"
   
-  Alice_0( $Alice.8, ~Kab.15, ~Na.12, senc(~Na.12, ~Kab.15)
-  ) ▶₀ #vr.7 // nr: 2 (from rule Alice_1)" (useful2)"
+  Alice_0_2( $Alice.8, ~Kab.15, ~Na.12, senc(~Na.12, ~Kab.15)
+  ) ▶₀ #vr.7 // nr: 2 (from rule Alice_1_3)" (useful2)"
   
   !Alice_init( $Alice.8, ~Kab.15
-  ) ▶₀ #vr.11 // nr: 5 (from rule Alice_0)" (useful2)"
+  ) ▶₀ #vr.11 // nr: 5 (from rule Alice_0_2)" (useful2)"
 
 json graph:
 {
@@ -818,8 +818,8 @@ json graph:
                                 "jgnFactId": "#vr.7:c0"
                             },
                             {
-                                "jgnFactName": "Alice_1",
-                                "jgnFactShow": "Alice_1( $Alice.8, ~Kab.15, senc(<h(~Na.12), Nb.8>, ~Kab.15), <h(~Na.12), Nb.8>, h(Nb.8), senc(h(Nb.8), ~Kab.15))",
+                                "jgnFactName": "Alice_1_3",
+                                "jgnFactShow": "Alice_1_3( $Alice.8, ~Kab.15, senc(<h(~Na.12), Nb.8>, ~Kab.15), <h(~Na.12), Nb.8>, h(Nb.8), senc(h(Nb.8), ~Kab.15))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -907,8 +907,8 @@ json graph:
                         ],
                         "jgnPrems": [
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.8, ~Kab.15, ~Na.12, senc(~Na.12, ~Kab.15) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.8, ~Kab.15, ~Na.12, senc(~Na.12, ~Kab.15) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -975,8 +975,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Alice_1",
-                                "jgnFactShow": "Alice_1( $Alice.8, ~Kab.15, senc(<h(~Na.12), Nb.8>, ~Kab.15), <h(~Na.12), Nb.8>, h(Nb.8), senc(h(Nb.8), ~Kab.15))",
+                                "jgnFactName": "Alice_1_3",
+                                "jgnFactShow": "Alice_1_3( $Alice.8, ~Kab.15, senc(<h(~Na.12), Nb.8>, ~Kab.15), <h(~Na.12), Nb.8>, h(Nb.8), senc(h(Nb.8), ~Kab.15))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -1090,7 +1090,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Alice_1",
+                    "jgnLabel": "Alice_1_3",
                     "jgnType": "isProtocolRule"
                 },
                 {
@@ -1252,8 +1252,8 @@ json graph:
                                 "jgnFactId": "#vr.11:c1"
                             },
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.8, ~Kab.15, ~Na.12, senc(~Na.12, ~Kab.15) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.8, ~Kab.15, ~Na.12, senc(~Na.12, ~Kab.15) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -1313,8 +1313,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.8, ~Kab.15, ~Na.12, senc(~Na.12, ~Kab.15) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.8, ~Kab.15, ~Na.12, senc(~Na.12, ~Kab.15) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -1344,7 +1344,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Alice_0",
+                    "jgnLabel": "Alice_0_2",
                     "jgnType": "isProtocolRule"
                 },
                 {
@@ -1519,10 +1519,10 @@ json graph:
 }
 
 ------------------------------------------------------------------------------
-Sources of "Bob_0( t.1, t.2, t.3, t.4, t.5, t.6, t.7, t.8
+Sources of "Bob_0_0( t.1, t.2, t.3, t.4, t.5, t.6, t.7, t.8
             ) ▶₀ #i" (1 cases)
-Source 1 of 1  / named  "Bob_0" 
-  "Bob_0( t.1, t.2, t.3, t.4, t.5, t.6, t.7, t.8 ) ▶₀ #i"
+Source 1 of 1  / named  "Bob_0_0" 
+  "Bob_0_0( t.1, t.2, t.3, t.4, t.5, t.6, t.7, t.8 ) ▶₀ #i"
 last: none
 
 formulas:
@@ -1550,12 +1550,12 @@ unsolved goals:
   !KU( senc(t.5, ~Kab.17) ) @ #vk.14 // nr: 4" (useful2)"
 
 solved goals:
-  Bob_0( $Bob.10, ~Kab.17, $Alice.10, senc(t.5, ~Kab.17), t.5, h(t.5),
-         ~Nb.10, senc(<h(t.5), ~Nb.10>, ~Kab.17)
+  Bob_0_0( $Bob.10, ~Kab.17, $Alice.10, senc(t.5, ~Kab.17), t.5, h(t.5),
+           ~Nb.10, senc(<h(t.5), ~Nb.10>, ~Kab.17)
   ) ▶₀ #i // nr: 0" (useful2)"
   
   !Bob_init( $Bob.10, ~Kab.17
-  ) ▶₀ #vr.9 // nr: 2 (from rule Bob_0)" (useful2)"
+  ) ▶₀ #vr.9 // nr: 2 (from rule Bob_0_0)" (useful2)"
 
 json graph:
 {
@@ -1648,8 +1648,8 @@ json graph:
                                 "jgnFactId": "#vr.9:c0"
                             },
                             {
-                                "jgnFactName": "Bob_0",
-                                "jgnFactShow": "Bob_0( $Bob.10, ~Kab.17, $Alice.10, senc(t.5, ~Kab.17), t.5, h(t.5), ~Nb.10, senc(<h(t.5), ~Nb.10>, ~Kab.17))",
+                                "jgnFactName": "Bob_0_0",
+                                "jgnFactShow": "Bob_0_0( $Bob.10, ~Kab.17, $Alice.10, senc(t.5, ~Kab.17), t.5, h(t.5), ~Nb.10, senc(<h(t.5), ~Nb.10>, ~Kab.17))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -1784,8 +1784,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Bob_0",
-                                "jgnFactShow": "Bob_0( $Bob.10, ~Kab.17, $Alice.10, senc(t.5, ~Kab.17), t.5, h(t.5), ~Nb.10, senc(<h(t.5), ~Nb.10>, ~Kab.17))",
+                                "jgnFactName": "Bob_0_0",
+                                "jgnFactShow": "Bob_0_0( $Bob.10, ~Kab.17, $Alice.10, senc(t.5, ~Kab.17), t.5, h(t.5), ~Nb.10, senc(<h(t.5), ~Nb.10>, ~Kab.17))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -1857,7 +1857,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Bob_0",
+                    "jgnLabel": "Bob_0_0",
                     "jgnType": "isProtocolRule"
                 },
                 {
@@ -2165,9 +2165,9 @@ json graph:
 }
 
 ------------------------------------------------------------------------------
-Sources of "Bob_2( t.1, t.2, t.3, t.4, t.5, t.6 ) ▶₀ #i" (1 cases)
-Source 1 of 1  / named  "Bob_2" 
-  "Bob_2( t.1, t.2, t.3, t.4, t.5, t.6 ) ▶₀ #i"
+Sources of "Bob_2_4( t.1, t.2, t.3, t.4, t.5, t.6 ) ▶₀ #i" (1 cases)
+Source 1 of 1  / named  "Bob_2_4" 
+  "Bob_2_4( t.1, t.2, t.3, t.4, t.5, t.6 ) ▶₀ #i"
 last: none
 
 formulas:
@@ -2196,16 +2196,16 @@ unsolved goals:
   !KU( senc(Na.8, ~Kab.19) ) @ #vk.16 // nr: 7" (useful2)"
 
 solved goals:
-  Bob_2( $Bob.8, ~Kab.19, $Alice.8, senc(Na.8, ~Kab.19),
-         senc(h(~Nb.12), ~Kab.19), h(~Nb.12)
+  Bob_2_4( $Bob.8, ~Kab.19, $Alice.8, senc(Na.8, ~Kab.19),
+           senc(h(~Nb.12), ~Kab.19), h(~Nb.12)
   ) ▶₀ #i // nr: 0" (useful2)"
   
-  Bob_0( $Bob.8, ~Kab.19, $Alice.8, senc(Na.8, ~Kab.19), Na.8, h(Na.8),
-         ~Nb.12, senc(<h(Na.8), ~Nb.12>, ~Kab.19)
-  ) ▶₀ #vr.7 // nr: 2 (from rule Bob_2)" (useful2)"
+  Bob_0_0( $Bob.8, ~Kab.19, $Alice.8, senc(Na.8, ~Kab.19), Na.8, h(Na.8),
+           ~Nb.12, senc(<h(Na.8), ~Nb.12>, ~Kab.19)
+  ) ▶₀ #vr.7 // nr: 2 (from rule Bob_2_4)" (useful2)"
   
   !Bob_init( $Bob.8, ~Kab.19
-  ) ▶₀ #vr.11 // nr: 5 (from rule Bob_0)" (useful2)"
+  ) ▶₀ #vr.11 // nr: 5 (from rule Bob_0_0)" (useful2)"
 
 json graph:
 {
@@ -2277,8 +2277,8 @@ json graph:
                     "jgnMetadata": {
                         "jgnConcs": [
                             {
-                                "jgnFactName": "Bob_2",
-                                "jgnFactShow": "Bob_2( $Bob.8, ~Kab.19, $Alice.8, senc(Na.8, ~Kab.19), senc(h(~Nb.12), ~Kab.19), h(~Nb.12))",
+                                "jgnFactName": "Bob_2_4",
+                                "jgnFactShow": "Bob_2_4( $Bob.8, ~Kab.19, $Alice.8, senc(Na.8, ~Kab.19), senc(h(~Nb.12), ~Kab.19), h(~Nb.12))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -2336,8 +2336,8 @@ json graph:
                         ],
                         "jgnPrems": [
                             {
-                                "jgnFactName": "Bob_0",
-                                "jgnFactShow": "Bob_0( $Bob.8, ~Kab.19, $Alice.8, senc(Na.8, ~Kab.19), Na.8, h(Na.8), ~Nb.12, senc(<h(Na.8), ~Nb.12>, ~Kab.19))",
+                                "jgnFactName": "Bob_0_0",
+                                "jgnFactShow": "Bob_0_0( $Bob.8, ~Kab.19, $Alice.8, senc(Na.8, ~Kab.19), Na.8, h(Na.8), ~Nb.12, senc(<h(Na.8), ~Nb.12>, ~Kab.19))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -2437,8 +2437,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Bob_2",
-                                "jgnFactShow": "Bob_2( $Bob.8, ~Kab.19, $Alice.8, senc(Na.8, ~Kab.19), senc(h(~Nb.12), ~Kab.19), h(~Nb.12))",
+                                "jgnFactName": "Bob_2_4",
+                                "jgnFactShow": "Bob_2_4( $Bob.8, ~Kab.19, $Alice.8, senc(Na.8, ~Kab.19), senc(h(~Nb.12), ~Kab.19), h(~Nb.12))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -2522,7 +2522,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Bob_2",
+                    "jgnLabel": "Bob_2_4",
                     "jgnType": "isProtocolRule"
                 },
                 {
@@ -2660,8 +2660,8 @@ json graph:
                                 "jgnFactId": "#vr.11:c0"
                             },
                             {
-                                "jgnFactName": "Bob_0",
-                                "jgnFactShow": "Bob_0( $Bob.8, ~Kab.19, $Alice.8, senc(Na.8, ~Kab.19), Na.8, h(Na.8), ~Nb.12, senc(<h(Na.8), ~Nb.12>, ~Kab.19))",
+                                "jgnFactName": "Bob_0_0",
+                                "jgnFactShow": "Bob_0_0( $Bob.8, ~Kab.19, $Alice.8, senc(Na.8, ~Kab.19), Na.8, h(Na.8), ~Nb.12, senc(<h(Na.8), ~Nb.12>, ~Kab.19))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -2796,8 +2796,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Bob_0",
-                                "jgnFactShow": "Bob_0( $Bob.8, ~Kab.19, $Alice.8, senc(Na.8, ~Kab.19), Na.8, h(Na.8), ~Nb.12, senc(<h(Na.8), ~Nb.12>, ~Kab.19))",
+                                "jgnFactName": "Bob_0_0",
+                                "jgnFactShow": "Bob_0_0( $Bob.8, ~Kab.19, $Alice.8, senc(Na.8, ~Kab.19), Na.8, h(Na.8), ~Nb.12, senc(<h(Na.8), ~Nb.12>, ~Kab.19))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -2869,7 +2869,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Bob_0",
+                    "jgnLabel": "Bob_0_0",
                     "jgnType": "isProtocolRule"
                 },
                 {
@@ -3216,7 +3216,7 @@ json graph:
 
 ------------------------------------------------------------------------------
 Sources of "!KU( ~t.1 ) @ #i" (3 cases)
-Source 1 of 3  / named  "Bob_0" 
+Source 1 of 3  / named  "Bob_0_0" 
   "!KU( ~t.1 ) @ #i"
 last: none
 
@@ -3243,7 +3243,7 @@ solved goals:
   !KU( ~t.1 ) @ #i // nr: 0 (from rule Coerce)" (currently deducible)"
   
   !Bob_init( $Bob.7, ~Kab.21
-  ) ▶₀ #vr.6 // nr: 4 (from rule Bob_0)" (useful2)"
+  ) ▶₀ #vr.6 // nr: 4 (from rule Bob_0_0)" (useful2)"
 
 json graph:
 {
@@ -3494,8 +3494,8 @@ json graph:
                                 "jgnFactId": "#vr.6:c0"
                             },
                             {
-                                "jgnFactName": "Bob_0",
-                                "jgnFactShow": "Bob_0( $Bob.7, ~Kab.21, $Alice.7, senc(Na.7, ~Kab.21), Na.7, h(Na.7), ~t.1, senc(<h(Na.7), ~t.1>, ~Kab.21))",
+                                "jgnFactName": "Bob_0_0",
+                                "jgnFactShow": "Bob_0_0( $Bob.7, ~Kab.21, $Alice.7, senc(Na.7, ~Kab.21), Na.7, h(Na.7), ~t.1, senc(<h(Na.7), ~t.1>, ~Kab.21))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -3630,8 +3630,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Bob_0",
-                                "jgnFactShow": "Bob_0( $Bob.7, ~Kab.21, $Alice.7, senc(Na.7, ~Kab.21), Na.7, h(Na.7), ~t.1, senc(<h(Na.7), ~t.1>, ~Kab.21))",
+                                "jgnFactName": "Bob_0_0",
+                                "jgnFactShow": "Bob_0_0( $Bob.7, ~Kab.21, $Alice.7, senc(Na.7, ~Kab.21), Na.7, h(Na.7), ~t.1, senc(<h(Na.7), ~t.1>, ~Kab.21))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -3703,7 +3703,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Bob_0",
+                    "jgnLabel": "Bob_0_0",
                     "jgnType": "isProtocolRule"
                 },
                 {
@@ -4153,7 +4153,7 @@ json graph:
 }
 
 ------------------------------------------------------------------------------
-Source 2 of 3  / named  "Alice_0" 
+Source 2 of 3  / named  "Alice_0_2" 
   "!KU( ~t.1 ) @ #i"
 last: none
 
@@ -4175,7 +4175,7 @@ solved goals:
   !KU( ~t.1 ) @ #i // nr: 0 (from rule Coerce)" (currently deducible)"
   
   !Alice_init( $Alice.7, ~Kab.14
-  ) ▶₀ #vr.6 // nr: 4 (from rule Alice_0)" (useful2)"
+  ) ▶₀ #vr.6 // nr: 4 (from rule Alice_0_2)" (useful2)"
 
 json graph:
 {
@@ -4368,8 +4368,8 @@ json graph:
                                 "jgnFactId": "#vr.6:c1"
                             },
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.7, ~Kab.14, ~t.1, senc(~t.1, ~Kab.14) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.7, ~Kab.14, ~t.1, senc(~t.1, ~Kab.14) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -4429,8 +4429,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.7, ~Kab.14, ~t.1, senc(~t.1, ~Kab.14) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.7, ~Kab.14, ~t.1, senc(~t.1, ~Kab.14) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -4460,7 +4460,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Alice_0",
+                    "jgnLabel": "Alice_0_2",
                     "jgnType": "isProtocolRule"
                 },
                 {
@@ -5019,7 +5019,7 @@ json graph:
 }
 
 ------------------------------------------------------------------------------
-Source 2 of 3  / named  "Bob_0" 
+Source 2 of 3  / named  "Bob_0_0" 
   "!KU( h(t.1) ) @ #i"
 last: none
 
@@ -5046,7 +5046,7 @@ solved goals:
   !KU( h(t.1) ) @ #i // nr: 0 (from rule Coerce)" (currently deducible)"
   
   !Bob_init( $Bob.7, ~Kab.21
-  ) ▶₀ #vr.6 // nr: 4 (from rule Bob_0)" (useful2)"
+  ) ▶₀ #vr.6 // nr: 4 (from rule Bob_0_0)" (useful2)"
 
 json graph:
 {
@@ -5315,8 +5315,8 @@ json graph:
                                 "jgnFactId": "#vr.6:c0"
                             },
                             {
-                                "jgnFactName": "Bob_0",
-                                "jgnFactShow": "Bob_0( $Bob.7, ~Kab.21, $Alice.7, senc(t.1, ~Kab.21), t.1, h(t.1), ~Nb.7, senc(<h(t.1), ~Nb.7>, ~Kab.21))",
+                                "jgnFactName": "Bob_0_0",
+                                "jgnFactShow": "Bob_0_0( $Bob.7, ~Kab.21, $Alice.7, senc(t.1, ~Kab.21), t.1, h(t.1), ~Nb.7, senc(<h(t.1), ~Nb.7>, ~Kab.21))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -5451,8 +5451,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Bob_0",
-                                "jgnFactShow": "Bob_0( $Bob.7, ~Kab.21, $Alice.7, senc(t.1, ~Kab.21), t.1, h(t.1), ~Nb.7, senc(<h(t.1), ~Nb.7>, ~Kab.21))",
+                                "jgnFactName": "Bob_0_0",
+                                "jgnFactShow": "Bob_0_0( $Bob.7, ~Kab.21, $Alice.7, senc(t.1, ~Kab.21), t.1, h(t.1), ~Nb.7, senc(<h(t.1), ~Nb.7>, ~Kab.21))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -5524,7 +5524,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Bob_0",
+                    "jgnLabel": "Bob_0_0",
                     "jgnType": "isProtocolRule"
                 },
                 {
@@ -5980,7 +5980,7 @@ json graph:
 }
 
 ------------------------------------------------------------------------------
-Source 3 of 3  / named  "Alice_1" 
+Source 3 of 3  / named  "Alice_1_3" 
   "!KU( h(t.1) ) @ #i"
 last: none
 
@@ -6004,11 +6004,11 @@ unsolved goals:
 solved goals:
   !KU( h(t.1) ) @ #i // nr: 0 (from rule Coerce)" (currently deducible)"
   
-  Alice_0( $Alice.7, ~Kab.18, ~Na.15, senc(~Na.15, ~Kab.18)
-  ) ▶₀ #vr.6 // nr: 4 (from rule Alice_1)" (useful2)"
+  Alice_0_2( $Alice.7, ~Kab.18, ~Na.15, senc(~Na.15, ~Kab.18)
+  ) ▶₀ #vr.6 // nr: 4 (from rule Alice_1_3)" (useful2)"
   
   !Alice_init( $Alice.7, ~Kab.18
-  ) ▶₀ #vr.14 // nr: 11 (from rule Alice_0)" (useful2)"
+  ) ▶₀ #vr.14 // nr: 11 (from rule Alice_0_2)" (useful2)"
 
 json graph:
 {
@@ -6240,8 +6240,8 @@ json graph:
                                 "jgnFactId": "#vr.6:c0"
                             },
                             {
-                                "jgnFactName": "Alice_1",
-                                "jgnFactShow": "Alice_1( $Alice.7, ~Kab.18, senc(<h(~Na.15), t.1>, ~Kab.18), <h(~Na.15), t.1>, h(t.1), senc(h(t.1), ~Kab.18))",
+                                "jgnFactName": "Alice_1_3",
+                                "jgnFactShow": "Alice_1_3( $Alice.7, ~Kab.18, senc(<h(~Na.15), t.1>, ~Kab.18), <h(~Na.15), t.1>, h(t.1), senc(h(t.1), ~Kab.18))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -6329,8 +6329,8 @@ json graph:
                         ],
                         "jgnPrems": [
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.7, ~Kab.18, ~Na.15, senc(~Na.15, ~Kab.18) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.7, ~Kab.18, ~Na.15, senc(~Na.15, ~Kab.18) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -6397,8 +6397,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Alice_1",
-                                "jgnFactShow": "Alice_1( $Alice.7, ~Kab.18, senc(<h(~Na.15), t.1>, ~Kab.18), <h(~Na.15), t.1>, h(t.1), senc(h(t.1), ~Kab.18))",
+                                "jgnFactName": "Alice_1_3",
+                                "jgnFactShow": "Alice_1_3( $Alice.7, ~Kab.18, senc(<h(~Na.15), t.1>, ~Kab.18), <h(~Na.15), t.1>, h(t.1), senc(h(t.1), ~Kab.18))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -6512,7 +6512,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Alice_1",
+                    "jgnLabel": "Alice_1_3",
                     "jgnType": "isProtocolRule"
                 },
                 {
@@ -6743,8 +6743,8 @@ json graph:
                                 "jgnFactId": "#vr.14:c1"
                             },
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.7, ~Kab.18, ~Na.15, senc(~Na.15, ~Kab.18) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.7, ~Kab.18, ~Na.15, senc(~Na.15, ~Kab.18) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -6804,8 +6804,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.7, ~Kab.18, ~Na.15, senc(~Na.15, ~Kab.18) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.7, ~Kab.18, ~Na.15, senc(~Na.15, ~Kab.18) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -6835,7 +6835,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Alice_0",
+                    "jgnLabel": "Alice_0_2",
                     "jgnType": "isProtocolRule"
                 },
                 {
@@ -7368,7 +7368,7 @@ json graph:
 }
 
 ------------------------------------------------------------------------------
-Source 2 of 4  / named  "Bob_0" 
+Source 2 of 4  / named  "Bob_0_0" 
   "!KU( senc(t.1, t.2) ) @ #i"
 last: none
 
@@ -7396,7 +7396,7 @@ solved goals:
   ) @ #i // nr: 0 (from rule Coerce)" (currently deducible)"
   
   !Bob_init( $Bob.10, ~Kab.17
-  ) ▶₀ #vr.9 // nr: 4 (from rule Bob_0)" (useful2)"
+  ) ▶₀ #vr.9 // nr: 4 (from rule Bob_0_0)" (useful2)"
 
 json graph:
 {
@@ -7704,8 +7704,8 @@ json graph:
                                 "jgnFactId": "#vr.9:c0"
                             },
                             {
-                                "jgnFactName": "Bob_0",
-                                "jgnFactShow": "Bob_0( $Bob.10, ~Kab.17, $Alice.10, senc(Na.10, ~Kab.17), Na.10, h(Na.10), ~Nb.10, senc(<h(Na.10), ~Nb.10>, ~Kab.17))",
+                                "jgnFactName": "Bob_0_0",
+                                "jgnFactShow": "Bob_0_0( $Bob.10, ~Kab.17, $Alice.10, senc(Na.10, ~Kab.17), Na.10, h(Na.10), ~Nb.10, senc(<h(Na.10), ~Nb.10>, ~Kab.17))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -7840,8 +7840,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Bob_0",
-                                "jgnFactShow": "Bob_0( $Bob.10, ~Kab.17, $Alice.10, senc(Na.10, ~Kab.17), Na.10, h(Na.10), ~Nb.10, senc(<h(Na.10), ~Nb.10>, ~Kab.17))",
+                                "jgnFactName": "Bob_0_0",
+                                "jgnFactShow": "Bob_0_0( $Bob.10, ~Kab.17, $Alice.10, senc(Na.10, ~Kab.17), Na.10, h(Na.10), ~Nb.10, senc(<h(Na.10), ~Nb.10>, ~Kab.17))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -7913,7 +7913,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Bob_0",
+                    "jgnLabel": "Bob_0_0",
                     "jgnType": "isProtocolRule"
                 },
                 {
@@ -8202,7 +8202,7 @@ json graph:
 }
 
 ------------------------------------------------------------------------------
-Source 3 of 4  / named  "Alice_0" 
+Source 3 of 4  / named  "Alice_0_2" 
   "!KU( senc(t.1, t.2) ) @ #i"
 last: none
 
@@ -8227,7 +8227,7 @@ solved goals:
   ) @ #i // nr: 0 (from rule Coerce)" (currently deducible)"
   
   !Alice_init( $Alice.10, ~Kab.13
-  ) ▶₀ #vr.9 // nr: 4 (from rule Alice_0)" (useful2)"
+  ) ▶₀ #vr.9 // nr: 4 (from rule Alice_0_2)" (useful2)"
 
 json graph:
 {
@@ -8437,8 +8437,8 @@ json graph:
                                 "jgnFactId": "#vr.9:c1"
                             },
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.10, ~Kab.13, ~Na.10, senc(~Na.10, ~Kab.13) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.10, ~Kab.13, ~Na.10, senc(~Na.10, ~Kab.13) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -8498,8 +8498,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.10, ~Kab.13, ~Na.10, senc(~Na.10, ~Kab.13) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.10, ~Kab.13, ~Na.10, senc(~Na.10, ~Kab.13) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -8529,7 +8529,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Alice_0",
+                    "jgnLabel": "Alice_0_2",
                     "jgnType": "isProtocolRule"
                 },
                 {
@@ -8638,7 +8638,7 @@ json graph:
 }
 
 ------------------------------------------------------------------------------
-Source 4 of 4  / named  "Alice_1" 
+Source 4 of 4  / named  "Alice_1_3" 
   "!KU( senc(t.1, t.2) ) @ #i"
 last: none
 
@@ -8663,11 +8663,11 @@ solved goals:
   !KU( senc(h(Nb.10), ~Kab.17)
   ) @ #i // nr: 0 (from rule Coerce)" (currently deducible)"
   
-  Alice_0( $Alice.10, ~Kab.17, ~Na.14, senc(~Na.14, ~Kab.17)
-  ) ▶₀ #vr.9 // nr: 4 (from rule Alice_1)" (useful2)"
+  Alice_0_2( $Alice.10, ~Kab.17, ~Na.14, senc(~Na.14, ~Kab.17)
+  ) ▶₀ #vr.9 // nr: 4 (from rule Alice_1_3)" (useful2)"
   
   !Alice_init( $Alice.10, ~Kab.17
-  ) ▶₀ #vr.13 // nr: 7 (from rule Alice_0)" (useful2)"
+  ) ▶₀ #vr.13 // nr: 7 (from rule Alice_0_2)" (useful2)"
 
 json graph:
 {
@@ -8916,8 +8916,8 @@ json graph:
                                 "jgnFactId": "#vr.9:c0"
                             },
                             {
-                                "jgnFactName": "Alice_1",
-                                "jgnFactShow": "Alice_1( $Alice.10, ~Kab.17, senc(<h(~Na.14), Nb.10>, ~Kab.17), <h(~Na.14), Nb.10>, h(Nb.10), senc(h(Nb.10), ~Kab.17))",
+                                "jgnFactName": "Alice_1_3",
+                                "jgnFactShow": "Alice_1_3( $Alice.10, ~Kab.17, senc(<h(~Na.14), Nb.10>, ~Kab.17), <h(~Na.14), Nb.10>, h(Nb.10), senc(h(Nb.10), ~Kab.17))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -9005,8 +9005,8 @@ json graph:
                         ],
                         "jgnPrems": [
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.10, ~Kab.17, ~Na.14, senc(~Na.14, ~Kab.17) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.10, ~Kab.17, ~Na.14, senc(~Na.14, ~Kab.17) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -9073,8 +9073,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Alice_1",
-                                "jgnFactShow": "Alice_1( $Alice.10, ~Kab.17, senc(<h(~Na.14), Nb.10>, ~Kab.17), <h(~Na.14), Nb.10>, h(Nb.10), senc(h(Nb.10), ~Kab.17))",
+                                "jgnFactName": "Alice_1_3",
+                                "jgnFactShow": "Alice_1_3( $Alice.10, ~Kab.17, senc(<h(~Na.14), Nb.10>, ~Kab.17), <h(~Na.14), Nb.10>, h(Nb.10), senc(h(Nb.10), ~Kab.17))",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -9188,7 +9188,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Alice_1",
+                    "jgnLabel": "Alice_1_3",
                     "jgnType": "isProtocolRule"
                 },
                 {
@@ -9350,8 +9350,8 @@ json graph:
                                 "jgnFactId": "#vr.13:c1"
                             },
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.10, ~Kab.17, ~Na.14, senc(~Na.14, ~Kab.17) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.10, ~Kab.17, ~Na.14, senc(~Na.14, ~Kab.17) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -9411,8 +9411,8 @@ json graph:
                         ],
                         "jgnActs": [
                             {
-                                "jgnFactName": "Alice_0",
-                                "jgnFactShow": "Alice_0( $Alice.10, ~Kab.17, ~Na.14, senc(~Na.14, ~Kab.17) )",
+                                "jgnFactName": "Alice_0_2",
+                                "jgnFactShow": "Alice_0_2( $Alice.10, ~Kab.17, ~Na.14, senc(~Na.14, ~Kab.17) )",
                                 "jgnFactMult": "",
                                 "jgnFactTag": "ProtoFact",
                                 "jgnFactTerms": [
@@ -9442,7 +9442,7 @@ json graph:
                             }
                         ]
                     },
-                    "jgnLabel": "Alice_0",
+                    "jgnLabel": "Alice_0_2",
                     "jgnType": "isProtocolRule"
                 },
                 {

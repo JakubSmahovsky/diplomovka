@@ -6,6 +6,8 @@ import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.StModel;
 import simple_tamarin.dataStructures.term.*;
 import simple_tamarin.sourcesCompiler.term.*;
+import simple_tamarin.sourcesCompiler.graph.*;
+import simple_tamarin.sourcesCompiler.graph.node.*;
 import simple_tamarin.sourcesParser.SourcesParser.*;
 
 public class SourcesCompilerVisitor {
@@ -128,56 +130,71 @@ public class SourcesCompilerVisitor {
     }
     // TODO assert edges and nodes aren't null
 
-    ArrayList<GraphNode> nodes = new ArrayList<>();
+    ArrayList<Node> nodes = new ArrayList<>();
     for (JsonValueContext nodectx : nodectxs.jsonValue()) {
       nodes.add(visitGraphNode(nodectx.jsonObj()));
     }
-    ArrayList<GraphEdge> edges = new ArrayList<>();
+    ArrayList<Edge> edges = new ArrayList<>();
     for (JsonValueContext edgectx : edgectxs.jsonValue()) {
       edges.add(visitGraphEdge(edgectx.jsonObj(), nodes));
     }
     return new Graph(nodes, edges);
   }
 
-  public GraphNode visitGraphNode(JsonObjContext ctx) {
+  public Node visitGraphNode(JsonObjContext ctx) {
     String nodeID = null;
     String nodeLabel = null;
+    String nodeType = null;
     for (JsonKeyValueContext kvctx : ctx.jsonKeyValue()) {
-      // TODO assert ID and label are only assigned once
+      // TODO assert values are only assigned once
       switch (kvctx.jsonKey().jsonString().getText()) {
         case (Constants.JSON_NODEID):
           nodeID = kvctx.jsonValue().jsonString().getText();
         case (Constants.JSON_NODELABEL):
           nodeLabel = kvctx.jsonValue().jsonString().getText();
+        case (Constants.JSON_NODETYPE):
+          nodeType = kvctx.jsonValue().jsonString().getText();
       }
     }
-    // TODO assert ID and label aren't null
-
-    return new GraphNode(nodeID, nodeLabel);
+    // TODO assert values aren't null
+    switch (nodeType) {
+      case (Constants.JSON_NODE_BLOCK):
+        return new BlockNode(nodeID, nodeLabel, model);
+      case (Constants.JSON_NODE_FUNCTION):
+        return new FunctionNode(nodeID, nodeLabel);
+      case (Constants.JSON_NODE_UNSOLVED):
+        return new UnsolvedNode(nodeID, nodeLabel);
+      case (Constants.JSON_NODE_FRESH):
+      case (Constants.JSON_NODE_MISSING):
+        break;
+      default:
+        System.out.println("unrecognized node type:" + nodeType);
+    }
+    return new Node(nodeID, nodeLabel);
   }
 
-  public GraphEdge visitGraphEdge(JsonObjContext ctx, ArrayList<GraphNode> nodes) {
+  public Edge visitGraphEdge(JsonObjContext ctx, ArrayList<Node> nodes) {
     String fromID = null;
     String toID = null;
     for (JsonKeyValueContext kvctx : ctx.jsonKeyValue()) {
       // TODO assert IDs are only assigned once
       switch (kvctx.jsonKey().jsonString().getText()) {
         case (Constants.JSON_EDGEFROM):
-          fromID = kvctx.jsonValue().jsonString().getText().split(":")[0]; // TODO parse properly
+          fromID = Node.ArrowEndpointToNode(kvctx.jsonValue().jsonString().getText());
         case (Constants.JSON_EDGETO):
-          toID = kvctx.jsonValue().jsonString().getText().split(":")[0]; // TODO parse properly
+          toID = Node.ArrowEndpointToNode(kvctx.jsonValue().jsonString().getText());
       }
     }
     // TODO assert IDs aren't null
-    GraphNode from = null;
-    GraphNode to = null;
-    for (GraphNode node : nodes) {
+    Node from = null;
+    Node to = null;
+    for (Node node : nodes) {
       if (node.id.equals(fromID)) {
         from = node;
         break;
       }
     }
-    for (GraphNode node : nodes) {
+    for (Node node : nodes) {
       if (node.id.equals(toID)) {
         to = node;
         break;
@@ -185,6 +202,6 @@ public class SourcesCompilerVisitor {
     }
     // TODO assert from and to aren't null
     
-    return new GraphEdge(from, to);
+    return new Edge(from, to);
   }
 }

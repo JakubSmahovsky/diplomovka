@@ -2,6 +2,8 @@ package simple_tamarin.sourcesCompiler;
 
 import simple_tamarin.Constants;
 
+import simple_tamarin.sourcesCompiler.graph.*;
+
 public class Source {
   public String name;
   public Graph graph;

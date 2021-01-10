@@ -62,11 +62,11 @@ public final class Constants{
   public static final String COMMAND_IN = "In";
   public static final String COMMAND_OUT = "Out";
   public static final String COMMAND_FRESH = "Fr";
+  public static final String FIRST = "fst";
+  public static final String SECOND = "snd";
   public static final String SENC = "senc";
   public static final String SDEC = "sdec";
   public static final String HASH = "h";
-  public static final String FIRST = "fst";
-  public static final String SECOND = "snd";
   // VP functions
   public static final String VPSENC = "ENC";
   public static final String VPSDEC = "DEC";
@@ -80,6 +80,17 @@ public final class Constants{
   public static final String JSON_NODETYPE = "jgnType";
   public static final String JSON_EDGEFROM = "jgeSource";
   public static final String JSON_EDGETO = "jgeTarget";
+  public static final String JSON_NODE_BLOCK = "isProtocolRule";
+  public static final String JSON_NODE_MISSING = "missingNodePrem";
+  public static final String JSON_NODE_FUNCTION = "isIntruderRule";
+  public static final String JSON_NODE_FRESH = "isFreshRule";
+  public static final String JSON_NODE_UNSOLVED = "unsolvedActionAtom";
+  public static final String JSON_FUNCTION_LABEL_SEND = "Send";
+  public static final String JSON_FUNCTION_LABEL_RECEIVE = "Recv";
+  public static final String JSON_FUNCTION_LABEL_COERCE = "Coerce";
+  public static final String JSON_FUNCTION_LABEL_FRESH = "FreshConstr";
+  public static final String JSON_FUNCTION_PREFIX_CONSTRUCT = "Constrc";
+  public static final String JSON_FUNCTION_PREFIX_DECONSTRUCT = "Destrd";
   // miscelaneous
   public static final String OUTPUT_SEPARATOR = "==============================================================================";
   public static final String SOURCES_HEADER = OUTPUT_SEPARATOR + "SOURCES" + OUTPUT_SEPARATOR;
@@ -89,4 +100,5 @@ public final class Constants{
   public static final String TEMPORAL_NAME = "t";
   public static final String EXECUTABLE = "executable";
   public static final String EQUALITY = "Eq";
+  public static final String NAMES_SEPARATOR = "_";  
 }

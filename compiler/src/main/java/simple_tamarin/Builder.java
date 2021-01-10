@@ -70,7 +70,7 @@ public class Builder extends BuilderFormatting{
 
     // render fresh facts
     ArrayList<String> facts = new ArrayList<>();
-    output.append(ruleAliases(Constants.INIT, new ArrayList<>()));
+    output.append(ruleAliases(null, new ArrayList<>()));
     for (Variable variable : toGenerate) {
       facts.add(fact(Constants.COMMAND_FRESH, variable, null));
     }
@@ -110,7 +110,7 @@ public class Builder extends BuilderFormatting{
     for (Alias alias : block.aliases) {
       facts.add(alias(alias));
     }
-    output.append(ruleAliases(blockName(block), facts));
+    output.append(ruleAliases(block, facts));
 
     // premise
     facts = new ArrayList<>();

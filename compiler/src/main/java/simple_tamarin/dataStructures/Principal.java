@@ -8,13 +8,17 @@ import simple_tamarin.dataStructures.term.Term;
 import simple_tamarin.dataStructures.term.Variable;
 
 public class Principal {
+  public final StModel model;
+
   public String name;
   private ArrayList<Variable> knowledge;
   private ArrayList<StBlock> blocks;
   public StBlock nextBlock;
   public ArrayList<Variable> initState;
 
-  public Principal(String name){
+  public Principal(StModel model, String name){
+    this.model = model;
+
     this.name = name;
     this.knowledge = new ArrayList<>();
     this.blocks = new ArrayList<>();
@@ -52,9 +56,9 @@ public class Principal {
   public void nextBlock() {
     if (nextBlock != null) {
       blocks.add(nextBlock);
-      nextBlock = new StBlock(this, blocks.size(), nextBlock.state);
+      nextBlock = new StBlock(model, this, blocks.size(), nextBlock.state);
     } else {
-      nextBlock = new StBlock(this, 0);
+      nextBlock = new StBlock(model, this, 0);
     }
     return;
   }

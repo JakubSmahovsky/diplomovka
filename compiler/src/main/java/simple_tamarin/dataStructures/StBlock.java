@@ -8,7 +8,10 @@ import simple_tamarin.dataStructures.term.Term;
  * Simple_tamarin Block
  */
 public class StBlock {
-  public Principal principal;
+  public final StModel model;
+  public final int indexInModel;
+  public final Principal principal;
+
   public ArrayList<Alias> aliases;
   public ArrayList<Deconstruction> deconstructed;
   public ArrayList<Command> premise;
@@ -18,7 +21,10 @@ public class StBlock {
   public int rangeBegin;
   public int rangeEnd;
   
-  public StBlock(Principal principal, int index){
+  public StBlock(StModel model, Principal principal, int index){
+    this.model = model;
+    this.indexInModel = model.registerBlock(this);
+
     this.principal = principal;
     this.aliases = new ArrayList<>();
     this.deconstructed = new ArrayList<>();
@@ -30,8 +36,8 @@ public class StBlock {
     this.rangeEnd = index;
   }
 
-  public StBlock(Principal principal, int index, ArrayList<Term> state){
-    this(principal, index);
+  public StBlock(StModel model, Principal principal, int index, ArrayList<Term> state){
+    this(model, principal, index);
     this.state.addAll(state);
   }
 
