@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.term.Variable;
+import simple_tamarin.sourcesCompiler.Source;
 import simple_tamarin.sourcesCompiler.SourceGroup;
 
 /**
@@ -17,8 +18,9 @@ public class StModel {
 
   public ArrayList<SourceGroup> sourceGroups;
 
-  // lists of objects
+  // lists of all objects of type
   public ArrayList<StBlock> blocks;
+  public ArrayList<Source> sources;
 
   public StModel(){
     this.principals = new ArrayList<>();
@@ -29,6 +31,7 @@ public class StModel {
     this.sourceGroups = new ArrayList<>();
 
     this.blocks = new ArrayList<>();
+    this.sources = new ArrayList<>();
   }
 
   /**
@@ -80,6 +83,12 @@ public class StModel {
   public int registerBlock(StBlock block) {
     int index = blocks.size();
     blocks.add(block);
+    return index;
+  }
+
+  public int registerSource(Source source) {
+    int index = sources.size();
+    sources.add(source);
     return index;
   }
 }

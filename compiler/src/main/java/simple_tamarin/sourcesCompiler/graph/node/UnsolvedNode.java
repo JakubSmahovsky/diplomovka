@@ -21,7 +21,7 @@ public class UnsolvedNode extends Node {
 
   @Override public Description renderDescription() {
     StringBuilder myLine = new StringBuilder("Intruder gets it from unknown source (source endpoint).");
-    return new Description(new Document(myLine), new Document(new StringBuilder(myLine)), null);
+    return new Description(new Document(myLine), new Document(new StringBuilder(myLine)), null, null);
   }
 
   @Override public String toString(){

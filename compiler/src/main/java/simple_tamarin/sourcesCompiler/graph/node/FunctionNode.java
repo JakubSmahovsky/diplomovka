@@ -81,7 +81,7 @@ public class FunctionNode extends Node{
     if (function.equals(Constants.JSON_FUNCTION_LABEL_FRESH)) {
       Document doc = new Document();
       doc.doc.add(new StringBuilder("Intruder may generate it."));
-      return new Description(doc, doc, null);
+      return new Description(doc, doc, null, "by generation");
     }
 
     if (function.equals(Constants.JSON_FUNCTION_LABEL_COERCE)){
@@ -102,7 +102,7 @@ public class FunctionNode extends Node{
 
       StringBuilder myLine = new StringBuilder("Intruder may receive it from "
           + block.block.principal + " after block " + block.block.rangeEnd + "." );
-      return new Description(new Document(myLine), new Document(new StringBuilder(myLine)), block);
+      return new Description(new Document(myLine), new Document(new StringBuilder(myLine)), block, block.label);
     }
 
     if (nativeTamarin) {
@@ -114,20 +114,23 @@ public class FunctionNode extends Node{
       desc.longDoc.indent();
       desc.longDoc.doc.addFirst(myLine);
       desc.shortDoc.doc.addFirst(new StringBuilder(myLine));
+      if (desc.sourceDescription == null) {
+        desc.sourceDescription = "by tuple deconstruction";
+      }
       return desc;
     }
 
-    String intruderAction; 
+    String intruderAction;
     if (construction) {
-      intruderAction = "construct it";
+      intruderAction = "by construction";
     } else if (deconstruction) {
-      intruderAction = "deconstruct it";
+      intruderAction = "by deconstruction";
     } else {
       Errors.debug("FunctionNode has no matching representation in renderDescription()!");
       intruderAction = "";
     }
 
-    StringBuilder myLine = new StringBuilder("Intruder may " + intruderAction 
+    StringBuilder myLine = new StringBuilder("Intruder may get it " + intruderAction 
         + " using function " + printLabel + " from values it got from:");
     Document shortDoc = new Document(myLine);
     Document longDoc = shortDoc.clone();
@@ -144,7 +147,7 @@ public class FunctionNode extends Node{
       parentDesc.longDoc.indent();
       longDoc.doc.addAll(parentDesc.longDoc.doc);
     }
-    return new Description(shortDoc, longDoc, rule);
+    return new Description(shortDoc, longDoc, rule, intruderAction);
   }
 
   @Override public String toString(){

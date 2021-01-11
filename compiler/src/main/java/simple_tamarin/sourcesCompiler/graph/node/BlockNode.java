@@ -18,7 +18,7 @@ public class BlockNode extends Node {
   }
 
   @Override public Description renderDescription() {
-    return new Description(new Document(), new Document(), this);
+    return new Description(new Document(), new Document(), this, label);
   }
 
   @Override public String toString(){

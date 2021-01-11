@@ -41,7 +41,7 @@ public class SourcesCompilerVisitor {
   public Source visitSource(SourceContext ctx) {
     String name = ctx.name.getText();
     Graph graph = visitGraph(ctx.jsonObj(), name);
-    return new Source(name, graph);
+    return new Source(model, name, graph);
   }
 
   public Fact visitFact(FactContext ctx) {
