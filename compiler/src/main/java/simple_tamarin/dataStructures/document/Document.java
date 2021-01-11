@@ -16,6 +16,15 @@ public class Document {
     doc.add(s);
   }
 
+  public Document(String s) {
+    this.doc = new LinkedList<>();
+    doc.add(new StringBuilder(s));
+  }
+
+  public void append(Document doc2) {
+    doc.addAll(doc2.doc);
+  }
+
   public void indent() {
     for (int i = 0; i < doc.size(); i++) {
       doc.get(i).insert(0, Constants.INDENT);

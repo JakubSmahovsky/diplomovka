@@ -101,4 +101,5 @@ public final class Constants{
   public static final String EXECUTABLE = "executable";
   public static final String EQUALITY = "Eq";
   public static final String NAMES_SEPARATOR = "_";  
+  public static final String INTRUDER_KNOWLEDGE_FACT = "KU";
 }

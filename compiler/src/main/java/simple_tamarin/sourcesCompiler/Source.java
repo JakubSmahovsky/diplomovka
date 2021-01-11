@@ -1,7 +1,7 @@
 package simple_tamarin.sourcesCompiler;
 
-import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.StModel;
+import simple_tamarin.dataStructures.document.Document;
 import simple_tamarin.sourcesCompiler.graph.*;
 
 public class Source {
@@ -21,7 +21,11 @@ public class Source {
     this.printLabel = graph.description.sourceDescription == null ? name : graph.description.sourceDescription;
   }
 
-  @Override public String toString(){
-    return Constants.INDENT + "Source (" + indexInModel + ") " + printLabel + "\r\n" + graph;
+  public Document render(){
+    Document doc = new Document("Source (" + indexInModel + ") " + printLabel);
+    Document graphDoc = graph.render();
+    graphDoc.indent();
+    doc.append(graphDoc);
+    return doc;
   }
 }

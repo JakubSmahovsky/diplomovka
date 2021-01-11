@@ -2,6 +2,7 @@ package simple_tamarin.sourcesCompiler.graph;
 
 import java.util.ArrayList;
 
+import simple_tamarin.dataStructures.document.Document;
 import simple_tamarin.errors.Errors;
 import simple_tamarin.sourcesCompiler.graph.node.*;
 
@@ -28,10 +29,6 @@ public class Graph {
     }
     findGoal();
     description = goal.renderDescription();
-    
-    // for now we indent the descriptions twice
-    description.shortDoc.indent(2);
-    description.longDoc.indent(2);
   }
 
   /**
@@ -49,7 +46,7 @@ public class Graph {
     }
   }
 
-  @Override public String toString() {
-    return description.longDoc.toString();
+  public Document render() {
+    return description.longDoc.clone();
   }
 }

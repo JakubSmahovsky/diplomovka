@@ -23,18 +23,21 @@ public class SourcesCompilerVisitor {
     for (GroupContext gctx : ctx.group()) {
       visitGroup(gctx);
     }
+
+    for (SourceGroup group : model.sourceGroups) {
+      System.out.println(group.render().toString());
+      System.out.println();
+    }
   }
 
   public void visitGroup(GroupContext ctx) {
     Fact goal = visitFact(ctx.goal().fact());
-    System.out.println("Group " + goal);
     ArrayList<Source> sources = new ArrayList<>();
     for (SourceContext sctx : ctx.source()) {
       Source source = visitSource(sctx);
       sources.add(source);
-      System.out.println(source);
     }
-
+    
     model.sourceGroups.add(new SourceGroup(goal, sources));
   }
 
