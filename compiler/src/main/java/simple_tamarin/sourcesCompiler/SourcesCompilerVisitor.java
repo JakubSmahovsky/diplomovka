@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.StModel;
 import simple_tamarin.dataStructures.term.*;
+import simple_tamarin.errors.Errors;
 import simple_tamarin.sourcesCompiler.term.*;
 import simple_tamarin.sourcesCompiler.graph.*;
 import simple_tamarin.sourcesCompiler.graph.node.*;
@@ -39,7 +40,7 @@ public class SourcesCompilerVisitor {
 
   public Source visitSource(SourceContext ctx) {
     String name = ctx.name.getText();
-    Graph graph = visitGraph(ctx.jsonObj());
+    Graph graph = visitGraph(ctx.jsonObj(), name);
     return new Source(name, graph);
   }
 
@@ -113,7 +114,7 @@ public class SourcesCompilerVisitor {
     return new Variable(name + number);
   }
 
-  public Graph visitGraph(JsonObjContext ctx) {
+  public Graph visitGraph(JsonObjContext ctx, String sourceName) {
     // { "graph" : [ { graph } ] } // TODO assertions
     JsonObjContext graph = ctx.jsonKeyValue(0).jsonValue().jsonArray().jsonValue(0).jsonObj();
     
@@ -138,7 +139,7 @@ public class SourcesCompilerVisitor {
     for (JsonValueContext edgectx : edgectxs.jsonValue()) {
       edges.add(visitGraphEdge(edgectx.jsonObj(), nodes));
     }
-    return new Graph(nodes, edges);
+    return new Graph(nodes, edges, sourceName);
   }
 
   public Node visitGraphNode(JsonObjContext ctx) {
@@ -165,12 +166,14 @@ public class SourcesCompilerVisitor {
       case (Constants.JSON_NODE_UNSOLVED):
         return new UnsolvedNode(nodeID, nodeLabel);
       case (Constants.JSON_NODE_FRESH):
+        return new FreshNode(nodeID);
       case (Constants.JSON_NODE_MISSING):
-        break;
+        return new StubNode(nodeID);
       default:
         System.out.println("unrecognized node type:" + nodeType);
     }
-    return new Node(nodeID, nodeLabel);
+    Errors.DebugUnexpectedTokenType(nodeType, "visitGraphNode");
+    return null;
   }
 
   public Edge visitGraphEdge(JsonObjContext ctx, ArrayList<Node> nodes) {

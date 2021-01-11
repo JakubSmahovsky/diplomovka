@@ -2,24 +2,43 @@ package simple_tamarin.sourcesCompiler.graph;
 
 import java.util.ArrayList;
 
-import simple_tamarin.Constants;
 import simple_tamarin.errors.Errors;
 import simple_tamarin.sourcesCompiler.graph.node.*;
 
 public class Graph {
   public ArrayList<Node> nodes;
   public ArrayList<Edge> edges;
+  public String sourceName;
+
   public Node goal; // leaf of DAG 
 
-  public Graph(ArrayList<Node> nodes, ArrayList<Edge> edges) {
+  public Description description;
+
+  public Graph(ArrayList<Node> nodes, ArrayList<Edge> edges, String sourceName) {
     this.nodes = nodes;
     this.edges = edges;
+    this.sourceName = sourceName;
 
     // form into DAG
     for (Edge edge : edges) {
-      edge.from.children.add(edge.to);
+      if (!edge.from.children.contains(edge.to)) {
+        edge.from.children.add(edge.to);
+        edge.to.parents.add(edge.from);
+      }
     }
-    // find leaf(s)
+    findGoal();
+    description = goal.renderDescription();
+    
+    // for now we indent the descriptions twice
+    description.shortDoc.indent(2);
+    description.longDoc.indent(2);
+  }
+
+  /**
+   * Separated part of constructor
+   * Find leaf of graph (should only have 1) and assign it to goal.
+   */
+  private void findGoal() {
     for (Node node : nodes) {
       if (node.children.isEmpty()) {
         if (goal != null) {
@@ -31,11 +50,6 @@ public class Graph {
   }
 
   @Override public String toString() {
-    StringBuilder result = new StringBuilder();
-    result.append(Constants.INDENT + Constants.INDENT + "GOAL: " + goal + "\r\n");
-    for (Edge edge : edges) {
-      result.append(Constants.INDENT + Constants.INDENT + edge.from + "->" + edge.to + "\r\n");
-    }
-    return result.toString();
+    return description.longDoc.toString();
   }
 }

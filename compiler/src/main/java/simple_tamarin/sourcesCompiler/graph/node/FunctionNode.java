@@ -1,11 +1,13 @@
 package simple_tamarin.sourcesCompiler.graph.node;
 
 import simple_tamarin.Constants;
+import simple_tamarin.dataStructures.document.Document;
 import simple_tamarin.errors.Errors;
+import simple_tamarin.sourcesCompiler.graph.Description;
 
 public class FunctionNode extends Node{
   public boolean nativeIntruder; // is one of intruder functions (/actions/commands)
-  public boolean nativeTamarin; // is one of native functions
+  public boolean nativeTamarin; // is one of native functions (tuple deconstructions)
   public boolean construction;
   public boolean deconstruction;
   public String function;
@@ -19,6 +21,7 @@ public class FunctionNode extends Node{
 
     this.nativeIntruder = isNativeIntruderFunction(label);
     if (nativeIntruder) {
+      this.function = label;
       this.printLabel = label;
       return;
     }
@@ -72,6 +75,76 @@ public class FunctionNode extends Node{
     }
     Errors.DebugUnexpectedValueType("function", function, " tamarinToVP in FunctionNode");
     return null;
+  }
+
+  @Override public Description renderDescription() {
+    if (function.equals(Constants.JSON_FUNCTION_LABEL_FRESH)) {
+      Document doc = new Document();
+      doc.doc.add(new StringBuilder("Intruder may generate it."));
+      return new Description(doc, doc, null);
+    }
+
+    if (function.equals(Constants.JSON_FUNCTION_LABEL_COERCE)){
+      if (parents.size() != 1) {
+        Errors.debug("FunctionNode of Coerce has " + parents.size() + " parents!");
+      }
+      return parents.get(0).renderDescription();
+    }
+
+    if (function.equals(Constants.JSON_FUNCTION_LABEL_RECEIVE)){
+      if (parents.size() != 1) {
+        Errors.debug("FunctionNode of Receive has " + parents.size() + " parents!");
+      }
+      if (!(parents.get(0) instanceof BlockNode)) {
+        Errors.debug("FunctionNode of Receive has a parent that is not a block rule!");
+      }
+      BlockNode block = (BlockNode)parents.get(0);
+
+      StringBuilder myLine = new StringBuilder("Intruder may receive it from "
+          + block.block.principal + " after block " + block.block.rangeEnd + "." );
+      return new Description(new Document(myLine), new Document(new StringBuilder(myLine)), block);
+    }
+
+    if (nativeTamarin) {
+      if (parents.size() != 1) {
+        Errors.debug("FunctionNode of tuple deconstruction has " + parents.size() + " parents!");
+      }
+      Description desc = parents.get(0).renderDescription();
+      StringBuilder myLine = new StringBuilder("Intruder may deconstruct it from a tuple.");
+      desc.longDoc.indent();
+      desc.longDoc.doc.addFirst(myLine);
+      desc.shortDoc.doc.addFirst(new StringBuilder(myLine));
+      return desc;
+    }
+
+    String intruderAction; 
+    if (construction) {
+      intruderAction = "construct it";
+    } else if (deconstruction) {
+      intruderAction = "deconstruct it";
+    } else {
+      Errors.debug("FunctionNode has no matching representation in renderDescription()!");
+      intruderAction = "";
+    }
+
+    StringBuilder myLine = new StringBuilder("Intruder may " + intruderAction 
+        + " using function " + printLabel + " from values it got from:");
+    Document shortDoc = new Document(myLine);
+    Document longDoc = shortDoc.clone();
+    Node rule = null;
+    for (Node parent : parents) {
+      Description parentDesc = parent.renderDescription();
+      if (parentDesc.rule != null) {
+        if (rule != null) {
+          Errors.debug("FunctionNode of function " + label + " has more than 1 parent comming from blockNode!");
+        }
+        rule = parentDesc.rule;
+        shortDoc.doc.addAll(parentDesc.shortDoc.doc);
+      }
+      parentDesc.longDoc.indent();
+      longDoc.doc.addAll(parentDesc.longDoc.doc);
+    }
+    return new Description(shortDoc, longDoc, rule);
   }
 
   @Override public String toString(){

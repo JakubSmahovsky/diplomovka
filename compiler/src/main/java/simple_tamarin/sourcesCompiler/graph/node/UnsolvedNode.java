@@ -1,6 +1,9 @@
 package simple_tamarin.sourcesCompiler.graph.node;
 
-public class UnsolvedNode extends Node{
+import simple_tamarin.dataStructures.document.Document;
+import simple_tamarin.sourcesCompiler.graph.Description;
+
+public class UnsolvedNode extends Node {
   public String term;
   public UnsolvedNode(String id, String label) {
     super(id, label);
@@ -14,6 +17,11 @@ public class UnsolvedNode extends Node{
    */
   public static String labelToTermString(String label) {
     return label.substring(4, label.length()-1);
+  }
+
+  @Override public Description renderDescription() {
+    StringBuilder myLine = new StringBuilder("Intruder gets it from unknown source (source endpoint).");
+    return new Description(new Document(myLine), new Document(new StringBuilder(myLine)), null);
   }
 
   @Override public String toString(){

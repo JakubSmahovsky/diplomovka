@@ -139,7 +139,7 @@ public final class Errors{
   }
 
   public static void DebugMissingImplementation(String function, String where) {
-    debug("Missing implementation of function " + function + " iherited from " + where + "!");
+    debug("Missing implementation of function " + function + " iherited by " + where + "!");
   }
 
   public static void error(Token posToken, String message) {
