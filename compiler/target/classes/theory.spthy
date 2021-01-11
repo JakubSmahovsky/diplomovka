@@ -11,7 +11,7 @@ rule init:
   !Alice_init($Alice, ~Kab)
 ]
 
-rule Bob_0_0:
+rule Bob_1_0:
 let
   SuccNa = h(Na)
   m2 = senc(<SuccNa, ~Nb>, Kab)
@@ -22,21 +22,21 @@ in
   In(senc(Na, Kab)),
   Fr(~Nb)
 ]--[
-  Bob_0_0($Bob, Kab, $Alice, senc(Na, Kab), Na, SuccNa, ~Nb, m2)
+  Bob_1_0($Bob, Kab, $Alice, senc(Na, Kab), Na, SuccNa, ~Nb, m2)
 ]->[
   Out(m2),
-  Bob_0_0($Bob, Kab, $Alice, senc(Na, Kab), Na, SuccNa, ~Nb, m2)
+  Bob_1_0($Bob, Kab, $Alice, senc(Na, Kab), Na, SuccNa, ~Nb, m2)
 ]
 
-rule Bob_2_4:
+rule Bob_3_4:
 [
-  Bob_0_0($Bob, Kab, $Alice, m1, Na, SuccNa, Nb, m2),
+  Bob_1_0($Bob, Kab, $Alice, m1, Na, SuccNa, Nb, m2),
   In(senc(SuccNb, Kab))
 ]--[
-  Bob_2_4($Bob, Kab, $Alice, m1, senc(SuccNb, Kab), SuccNb),
+  Bob_3_4($Bob, Kab, $Alice, m1, senc(SuccNb, Kab), SuccNb),
   Eq(SuccNb, h(Nb))
 ]->[
-  Bob_2_4($Bob, Kab, $Alice, m1, senc(SuccNb, Kab), SuccNb)
+  Bob_3_4($Bob, Kab, $Alice, m1, senc(SuccNb, Kab), SuccNb)
 ]
 
 rule Alice_0_2:
@@ -54,7 +54,7 @@ in
   Alice_0_2($Alice, Kab, ~Na, m1)
 ]
 
-rule Alice_1_3:
+rule Alice_2_3:
 let
   SuccNb = h(Nb)
   m3 = senc(SuccNb, Kab)
@@ -63,11 +63,11 @@ in
   Alice_0_2($Alice, Kab, Na, m1),
   In(senc(<SuccNa, Nb>, Kab))
 ]--[
-  Alice_1_3($Alice, Kab, senc(<SuccNa, Nb>, Kab), <SuccNa, Nb>, SuccNb, m3),
+  Alice_2_3($Alice, Kab, senc(<SuccNa, Nb>, Kab), <SuccNa, Nb>, SuccNb, m3),
   Eq(SuccNa, h(Na))
 ]->[
   Out(m3),
-  Alice_1_3($Alice, Kab, senc(<SuccNa, Nb>, Kab), <SuccNa, Nb>, SuccNb, m3)
+  Alice_2_3($Alice, Kab, senc(<SuccNa, Nb>, Kab), <SuccNa, Nb>, SuccNb, m3)
 ]
 
 restriction Equality:
@@ -76,7 +76,7 @@ restriction Equality:
 lemma executable:
 exists-trace "
 Ex Bob Kab Alice m1 m3 SuccNb m2 SuccNa Nb #t0 #t1.
-Bob_2_4(Bob, Kab, Alice, m1, m3, SuccNb) @ #t0 &
-Alice_1_3(Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3) @ #t1
+Bob_3_4(Bob, Kab, Alice, m1, m3, SuccNb) @ #t0 &
+Alice_2_3(Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3) @ #t1
 "
 end

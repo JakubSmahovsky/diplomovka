@@ -12,7 +12,7 @@ public abstract class BlockNames{
   */
   public static String render(StBlock block) {
     return block.principal.name + Constants.NAMES_SEPARATOR
-      + block.rangeBegin + Constants.NAMES_SEPARATOR + block.indexInModel;
+      + block.rangeEnd + Constants.NAMES_SEPARATOR + block.indexInModel;
   }
 
   /**
