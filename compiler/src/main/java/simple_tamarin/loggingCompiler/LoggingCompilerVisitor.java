@@ -1,6 +1,8 @@
 package simple_tamarin.loggingCompiler;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.StModel;
@@ -12,13 +14,39 @@ import simple_tamarin.sourcesCompiler.term.FunctionSecond;
 
 public class LoggingCompilerVisitor {
   private StModel model;
-  
+  private Queue<LoggingGoal> solved;
+  private Queue<LoggingSource> by;
+
   public LoggingCompilerVisitor(StModel model) {
     this.model = model;
+    this.solved = new LinkedList<>();
+    this.by = new LinkedList<>();
   }
 
   public void visitMessage(MessageContext ctx) {
-    System.out.println(ctx.getText());
+    // discard directly solved
+    if (ctx.solved() != null && !ctx.solved().SOLVEDHOW().getText().equals(Constants.SOLVEDHOW_DIRECTLY)) {
+      solved.add(visitSolved(ctx.solved()));
+    } else if (ctx.by() != null) {
+      by.add(visitBy(ctx.by()));
+    } else {
+      return;
+    }
+
+    if (!solved.isEmpty() && !by.isEmpty()) {
+      System.out.println(solved.remove());
+      System.out.println(by.remove());
+    }
+  }
+
+  public LoggingGoal visitSolved(SolvedContext ctx) {
+    int number = Integer.parseInt(ctx.NUMBER().getText());
+    Fact goal = visitFact(ctx.goal().fact());
+    return new LoggingGoal(number, goal);
+  }
+
+  public LoggingSource visitBy(ByContext ctx) {
+    return new LoggingSource(ctx.IDENTIFIER().getText());
   }
 
   public Fact visitFact(FactContext ctx) {
@@ -90,5 +118,4 @@ public class LoggingCompilerVisitor {
     String number = (ctx.NUMBER() != null) ? ("." + ctx.NUMBER().getText()) : "";
     return new Variable(name + number);
   }
-
 }

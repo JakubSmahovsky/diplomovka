@@ -59,6 +59,7 @@ public class Simple_tamarin {
       p = Runtime.getRuntime().exec(cmd);  //TODO: catch
       // error output contains logging from Tamarin computation
       InputStream errStream = p.getErrorStream();
+      LoggingCompilerVisitor loggingVisitor = new LoggingCompilerVisitor(model);
       BufferedReader reader = new BufferedReader(new InputStreamReader(errStream));
       String message = "";
       int linesInMessage = 0;
@@ -74,7 +75,6 @@ public class Simple_tamarin {
         LoggingParser loggingParser = new LoggingParser(loggingTokes);
         loggingParser.removeErrorListeners();
         loggingParser.addErrorListener(LoggingErrorListener.INSTANCE);
-        LoggingCompilerVisitor loggingVisitor = new LoggingCompilerVisitor(model);
         try {
           loggingVisitor.visitMessage(loggingParser.message());
         } catch (ParseCancellationException e) {

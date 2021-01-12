@@ -102,4 +102,5 @@ public final class Constants{
   public static final String EQUALITY = "Eq";
   public static final String NAMES_SEPARATOR = "_";  
   public static final String INTRUDER_KNOWLEDGE_FACT = "KU";
+  public static final String SOLVEDHOW_DIRECTLY = "(directly)";
 }
