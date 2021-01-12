@@ -38,7 +38,7 @@ public class SourcesCompilerVisitor {
   }
 
   public void visitGroup(GroupContext ctx) {
-    Fact goal = visitFact(ctx.goal().fact());
+    Goal goal = visitFact(ctx.goal().fact());
     ArrayList<Source> sources = new ArrayList<>();
     for (SourceContext sctx : ctx.source()) {
       Source source = visitSource(sctx);
@@ -54,7 +54,7 @@ public class SourcesCompilerVisitor {
     return new Source(model, name, graph);
   }
 
-  public Fact visitFact(FactContext ctx) {
+  public Goal visitFact(FactContext ctx) {
     boolean persistent = ctx.PERSISTENT() != null;
     String factName = ctx.IDENTIFIER().getText();
     ArrayList<Term> terms = new ArrayList<>();
@@ -62,7 +62,7 @@ public class SourcesCompilerVisitor {
       terms.add(visitTerm(tctx));
     }
     
-    return new Fact(persistent, factName, terms);
+    return new Goal(persistent, factName, terms);
   }
 
   public Term visitTerm(TermContext ctx) {

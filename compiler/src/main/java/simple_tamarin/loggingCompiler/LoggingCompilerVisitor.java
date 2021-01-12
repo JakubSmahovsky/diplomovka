@@ -8,7 +8,7 @@ import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.StModel;
 import simple_tamarin.dataStructures.term.*;
 import simple_tamarin.loggingParser.LoggingParser.*;
-import simple_tamarin.sourcesCompiler.Fact;
+import simple_tamarin.sourcesCompiler.Goal;
 import simple_tamarin.sourcesCompiler.term.FunctionFirst;
 import simple_tamarin.sourcesCompiler.term.FunctionSecond;
 
@@ -41,7 +41,7 @@ public class LoggingCompilerVisitor {
 
   public LoggingGoal visitSolved(SolvedContext ctx) {
     int number = Integer.parseInt(ctx.NUMBER().getText());
-    Fact goal = visitFact(ctx.goal().fact());
+    Goal goal = visitFact(ctx.goal().fact());
     return new LoggingGoal(number, goal);
   }
 
@@ -49,7 +49,7 @@ public class LoggingCompilerVisitor {
     return new LoggingSource(ctx.IDENTIFIER().getText());
   }
 
-  public Fact visitFact(FactContext ctx) {
+  public Goal visitFact(FactContext ctx) {
     boolean persistent = ctx.PERSISTENT() != null;
     String factName = ctx.IDENTIFIER().getText();
     ArrayList<Term> terms = new ArrayList<>();
@@ -57,7 +57,7 @@ public class LoggingCompilerVisitor {
       terms.add(visitTerm(tctx));
     }
     
-    return new Fact(persistent, factName, terms);
+    return new Goal(persistent, factName, terms);
   }
 
   public Term visitTerm(TermContext ctx) {

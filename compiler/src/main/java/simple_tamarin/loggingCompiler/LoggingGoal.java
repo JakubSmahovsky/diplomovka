@@ -1,12 +1,12 @@
 package simple_tamarin.loggingCompiler;
 
-import simple_tamarin.sourcesCompiler.Fact;
+import simple_tamarin.sourcesCompiler.Goal;
 
 public class LoggingGoal {
   public int number;
-  public Fact goal;
+  public Goal goal;
 
-  public LoggingGoal(int number, Fact goal) {
+  public LoggingGoal(int number, Goal goal) {
     this.number = number;
     this.goal = goal;
   }
