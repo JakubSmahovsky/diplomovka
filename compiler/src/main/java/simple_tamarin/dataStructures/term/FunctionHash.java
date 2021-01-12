@@ -50,6 +50,10 @@ public class FunctionHash extends Term {
     return false;
   }
 
+  @Override public boolean unify(Term term) {
+    return ((term instanceof FunctionHash) && subterm.unify(((FunctionHash)term).subterm));
+  }
+
   @Override public List<Variable> freeVariables() {
     return subterm.freeVariables();
   }

@@ -102,6 +102,10 @@ public class Variable extends Term {
     return false;
   }
 
+  @Override public boolean unify(Term term) {
+    return true;
+  }
+
   @Override public List<Variable> freeVariables() {
     return Arrays.asList(this);    
   }
@@ -110,7 +114,7 @@ public class Variable extends Term {
     return subterm.encoded();
   }
 
-  @Override public boolean unify(Term right, StBlock block, Principal principal) {
+  @Override public boolean assign(Term right, StBlock block, Principal principal) {
     if (this.equals(right)) {
       return true;
     }

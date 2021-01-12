@@ -1,43 +1,24 @@
-Group: establish fact !Alice_init(t.1, t.2)
-  Source (0) init
-    TODO (unimportant, we will likely be hiding fact sources.)
-
-Group: establish fact !Bob_init(t.1, t.2)
-  Source (1) init
-    TODO (unimportant, we will likely be hiding fact sources.)
-
-Group: establish fact Alice_0_2(t.1, t.2, t.3, t.4)
-  Source (2) Alice_0_2
-    TODO (unimportant, we will likely be hiding fact sources.)
-
-Group: establish fact Alice_2_3(t.1, t.2, t.3, t.4, t.5, t.6)
-  Source (3) Alice_2_3
-    TODO (unimportant, we will likely be hiding fact sources.)
-
-Group: establish fact Bob_1_0(t.1, t.2, t.3, t.4, t.5, t.6, t.7, t.8)
-  Source (4) Bob_1_0
-    TODO (unimportant, we will likely be hiding fact sources.)
-
-Group: establish fact Bob_3_4(t.1, t.2, t.3, t.4, t.5, t.6)
-  Source (5) Bob_3_4
-    TODO (unimportant, we will likely be hiding fact sources.)
-
-Group: intruder learns t.1
-  Source (6) by deconstruction
+Group: intruder learns snd(t.1)
+  Source (18) by tuple deconstruction
     Intruder may deconstruct it from a tuple.
-      Intruder may get it by deconstruction using function DEC from values it got from:
-        Intruder may receive it from Bob after block 1.
-        Intruder gets it from unknown source (source endpoint).
-  Source (7) by deconstruction
-    Intruder may get it by deconstruction using function DEC from values it got from:
-      Intruder may receive it from Alice after block 0.
       Intruder gets it from unknown source (source endpoint).
-  Source (8) by generation
-    Intruder may generate it.
 
-Group: intruder learns fst(t.1)
-  Source (9) by tuple deconstruction
-    Intruder may deconstruct it from a tuple.
+Group: intruder learns senc(t.1, t.2)
+  Source (14) by construction
+    Intruder may get it by construction using function ENC from values it got from:
+      Intruder gets it from unknown source (source endpoint).
+      Intruder gets it from unknown source (source endpoint).
+  Source (15) Bob_1_0
+    Intruder may receive it from Bob after block 1.
+  Source (16) Alice_0_2
+    Intruder may receive it from Alice after block 0.
+  Source (17) Alice_2_3
+    Intruder may receive it from Alice after block 2.
+
+Group: intruder learns sdec(t.1, t.2)
+  Source (13) by construction
+    Intruder may get it by construction using function DEC from values it got from:
+      Intruder gets it from unknown source (source endpoint).
       Intruder gets it from unknown source (source endpoint).
 
 Group: intruder learns h(t.1)
@@ -54,26 +35,45 @@ Group: intruder learns h(t.1)
       Intruder may receive it from Alice after block 2.
       Intruder gets it from unknown source (source endpoint).
 
-Group: intruder learns sdec(t.1, t.2)
-  Source (13) by construction
-    Intruder may get it by construction using function DEC from values it got from:
-      Intruder gets it from unknown source (source endpoint).
-      Intruder gets it from unknown source (source endpoint).
-
-Group: intruder learns senc(t.1, t.2)
-  Source (14) by construction
-    Intruder may get it by construction using function ENC from values it got from:
-      Intruder gets it from unknown source (source endpoint).
-      Intruder gets it from unknown source (source endpoint).
-  Source (15) Bob_1_0
-    Intruder may receive it from Bob after block 1.
-  Source (16) Alice_0_2
-    Intruder may receive it from Alice after block 0.
-  Source (17) Alice_2_3
-    Intruder may receive it from Alice after block 2.
-
 Group: intruder learns fst(t.1)
-  Source (18) by tuple deconstruction
+  Source (9) by tuple deconstruction
     Intruder may deconstruct it from a tuple.
       Intruder gets it from unknown source (source endpoint).
+
+Group: intruder learns t.1
+  Source (6) by deconstruction
+    Intruder may deconstruct it from a tuple.
+      Intruder may get it by deconstruction using function DEC from values it got from:
+        Intruder may receive it from Bob after block 1.
+        Intruder gets it from unknown source (source endpoint).
+  Source (7) by deconstruction
+    Intruder may get it by deconstruction using function DEC from values it got from:
+      Intruder may receive it from Alice after block 0.
+      Intruder gets it from unknown source (source endpoint).
+  Source (8) by generation
+    Intruder may generate it.
+
+Group: establish fact Bob_3_4(t.1, t.2, t.3, t.4, t.5, t.6)
+  Source (5) Bob_3_4
+    TODO (unimportant, we will likely be hiding fact sources.)
+
+Group: establish fact Bob_1_0(t.1, t.2, t.3, t.4, t.5, t.6, t.7, t.8)
+  Source (4) Bob_1_0
+    TODO (unimportant, we will likely be hiding fact sources.)
+
+Group: establish fact Alice_2_3(t.1, t.2, t.3, t.4, t.5, t.6)
+  Source (3) Alice_2_3
+    TODO (unimportant, we will likely be hiding fact sources.)
+
+Group: establish fact Alice_0_2(t.1, t.2, t.3, t.4)
+  Source (2) Alice_0_2
+    TODO (unimportant, we will likely be hiding fact sources.)
+
+Group: establish fact !Bob_init(t.1, t.2)
+  Source (1) init
+    TODO (unimportant, we will likely be hiding fact sources.)
+
+Group: establish fact !Alice_init(t.1, t.2)
+  Source (0) init
+    TODO (unimportant, we will likely be hiding fact sources.)
 

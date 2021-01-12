@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import simple_tamarin.dataStructures.document.Document;
 
-public class SourceGroup {
+public class SourceGroup implements Comparable<SourceGroup>{
   public Goal goal;
   public ArrayList<Source> sources;
 
@@ -22,5 +22,13 @@ public class SourceGroup {
       doc.append(sourceDoc);
     }
     return doc;
+  }
+
+  @Override
+  public int compareTo(SourceGroup group) {
+    if (goal.unify(group.goal)) {
+      return 1;
+    }
+    return -1;
   }
 }

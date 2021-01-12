@@ -34,6 +34,23 @@ public class Goal {
     return false;
   }
 
+  /**
+   * Find out if this goal has the same structure as the provided goal 
+   * and is at least as general as the provided goal.
+   */
+  public boolean unify(Goal goal) {
+    if (intruderGoal != goal.intruderGoal || persistent != goal.persistent ||
+          !name.equals(goal.name) || terms.size() != goal.terms.size()) {
+      return false;
+    }
+    for (int i = 0; i < terms.size(); i++) {
+      if (!terms.get(i).unify(goal.terms.get(i))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @Override public String toString() {
     String description = intruderGoal ? "intruder learns " : "establish fact ";
     String fact;

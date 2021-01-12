@@ -1,6 +1,7 @@
 package simple_tamarin.dataStructures;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.term.Variable;
@@ -78,6 +79,12 @@ public class StModel {
    */
   public ArrayList<Principal> getPrincipals() {
     return principals;
+  }
+
+  public void sortSourceGroups() {
+    SourceGroup array[] = sourceGroups.toArray(new SourceGroup[0]);
+    Arrays.sort(array);
+    sourceGroups = new ArrayList<>(Arrays.asList(array));
   }
 
   public int registerBlock(StBlock block) {

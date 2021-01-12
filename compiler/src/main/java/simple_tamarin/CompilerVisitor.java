@@ -201,7 +201,7 @@ public class CompilerVisitor {
 
 		block.state.add(left);
 
-		if (!left.unify(right, block, principal)) {
+		if (!left.assign(right, block, principal)) {
 			Errors.ErrorCannotUnify(ctx.left, ctx.right);
 		}
 	}

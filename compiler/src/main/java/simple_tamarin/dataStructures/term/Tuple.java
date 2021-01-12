@@ -76,6 +76,18 @@ public class Tuple extends Term{
     return false;
   }
 
+  @Override public boolean unify(Term term) {
+    if (!(term instanceof Tuple) || subterms.size() != ((Tuple)term).subterms.size() ) {
+      return false;
+    }
+    for (int i = 0; i < subterms.size(); i++) {
+      if (!subterms.get(i).unify(((Tuple)term).subterms.get(i))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @Override public List<Variable> freeVariables() {
     ArrayList<Variable> result = new ArrayList<>();
     for (Term subterm : subterms) {
@@ -84,7 +96,7 @@ public class Tuple extends Term{
     return result;
   }
 
-  @Override public boolean unify(Term right, StBlock block, Principal principal) {
+  @Override public boolean assign(Term right, StBlock block, Principal principal) {
     // spread Tuple to deconstruct a deconstruction Term
     if (right.isDeconstructionTerm()) {
       Deconstruction dec = new Deconstruction(right.encoded(), this);
@@ -101,13 +113,13 @@ public class Tuple extends Term{
       }
     }
     
-    // unify
+    // assign
     Term canonical = right.toCanonical();
     if (!(canonical instanceof Tuple) || subterms.size() != ((Tuple)canonical).subterms.size()) {
       return false;
     }
     for (int i = 0; i < subterms.size(); i++) {
-      if (!subterms.get(i).unify(((Tuple)canonical).subterms.get(i), block, principal)) {
+      if (!subterms.get(i).assign(((Tuple)canonical).subterms.get(i), block, principal)) {
         return false;
       }
     }

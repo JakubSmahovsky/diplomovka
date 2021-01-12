@@ -27,6 +27,8 @@ public class SourcesCompilerVisitor {
       visitGroup(gctx);
     }
 
+    model.sortSourceGroups();
+
     try {
       for (SourceGroup group : model.sourceGroups) {
         writer.write(group.render().toString() + "\r\n" + "\r\n");
@@ -107,7 +109,7 @@ public class SourcesCompilerVisitor {
         return new FunctionSecond(subterm);
       }
     }
-    return new Variable("Function ph"); // TODO debug
+    return new OutputVariable("Function ph", ""); // TODO debug
   }
 
   public Term visitTuple(TupleContext ctx) {
@@ -118,10 +120,10 @@ public class SourcesCompilerVisitor {
     return new Tuple(subterms);
   }
 
-  public Variable visitVariable(VariableContext ctx) {
+  public OutputVariable visitVariable(VariableContext ctx) {
     String name = ctx.IDENTIFIER().getText();
     String number = (ctx.NUMBER() != null) ? ("." + ctx.NUMBER().getText()) : "";
-    return new Variable(name + number);
+    return new OutputVariable(name, number);
   }
 
   public Graph visitGraph(JsonObjContext ctx, String sourceName) {

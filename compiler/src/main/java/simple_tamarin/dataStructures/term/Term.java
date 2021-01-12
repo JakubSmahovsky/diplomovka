@@ -63,6 +63,12 @@ public abstract class Term{
    */
   public abstract boolean isDeconstructionTerm();
 
+
+  /**
+   * Check if terms have the same structure, variable unifies with anything
+   */
+  public abstract boolean unify(Term term);
+
   /**
    * Generate list of free variables of a Term to be declared when
    * rendering a lemma. Deconstruction Terms don't need to Override it.
@@ -93,8 +99,8 @@ public abstract class Term{
    * This function should be overriden by "transparent" Terms and no other.
    * @return false if left and right cannot be unified
    */
-  public boolean unify(Term right, StBlock block, Principal principal) {
-    Errors.DebugUnexpectedCall("unify", render());
+  public boolean assign(Term right, StBlock block, Principal principal) {
+    Errors.DebugUnexpectedCall("assign", render());
     return false;
-  };
+  }
 }

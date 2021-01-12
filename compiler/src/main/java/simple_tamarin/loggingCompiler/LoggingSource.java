@@ -12,7 +12,17 @@ public class LoggingSource {
     this.source = null;
   }
 
+  public void findSource(LoggingGoal goal) {
+    for (Source source : goal.group.sources) {
+      if (name.equals(source.name)) {
+        this.source = source;
+        return;
+      } 
+    }
+    System.out.println("Could not find source for " + name + " in group " + goal.group.goal);
+  }
+
   @Override public String toString() {
-    return Constants.INDENT + "by " + name; 
+    return Constants.INDENT + "by (" + source.indexInModel + ") " + name;
   }
 }

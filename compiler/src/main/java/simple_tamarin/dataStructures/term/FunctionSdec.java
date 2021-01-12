@@ -56,6 +56,14 @@ public class FunctionSdec extends Term{
     return true;
   }
 
+  @Override public boolean unify(Term term) {
+    if (!(term instanceof FunctionSdec)) {
+      return false;
+    }
+    FunctionSdec sdec = (FunctionSdec)term;
+    return (key.unify(sdec.key) && encodedValue.unify(sdec.encodedValue) && decodedValue.unify(sdec.decodedValue)); 
+  }
+
   @Override public Term encoded(){
     return encodedValue;
   }

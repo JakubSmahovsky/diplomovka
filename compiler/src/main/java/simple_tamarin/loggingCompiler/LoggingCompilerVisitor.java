@@ -11,6 +11,7 @@ import simple_tamarin.loggingParser.LoggingParser.*;
 import simple_tamarin.sourcesCompiler.Goal;
 import simple_tamarin.sourcesCompiler.term.FunctionFirst;
 import simple_tamarin.sourcesCompiler.term.FunctionSecond;
+import simple_tamarin.sourcesCompiler.term.OutputVariable;
 
 public class LoggingCompilerVisitor {
   private StModel model;
@@ -34,15 +35,18 @@ public class LoggingCompilerVisitor {
     }
 
     if (!solved.isEmpty() && !by.isEmpty()) {
-      System.out.println(solved.remove());
-      System.out.println(by.remove());
+      LoggingGoal goal = solved.remove();
+      LoggingSource source = by.remove();
+      source.findSource(goal);
+      System.out.println(goal);
+      System.out.println(source);
     }
   }
 
   public LoggingGoal visitSolved(SolvedContext ctx) {
     int number = Integer.parseInt(ctx.NUMBER().getText());
     Goal goal = visitFact(ctx.goal().fact());
-    return new LoggingGoal(number, goal);
+    return new LoggingGoal(model, number, goal);
   }
 
   public LoggingSource visitBy(ByContext ctx) {
@@ -113,9 +117,9 @@ public class LoggingCompilerVisitor {
     return new Tuple(subterms);
   }
 
-  public Variable visitVariable(VariableContext ctx) {
+  public OutputVariable visitVariable(VariableContext ctx) {
     String name = ctx.IDENTIFIER().getText();
     String number = (ctx.NUMBER() != null) ? ("." + ctx.NUMBER().getText()) : "";
-    return new Variable(name + number);
+    return new OutputVariable(name, number);
   }
 }

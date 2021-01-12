@@ -55,6 +55,14 @@ public class FunctionSenc extends Term {
     return false;
   }
 
+  @Override public boolean unify(Term term) {
+    if (!(term instanceof FunctionSenc)) {
+      return false;
+    }
+    FunctionSenc senc = (FunctionSenc)term;
+    return (key.unify(senc.key) && value.unify(senc.value)); 
+  }
+
   @Override public List<Variable> freeVariables() {
     ArrayList<Variable> result = new ArrayList<>();
     result.addAll(key.freeVariables());

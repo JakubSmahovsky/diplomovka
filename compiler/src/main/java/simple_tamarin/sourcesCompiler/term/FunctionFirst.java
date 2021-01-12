@@ -15,8 +15,11 @@ public class FunctionFirst extends OutputTerm{
     this.subterm = subterm;
   }
 
-  @Override
-  public String render() {
+  @Override public boolean unify(Term term) {
+    return (term instanceof FunctionSecond && subterm.unify(((FunctionSecond)term).subterm));
+  }
+
+  @Override public String render() {
     return BuilderFormatting.fact(Constants.FIRST, subterm, null);
   }
 }
