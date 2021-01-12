@@ -1,5 +1,7 @@
 package simple_tamarin.sourcesCompiler;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import simple_tamarin.Constants;
@@ -12,21 +14,26 @@ import simple_tamarin.sourcesCompiler.graph.node.*;
 import simple_tamarin.sourcesParser.SourcesParser.*;
 
 public class SourcesCompilerVisitor {
+	private FileWriter writer;
   private StModel model;
   
-  public SourcesCompilerVisitor(StModel model) {
+  public SourcesCompilerVisitor(StModel model, FileWriter writer) {
     this.model = model;
+    this.writer = writer;
   }
 
   public void visitSources(SourcesContext ctx) {
-    System.out.println("sources");
     for (GroupContext gctx : ctx.group()) {
       visitGroup(gctx);
     }
 
-    for (SourceGroup group : model.sourceGroups) {
-      System.out.println(group.render().toString());
-      System.out.println();
+    try {
+      for (SourceGroup group : model.sourceGroups) {
+        writer.write(group.render().toString() + "\r\n" + "\r\n");
+      }
+      writer.close();
+    } catch (IOException e) {
+      e.printStackTrace();;
     }
   }
 
