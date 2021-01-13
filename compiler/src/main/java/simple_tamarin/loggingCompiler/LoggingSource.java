@@ -4,10 +4,12 @@ import simple_tamarin.Constants;
 import simple_tamarin.sourcesCompiler.Source;
 
 public class LoggingSource {
+  public int goalNr;
   public String name;
   private Source source;
 
-  public LoggingSource(String name) {
+  public LoggingSource(int goalNr, String name) {
+    this.goalNr = goalNr;
     this.name = name;
     this.source = null;
   }

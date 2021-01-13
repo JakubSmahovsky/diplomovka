@@ -2,7 +2,7 @@ grammar Logging;
 
 message: solved | by;
 solved: 'solved goal nr.' NUMBER SOLVEDHOW ':' goal;
-by: 'by:' IDENTIFIER;
+by: NUMBER 'by:' IDENTIFIER;
 
 goal: fact ATTIMEPOINT variable;
 fact: PERSISTENT? IDENTIFIER '(' term? (',' term)* ')';

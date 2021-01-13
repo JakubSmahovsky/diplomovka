@@ -37,6 +37,9 @@ public class LoggingCompilerVisitor {
     if (!solved.isEmpty() && !by.isEmpty()) {
       LoggingGoal goal = solved.remove();
       LoggingSource source = by.remove();
+      if (goal.number != source.goalNr) {
+        System.out.println("Discarded goal " + goal.goal + " and source " + source.name + "!");
+      }
       source.findSource(goal);
       System.out.println(goal);
       System.out.println(source);
@@ -50,7 +53,7 @@ public class LoggingCompilerVisitor {
   }
 
   public LoggingSource visitBy(ByContext ctx) {
-    return new LoggingSource(ctx.IDENTIFIER().getText());
+    return new LoggingSource(Integer.parseInt(ctx.NUMBER().getText()) ,ctx.IDENTIFIER().getText());
   }
 
   public Goal visitFact(FactContext ctx) {
