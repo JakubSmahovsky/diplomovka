@@ -6,7 +6,7 @@ import simple_tamarin.sourcesCompiler.Source;
 public class LoggingSource {
   public int goalNr;
   public String name;
-  private Source source;
+  public Source source;
 
   public LoggingSource(int goalNr, String name) {
     this.goalNr = goalNr;
@@ -21,7 +21,6 @@ public class LoggingSource {
         return;
       } 
     }
-    System.out.println("Could not find source for " + name + " in group " + goal.group.goal);
   }
 
   @Override public String toString() {

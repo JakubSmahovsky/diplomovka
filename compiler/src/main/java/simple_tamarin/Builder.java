@@ -1,6 +1,7 @@
 package simple_tamarin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -27,6 +28,7 @@ public class Builder extends BuilderFormatting{
     initProtocol();
     initRule();
     blocks();
+    prefabs();
     restrictions();
     queries();
     output.append(endProtocol());
@@ -76,10 +78,13 @@ public class Builder extends BuilderFormatting{
     }
     output.append(rulePremise(facts));
 
-    // render init states of principals
+    // render init states of principals and initResults
     facts = new ArrayList<>();
     for (Principal principal : model.getPrincipals()) {
       facts.add(initStateFact(principal, null));
+      for (Fact fact : principal.initResults) {
+        facts.add(fact.render(null));
+      }
     }
     output.append(ruleResult(facts));
 
@@ -138,7 +143,7 @@ public class Builder extends BuilderFormatting{
     facts = new ArrayList<>();
     String resultStateFact = resultStateFact(block, block);
     facts.add(resultStateFact);
-    for (ActionFact fact : block.actions) {
+    for (Fact fact : block.actions) {
       facts.add(fact.render(block));
     }
     output.append(ruleAction(facts));
@@ -161,9 +166,15 @@ public class Builder extends BuilderFormatting{
     }
   }
 
+  private void prefabs() {
+    if (model.builtins.prefab_private_reveal) {
+      output.append(Constants.PREFAB_PRIVATE_REVEAL);
+    }
+  }
+
   private void restrictions() {
     if (model.builtins.restriction_eq) {
-      output.append(restrictionEq());
+      output.append(Constants.RESTRICTION_EQUALITY);
     }
   }
 
@@ -197,13 +208,23 @@ public class Builder extends BuilderFormatting{
       temporals.add(t);
     }
     output.append(ExVariables(variables));
+    output.append(lineBreak());
 
     ArrayList<String> facts = new ArrayList<>();
     Iterator<Variable> tempIt = temporals.iterator();
     for (Principal principal : model.getPrincipals()) {
       facts.add(lemmaResultStateFact(principal.getLastBlock(), tempIt.next()));
+      facts.add(honest(principal));
     }
+
     output.append(conjunction(facts));
     output.append(lemmaEnd());
+  }
+
+  private String honest(Principal principal) {
+    Variable temporal = Variable.nextTemporal();
+    String dishonest = lemmaFact(Constants.FACT_DISHONEST, principal.principalID);
+    dishonest = ExVariables(Arrays.asList(temporal)) + dishonest + atTemporal(temporal);
+    return negation(dishonest);
   }
 }

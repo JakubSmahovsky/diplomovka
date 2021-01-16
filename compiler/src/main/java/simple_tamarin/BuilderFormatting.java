@@ -62,7 +62,7 @@ public abstract class BuilderFormatting {
    * @param block is null for init block
    */
   public static String ruleAliases(StBlock block, List<String> aliases) {
-    String label = block == null ? Constants.INIT : BlockNames.render(block);
+    String label = block == null ? BlockNames.renderInit() : BlockNames.render(block);
     StringBuilder result = new StringBuilder("rule " + label + ":\r\n");
     if (aliases.isEmpty()) {
       return result.toString();
@@ -89,10 +89,6 @@ public abstract class BuilderFormatting {
     return String.join(",\r\n", indent(facts)) + "\r\n";
   }
 
-  public static String restrictionEq() {
-    return Constants.RESTRICTION_EQUALITY;
-  }
-
   public static String theoryHeader(String name) {
     return "theory " + name + "\r\nbegin\r\n\r\n";
   }
@@ -111,7 +107,7 @@ public abstract class BuilderFormatting {
     for (Variable variable : variables) {
       result.append(" " + variable.renderLemma());
     }
-    result.append(".\r\n");
+    result.append(".");
     return result.toString();
   }
 
@@ -129,6 +125,10 @@ public abstract class BuilderFormatting {
 
   public static String lemmaFact(String name, Term term) {
     return lemmaFact(name, Arrays.asList(term));
+  }
+
+  public static String negation(String fact) {
+    return "not (" + fact + ")";
   }
 
   public static String conjunction(List<String> facts) {
@@ -152,5 +152,9 @@ public abstract class BuilderFormatting {
       result.add(Constants.INDENT + string);
     }
     return result;
+  }
+
+  public static String lineBreak() {
+    return "\r\n";
   }
 }

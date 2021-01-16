@@ -100,9 +100,15 @@ public class FunctionNode extends Node{
       }
       BlockNode block = (BlockNode)parents.get(0);
 
-      StringBuilder myLine = new StringBuilder("Intruder may receive it from "
-          + block.block.principal + " after block " + block.block.rangeEnd + "." );
-      return new Description(new Document(myLine), new Document(new StringBuilder(myLine)), block, block.label);
+      if (block.block == null) {
+        // TODO: identities in reveals
+        String myLine = "Intruder may receive it from a compromited principal.";
+        return new Description(new Document(myLine), new Document(myLine), block, block.label);
+      }
+
+      String myLine = "Intruder may receive it from " + block.block.principal
+          + " after block " + block.block.rangeEnd + ".";
+      return new Description(new Document(myLine), new Document(myLine), block, block.label);
     }
 
     if (nativeTamarin) {

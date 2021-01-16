@@ -9,4 +9,5 @@ public class Builtins {
   public boolean hashing = false;
   // custom
   public boolean restriction_eq = false;
+  public boolean prefab_private_reveal = false;
 }

@@ -7,12 +7,12 @@ import simple_tamarin.groupedFunctions.BlockNames;
 import simple_tamarin.sourcesCompiler.graph.Description;
 
 public class BlockNode extends Node {
-  public StBlock block; // null for init rule
+  public StBlock block; // null for custom rule (e.g. init, key reveals)
 
   public BlockNode(String id, String label, StModel model) {
     super(id, label);
-    // assign block to node unless it's an init rule
-    if (!BlockNames.isInitLabel(label)) {
+    // assign block to node unless it's a custom rule (e.g. init, key reveals)
+    if (!BlockNames.isCustomLabel(label)) {
       this.block = BlockNames.read(model, label);
     }
   }

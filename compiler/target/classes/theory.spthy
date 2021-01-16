@@ -8,7 +8,9 @@ rule init:
   Fr(~Kab)
 ]-->[
   !Bob_init($Bob, ~Kab),
-  !Alice_init($Alice, ~Kab)
+  !PrincipalPrivate($Bob, ~Kab),
+  !Alice_init($Alice, ~Kab),
+  !PrincipalPrivate($Alice, ~Kab)
 ]
 
 rule Bob_1_0:
@@ -70,6 +72,14 @@ in
   Alice_2_3($Alice, Kab, senc(<SuccNa, Nb>, Kab), <SuccNa, Nb>, SuccNb, m3)
 ]
 
+rule privateReveal: [
+  !PrincipalPrivate(Principal, Private)
+]--[
+  Dishonest(Principal)
+]->[
+  Out(Private)
+]
+
 restriction Equality:
   "All x y #i. Eq(x,y) @i ==> x = y"
 
@@ -77,6 +87,8 @@ lemma executable:
 exists-trace "
 Ex Bob Kab Alice m1 m3 SuccNb m2 SuccNa Nb #t0 #t1.
 Bob_3_4(Bob, Kab, Alice, m1, m3, SuccNb) @ #t0 &
-Alice_2_3(Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3) @ #t1
+not (Ex #t2.Dishonest(Bob)@ #t2) &
+Alice_2_3(Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3) @ #t1 &
+not (Ex #t3.Dishonest(Alice)@ #t3)
 "
 end

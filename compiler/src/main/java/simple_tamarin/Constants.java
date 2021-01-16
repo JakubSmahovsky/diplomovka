@@ -1,5 +1,7 @@
 package simple_tamarin;
 
+import simple_tamarin.groupedFunctions.BlockNames;
+
 public final class Constants{
   // private contrustor to forbid instances of Constants
   private Constants(){}
@@ -49,15 +51,30 @@ public final class Constants{
     }
   }
 
-  // restrictions; put an empty line in Tamarin code after every restriction
+  // restrictions and prefabs; put an empty line in Tamarin code after every on of these
   public static final String RESTRICTION_EQUALITY = 
     "restriction Equality:\r\n" +
-    Constants.INDENT + "\"All x y #i. Eq(x,y) @i ==> x = y\"\r\n" +
+    Constants.INDENT + "\"All x y #i. " + Constants.EQUALITY + "(x,y) @i ==> x = y\"\r\n" +
     "\r\n";
 
-  // builtins
+  public static final String PREFAB_PRIVATE_REVEAL =
+    "rule "+ BlockNames.renderPrivateReveal() +": [\r\n" +
+    Constants.INDENT + "!" + Constants.PRINCIPAL_PRIVATE + "(Principal, Private)\r\n" +
+    "]--[\r\n" +
+    Constants.INDENT + Constants.FACT_DISHONEST + "(Principal)\r\n" +
+    "]->[\r\n" +
+    Constants.INDENT + "Out(Private)\r\n"
+    + "]\r\n" +
+    "\r\n";
+
+  // builtins and prefabs
   public static final String BUILTIN_SYMMETRIC_ENCRYPTION = "symmetric-encryption";
   public static final String BUILTIN_HASHING = "hashing";
+  public static final String PREFAB_PRIVATE_REVEAL_NAME = "privateReveal";
+  public static final String FACT_DISHONEST= "Dishonest";
+  // custom fact names (restriction and prefab sources)
+  public static final String EQUALITY = "Eq";
+  public static final String PRINCIPAL_PRIVATE = "PrincipalPrivate";
   // Tamarin functions
   public static final String COMMAND_IN = "In";
   public static final String COMMAND_OUT = "Out";
@@ -99,8 +116,7 @@ public final class Constants{
   public static final String INIT = "init";
   public static final String TEMPORAL_NAME = "t";
   public static final String EXECUTABLE = "executable";
-  public static final String EQUALITY = "Eq";
-  public static final String NAMES_SEPARATOR = "_";  
+  public static final String NAMES_SEPARATOR = "_";
   public static final String INTRUDER_KNOWLEDGE_FACT = "KU";
   public static final String SOLVEDHOW_DIRECTLY = "(directly)";
 }

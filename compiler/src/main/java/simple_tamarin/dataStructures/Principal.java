@@ -9,21 +9,25 @@ import simple_tamarin.dataStructures.term.Variable;
 
 public class Principal {
   public final StModel model;
+  public final Variable principalID;
 
   public String name;
   private ArrayList<Variable> knowledge;
   private ArrayList<StBlock> blocks;
   public StBlock nextBlock;
   public ArrayList<Variable> initState;
+  public ArrayList<Fact> initResults;
 
-  public Principal(StModel model, String name){
+  public Principal(StModel model, Variable principalID, String name){
     this.model = model;
+    this.principalID = principalID;
 
     this.name = name;
     this.knowledge = new ArrayList<>();
     this.blocks = new ArrayList<>();
     nextBlock();
     this.initState = new ArrayList<>();
+    this.initResults = new ArrayList<>();
   }
 
   /**

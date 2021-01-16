@@ -39,8 +39,9 @@ public class LoggingCompilerVisitor {
       LoggingSource source = by.remove();
       if (goal.number != source.goalNr) {
         System.out.println("Discarded goal " + goal.goal + " and source " + source.name + "!");
+        return;
       }
-      source.findSource(goal);
+      goal.findSource(source);
       System.out.println(goal);
       System.out.println(source);
     }

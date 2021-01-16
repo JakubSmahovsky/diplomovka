@@ -52,10 +52,10 @@ public class StModel {
    * @return newly created principal with given parameters
    */
   public Principal addPrincipal(String name) {
-    Principal principal = new Principal(this, name);
-    principals.add(principal);
     Variable principalID = new Variable(name, VariableSort.PUBLIC);
     pubVariables.add(principalID);
+    Principal principal = new Principal(this, principalID, name);
+    principals.add(principal);
     principal.initState.add(principalID);
     return principal;
   }

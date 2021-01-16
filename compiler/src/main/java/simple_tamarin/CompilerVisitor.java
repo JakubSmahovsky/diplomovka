@@ -147,6 +147,8 @@ public class CompilerVisitor {
 		}
 		principal.learn(variable);
 		principal.initState.add(variable);
+		model.builtins.prefab_private_reveal = true;
+		principal.initResults.add(new Fact(true, Constants.PRINCIPAL_PRIVATE, Arrays.asList(principal.principalID, variable)));
 	}
 
 	public void visitGenerates(GeneratesContext ctx, Principal principal, StBlock block) {
@@ -318,7 +320,7 @@ public class CompilerVisitor {
 				if (!(term1.equals(term2))) {
 					Errors.WarningAssertNeverTrue(ctx.start);
 				}
-				block.actions.add(new ActionFact(Constants.EQUALITY, new ArrayList<Term>(Arrays.asList(term1, term2))));
+				block.actions.add(new Fact(false, Constants.EQUALITY, new ArrayList<Term>(Arrays.asList(term1, term2))));
 			}
 			case Constants.VPHASH: {
 				model.builtins.hashing = true;

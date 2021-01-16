@@ -1,6 +1,7 @@
 package simple_tamarin.loggingCompiler;
 
 import simple_tamarin.dataStructures.StModel;
+import simple_tamarin.errors.Errors;
 import simple_tamarin.sourcesCompiler.Goal;
 import simple_tamarin.sourcesCompiler.SourceGroup;
 
@@ -14,17 +15,22 @@ public class LoggingGoal {
     this.model = model;
     this.number = number;
     this.goal = goal;
-    this.group = findGroup();
+    this.group = null;
   }
 
-  private SourceGroup findGroup() {
+  public void findSource(LoggingSource source) {
     for (SourceGroup group : model.sourceGroups) {
       if (group.goal.unify(goal)) {
-        return group;
+        this.group = group;
+        source.findSource(this);
+        if (source.source != null){
+          break;
+        }
       }
     }
-    System.out.println("Could not find group for " + toString());
-    return null;
+    if (source.source == null) {
+      Errors.debug("Could not find source for goal " + toString() + " and source" + source.name);
+    }
   }
 
   @Override public String toString() {
