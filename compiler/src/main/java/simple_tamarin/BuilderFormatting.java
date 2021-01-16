@@ -97,13 +97,12 @@ public abstract class BuilderFormatting {
     return "end\r\n";
   }
 
-  public static String lemmaEx(String name) {
-    return "lemma " + name + ":\r\n" + 
-      "exists-trace \"\r\n";
+  public static String lemma(String name, boolean existsTrace) {
+    return "lemma " + name + ":\r\n" + (existsTrace ? "exists-trace" : "all-traces") + " \"\r\n";
   }
 
-  public static String ExVariables(Collection<Variable> variables){
-    StringBuilder result = new StringBuilder("Ex");
+  public static String lemmaVariables(Collection<Variable> variables, boolean exQuantifier){
+    StringBuilder result = new StringBuilder(exQuantifier ? "Ex" : "All");
     for (Variable variable : variables) {
       result.append(" " + variable.renderLemma());
     }
@@ -112,7 +111,7 @@ public abstract class BuilderFormatting {
   }
 
   public static String lemmaResultStateFact(StBlock block, Variable temporal) {
-    return lemmaFact(BlockNames.render(block), block.completeState()) + " " + atTemporal(temporal);
+    return lemmaFact(BlockNames.render(block), block.completeState(), temporal);
   }
 
   public static String lemmaFact(String name, List<? extends Term> terms) {
@@ -127,12 +126,24 @@ public abstract class BuilderFormatting {
     return lemmaFact(name, Arrays.asList(term));
   }
 
+  public static String lemmaFact(String name, List<? extends Term> terms, Variable temporal) {
+    return lemmaFact(name, terms) + " " + atTemporal(temporal);
+  }
+
+  public static String lemmaFact(String name, Term term, Variable temporal) {
+    return lemmaFact(name, Arrays.asList(term), temporal);
+  }
+
   public static String negation(String fact) {
     return "not (" + fact + ")";
   }
 
   public static String conjunction(List<String> facts) {
-    return String.join(" &\r\n", facts) + "\r\n";
+    return String.join(" &\r\n", facts);
+  }
+
+  public static String implication(String from, String to) {
+    return from + "\r\n" + "==>\r\n" + to;
   }
 
   public static String lemmaEnd() {

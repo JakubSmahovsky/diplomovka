@@ -75,6 +75,7 @@ public final class Constants{
   // custom fact names (restriction and prefab sources)
   public static final String EQUALITY = "Eq";
   public static final String PRINCIPAL_PRIVATE = "PrincipalPrivate";
+  public static final String FACT_PRINCIPALS = "Principals";
   // Tamarin functions
   public static final String COMMAND_IN = "In";
   public static final String COMMAND_OUT = "Out";
@@ -116,7 +117,9 @@ public final class Constants{
   public static final String INIT = "init";
   public static final String TEMPORAL_NAME = "t";
   public static final String EXECUTABLE = "executable";
+  public static final String CONFIDENTIALITY = "secrecy";
   public static final String NAMES_SEPARATOR = "_";
-  public static final String INTRUDER_KNOWLEDGE_FACT = "KU";
+  public static final String INTRUDER_KNOWS_OUTPUT = "KU";
+  public static final String INTRUDER_KNOWS_LEMMA = "K";
   public static final String SOLVEDHOW_DIRECTLY = "(directly)";
 }

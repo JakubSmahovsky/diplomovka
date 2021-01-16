@@ -55,7 +55,7 @@ public class Simple_tamarin {
       sourcesVisitor.visitSources(sourcesParser.sources());
 
       // COMPILE LOGGING
-      cmd = homedir + "/.local/bin/tamarin-prover --prove=executable " + theoryFile;
+      cmd = homedir + "/.local/bin/tamarin-prover --prove=secrecy0 " + theoryFile;
       p = Runtime.getRuntime().exec(cmd);  //TODO: catch
       // error output contains logging from Tamarin computation
       InputStream errStream = p.getErrorStream();

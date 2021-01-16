@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import simple_tamarin.Constants.*;
 import simple_tamarin.dataStructures.*;
+import simple_tamarin.dataStructures.query.Confidentiality;
 import simple_tamarin.dataStructures.term.*;
 import simple_tamarin.errors.Errors;
 
@@ -70,6 +71,12 @@ public class Builder extends BuilderFormatting{
       }
     }
 
+    // gather principal IDs
+    ArrayList<Variable> principalIDs = new ArrayList<>();
+    for (Principal principal : model.getPrincipals()) {
+      principalIDs.add(principal.principalID);
+    }
+
     // render fresh facts
     ArrayList<String> facts = new ArrayList<>();
     output.append(ruleAliases(null, new ArrayList<>()));
@@ -77,6 +84,11 @@ public class Builder extends BuilderFormatting{
       facts.add(fact(Constants.COMMAND_FRESH, variable, null));
     }
     output.append(rulePremise(facts));
+
+    // render action facts
+    facts = new ArrayList<>();
+    facts.add(fact(Constants.FACT_PRINCIPALS, principalIDs, null));
+    output.append(ruleAction(facts));
 
     // render init states of principals and initResults
     facts = new ArrayList<>();
@@ -181,6 +193,11 @@ public class Builder extends BuilderFormatting{
   private void queries() {
     if (model.queries.executable) {
       executable();
+      output.append(lineBreak());
+    }
+    for (Confidentiality query : model.queries.confidentiality) {
+      confidentiality(query);
+      output.append(lineBreak());
     }
   }
 
@@ -189,7 +206,7 @@ public class Builder extends BuilderFormatting{
    * their final state. 
    */
   private void executable() {
-    output.append(lemmaEx(Constants.EXECUTABLE));
+    output.append(lemma(Constants.EXECUTABLE, true));
     ArrayList<Variable> variables = new ArrayList<>();
     for (Principal principal : model.getPrincipals()) {
       ArrayList<Term> finalState = principal.getLastBlock().completeState();
@@ -207,7 +224,7 @@ public class Builder extends BuilderFormatting{
       variables.add(t);
       temporals.add(t);
     }
-    output.append(ExVariables(variables));
+    output.append(lemmaVariables(variables, true));
     output.append(lineBreak());
 
     ArrayList<String> facts = new ArrayList<>();
@@ -217,14 +234,73 @@ public class Builder extends BuilderFormatting{
       facts.add(honest(principal));
     }
 
-    output.append(conjunction(facts));
+    output.append(conjunction(facts) + lineBreak());
     output.append(lemmaEnd());
+  }
+
+  /**
+   * Create a confidentiality lemma saying that if
+   * all principals from init are honest
+   * principal from query can reach the first state mentioning the variable from query
+   * then
+   * intruder doesn't know the variable from query.
+   */
+  private void confidentiality(Confidentiality query) {
+    output.append(lemma(Constants.CONFIDENTIALITY + Confidentiality.nextConfidentialityQuery(), false));
+    // gather principal IDs
+    ArrayList<Variable> principalIDs = new ArrayList<>();
+    for (Principal principal : model.getPrincipals()) {
+      principalIDs.add(principal.principalID);
+    }
+    Variable principalsTemporal = Variable.nextTemporal();
+
+    // find first block with varible from query
+    StBlock originalBlock = null;
+    for (StBlock block : query.principal.getBlocks()) {
+      if (block.completeState().contains(query.variable)) {
+        originalBlock = block;
+        break;
+      }
+    }
+    Variable stateTemporal = Variable.nextTemporal();
+
+    ArrayList<Variable> allVariables = new ArrayList<>(principalIDs);
+    for (Term term : originalBlock.completeState()) {
+      for (Variable variable : term.freeVariables()) {
+        if (!allVariables.contains(variable)) {
+            allVariables.add(variable);
+        }
+      }
+    }
+    allVariables.add(principalsTemporal);
+    allVariables.add(stateTemporal);
+
+    output.append(lemmaVariables(allVariables, false));
+    output.append(lineBreak());
+
+    ArrayList<String> facts = new ArrayList<>();
+    facts.add(lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal));
+    for (Principal principal : model.getPrincipals()) {
+      facts.add(honest(principal));
+    }
+    facts.add(lemmaResultStateFact(originalBlock, stateTemporal));
+    
+    output.append(implication(conjunction(facts), intruderDoesntKnow(query.variable)));
+    output.append(lineBreak());
+    output.append(lemmaEnd());
+  }
+
+  private String intruderDoesntKnow(Variable variable) {
+    Variable temporal = Variable.nextTemporal();
+    String knows = lemmaFact(Constants.INTRUDER_KNOWS_LEMMA, variable, temporal);
+    knows = lemmaVariables(Arrays.asList(temporal), true) + knows;
+    return negation(knows);
   }
 
   private String honest(Principal principal) {
     Variable temporal = Variable.nextTemporal();
-    String dishonest = lemmaFact(Constants.FACT_DISHONEST, principal.principalID);
-    dishonest = ExVariables(Arrays.asList(temporal)) + dishonest + atTemporal(temporal);
+    String dishonest = lemmaFact(Constants.FACT_DISHONEST, principal.principalID, temporal);
+    dishonest = lemmaVariables(Arrays.asList(temporal), true) + dishonest;
     return negation(dishonest);
   }
 }

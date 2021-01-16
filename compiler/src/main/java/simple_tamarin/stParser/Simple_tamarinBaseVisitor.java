@@ -122,5 +122,12 @@ public class Simple_tamarinBaseVisitor<T> extends AbstractParseTreeVisitor<T> im
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitConfidentiality(Simple_tamarinParser.ConfidentialityContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitExecutable(Simple_tamarinParser.ExecutableContext ctx) { return visitChildren(ctx); }
 }

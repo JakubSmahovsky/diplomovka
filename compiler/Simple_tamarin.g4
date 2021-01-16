@@ -34,8 +34,11 @@ variable: IDENTIFIER;
 functionCall: FUNCTION '(' (argument+=term)? (',' argument+=term)* ')';
 tuple: '{' term (',' term)* '}';
 
-query: executable;
+query: 
+  executable |
+  confidentiality;
 
+confidentiality: 'confidentiality?' (principal=IDENTIFIER '\'s')? variable;
 executable: 'executable?';
 
 FUNCTION:

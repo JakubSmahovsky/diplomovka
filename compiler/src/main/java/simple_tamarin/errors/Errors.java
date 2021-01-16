@@ -103,6 +103,11 @@ public final class Errors{
     warning(query, message);
   }
 
+  public static void WarningQueryConfidentialityDuplicite(Token variable) {
+    String message = "Duplicite request for confidentiality query of variable " + variable.getText() + ". The query will only be verified once!";
+    warning(variable, message);
+  }
+
   public static void InfoDeclareLongTermVariable(Token variable) {
     String message = "Long term variable \"" + variable.getText() + "\" is not declared. It is recommended to declare all long-term variables.";
     info(variable, message);

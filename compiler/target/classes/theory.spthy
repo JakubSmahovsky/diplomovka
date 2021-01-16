@@ -6,7 +6,9 @@ builtins: symmetric-encryption, hashing
 rule init:
 [
   Fr(~Kab)
-]-->[
+]--[
+  Principals($Bob, $Alice)
+]->[
   !Bob_init($Bob, ~Kab),
   !PrincipalPrivate($Bob, ~Kab),
   !Alice_init($Alice, ~Kab),
@@ -87,8 +89,20 @@ lemma executable:
 exists-trace "
 Ex Bob Kab Alice m1 m3 SuccNb m2 SuccNa Nb #t0 #t1.
 Bob_3_4(Bob, Kab, Alice, m1, m3, SuccNb) @ #t0 &
-not (Ex #t2.Dishonest(Bob)@ #t2) &
+not (Ex #t2.Dishonest(Bob) @ #t2) &
 Alice_2_3(Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3) @ #t1 &
-not (Ex #t3.Dishonest(Alice)@ #t3)
+not (Ex #t3.Dishonest(Alice) @ #t3)
 "
+
+lemma secrecy0:
+all-traces "
+All Bob Alice Kab m1 Na SuccNa Nb m2 #t4 #t5.
+Principals(Bob, Alice) @ #t4 &
+not (Ex #t6.Dishonest(Bob) @ #t6) &
+not (Ex #t7.Dishonest(Alice) @ #t7) &
+Bob_1_0(Bob, Kab, Alice, m1, Na, SuccNa, Nb, m2) @ #t5
+==>
+not (Ex #t8.K(Nb) @ #t8)
+"
+
 end

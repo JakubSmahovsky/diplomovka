@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import simple_tamarin.Constants.*;
 import simple_tamarin.dataStructures.*;
+import simple_tamarin.dataStructures.query.Confidentiality;
 import simple_tamarin.dataStructures.term.*;
 import simple_tamarin.stParser.Simple_tamarinParser.*;
 import simple_tamarin.errors.Errors;
@@ -361,7 +362,8 @@ public class CompilerVisitor {
 	public void visitQuery(QueryContext ctx) {
 		if (ctx.executable() != null) {
 			visitExecutable(ctx.executable());
-			return;
+		} else if (ctx.confidentiality() != null) {
+			visitConfidentiality(ctx.confidentiality());			
 		}
 	}
 
@@ -371,6 +373,24 @@ public class CompilerVisitor {
 		} else {
 			model.queries.executable = true;
 		}
+	}
+
+	public void visitConfidentiality(ConfidentialityContext ctx) {
+		if (ctx.principal == null) {
+			Errors.debug("Not yet implemented: confidentiality without specific principal!");
+		}
+		Principal principal = model.findPrincipal(ctx.principal.getText());
+		if (principal == null) {
+			Errors.ErrorPrincipalDoesNotExist(ctx.principal);
+		}
+		Variable variable = visitVariable(ctx.variable(), principal, VariableDefined.USE_MESSAGE);
+		for (Confidentiality query : model.queries.confidentiality) {
+			if (query.principal == principal && query.variable.equals(variable)) {
+				Errors.WarningQueryConfidentialityDuplicite(ctx.variable().start);
+				return;
+			}
+		}
+		model.queries.confidentiality.add(new Confidentiality(principal, variable));
 	}
 
 	private boolean identifierNameValid(String id) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import simple_tamarin.Constants.VariableSort;
+import simple_tamarin.dataStructures.query.Queries;
 import simple_tamarin.dataStructures.term.Variable;
 import simple_tamarin.sourcesCompiler.Source;
 import simple_tamarin.sourcesCompiler.SourceGroup;

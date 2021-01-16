@@ -32,4 +32,5 @@ Bob [
 
 queries [
   executable?
+  confidentiality? Bob's Nb
 ]
