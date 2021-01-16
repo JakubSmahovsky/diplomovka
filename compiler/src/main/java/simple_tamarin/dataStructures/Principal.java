@@ -21,12 +21,14 @@ public class Principal {
   public Principal(StModel model, Variable principalID, String name){
     this.model = model;
     this.principalID = principalID;
+    this.initState = new ArrayList<>();
+    initState.add(model.runID);
+    initState.add(principalID);
 
     this.name = name;
     this.knowledge = new ArrayList<>();
     this.blocks = new ArrayList<>();
     nextBlock();
-    this.initState = new ArrayList<>();
     this.initResults = new ArrayList<>();
   }
 

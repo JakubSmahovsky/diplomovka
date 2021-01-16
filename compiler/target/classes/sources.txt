@@ -57,19 +57,19 @@ Group: intruder learns t.1
   Source (12) by generation
     Intruder may generate it.
 
-Group: establish fact Bob_3_4(t.1, t.2, t.3, t.4, t.5, t.6)
+Group: establish fact Bob_3_4(t.1, t.2, t.3, t.4, t.5, t.6, t.7)
   Source (7) Bob_3_4
     TODO (unimportant, we will likely be hiding fact sources.)
 
-Group: establish fact Bob_1_0(t.1, t.2, t.3, t.4, t.5, t.6, t.7, t.8)
+Group: establish fact Bob_1_0(t.1, t.2, t.3, t.4, t.5, t.6, t.7, t.8, t.9)
   Source (6) Bob_1_0
     TODO (unimportant, we will likely be hiding fact sources.)
 
-Group: establish fact Alice_2_3(t.1, t.2, t.3, t.4, t.5, t.6)
+Group: establish fact Alice_2_3(t.1, t.2, t.3, t.4, t.5, t.6, t.7)
   Source (5) Alice_2_3
     TODO (unimportant, we will likely be hiding fact sources.)
 
-Group: establish fact Alice_0_2(t.1, t.2, t.3, t.4)
+Group: establish fact Alice_0_2(t.1, t.2, t.3, t.4, t.5)
   Source (4) Alice_0_2
     TODO (unimportant, we will likely be hiding fact sources.)
 
@@ -79,11 +79,11 @@ Group: establish fact !PrincipalPrivate(t.1, t.2)
   Source (3) init
     TODO (unimportant, we will likely be hiding fact sources.)
 
-Group: establish fact !Bob_init(t.1, t.2)
+Group: establish fact !Bob_init(t.1, t.2, t.3)
   Source (1) init
     TODO (unimportant, we will likely be hiding fact sources.)
 
-Group: establish fact !Alice_init(t.1, t.2)
+Group: establish fact !Alice_init(t.1, t.2, t.3)
   Source (0) init
     TODO (unimportant, we will likely be hiding fact sources.)
 

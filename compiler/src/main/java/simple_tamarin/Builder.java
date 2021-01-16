@@ -70,9 +70,11 @@ public class Builder extends BuilderFormatting{
         }
       }
     }
+    toGenerate.add(model.runID);
 
-    // gather principal IDs
+    // gather principal IDs (to bind principals with runID)
     ArrayList<Variable> principalIDs = new ArrayList<>();
+    principalIDs.add(model.runID);
     for (Principal principal : model.getPrincipals()) {
       principalIDs.add(principal.principalID);
     }
@@ -104,6 +106,7 @@ public class Builder extends BuilderFormatting{
     for (Variable variable : toGenerate) {
       variable.removeFresh();
     }
+    model.runID.removeFresh();
   }
 
   /**
@@ -249,6 +252,7 @@ public class Builder extends BuilderFormatting{
     output.append(lemma(Constants.CONFIDENTIALITY + Confidentiality.nextConfidentialityQuery(), false));
     // gather principal IDs
     ArrayList<Variable> principalIDs = new ArrayList<>();
+    principalIDs.add(model.runID);
     for (Principal principal : model.getPrincipals()) {
       principalIDs.add(principal.principalID);
     }

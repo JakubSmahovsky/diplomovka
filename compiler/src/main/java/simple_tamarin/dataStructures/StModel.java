@@ -3,6 +3,7 @@ package simple_tamarin.dataStructures;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import simple_tamarin.Constants;
 import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.query.Queries;
 import simple_tamarin.dataStructures.term.Variable;
@@ -17,6 +18,7 @@ public class StModel {
   public ArrayList<Variable> pubVariables; // long term public variables
   public Queries queries;
   public Builtins builtins;
+  public final Variable runID = new Variable(Constants.VARIABLE_RUNID, VariableSort.FRESH);
 
   public ArrayList<SourceGroup> sourceGroups;
 
@@ -57,7 +59,6 @@ public class StModel {
     pubVariables.add(principalID);
     Principal principal = new Principal(this, principalID, name);
     principals.add(principal);
-    principal.initState.add(principalID);
     return principal;
   }
 

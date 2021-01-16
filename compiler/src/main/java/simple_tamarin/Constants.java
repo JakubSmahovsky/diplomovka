@@ -38,7 +38,8 @@ public final class Constants{
     "queries",
     "generates",
     "public",
-    "private"
+    "private",
+    "runid"
   };
 
   public static String sortString(VariableSort sort) {
@@ -122,4 +123,5 @@ public final class Constants{
   public static final String INTRUDER_KNOWS_OUTPUT = "KU";
   public static final String INTRUDER_KNOWS_LEMMA = "K";
   public static final String SOLVEDHOW_DIRECTLY = "(directly)";
+  public static final String VARIABLE_RUNID = "runid";
 }
