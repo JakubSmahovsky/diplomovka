@@ -18,7 +18,7 @@ public class StModel {
   public ArrayList<Variable> pubVariables; // long term public variables
   public Queries queries;
   public Builtins builtins;
-  public final Variable runID = new Variable(Constants.VARIABLE_RUNID, VariableSort.FRESH);
+  public final Variable runID = new Variable(Constants.VARIABLE_RUNID);
 
   public ArrayList<SourceGroup> sourceGroups;
 

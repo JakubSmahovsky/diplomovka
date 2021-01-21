@@ -51,7 +51,14 @@ public abstract class Term{
   public abstract String renderLemma();
 
   /**
-   * Removed Fresh tag (~) from variables in Term.
+   * Variable is about to be generated, add fresh sort (tag ~)
+   */
+  public void addFresh() {
+    Errors.DebugUnexpectedCall("addFresh", render());
+  }
+
+  /**
+   * Removed Fresh sort (tag ~) from variables in Term.
    */
   public abstract void removeFresh();
 

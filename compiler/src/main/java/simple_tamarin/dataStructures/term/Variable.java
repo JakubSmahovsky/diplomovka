@@ -18,7 +18,7 @@ public class Variable extends Term {
 
   public String name;
   public Term subterm;
-  public Principal cratedBy; // null for long term variables
+  public StBlock cratedBy; // null for long term variables
   public VariableSort sort;
 
   public Variable(String name) {
@@ -101,6 +101,10 @@ public class Variable extends Term {
 
   @Override public String renderLemma() {
     return sort == VariableSort.TEMPORAL ? render() : name;
+  }
+
+  @Override public void addFresh() {
+    this.sort = VariableSort.FRESH;
   }
 
   @Override public void removeFresh() {

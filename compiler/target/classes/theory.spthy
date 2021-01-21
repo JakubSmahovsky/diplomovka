@@ -21,17 +21,17 @@ rule init:
 rule Bob_2_0:
 [
   !Bob_init(runid, $Bob, Kab),
-  In(~Na),
-  In(senc(<~Na, secret>, Kab))
+  In(Na),
+  In(senc(<Na, secret>, Kab))
 ]--[
-  Bob_2_0(runid, $Bob, Kab, ~Na, senc(<~Na, secret>, Kab), <~Na, secret>)
+  Bob_2_0(runid, $Bob, Kab, Na, senc(<Na, secret>, Kab), <Na, secret>)
 ]->[
-  Bob_2_0(runid, $Bob, Kab, ~Na, senc(<~Na, secret>, Kab), <~Na, secret>)
+  Bob_2_0(runid, $Bob, Kab, Na, senc(<Na, secret>, Kab), <Na, secret>)
 ]
 
 rule Alice_1_2:
 let
-  message = senc(<~Na, secret>, Kab)
+  message = senc(<Na, secret>, Kab)
 in
 [
   !Alice_init(runid, $Alice, Kab, secret),

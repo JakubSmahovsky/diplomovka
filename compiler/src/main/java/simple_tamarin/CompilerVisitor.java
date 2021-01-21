@@ -132,7 +132,7 @@ public class CompilerVisitor {
 			variable.sort = VariableSort.PUBLIC;
 			principal.initState.add(variable);
 		} else {
-			variable.sort = VariableSort.FRESH;
+			// sort will be set to fresh when init block is rendered
 			// possibly unify the private variable with one known by another principal
 			for (Principal anyPrincipal : model.getPrincipals()) {
 				Variable existing = anyPrincipal.knows(variable.name);
@@ -154,8 +154,7 @@ public class CompilerVisitor {
 
 	public void visitGenerates(GeneratesContext ctx, Principal principal, StBlock block) {
 		Variable variable = visitVariable(ctx.variable(), principal, VariableDefined.PRIVATE_DEFINITION);
-		variable.cratedBy = principal;
-		variable.sort = VariableSort.FRESH;
+		variable.cratedBy = block; // variable will be assigned fresh sort, when this block is being rendered
 		principal.learn(variable);
 		block.premise.add(new Command(CommandType.FRESH, variable));
 		block.state.add(variable);

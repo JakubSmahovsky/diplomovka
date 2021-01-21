@@ -64,12 +64,14 @@ public class Builder extends BuilderFormatting{
     HashSet<Variable> toGenerate = new HashSet<>();
     for (Principal principal : model.getPrincipals()) {
       for (Variable variable : principal.initState) {
-        // createdBy is null when variable is static
-        if (variable.cratedBy == null && variable.sort == VariableSort.FRESH) {
+        // private static variables are generated in init block 
+        if (variable.sort != VariableSort.PUBLIC && variable.cratedBy == null) {
+          variable.addFresh();
           toGenerate.add(variable);
         }
       }
     }
+    model.runID.addFresh();
     toGenerate.add(model.runID);
 
     // gather principal IDs (to bind principals with runID)
@@ -145,8 +147,9 @@ public class Builder extends BuilderFormatting{
           facts.add(fact(command.toString(), command.term, block));
           break;
         case FRESH:
-          facts.add(fact(command.toString(), command.term, null));
+          command.term.addFresh();
           generated.add(command.term);
+          facts.add(fact(command.toString(), command.term, null));
           break;
         default:
           Errors.DebugCommandType(command.toString(), "premises of block()");
