@@ -235,7 +235,6 @@ public class CompilerVisitor {
 				case PUBLIC_DEFINITION:
 				case PRIVATE_DEFINITION:
 				case PUBLIC_KNOWS:
-				case PRIVATE_LEFT:
 					Errors.ErrorVariableCollisionPrivate(principal, ctx.start);
 					return null;
 				default:
@@ -252,7 +251,7 @@ public class CompilerVisitor {
 				case PRIVATE_DEFINITION:
 				case PRIVATE_LEFT:
 					Errors.WarningVariableShadowed(ctx.start);
-					break; // and go define it as private
+					break; // and go define it as private placeholder
 				default:
 					return result;
 			}
@@ -269,9 +268,10 @@ public class CompilerVisitor {
 				return null;
 			case PUBLIC_KNOWS:
 				Errors.InfoDeclareLongTermVariable(ctx.start);
+			case PRIVATE_LEFT:
+				return Variable.placeholder(name);
 			default:
-				result = new Variable(name);
-				return result;
+				return new Variable(name);
 		}
 	}
 
@@ -321,7 +321,7 @@ public class CompilerVisitor {
 				if (!(term1.equals(term2))) {
 					Errors.WarningAssertNeverTrue(ctx.start);
 				}
-				block.actions.add(new Fact(false, Constants.EQUALITY, new ArrayList<Term>(Arrays.asList(term1, term2))));
+				block.actions.add(Fact.equality(term1, term2));
 			}
 			case Constants.VPHASH: {
 				model.builtins.hashing = true;

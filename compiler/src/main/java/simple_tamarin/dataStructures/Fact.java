@@ -1,9 +1,11 @@
 package simple_tamarin.dataStructures;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import simple_tamarin.BuilderFormatting;
+import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.term.Term;
 
 /**
@@ -31,5 +33,12 @@ public class Fact {
 
   public String renderLemma(){
     return BuilderFormatting.lemmaFact(name, terms);
+  }
+
+  /**
+   * Create a classic fact to declare equality of 2 terms
+   */
+  public static Fact equality(Term term1, Term term2) {
+    return new Fact(false, Constants.EQUALITY, Arrays.asList(term1, term2));
   }
 }

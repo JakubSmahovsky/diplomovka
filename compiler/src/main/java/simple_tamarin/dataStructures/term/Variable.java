@@ -7,12 +7,15 @@ import simple_tamarin.Constants;
 import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.Alias;
 import simple_tamarin.dataStructures.Deconstruction;
+import simple_tamarin.dataStructures.Fact;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.StBlock;
 import simple_tamarin.errors.Errors;
 
 public class Variable extends Term {
   private static int temporals = 0;
+  protected boolean placeholder = false;
+
   public String name;
   public Term subterm;
   public Principal cratedBy; // null for long term variables
@@ -30,6 +33,17 @@ public class Variable extends Term {
     this.subterm = null;
     this.cratedBy = null;
     this.sort = sort;
+  }
+
+  /**
+   * return a new Variable marked as placeholder, this is considered a partially 
+   * defined variable, which should not be rendered or used as a normal variable
+   * until it is properly defined.
+   */
+  public static Variable placeholder(String name) {
+    Variable result = new Variable(name);
+    result.placeholder = true;
+    return result;
   }
 
   public static Variable nextTemporal(){
@@ -115,9 +129,16 @@ public class Variable extends Term {
   }
 
   @Override public boolean assign(Term right, StBlock block, Principal principal) {
-    if (this.equals(right)) {
-      return true;
+    // if this is properly defined (principal already knew it) assert equality
+    if (!this.placeholder) {
+      if (this == right) { // equality guaranteed by usage of the same name, no action fact is needed
+        return true;
+      }
+      block.actions.add(Fact.equality(this, right));
+      return this.equals(right);
     }
+
+    // this is not properly defined, assign
     this.subterm = right.toCanonical();
     if (right.isDeconstructionTerm()) {
       Deconstruction dec = new Deconstruction(right.encoded(), this);
