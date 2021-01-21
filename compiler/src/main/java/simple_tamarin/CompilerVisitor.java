@@ -126,38 +126,42 @@ public class CompilerVisitor {
 		}
 
 		VariableDefined expectVD = pub ? VariableDefined.PUBLIC_KNOWS : VariableDefined.PRIVATE_DEFINITION;
-		Variable variable = visitVariable(ctx.variable(), principal, expectVD);
+		for (VariableContext vctx : ctx.variable()) {
+			Variable variable = visitVariable(vctx, principal, expectVD);
 
-		if (pub) {
-			variable.sort = VariableSort.PUBLIC;
-			principal.initState.add(variable);
-		} else {
-			// sort will be set to fresh when init block is rendered
-			// possibly unify the private variable with one known by another principal
-			for (Principal anyPrincipal : model.getPrincipals()) {
-				Variable existing = anyPrincipal.knows(variable.name);
-				if (existing != null) {
-					if (existing.cratedBy == null) {
-						// created by null confirms it's a long term variable
-						variable = existing;
-					} else {
-						Errors.WarningVariableEphemeralShadowed(ctx.variable().start);
+			if (pub) {
+				variable.sort = VariableSort.PUBLIC;
+				principal.initState.add(variable);
+			} else {
+				// sort will be set to fresh when init block is rendered
+				// possibly unify the private variable with one known by another principal
+				for (Principal anyPrincipal : model.getPrincipals()) {
+					Variable existing = anyPrincipal.knows(variable.name);
+					if (existing != null) {
+						if (existing.cratedBy == null) {
+							// created by null confirms it's a long term variable
+							variable = existing;
+						} else {
+							Errors.WarningVariableEphemeralShadowed(vctx.start);
+						}
 					}
 				}
 			}
+			principal.learn(variable);
+			principal.initState.add(variable);
+			model.builtins.prefab_private_reveal = true;
+			principal.initResults.add(new Fact(true, Constants.PRINCIPAL_PRIVATE, Arrays.asList(principal.principalID, variable)));
 		}
-		principal.learn(variable);
-		principal.initState.add(variable);
-		model.builtins.prefab_private_reveal = true;
-		principal.initResults.add(new Fact(true, Constants.PRINCIPAL_PRIVATE, Arrays.asList(principal.principalID, variable)));
 	}
 
 	public void visitGenerates(GeneratesContext ctx, Principal principal, StBlock block) {
-		Variable variable = visitVariable(ctx.variable(), principal, VariableDefined.PRIVATE_DEFINITION);
-		variable.cratedBy = block; // variable will be assigned fresh sort, when this block is being rendered
-		principal.learn(variable);
-		block.premise.add(new Command(CommandType.FRESH, variable));
-		block.state.add(variable);
+		for (VariableContext vctx : ctx.variable()) {
+			Variable variable = visitVariable(vctx, principal, VariableDefined.PRIVATE_DEFINITION);
+			variable.cratedBy = block; // variable will be assigned fresh sort, when this block is being rendered
+			principal.learn(variable);
+			block.premise.add(new Command(CommandType.FRESH, variable));
+			block.state.add(variable);
+		}
 	}
 
 	public void visitCheck(CheckContext ctx, Principal principal, StBlock block){

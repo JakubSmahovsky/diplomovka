@@ -16,8 +16,8 @@ command:
   assignment |
   check;
 
-knows: 'knows' modifier=('public' | 'private') variable;
-generates: 'generates' variable;
+knows: 'knows' modifier=('public' | 'private') variable (',' variable)*;
+generates: 'generates' variable (',' variable)*;
 assignment: left=term '=' right=term;
 check: functionCall '?';
 

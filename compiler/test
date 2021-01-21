@@ -1,8 +1,7 @@
 Bob []
 
 Alice [
-  knows private Kab
-  knows private secret
+  knows private Kab, secret
   generates Na
   message = ENC(Kab, {Na, secret})
 ]
