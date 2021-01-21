@@ -165,7 +165,7 @@ public class CompilerVisitor {
 	}
 
 	public void visitCheck(CheckContext ctx, Principal principal, StBlock block){
-		visitFunctionCall(ctx.functionCall(), principal, block, VariableDefined.USE_RIGHT);
+		visitCheckedCall(ctx.checkedCall(), principal, block, VariableDefined.USE_RIGHT);
 	}
 
 	public void visitMessageBlock(MessageBlockContext ctx) {
@@ -278,6 +278,28 @@ public class CompilerVisitor {
 		}
 	}
 
+	public Term visitCheckedCall(CheckedCallContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
+		switch (ctx.CHECKED().getText()) {
+			case Constants.VPASSERT: {
+				model.builtins.restriction_eq = true;
+				if (ctx.argument.size() != 2) {
+					Errors.ErrorArgumentsCount(ctx.CHECKED().getSymbol(), 2, ctx.argument.size());
+				}
+				Term term1 = visitTerm(ctx.argument.get(0), principal, block, expectVD);
+				Term term2 = visitTerm(ctx.argument.get(1), principal, block, expectVD);
+				if (!(term1.equals(term2))) {
+					Errors.WarningAssertNeverTrue(ctx.start);
+				}
+				block.actions.add(Fact.equality(term1, term2));
+			}
+			default: {	
+				Errors.DebugUnexpectedTokenType(ctx.CHECKED().getText(), "visitCheckedCall");
+				return null;
+			}
+		}
+	}
+	
+
 	public Term visitFunctionCall(FunctionCallContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
 		if (expectVD == VariableDefined.PRIVATE_LEFT) {
 			// so far we have no transparent functions
@@ -313,18 +335,6 @@ public class CompilerVisitor {
 					Errors.ErrorWrongKey(ctx.argument.get(0));
 				}
 				return new FunctionSdec(key, value, ((FunctionSenc)encodedValue).value);
-			}
-			case Constants.VPASSERT: {
-				model.builtins.restriction_eq = true;
-				if (ctx.argument.size() != 2) {
-					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
-				}
-				Term term1 = visitTerm(ctx.argument.get(0), principal, block, expectVD);
-				Term term2 = visitTerm(ctx.argument.get(1), principal, block, expectVD);
-				if (!(term1.equals(term2))) {
-					Errors.WarningAssertNeverTrue(ctx.start);
-				}
-				block.actions.add(Fact.equality(term1, term2));
 			}
 			case Constants.VPHASH: {
 				model.builtins.hashing = true;

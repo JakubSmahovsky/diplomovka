@@ -89,6 +89,12 @@ public interface Simple_tamarinVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunctionCall(Simple_tamarinParser.FunctionCallContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Simple_tamarinParser#checkedCall}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCheckedCall(Simple_tamarinParser.CheckedCallContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Simple_tamarinParser#tuple}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

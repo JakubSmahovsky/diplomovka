@@ -19,7 +19,7 @@ command:
 knows: 'knows' modifier=('public' | 'private') variable (',' variable)*;
 generates: 'generates' variable (',' variable)*;
 assignment: left=term '=' right=term;
-check: functionCall '?';
+check: checkedCall '?';
 
 messageBlock: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' term (',' term)*;
 
@@ -32,6 +32,7 @@ term:
 
 variable: IDENTIFIER;
 functionCall: FUNCTION '(' (argument+=term)? (',' argument+=term)* ')';
+checkedCall: CHECKED '(' (argument+=term)? (',' argument+=term)* ')';
 tuple: '{' term (',' term)* '}';
 
 query: 
@@ -44,8 +45,9 @@ executable: 'executable?';
 FUNCTION:
   'ENC' |
   'DEC' |
-  'HASH' |
-  // checkables
+  'HASH';
+
+CHECKED:
   'ASSERT';
 
 IDENTIFIER : [a-zA-Z0-9]+;

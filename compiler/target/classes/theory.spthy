@@ -5,9 +5,9 @@ builtins: symmetric-encryption
 
 rule init:
 [
-  Fr(~runid),
   Fr(~Kab),
-  Fr(~secret)
+  Fr(~secret),
+  Fr(~runid)
 ]--[
   Principals(~runid, $Bob, $Alice)
 ]->[
