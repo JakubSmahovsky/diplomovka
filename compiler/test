@@ -1,4 +1,4 @@
-Bob []
+principals: Alice, Bob
 
 Alice [
   knows private Kab, secret

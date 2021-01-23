@@ -4,9 +4,14 @@ grammar Simple_tamarin;
 model: segment*;
 
 segment: 
+  declaration |
   principalBlock |
   messageBlock |
   queriesBlock;
+
+declaration: decPrincipals;
+
+decPrincipals: KEYWORD_PRINCIPALS ':' principal+=IDENTIFIER (',' principal+=IDENTIFIER)*;
 
 principalBlock: principal=IDENTIFIER '[' command* ']';
 
@@ -49,6 +54,8 @@ FUNCTION:
 
 CHECKED:
   'ASSERT';
+
+KEYWORD_PRINCIPALS: 'principals';
 
 IDENTIFIER : [a-zA-Z0-9]+;
 WHITESPACE : [ \t\r\n]+ -> skip;

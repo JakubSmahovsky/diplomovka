@@ -6,30 +6,19 @@ builtins: symmetric-encryption
 rule init:
 [
   Fr(~Kab),
-  Fr(~secret),
-  Fr(~runid)
+  Fr(~runid),
+  Fr(~secret)
 ]--[
-  Principals(~runid, $Bob, $Alice)
+  Principals(~runid, $Alice, $Bob)
 ]->[
-  !Bob_init(~runid, $Bob, ~Kab),
-  !PrincipalPrivate($Bob, ~Kab),
   !Alice_init(~runid, $Alice, ~Kab, ~secret),
   !PrincipalPrivate($Alice, ~Kab),
-  !PrincipalPrivate($Alice, ~secret)
+  !PrincipalPrivate($Alice, ~secret),
+  !Bob_init(~runid, $Bob, ~Kab),
+  !PrincipalPrivate($Bob, ~Kab)
 ]
 
-rule Bob_2_0:
-[
-  !Bob_init(runid, $Bob, Kab),
-  In(Na),
-  In(senc(<Na, secret>, Kab))
-]--[
-  Bob_2_0(runid, $Bob, Kab, Na, senc(<Na, secret>, Kab), <Na, secret>)
-]->[
-  Bob_2_0(runid, $Bob, Kab, Na, senc(<Na, secret>, Kab), <Na, secret>)
-]
-
-rule Alice_1_2:
+rule Alice_1_0:
 let
   message = senc(<Na, secret>, Kab)
 in
@@ -37,11 +26,22 @@ in
   !Alice_init(runid, $Alice, Kab, secret),
   Fr(~Na)
 ]--[
-  Alice_1_2(runid, $Alice, Kab, secret, ~Na, message)
+  Alice_1_0(runid, $Alice, Kab, secret, ~Na, message)
 ]->[
   Out(~Na),
   Out(message),
-  Alice_1_2(runid, $Alice, Kab, secret, ~Na, message)
+  Alice_1_0(runid, $Alice, Kab, secret, ~Na, message)
+]
+
+rule Bob_1_1:
+[
+  !Bob_init(runid, $Bob, Kab),
+  In(Na),
+  In(senc(<Na, secret>, Kab))
+]--[
+  Bob_1_1(runid, $Bob, Kab, Na, senc(<Na, secret>, Kab), <Na, secret>)
+]->[
+  Bob_1_1(runid, $Bob, Kab, Na, senc(<Na, secret>, Kab), <Na, secret>)
 ]
 
 rule privateReveal: [

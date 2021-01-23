@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.antlr.v4.runtime.Token;
+
 import simple_tamarin.Constants.*;
 import simple_tamarin.dataStructures.*;
 import simple_tamarin.dataStructures.query.Confidentiality;
@@ -50,6 +52,10 @@ public class CompilerVisitor {
 	}
 
 	public void visitSegment(SegmentContext ctx) {
+		if (ctx.declaration() != null) {
+			visitDeclaration(ctx.declaration());
+			return;
+		}
 		if (ctx.messageBlock() != null) {
 			visitMessageBlock(ctx.messageBlock());
 			return;
@@ -66,6 +72,29 @@ public class CompilerVisitor {
 		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitSegment");
 	}
 
+	private void visitDeclaration(DeclarationContext ctx) {
+		if (ctx.decPrincipals() != null) {
+			visitDecPrincipals(ctx.decPrincipals());
+			return;
+		}
+	}
+
+	private void visitDecPrincipals(DecPrincipalsContext decPrincipals) {
+		for (Token pctx : decPrincipals.principal) {
+			String principalName = pctx.getText();
+			if (!identifierNameValid(principalName)) {
+				Errors.ErrorReservedName(pctx);
+			}
+			// check for name collision, allso covers duplicite principals
+			if (model.findVariable(principalName) != null) {
+				Errors.ErrorPrincipalNameCollision(pctx);
+			}
+
+			model.addPrincipal(principalName);
+			model.builtins.principalsWereDeclared = true;
+		}
+	}
+
 	public void visitPrincipalBlock(PrincipalBlockContext ctx) {
 		String principalName = ctx.principal.getText();
 		if (!identifierNameValid(principalName)) {
@@ -74,8 +103,11 @@ public class CompilerVisitor {
 		
 		Principal principal = model.findPrincipal(principalName);
 		if (principal == null) {
-			// TODO: allow declaring principals, then uncomment next line
-			// Errors.InfoDeclarePrincipal(ctx.principal);
+			if (model.builtins.principalsWereDeclared) {
+				Errors.WarningUndeclaredPrincipal(ctx.principal);
+			} else {
+				Errors.InfoDeclarePrincipal(ctx.principal);
+			}
 			if (model.findVariable(principalName) != null) {
 				Errors.ErrorPrincipalNameCollision(ctx.principal);
 			}

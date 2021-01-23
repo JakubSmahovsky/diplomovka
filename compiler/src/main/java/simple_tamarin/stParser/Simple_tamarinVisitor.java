@@ -23,6 +23,18 @@ public interface Simple_tamarinVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSegment(Simple_tamarinParser.SegmentContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Simple_tamarinParser#declaration}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclaration(Simple_tamarinParser.DeclarationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Simple_tamarinParser#decPrincipals}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDecPrincipals(Simple_tamarinParser.DecPrincipalsContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Simple_tamarinParser#principalBlock}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

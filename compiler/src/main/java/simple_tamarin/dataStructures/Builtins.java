@@ -10,4 +10,6 @@ public class Builtins {
   // custom
   public boolean restriction_eq = false;
   public boolean prefab_private_reveal = false;
+  // other flags
+  public boolean principalsWereDeclared = false;
 }

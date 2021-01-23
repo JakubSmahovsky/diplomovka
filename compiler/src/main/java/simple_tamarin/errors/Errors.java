@@ -83,6 +83,11 @@ public final class Errors{
     error(left.start, message);
   }
 
+  public static void WarningUndeclaredPrincipal(Token principal) {
+    String message = "Principal \"" + principal.getText() + "\" was not declared even though some principals were declared!";
+    warning(principal, message);
+  }
+
   public static void WarningVariableShadowed(Token variable) {
     String message = "Variable \"" + variable.getText() + "\" shadows a public variable!";
     warning(variable, message);
