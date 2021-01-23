@@ -16,23 +16,61 @@ public class Variable extends Term {
   private static int temporals = 0;
   protected boolean placeholder = false;
 
-  public String name;
+  public final Principal owner;
+  public final String name;
+  public final StBlock cratedBy; // null for long term variables
+
   public Term subterm;
-  public StBlock cratedBy; // null for long term variables
   public VariableSort sort;
 
+  /**
+   * Create an unowned variable, this mean the variable should be static
+   */
   public Variable(String name) {
+    this.owner = null;
     this.name = name;
-    this.subterm = null;
     this.cratedBy = null;
+
+    this.subterm = null;
     this.sort = VariableSort.NOSORT;
   }
 
-  public Variable(String name, VariableSort sort) {
+  /**
+   * Create an owned variable, the owner is taken from the creating block
+   */
+  public Variable(String name, StBlock block) {
+    this.owner = block.principal;
     this.name = name;
+    this.cratedBy = block;
+
     this.subterm = null;
+    this.sort = VariableSort.NOSORT;
+  }
+
+  /**
+   * Create an unowned variable with a defined sort, variables with sort
+   * FRESH should not be created this way, they sould be assigned sort FRESH
+   * while rendering a rule that generates them.
+   */
+  public Variable(String name, VariableSort sort) {
+    this.owner = null;
+    this.name = name;
     this.cratedBy = null;
+
+    this.subterm = null;
     this.sort = sort;
+  }
+
+  /**
+   * Clone the variable for a new owner, e.g. when receiving it in a message.
+   */
+  public Variable(Variable variable, Principal newOwner) {
+    this.owner = newOwner;
+    this.name = variable.name;
+    this.cratedBy = null;
+    
+    this.subterm = variable;
+    this.sort = VariableSort.NOSORT;
   }
 
   /**
@@ -135,7 +173,7 @@ public class Variable extends Term {
   @Override public boolean assign(Term right, StBlock block, Principal principal) {
     // if this is properly defined (principal already knew it) assert equality
     if (!this.placeholder) {
-      if (this == right) { // equality guaranteed by usage of the same name, no action fact is needed
+      if (right instanceof Variable && name.equals(((Variable)right).name)) { // equality guaranteed by usage of the same name, no action fact is needed
         return true;
       }
       block.actions.add(Fact.equality(this, right));

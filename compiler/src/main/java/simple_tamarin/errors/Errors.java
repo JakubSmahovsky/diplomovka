@@ -19,7 +19,7 @@ public final class Errors{
   private Errors(){};
 
   public static void ErrorWrongKey(TermContext got) {
-    String message = "Key \"" + got.getText() + "\" does not match the" + "key used for encoding!";
+    String message = "Key \"" + got.getText() + "\" does not match the key used for encoding!";
     error(got.start, message);
   }
 
@@ -94,7 +94,7 @@ public final class Errors{
   }
 
   public static void WarningVariableEphemeralShadowed(Token variable) {
-    String message = "Ephemeral variable \"" + variable.getText() + "\" allready exist for some principal, this will create a different long-term variable + \"" + variable.getText() + "\"!";
+    String message = "Ephemeral variable \"" + variable.getText() + "\" allready exists for some principal, this will create a different long-term variable \"" + variable.getText() + "\"!";
     warning(variable, message);
   }
 

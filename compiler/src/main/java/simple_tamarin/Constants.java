@@ -26,7 +26,8 @@ public final class Constants{
   public static enum VariableDefined {
     PUBLIC_DEFINITION,
     PUBLIC_KNOWS,
-    PRIVATE_DEFINITION, // generates or knows private
+    PRIVATE_KNOWS,
+    PRIVATE_GENERATES,
     PRIVATE_LEFT,
     USE_RIGHT,
     USE_MESSAGE

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import simple_tamarin.Constants.CommandType;
-import simple_tamarin.dataStructures.term.Term;
 import simple_tamarin.dataStructures.term.Variable;
 
 public class Principal {
@@ -48,11 +47,9 @@ public class Principal {
    * Add all variables from a transparent Term to knowledge.
    * Undefined bahavior for non-transparent Terms (likely crash).
    */
-  public void learn(Term term) {
-    for (Variable extracted : term.extractKnowledge()) {
-      if (!knowledge.contains(extracted)) {
-        knowledge.add(extracted);
-      }
+  public void learn(Variable variable) {
+    if (!knowledge.contains(variable)) {
+      knowledge.add(variable);
     }
   }
 

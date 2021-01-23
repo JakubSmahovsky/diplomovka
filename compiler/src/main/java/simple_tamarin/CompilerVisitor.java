@@ -153,9 +153,9 @@ public class CompilerVisitor {
 			return;
 		}
 
-		VariableDefined expectVD = pub ? VariableDefined.PUBLIC_KNOWS : VariableDefined.PRIVATE_DEFINITION;
+		VariableDefined expectVD = pub ? VariableDefined.PUBLIC_KNOWS : VariableDefined.PRIVATE_KNOWS;
 		for (VariableContext vctx : ctx.variable()) {
-			Variable variable = visitVariable(vctx, principal, expectVD);
+			Variable variable = visitVariable(vctx, principal, block, expectVD);
 
 			if (pub) {
 				variable.sort = VariableSort.PUBLIC;
@@ -184,8 +184,7 @@ public class CompilerVisitor {
 
 	public void visitGenerates(GeneratesContext ctx, Principal principal, StBlock block) {
 		for (VariableContext vctx : ctx.variable()) {
-			Variable variable = visitVariable(vctx, principal, VariableDefined.PRIVATE_DEFINITION);
-			variable.cratedBy = block; // variable will be assigned fresh sort, when this block is being rendered
+			Variable variable = visitVariable(vctx, principal, block, VariableDefined.PRIVATE_GENERATES);
 			principal.learn(variable);
 			block.premise.add(new Command(CommandType.FRESH, variable));
 			block.state.add(variable);
@@ -213,7 +212,9 @@ public class CompilerVisitor {
 			// if it's not a public variable
 			if (!(term instanceof Variable) || model.findVariable(((Variable)term).name) == null) {
 				// add all new variables to receiver's knowledge
-				receiver.learn(term);
+				for (Variable variable : term.extractKnowledge()) {
+					receiver.learn(new Variable(variable, receiver));
+				}
 			}
 
 			if (sender.getBlocks().isEmpty()) {
@@ -242,7 +243,7 @@ public class CompilerVisitor {
 
 	public Term visitTerm(TermContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
 		if (ctx.variable() != null) {
-			return visitVariable(ctx.variable(), principal, expectVD);
+			return visitVariable(ctx.variable(), principal, block, expectVD);
 		}
 		if (ctx.functionCall() != null) {
 			return visitFunctionCall(ctx.functionCall(), principal, block, expectVD);
@@ -257,14 +258,15 @@ public class CompilerVisitor {
 	/**
 	 * Finds a variable if it should have existed or creates a new one otherwise.
 	 */
-	public Variable visitVariable(VariableContext ctx, Principal principal, VariableDefined expectVD) {
+	public Variable visitVariable(VariableContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
 		String name = ctx.IDENTIFIER().getText();
 		
 		Variable result = principal.knows(name);
 		if (result != null) {
 			switch (expectVD) {
 				case PUBLIC_DEFINITION:
-				case PRIVATE_DEFINITION:
+				case PRIVATE_KNOWS:
+				case PRIVATE_GENERATES:
 				case PUBLIC_KNOWS:
 					Errors.ErrorVariableCollisionPrivate(principal, ctx.start);
 					return null;
@@ -279,7 +281,8 @@ public class CompilerVisitor {
 				case PUBLIC_DEFINITION:
 					Errors.ErrorVariableCollisionPublic(result, ctx.start);
 					return result;
-				case PRIVATE_DEFINITION:
+				case PRIVATE_KNOWS:
+				case PRIVATE_GENERATES:
 				case PRIVATE_LEFT:
 					Errors.WarningVariableShadowed(ctx.start);
 					break; // and go define it as private placeholder
@@ -299,10 +302,12 @@ public class CompilerVisitor {
 				return null;
 			case PUBLIC_KNOWS:
 				Errors.InfoDeclareLongTermVariable(ctx.start);
+			case PRIVATE_KNOWS:
+				return new Variable(name);
 			case PRIVATE_LEFT:
 				return Variable.placeholder(name);
 			default:
-				return new Variable(name);
+				return new Variable(name, block);
 		}
 	}
 
@@ -424,7 +429,7 @@ public class CompilerVisitor {
 		if (principal == null) {
 			Errors.ErrorPrincipalDoesNotExist(ctx.principal);
 		}
-		Variable variable = visitVariable(ctx.variable(), principal, VariableDefined.USE_MESSAGE);
+		Variable variable = visitVariable(ctx.variable(), principal, null, VariableDefined.USE_MESSAGE);
 		for (Confidentiality query : model.queries.confidentiality) {
 			if (query.principal == principal && query.variable.equals(variable)) {
 				Errors.WarningQueryConfidentialityDuplicite(ctx.variable().start);
