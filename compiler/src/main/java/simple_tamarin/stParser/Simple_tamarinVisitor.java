@@ -17,12 +17,6 @@ public interface Simple_tamarinVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitModel(Simple_tamarinParser.ModelContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Simple_tamarinParser#segment}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSegment(Simple_tamarinParser.SegmentContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Simple_tamarinParser#declaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -34,6 +28,12 @@ public interface Simple_tamarinVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDecPrincipals(Simple_tamarinParser.DecPrincipalsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Simple_tamarinParser#specificationSegment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSpecificationSegment(Simple_tamarinParser.SpecificationSegmentContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Simple_tamarinParser#principalBlock}.
 	 * @param ctx the parse tree
@@ -71,11 +71,11 @@ public interface Simple_tamarinVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCheck(Simple_tamarinParser.CheckContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Simple_tamarinParser#messageBlock}.
+	 * Visit a parse tree produced by {@link Simple_tamarinParser#message}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitMessageBlock(Simple_tamarinParser.MessageBlockContext ctx);
+	T visitMessage(Simple_tamarinParser.MessageContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Simple_tamarinParser#queriesBlock}.
 	 * @param ctx the parse tree

@@ -22,17 +22,17 @@ public class Simple_tamarinParser extends Parser {
 		T__17=18, T__18=19, FUNCTION=20, CHECKED=21, KEYWORD_PRINCIPALS=22, IDENTIFIER=23, 
 		WHITESPACE=24;
 	public static final int
-		RULE_model = 0, RULE_segment = 1, RULE_declaration = 2, RULE_decPrincipals = 3, 
+		RULE_model = 0, RULE_declaration = 1, RULE_decPrincipals = 2, RULE_specificationSegment = 3, 
 		RULE_principalBlock = 4, RULE_command = 5, RULE_knows = 6, RULE_generates = 7, 
-		RULE_assignment = 8, RULE_check = 9, RULE_messageBlock = 10, RULE_queriesBlock = 11, 
+		RULE_assignment = 8, RULE_check = 9, RULE_message = 10, RULE_queriesBlock = 11, 
 		RULE_term = 12, RULE_variable = 13, RULE_functionCall = 14, RULE_checkedCall = 15, 
 		RULE_tuple = 16, RULE_query = 17, RULE_confidentiality = 18, RULE_executable = 19;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"model", "segment", "declaration", "decPrincipals", "principalBlock", 
-			"command", "knows", "generates", "assignment", "check", "messageBlock", 
-			"queriesBlock", "term", "variable", "functionCall", "checkedCall", "tuple", 
-			"query", "confidentiality", "executable"
+			"model", "declaration", "decPrincipals", "specificationSegment", "principalBlock", 
+			"command", "knows", "generates", "assignment", "check", "message", "queriesBlock", 
+			"term", "variable", "functionCall", "checkedCall", "tuple", "query", 
+			"confidentiality", "executable"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -105,11 +105,20 @@ public class Simple_tamarinParser extends Parser {
 	}
 
 	public static class ModelContext extends ParserRuleContext {
-		public List<SegmentContext> segment() {
-			return getRuleContexts(SegmentContext.class);
+		public List<DeclarationContext> declaration() {
+			return getRuleContexts(DeclarationContext.class);
 		}
-		public SegmentContext segment(int i) {
-			return getRuleContext(SegmentContext.class,i);
+		public DeclarationContext declaration(int i) {
+			return getRuleContext(DeclarationContext.class,i);
+		}
+		public List<SpecificationSegmentContext> specificationSegment() {
+			return getRuleContexts(SpecificationSegmentContext.class);
+		}
+		public SpecificationSegmentContext specificationSegment(int i) {
+			return getRuleContext(SpecificationSegmentContext.class,i);
+		}
+		public QueriesBlockContext queriesBlock() {
+			return getRuleContext(QueriesBlockContext.class,0);
 		}
 		public ModelContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -132,89 +141,41 @@ public class Simple_tamarinParser extends Parser {
 			setState(43);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__11) | (1L << KEYWORD_PRINCIPALS) | (1L << IDENTIFIER))) != 0)) {
+			while (_la==KEYWORD_PRINCIPALS) {
 				{
 				{
 				setState(40);
-				segment();
+				declaration();
 				}
 				}
 				setState(45);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class SegmentContext extends ParserRuleContext {
-		public DeclarationContext declaration() {
-			return getRuleContext(DeclarationContext.class,0);
-		}
-		public PrincipalBlockContext principalBlock() {
-			return getRuleContext(PrincipalBlockContext.class,0);
-		}
-		public MessageBlockContext messageBlock() {
-			return getRuleContext(MessageBlockContext.class,0);
-		}
-		public QueriesBlockContext queriesBlock() {
-			return getRuleContext(QueriesBlockContext.class,0);
-		}
-		public SegmentContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_segment; }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof Simple_tamarinVisitor ) return ((Simple_tamarinVisitor<? extends T>)visitor).visitSegment(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final SegmentContext segment() throws RecognitionException {
-		SegmentContext _localctx = new SegmentContext(_ctx, getState());
-		enterRule(_localctx, 2, RULE_segment);
-		try {
-			setState(50);
+			setState(47); 
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
-			case 1:
-				enterOuterAlt(_localctx, 1);
+			_la = _input.LA(1);
+			do {
+				{
 				{
 				setState(46);
-				declaration();
+				specificationSegment();
 				}
-				break;
-			case 2:
-				enterOuterAlt(_localctx, 2);
-				{
-				setState(47);
-				principalBlock();
 				}
-				break;
-			case 3:
-				enterOuterAlt(_localctx, 3);
+				setState(49); 
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			} while ( _la==IDENTIFIER );
+			setState(52);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==T__11) {
 				{
-				setState(48);
-				messageBlock();
-				}
-				break;
-			case 4:
-				enterOuterAlt(_localctx, 4);
-				{
-				setState(49);
+				setState(51);
 				queriesBlock();
 				}
-				break;
+			}
+
 			}
 		}
 		catch (RecognitionException re) {
@@ -245,11 +206,11 @@ public class Simple_tamarinParser extends Parser {
 
 	public final DeclarationContext declaration() throws RecognitionException {
 		DeclarationContext _localctx = new DeclarationContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_declaration);
+		enterRule(_localctx, 2, RULE_declaration);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(52);
+			setState(54);
 			decPrincipals();
 			}
 		}
@@ -285,35 +246,87 @@ public class Simple_tamarinParser extends Parser {
 
 	public final DecPrincipalsContext decPrincipals() throws RecognitionException {
 		DecPrincipalsContext _localctx = new DecPrincipalsContext(_ctx, getState());
-		enterRule(_localctx, 6, RULE_decPrincipals);
+		enterRule(_localctx, 4, RULE_decPrincipals);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(54);
-			match(KEYWORD_PRINCIPALS);
-			setState(55);
-			match(T__0);
 			setState(56);
+			match(KEYWORD_PRINCIPALS);
+			setState(57);
+			match(T__0);
+			setState(58);
 			((DecPrincipalsContext)_localctx).IDENTIFIER = match(IDENTIFIER);
 			((DecPrincipalsContext)_localctx).principal.add(((DecPrincipalsContext)_localctx).IDENTIFIER);
-			setState(61);
+			setState(63);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__1) {
 				{
 				{
-				setState(57);
+				setState(59);
 				match(T__1);
-				setState(58);
+				setState(60);
 				((DecPrincipalsContext)_localctx).IDENTIFIER = match(IDENTIFIER);
 				((DecPrincipalsContext)_localctx).principal.add(((DecPrincipalsContext)_localctx).IDENTIFIER);
 				}
 				}
-				setState(63);
+				setState(65);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class SpecificationSegmentContext extends ParserRuleContext {
+		public PrincipalBlockContext principalBlock() {
+			return getRuleContext(PrincipalBlockContext.class,0);
+		}
+		public MessageContext message() {
+			return getRuleContext(MessageContext.class,0);
+		}
+		public SpecificationSegmentContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_specificationSegment; }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof Simple_tamarinVisitor ) return ((Simple_tamarinVisitor<? extends T>)visitor).visitSpecificationSegment(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final SpecificationSegmentContext specificationSegment() throws RecognitionException {
+		SpecificationSegmentContext _localctx = new SpecificationSegmentContext(_ctx, getState());
+		enterRule(_localctx, 6, RULE_specificationSegment);
+		try {
+			setState(68);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
+			case 1:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(66);
+				principalBlock();
+				}
+				break;
+			case 2:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(67);
+				message();
+				}
+				break;
 			}
 		}
 		catch (RecognitionException re) {
@@ -354,25 +367,25 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(64);
+			setState(70);
 			((PrincipalBlockContext)_localctx).principal = match(IDENTIFIER);
-			setState(65);
+			setState(71);
 			match(T__2);
-			setState(69);
+			setState(75);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__4) | (1L << T__7) | (1L << T__14) | (1L << FUNCTION) | (1L << CHECKED) | (1L << IDENTIFIER))) != 0)) {
 				{
 				{
-				setState(66);
+				setState(72);
 				command();
 				}
 				}
-				setState(71);
+				setState(77);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(72);
+			setState(78);
 			match(T__3);
 			}
 		}
@@ -415,20 +428,20 @@ public class Simple_tamarinParser extends Parser {
 		CommandContext _localctx = new CommandContext(_ctx, getState());
 		enterRule(_localctx, 10, RULE_command);
 		try {
-			setState(78);
+			setState(84);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__4:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(74);
+				setState(80);
 				knows();
 				}
 				break;
 			case T__7:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(75);
+				setState(81);
 				generates();
 				}
 				break;
@@ -437,14 +450,14 @@ public class Simple_tamarinParser extends Parser {
 			case IDENTIFIER:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(76);
+				setState(82);
 				assignment();
 				}
 				break;
 			case CHECKED:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(77);
+				setState(83);
 				check();
 				}
 				break;
@@ -489,9 +502,9 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(80);
+			setState(86);
 			match(T__4);
-			setState(81);
+			setState(87);
 			((KnowsContext)_localctx).modifier = _input.LT(1);
 			_la = _input.LA(1);
 			if ( !(_la==T__5 || _la==T__6) ) {
@@ -502,21 +515,21 @@ public class Simple_tamarinParser extends Parser {
 				_errHandler.reportMatch(this);
 				consume();
 			}
-			setState(82);
+			setState(88);
 			variable();
-			setState(87);
+			setState(93);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__1) {
 				{
 				{
-				setState(83);
+				setState(89);
 				match(T__1);
-				setState(84);
+				setState(90);
 				variable();
 				}
 				}
-				setState(89);
+				setState(95);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -558,23 +571,23 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(90);
-			match(T__7);
-			setState(91);
-			variable();
 			setState(96);
+			match(T__7);
+			setState(97);
+			variable();
+			setState(102);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__1) {
 				{
 				{
-				setState(92);
+				setState(98);
 				match(T__1);
-				setState(93);
+				setState(99);
 				variable();
 				}
 				}
-				setState(98);
+				setState(104);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -617,11 +630,11 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(99);
+			setState(105);
 			((AssignmentContext)_localctx).left = term();
-			setState(100);
+			setState(106);
 			match(T__8);
-			setState(101);
+			setState(107);
 			((AssignmentContext)_localctx).right = term();
 			}
 		}
@@ -657,9 +670,9 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(103);
+			setState(109);
 			checkedCall();
-			setState(104);
+			setState(110);
 			match(T__9);
 			}
 		}
@@ -674,7 +687,7 @@ public class Simple_tamarinParser extends Parser {
 		return _localctx;
 	}
 
-	public static class MessageBlockContext extends ParserRuleContext {
+	public static class MessageContext extends ParserRuleContext {
 		public Token sender;
 		public Token receiver;
 		public List<TermContext> term() {
@@ -687,47 +700,47 @@ public class Simple_tamarinParser extends Parser {
 		public TerminalNode IDENTIFIER(int i) {
 			return getToken(Simple_tamarinParser.IDENTIFIER, i);
 		}
-		public MessageBlockContext(ParserRuleContext parent, int invokingState) {
+		public MessageContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_messageBlock; }
+		@Override public int getRuleIndex() { return RULE_message; }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof Simple_tamarinVisitor ) return ((Simple_tamarinVisitor<? extends T>)visitor).visitMessageBlock(this);
+			if ( visitor instanceof Simple_tamarinVisitor ) return ((Simple_tamarinVisitor<? extends T>)visitor).visitMessage(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final MessageBlockContext messageBlock() throws RecognitionException {
-		MessageBlockContext _localctx = new MessageBlockContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_messageBlock);
+	public final MessageContext message() throws RecognitionException {
+		MessageContext _localctx = new MessageContext(_ctx, getState());
+		enterRule(_localctx, 20, RULE_message);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(106);
-			((MessageBlockContext)_localctx).sender = match(IDENTIFIER);
-			setState(107);
+			setState(112);
+			((MessageContext)_localctx).sender = match(IDENTIFIER);
+			setState(113);
 			match(T__10);
-			setState(108);
-			((MessageBlockContext)_localctx).receiver = match(IDENTIFIER);
-			setState(109);
-			match(T__0);
-			setState(110);
-			term();
+			setState(114);
+			((MessageContext)_localctx).receiver = match(IDENTIFIER);
 			setState(115);
+			match(T__0);
+			setState(116);
+			term();
+			setState(121);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__1) {
 				{
 				{
-				setState(111);
+				setState(117);
 				match(T__1);
-				setState(112);
+				setState(118);
 				term();
 				}
 				}
-				setState(117);
+				setState(123);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -769,25 +782,25 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(118);
+			setState(124);
 			match(T__11);
-			setState(119);
+			setState(125);
 			match(T__2);
-			setState(123);
+			setState(129);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__16 || _la==T__18) {
 				{
 				{
-				setState(120);
+				setState(126);
 				query();
 				}
 				}
-				setState(125);
+				setState(131);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(126);
+			setState(132);
 			match(T__3);
 			}
 		}
@@ -827,27 +840,27 @@ public class Simple_tamarinParser extends Parser {
 		TermContext _localctx = new TermContext(_ctx, getState());
 		enterRule(_localctx, 24, RULE_term);
 		try {
-			setState(131);
+			setState(137);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case IDENTIFIER:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(128);
+				setState(134);
 				variable();
 				}
 				break;
 			case FUNCTION:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(129);
+				setState(135);
 				functionCall();
 				}
 				break;
 			case T__14:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(130);
+				setState(136);
 				tuple();
 				}
 				break;
@@ -885,7 +898,7 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(133);
+			setState(139);
 			match(IDENTIFIER);
 			}
 		}
@@ -928,39 +941,39 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(135);
+			setState(141);
 			match(FUNCTION);
-			setState(136);
+			setState(142);
 			match(T__12);
-			setState(138);
+			setState(144);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << FUNCTION) | (1L << IDENTIFIER))) != 0)) {
 				{
-				setState(137);
+				setState(143);
 				((FunctionCallContext)_localctx).term = term();
 				((FunctionCallContext)_localctx).argument.add(((FunctionCallContext)_localctx).term);
 				}
 			}
 
-			setState(144);
+			setState(150);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__1) {
 				{
 				{
-				setState(140);
+				setState(146);
 				match(T__1);
-				setState(141);
+				setState(147);
 				((FunctionCallContext)_localctx).term = term();
 				((FunctionCallContext)_localctx).argument.add(((FunctionCallContext)_localctx).term);
 				}
 				}
-				setState(146);
+				setState(152);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(147);
+			setState(153);
 			match(T__13);
 			}
 		}
@@ -1003,39 +1016,39 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(149);
+			setState(155);
 			match(CHECKED);
-			setState(150);
+			setState(156);
 			match(T__12);
-			setState(152);
+			setState(158);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << FUNCTION) | (1L << IDENTIFIER))) != 0)) {
 				{
-				setState(151);
+				setState(157);
 				((CheckedCallContext)_localctx).term = term();
 				((CheckedCallContext)_localctx).argument.add(((CheckedCallContext)_localctx).term);
 				}
 			}
 
-			setState(158);
+			setState(164);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__1) {
 				{
 				{
-				setState(154);
+				setState(160);
 				match(T__1);
-				setState(155);
+				setState(161);
 				((CheckedCallContext)_localctx).term = term();
 				((CheckedCallContext)_localctx).argument.add(((CheckedCallContext)_localctx).term);
 				}
 				}
-				setState(160);
+				setState(166);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(161);
+			setState(167);
 			match(T__13);
 			}
 		}
@@ -1075,27 +1088,27 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(163);
-			match(T__14);
-			setState(164);
-			term();
 			setState(169);
+			match(T__14);
+			setState(170);
+			term();
+			setState(175);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__1) {
 				{
 				{
-				setState(165);
+				setState(171);
 				match(T__1);
-				setState(166);
+				setState(172);
 				term();
 				}
 				}
-				setState(171);
+				setState(177);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(172);
+			setState(178);
 			match(T__15);
 			}
 		}
@@ -1132,20 +1145,20 @@ public class Simple_tamarinParser extends Parser {
 		QueryContext _localctx = new QueryContext(_ctx, getState());
 		enterRule(_localctx, 34, RULE_query);
 		try {
-			setState(176);
+			setState(182);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__18:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(174);
+				setState(180);
 				executable();
 				}
 				break;
 			case T__16:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(175);
+				setState(181);
 				confidentiality();
 				}
 				break;
@@ -1187,21 +1200,21 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(178);
+			setState(184);
 			match(T__16);
-			setState(181);
+			setState(187);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,16,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,18,_ctx) ) {
 			case 1:
 				{
-				setState(179);
+				setState(185);
 				((ConfidentialityContext)_localctx).principal = match(IDENTIFIER);
-				setState(180);
+				setState(186);
 				match(T__17);
 				}
 				break;
 			}
-			setState(183);
+			setState(189);
 			variable();
 			}
 		}
@@ -1234,7 +1247,7 @@ public class Simple_tamarinParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(185);
+			setState(191);
 			match(T__18);
 			}
 		}
@@ -1250,62 +1263,64 @@ public class Simple_tamarinParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\32\u00be\4\2\t\2"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\32\u00c4\4\2\t\2"+
 		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
-		"\4\23\t\23\4\24\t\24\4\25\t\25\3\2\7\2,\n\2\f\2\16\2/\13\2\3\3\3\3\3\3"+
-		"\3\3\5\3\65\n\3\3\4\3\4\3\5\3\5\3\5\3\5\3\5\7\5>\n\5\f\5\16\5A\13\5\3"+
-		"\6\3\6\3\6\7\6F\n\6\f\6\16\6I\13\6\3\6\3\6\3\7\3\7\3\7\3\7\5\7Q\n\7\3"+
-		"\b\3\b\3\b\3\b\3\b\7\bX\n\b\f\b\16\b[\13\b\3\t\3\t\3\t\3\t\7\ta\n\t\f"+
-		"\t\16\td\13\t\3\n\3\n\3\n\3\n\3\13\3\13\3\13\3\f\3\f\3\f\3\f\3\f\3\f\3"+
-		"\f\7\ft\n\f\f\f\16\fw\13\f\3\r\3\r\3\r\7\r|\n\r\f\r\16\r\177\13\r\3\r"+
-		"\3\r\3\16\3\16\3\16\5\16\u0086\n\16\3\17\3\17\3\20\3\20\3\20\5\20\u008d"+
-		"\n\20\3\20\3\20\7\20\u0091\n\20\f\20\16\20\u0094\13\20\3\20\3\20\3\21"+
-		"\3\21\3\21\5\21\u009b\n\21\3\21\3\21\7\21\u009f\n\21\f\21\16\21\u00a2"+
-		"\13\21\3\21\3\21\3\22\3\22\3\22\3\22\7\22\u00aa\n\22\f\22\16\22\u00ad"+
-		"\13\22\3\22\3\22\3\23\3\23\5\23\u00b3\n\23\3\24\3\24\3\24\5\24\u00b8\n"+
-		"\24\3\24\3\24\3\25\3\25\3\25\2\2\26\2\4\6\b\n\f\16\20\22\24\26\30\32\34"+
-		"\36 \"$&(\2\3\3\2\b\t\2\u00bf\2-\3\2\2\2\4\64\3\2\2\2\6\66\3\2\2\2\b8"+
-		"\3\2\2\2\nB\3\2\2\2\fP\3\2\2\2\16R\3\2\2\2\20\\\3\2\2\2\22e\3\2\2\2\24"+
-		"i\3\2\2\2\26l\3\2\2\2\30x\3\2\2\2\32\u0085\3\2\2\2\34\u0087\3\2\2\2\36"+
-		"\u0089\3\2\2\2 \u0097\3\2\2\2\"\u00a5\3\2\2\2$\u00b2\3\2\2\2&\u00b4\3"+
-		"\2\2\2(\u00bb\3\2\2\2*,\5\4\3\2+*\3\2\2\2,/\3\2\2\2-+\3\2\2\2-.\3\2\2"+
-		"\2.\3\3\2\2\2/-\3\2\2\2\60\65\5\6\4\2\61\65\5\n\6\2\62\65\5\26\f\2\63"+
-		"\65\5\30\r\2\64\60\3\2\2\2\64\61\3\2\2\2\64\62\3\2\2\2\64\63\3\2\2\2\65"+
-		"\5\3\2\2\2\66\67\5\b\5\2\67\7\3\2\2\289\7\30\2\29:\7\3\2\2:?\7\31\2\2"+
-		";<\7\4\2\2<>\7\31\2\2=;\3\2\2\2>A\3\2\2\2?=\3\2\2\2?@\3\2\2\2@\t\3\2\2"+
-		"\2A?\3\2\2\2BC\7\31\2\2CG\7\5\2\2DF\5\f\7\2ED\3\2\2\2FI\3\2\2\2GE\3\2"+
-		"\2\2GH\3\2\2\2HJ\3\2\2\2IG\3\2\2\2JK\7\6\2\2K\13\3\2\2\2LQ\5\16\b\2MQ"+
-		"\5\20\t\2NQ\5\22\n\2OQ\5\24\13\2PL\3\2\2\2PM\3\2\2\2PN\3\2\2\2PO\3\2\2"+
-		"\2Q\r\3\2\2\2RS\7\7\2\2ST\t\2\2\2TY\5\34\17\2UV\7\4\2\2VX\5\34\17\2WU"+
-		"\3\2\2\2X[\3\2\2\2YW\3\2\2\2YZ\3\2\2\2Z\17\3\2\2\2[Y\3\2\2\2\\]\7\n\2"+
-		"\2]b\5\34\17\2^_\7\4\2\2_a\5\34\17\2`^\3\2\2\2ad\3\2\2\2b`\3\2\2\2bc\3"+
-		"\2\2\2c\21\3\2\2\2db\3\2\2\2ef\5\32\16\2fg\7\13\2\2gh\5\32\16\2h\23\3"+
-		"\2\2\2ij\5 \21\2jk\7\f\2\2k\25\3\2\2\2lm\7\31\2\2mn\7\r\2\2no\7\31\2\2"+
-		"op\7\3\2\2pu\5\32\16\2qr\7\4\2\2rt\5\32\16\2sq\3\2\2\2tw\3\2\2\2us\3\2"+
-		"\2\2uv\3\2\2\2v\27\3\2\2\2wu\3\2\2\2xy\7\16\2\2y}\7\5\2\2z|\5$\23\2{z"+
-		"\3\2\2\2|\177\3\2\2\2}{\3\2\2\2}~\3\2\2\2~\u0080\3\2\2\2\177}\3\2\2\2"+
-		"\u0080\u0081\7\6\2\2\u0081\31\3\2\2\2\u0082\u0086\5\34\17\2\u0083\u0086"+
-		"\5\36\20\2\u0084\u0086\5\"\22\2\u0085\u0082\3\2\2\2\u0085\u0083\3\2\2"+
-		"\2\u0085\u0084\3\2\2\2\u0086\33\3\2\2\2\u0087\u0088\7\31\2\2\u0088\35"+
-		"\3\2\2\2\u0089\u008a\7\26\2\2\u008a\u008c\7\17\2\2\u008b\u008d\5\32\16"+
-		"\2\u008c\u008b\3\2\2\2\u008c\u008d\3\2\2\2\u008d\u0092\3\2\2\2\u008e\u008f"+
-		"\7\4\2\2\u008f\u0091\5\32\16\2\u0090\u008e\3\2\2\2\u0091\u0094\3\2\2\2"+
-		"\u0092\u0090\3\2\2\2\u0092\u0093\3\2\2\2\u0093\u0095\3\2\2\2\u0094\u0092"+
-		"\3\2\2\2\u0095\u0096\7\20\2\2\u0096\37\3\2\2\2\u0097\u0098\7\27\2\2\u0098"+
-		"\u009a\7\17\2\2\u0099\u009b\5\32\16\2\u009a\u0099\3\2\2\2\u009a\u009b"+
-		"\3\2\2\2\u009b\u00a0\3\2\2\2\u009c\u009d\7\4\2\2\u009d\u009f\5\32\16\2"+
-		"\u009e\u009c\3\2\2\2\u009f\u00a2\3\2\2\2\u00a0\u009e\3\2\2\2\u00a0\u00a1"+
-		"\3\2\2\2\u00a1\u00a3\3\2\2\2\u00a2\u00a0\3\2\2\2\u00a3\u00a4\7\20\2\2"+
-		"\u00a4!\3\2\2\2\u00a5\u00a6\7\21\2\2\u00a6\u00ab\5\32\16\2\u00a7\u00a8"+
-		"\7\4\2\2\u00a8\u00aa\5\32\16\2\u00a9\u00a7\3\2\2\2\u00aa\u00ad\3\2\2\2"+
-		"\u00ab\u00a9\3\2\2\2\u00ab\u00ac\3\2\2\2\u00ac\u00ae\3\2\2\2\u00ad\u00ab"+
-		"\3\2\2\2\u00ae\u00af\7\22\2\2\u00af#\3\2\2\2\u00b0\u00b3\5(\25\2\u00b1"+
-		"\u00b3\5&\24\2\u00b2\u00b0\3\2\2\2\u00b2\u00b1\3\2\2\2\u00b3%\3\2\2\2"+
-		"\u00b4\u00b7\7\23\2\2\u00b5\u00b6\7\31\2\2\u00b6\u00b8\7\24\2\2\u00b7"+
-		"\u00b5\3\2\2\2\u00b7\u00b8\3\2\2\2\u00b8\u00b9\3\2\2\2\u00b9\u00ba\5\34"+
-		"\17\2\u00ba\'\3\2\2\2\u00bb\u00bc\7\25\2\2\u00bc)\3\2\2\2\23-\64?GPYb"+
-		"u}\u0085\u008c\u0092\u009a\u00a0\u00ab\u00b2\u00b7";
+		"\4\23\t\23\4\24\t\24\4\25\t\25\3\2\7\2,\n\2\f\2\16\2/\13\2\3\2\6\2\62"+
+		"\n\2\r\2\16\2\63\3\2\5\2\67\n\2\3\3\3\3\3\4\3\4\3\4\3\4\3\4\7\4@\n\4\f"+
+		"\4\16\4C\13\4\3\5\3\5\5\5G\n\5\3\6\3\6\3\6\7\6L\n\6\f\6\16\6O\13\6\3\6"+
+		"\3\6\3\7\3\7\3\7\3\7\5\7W\n\7\3\b\3\b\3\b\3\b\3\b\7\b^\n\b\f\b\16\ba\13"+
+		"\b\3\t\3\t\3\t\3\t\7\tg\n\t\f\t\16\tj\13\t\3\n\3\n\3\n\3\n\3\13\3\13\3"+
+		"\13\3\f\3\f\3\f\3\f\3\f\3\f\3\f\7\fz\n\f\f\f\16\f}\13\f\3\r\3\r\3\r\7"+
+		"\r\u0082\n\r\f\r\16\r\u0085\13\r\3\r\3\r\3\16\3\16\3\16\5\16\u008c\n\16"+
+		"\3\17\3\17\3\20\3\20\3\20\5\20\u0093\n\20\3\20\3\20\7\20\u0097\n\20\f"+
+		"\20\16\20\u009a\13\20\3\20\3\20\3\21\3\21\3\21\5\21\u00a1\n\21\3\21\3"+
+		"\21\7\21\u00a5\n\21\f\21\16\21\u00a8\13\21\3\21\3\21\3\22\3\22\3\22\3"+
+		"\22\7\22\u00b0\n\22\f\22\16\22\u00b3\13\22\3\22\3\22\3\23\3\23\5\23\u00b9"+
+		"\n\23\3\24\3\24\3\24\5\24\u00be\n\24\3\24\3\24\3\25\3\25\3\25\2\2\26\2"+
+		"\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(\2\3\3\2\b\t\2\u00c5\2-\3\2"+
+		"\2\2\48\3\2\2\2\6:\3\2\2\2\bF\3\2\2\2\nH\3\2\2\2\fV\3\2\2\2\16X\3\2\2"+
+		"\2\20b\3\2\2\2\22k\3\2\2\2\24o\3\2\2\2\26r\3\2\2\2\30~\3\2\2\2\32\u008b"+
+		"\3\2\2\2\34\u008d\3\2\2\2\36\u008f\3\2\2\2 \u009d\3\2\2\2\"\u00ab\3\2"+
+		"\2\2$\u00b8\3\2\2\2&\u00ba\3\2\2\2(\u00c1\3\2\2\2*,\5\4\3\2+*\3\2\2\2"+
+		",/\3\2\2\2-+\3\2\2\2-.\3\2\2\2.\61\3\2\2\2/-\3\2\2\2\60\62\5\b\5\2\61"+
+		"\60\3\2\2\2\62\63\3\2\2\2\63\61\3\2\2\2\63\64\3\2\2\2\64\66\3\2\2\2\65"+
+		"\67\5\30\r\2\66\65\3\2\2\2\66\67\3\2\2\2\67\3\3\2\2\289\5\6\4\29\5\3\2"+
+		"\2\2:;\7\30\2\2;<\7\3\2\2<A\7\31\2\2=>\7\4\2\2>@\7\31\2\2?=\3\2\2\2@C"+
+		"\3\2\2\2A?\3\2\2\2AB\3\2\2\2B\7\3\2\2\2CA\3\2\2\2DG\5\n\6\2EG\5\26\f\2"+
+		"FD\3\2\2\2FE\3\2\2\2G\t\3\2\2\2HI\7\31\2\2IM\7\5\2\2JL\5\f\7\2KJ\3\2\2"+
+		"\2LO\3\2\2\2MK\3\2\2\2MN\3\2\2\2NP\3\2\2\2OM\3\2\2\2PQ\7\6\2\2Q\13\3\2"+
+		"\2\2RW\5\16\b\2SW\5\20\t\2TW\5\22\n\2UW\5\24\13\2VR\3\2\2\2VS\3\2\2\2"+
+		"VT\3\2\2\2VU\3\2\2\2W\r\3\2\2\2XY\7\7\2\2YZ\t\2\2\2Z_\5\34\17\2[\\\7\4"+
+		"\2\2\\^\5\34\17\2][\3\2\2\2^a\3\2\2\2_]\3\2\2\2_`\3\2\2\2`\17\3\2\2\2"+
+		"a_\3\2\2\2bc\7\n\2\2ch\5\34\17\2de\7\4\2\2eg\5\34\17\2fd\3\2\2\2gj\3\2"+
+		"\2\2hf\3\2\2\2hi\3\2\2\2i\21\3\2\2\2jh\3\2\2\2kl\5\32\16\2lm\7\13\2\2"+
+		"mn\5\32\16\2n\23\3\2\2\2op\5 \21\2pq\7\f\2\2q\25\3\2\2\2rs\7\31\2\2st"+
+		"\7\r\2\2tu\7\31\2\2uv\7\3\2\2v{\5\32\16\2wx\7\4\2\2xz\5\32\16\2yw\3\2"+
+		"\2\2z}\3\2\2\2{y\3\2\2\2{|\3\2\2\2|\27\3\2\2\2}{\3\2\2\2~\177\7\16\2\2"+
+		"\177\u0083\7\5\2\2\u0080\u0082\5$\23\2\u0081\u0080\3\2\2\2\u0082\u0085"+
+		"\3\2\2\2\u0083\u0081\3\2\2\2\u0083\u0084\3\2\2\2\u0084\u0086\3\2\2\2\u0085"+
+		"\u0083\3\2\2\2\u0086\u0087\7\6\2\2\u0087\31\3\2\2\2\u0088\u008c\5\34\17"+
+		"\2\u0089\u008c\5\36\20\2\u008a\u008c\5\"\22\2\u008b\u0088\3\2\2\2\u008b"+
+		"\u0089\3\2\2\2\u008b\u008a\3\2\2\2\u008c\33\3\2\2\2\u008d\u008e\7\31\2"+
+		"\2\u008e\35\3\2\2\2\u008f\u0090\7\26\2\2\u0090\u0092\7\17\2\2\u0091\u0093"+
+		"\5\32\16\2\u0092\u0091\3\2\2\2\u0092\u0093\3\2\2\2\u0093\u0098\3\2\2\2"+
+		"\u0094\u0095\7\4\2\2\u0095\u0097\5\32\16\2\u0096\u0094\3\2\2\2\u0097\u009a"+
+		"\3\2\2\2\u0098\u0096\3\2\2\2\u0098\u0099\3\2\2\2\u0099\u009b\3\2\2\2\u009a"+
+		"\u0098\3\2\2\2\u009b\u009c\7\20\2\2\u009c\37\3\2\2\2\u009d\u009e\7\27"+
+		"\2\2\u009e\u00a0\7\17\2\2\u009f\u00a1\5\32\16\2\u00a0\u009f\3\2\2\2\u00a0"+
+		"\u00a1\3\2\2\2\u00a1\u00a6\3\2\2\2\u00a2\u00a3\7\4\2\2\u00a3\u00a5\5\32"+
+		"\16\2\u00a4\u00a2\3\2\2\2\u00a5\u00a8\3\2\2\2\u00a6\u00a4\3\2\2\2\u00a6"+
+		"\u00a7\3\2\2\2\u00a7\u00a9\3\2\2\2\u00a8\u00a6\3\2\2\2\u00a9\u00aa\7\20"+
+		"\2\2\u00aa!\3\2\2\2\u00ab\u00ac\7\21\2\2\u00ac\u00b1\5\32\16\2\u00ad\u00ae"+
+		"\7\4\2\2\u00ae\u00b0\5\32\16\2\u00af\u00ad\3\2\2\2\u00b0\u00b3\3\2\2\2"+
+		"\u00b1\u00af\3\2\2\2\u00b1\u00b2\3\2\2\2\u00b2\u00b4\3\2\2\2\u00b3\u00b1"+
+		"\3\2\2\2\u00b4\u00b5\7\22\2\2\u00b5#\3\2\2\2\u00b6\u00b9\5(\25\2\u00b7"+
+		"\u00b9\5&\24\2\u00b8\u00b6\3\2\2\2\u00b8\u00b7\3\2\2\2\u00b9%\3\2\2\2"+
+		"\u00ba\u00bd\7\23\2\2\u00bb\u00bc\7\31\2\2\u00bc\u00be\7\24\2\2\u00bd"+
+		"\u00bb\3\2\2\2\u00bd\u00be\3\2\2\2\u00be\u00bf\3\2\2\2\u00bf\u00c0\5\34"+
+		"\17\2\u00c0\'\3\2\2\2\u00c1\u00c2\7\25\2\2\u00c2)\3\2\2\2\25-\63\66AF"+
+		"MV_h{\u0083\u008b\u0092\u0098\u00a0\u00a6\u00b1\u00b8\u00bd";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

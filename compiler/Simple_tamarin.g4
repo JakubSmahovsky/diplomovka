@@ -1,17 +1,15 @@
 
 grammar Simple_tamarin;
 
-model: segment*;
-
-segment: 
-  declaration |
-  principalBlock |
-  messageBlock |
-  queriesBlock;
+model: declaration* specificationSegment+ queriesBlock?;
 
 declaration: decPrincipals;
 
 decPrincipals: KEYWORD_PRINCIPALS ':' principal+=IDENTIFIER (',' principal+=IDENTIFIER)*;
+
+specificationSegment:
+  principalBlock | 
+  message;
 
 principalBlock: principal=IDENTIFIER '[' command* ']';
 
@@ -26,7 +24,7 @@ generates: 'generates' variable (',' variable)*;
 assignment: left=term '=' right=term;
 check: checkedCall '?';
 
-messageBlock: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' term (',' term)*;
+message: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' term (',' term)*;
 
 queriesBlock: 'queries' '[' query* ']';
 

@@ -30,8 +30,14 @@ public class CompilerVisitor {
 
 	public StModel visitModel(ModelContext ctx) {
 		this.model = new StModel();
-		for (SegmentContext segment : ctx.segment()) {
-			visitSegment(segment);
+		for (DeclarationContext dctx : ctx.declaration()) {
+			visitDeclaration(dctx);
+		}
+		for (SpecificationSegmentContext sctx : ctx.specificationSegment()) {
+			visitSpecificationSegment(sctx);
+		}
+		if (ctx.queriesBlock() != null) {
+			visitQueriesBlock(ctx.queriesBlock());
 		}
 
 		for (Principal principal : model.getPrincipals()) {
@@ -51,25 +57,15 @@ public class CompilerVisitor {
 		return model;
 	}
 
-	public void visitSegment(SegmentContext ctx) {
-		if (ctx.declaration() != null) {
-			visitDeclaration(ctx.declaration());
-			return;
-		}
-		if (ctx.messageBlock() != null) {
-			visitMessageBlock(ctx.messageBlock());
+	public void visitSpecificationSegment(SpecificationSegmentContext ctx) {
+		if (ctx.message() != null) {
+			visitMessage(ctx.message());
 			return;
 		}
 		if (ctx.principalBlock() != null) {
 			visitPrincipalBlock(ctx.principalBlock());
 			return;
 		}
-		if (ctx.queriesBlock() != null) {
-			visitQueriesBlock(ctx.queriesBlock());
-			return;
-		}
-
-		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitSegment");
 	}
 
 	private void visitDeclaration(DeclarationContext ctx) {
@@ -200,7 +196,7 @@ public class CompilerVisitor {
 		visitCheckedCall(ctx.checkedCall(), principal, block, VariableDefined.USE_RIGHT);
 	}
 
-	public void visitMessageBlock(MessageBlockContext ctx) {
+	public void visitMessage(MessageContext ctx) {
 		Principal sender = model.findPrincipal(ctx.sender.getText());
 		if (sender == null) {
 			Errors.ErrorPrincipalDoesNotExist(ctx.sender);
