@@ -35,8 +35,9 @@ term:
 
 variable: IDENTIFIER;
 functionCall: FUNCTION '(' (argument+=term)? (',' argument+=term)* ')';
-checkedCall: CHECKED '(' (argument+=term)? (',' argument+=term)* ')';
 tuple: '{' term (',' term)* '}';
+
+checkedCall: CHECKED '(' (argument+=term)? (',' argument+=term)* ')';
 
 query: 
   executable |
