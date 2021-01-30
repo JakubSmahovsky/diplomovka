@@ -20,7 +20,7 @@ rule init:
 
 rule Alice_1_0:
 let
-  message = senc(<Na, secret>, Kab)
+  message = senc(<~Na, secret>, Kab)
 in
 [
   !Alice_init(runid, $Alice, Kab, secret),

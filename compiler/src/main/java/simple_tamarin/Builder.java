@@ -126,57 +126,58 @@ public class Builder extends BuilderFormatting{
 
   private void block(StBlock previousBlock, StBlock block){
     ArrayList<Term> generated = new ArrayList<>();
-    
-    // aliases
-    ArrayList<String> facts = new ArrayList<>();
-    for (Alias alias : block.aliases) {
-      facts.add(alias(alias));
-    }
-    output.append(ruleAliases(block, facts));
 
-    // premise
-    facts = new ArrayList<>();
+    // premises
+    ArrayList<String> premises = new ArrayList<>();
     if (previousBlock == null) {
-      facts.add(initStateFact(block.principal, null));
+      premises.add(initStateFact(block.principal, null));
     } else {
-      facts.add(resultStateFact(previousBlock, block));
+      premises.add(resultStateFact(previousBlock, block));
     }
     for (Command command : block.premise) {
       switch (command.type) {
         case IN:
-          facts.add(fact(command.toString(), command.term, block));
+          premises.add(fact(command.toString(), command.term, block));
           break;
         case FRESH:
           command.term.addFresh();
           generated.add(command.term);
-          facts.add(fact(command.toString(), command.term, null));
+          premises.add(fact(command.toString(), command.term, null));
           break;
         default:
           Errors.DebugCommandType(command.toString(), "premises of block()");
       }
     }
-    output.append(rulePremise(facts));
 
     // actions
-    facts = new ArrayList<>();
+    ArrayList<String> actions = new ArrayList<>();
     String resultStateFact = resultStateFact(block, block);
-    facts.add(resultStateFact);
+    actions.add(resultStateFact);
     for (Fact fact : block.actions) {
-      facts.add(fact.render(block));
+      actions.add(fact.render(block));
     }
-    output.append(ruleAction(facts));
 
     // results
-    facts = new ArrayList<>();
+    ArrayList<String> results = new ArrayList<>();
     for (Command command : block.result) {
       if (command.type == CommandType.OUT) {
-        facts.add(fact(command.toString(), command.term, block));
+        results.add(fact(command.toString(), command.term, block));
       } else {
         Errors.DebugCommandType(command.toString(), "results of block()");
       }
     }
-    facts.add(resultStateFact);
-    output.append(ruleResult(facts));
+    results.add(resultStateFact);
+
+    // aliases; they need to be rendered last, cause they are affected by other parts
+    ArrayList<String> aliases = new ArrayList<>();
+    for (Alias alias : block.aliases) {
+      aliases.add(alias(alias));
+    }
+
+    output.append(ruleAliases(block, aliases));
+    output.append(rulePremise(premises));
+    output.append(ruleAction(actions));
+    output.append(ruleResult(results));
     
     // remove fresh sort from generated variables
     for (Term term : generated) {

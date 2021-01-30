@@ -1,46 +1,26 @@
 Group: intruder learns snd(t.1)
-  Source (21) by tuple deconstruction
+  Source (18) by tuple deconstruction
     Intruder may deconstruct it from a tuple.
       Intruder gets it from unknown source (source endpoint).
-  Source (22) by deconstruction
-    Intruder may deconstruct it from a tuple.
-      Intruder may get it by deconstruction using function DEC from values it got from:
-        Intruder may receive it from Alice after block 1.
-        Intruder gets it from unknown source (source endpoint).
 
 Group: intruder learns senc(t.1, t.2)
-  Source (18) by construction
+  Source (16) by construction
     Intruder may get it by construction using function ENC from values it got from:
       Intruder gets it from unknown source (source endpoint).
       Intruder gets it from unknown source (source endpoint).
-  Source (19) Alice_1_0
+  Source (17) Alice_1_0
     Intruder may receive it from Alice after block 1.
-  Source (20) by deconstruction
-    Intruder may deconstruct it from a tuple.
-      Intruder may get it by deconstruction using function DEC from values it got from:
-        Intruder may receive it from Alice after block 1.
-        Intruder gets it from unknown source (source endpoint).
 
 Group: intruder learns sdec(t.1, t.2)
-  Source (16) by construction
+  Source (15) by construction
     Intruder may get it by construction using function DEC from values it got from:
       Intruder gets it from unknown source (source endpoint).
       Intruder gets it from unknown source (source endpoint).
-  Source (17) by deconstruction
-    Intruder may deconstruct it from a tuple.
-      Intruder may get it by deconstruction using function DEC from values it got from:
-        Intruder may receive it from Alice after block 1.
-        Intruder gets it from unknown source (source endpoint).
 
 Group: intruder learns fst(t.1)
   Source (14) by tuple deconstruction
     Intruder may deconstruct it from a tuple.
       Intruder gets it from unknown source (source endpoint).
-  Source (15) by deconstruction
-    Intruder may deconstruct it from a tuple.
-      Intruder may get it by deconstruction using function DEC from values it got from:
-        Intruder may receive it from Alice after block 1.
-        Intruder gets it from unknown source (source endpoint).
 
 Group: intruder learns t.1
   Source (7) Alice_1_0
