@@ -5,7 +5,7 @@ sources: group*;
 group: 'Sources of' '"' goal '"' '(' NUMBER 'cases)' source*;
 
 source:
-  'Source' NUMBER 'of' NUMBER '/' 'named' '"' name=IDENTIFIER '"' 
+  'Source' NUMBER 'of' NUMBER '/' 'named' '"' name=IDENTIFIER '"' PARTIAL_DECONSTRUCTIONS? 
     '"' goal '"'
   'last: none'
   'formulas:'
@@ -22,7 +22,9 @@ source:
   'json graph:' jsonObj
   SEPARATOR;
 
-goal: fact ATTIMEPOINT variable;
+goal:
+  fact ATTIMEPOINT variable |
+  '(' variable ',' NUMBER ')' '~~>' '(' variable ',' NUMBER ')';
 fact: PERSISTENT? IDENTIFIER '(' term? (',' term)* ')';
 
 term:
@@ -59,6 +61,7 @@ SEPARATOR: '--------------------------------------------------------------------
 ATTIMEPOINT: '▶₀' | '@';
 PERSISTENT: '!';
 SUBSTARROW: '<~';
+PARTIAL_DECONSTRUCTIONS: '(partial deconstructions)';
 USEFUL: '" (useful2)"' | '" (currently deducible)"' | '" (probably constructible)"';
 NUMBER: [0-9]+;
 IDENTIFIER: [a-zA-Z0-9_]+;
