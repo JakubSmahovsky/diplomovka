@@ -36,7 +36,7 @@ function: IDENTIFIER '(' term? (',' term)* ')';
 tuple: '<' term? (',' term)* '>';
 variable: ('$' | '~' | '#')? IDENTIFIER ('.' NUMBER)?;
 
-subst: term SUBSTARROW '{' variable '}';
+subst: term '<' '~' '{' variable '}';
 formula: term '=' term;
 lemma: '∀' variable+ '.' lemmaStmt;
 lemmaStmt:
@@ -60,7 +60,6 @@ jsonString: (jsonChars | IDENTIFIER | NUMBER)*;
 SEPARATOR: '------------------------------------------------------------------------------';
 ATTIMEPOINT: '▶₀' | '@';
 PERSISTENT: '!';
-SUBSTARROW: '<~';
 PARTIAL_DECONSTRUCTIONS: '(partial deconstructions)';
 USEFUL: '" (useful2)"' | '" (currently deducible)"' | '" (probably constructible)"';
 NUMBER: [0-9]+;

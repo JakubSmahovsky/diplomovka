@@ -1,0 +1,36 @@
+Bob [
+  knows private Kab
+]
+
+Alice [
+  knows private Kab
+  generates Na
+  m1 = ENC(Kab, Na)
+]
+Alice -> Bob: Alice, m1
+
+Bob [
+  Na = DEC(Kab, m1)
+  SuccNa = HASH(Na)
+  generates Nb
+  m2 = ENC(Kab, {SuccNa, Nb})
+]
+Bob -> Alice: m2
+
+Alice [
+  {SuccNa, Nb} = DEC(Kab, m2)
+  ASSERT(SuccNa, HASH(Na))?
+  SuccNb = HASH(Nb)
+  m3 = ENC(Kab, SuccNb)
+]
+Alice -> Bob: m3
+
+Bob [
+  SuccNb = DEC(Kab, m3)
+  ASSERT(SuccNb, HASH(Nb))?
+]
+
+queries [
+  executable?
+  confidentiality? Bob's Nb
+]
