@@ -311,7 +311,7 @@ public class CompilerVisitor {
 		}
 	}
 
-	public Term visitCheckedCall(CheckedCallContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
+	public void visitCheckedCall(CheckedCallContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
 		switch (ctx.CHECKED().getText()) {
 			case Constants.VPASSERT: {
 				model.builtins.restriction_eq = true;
@@ -325,9 +325,9 @@ public class CompilerVisitor {
 				}
 				block.actions.add(Fact.equality(term1, term2));
 			}
+			return;
 			default: {	
 				Errors.DebugUnexpectedTokenType(ctx.CHECKED().getText(), "visitCheckedCall");
-				return null;
 			}
 		}
 	}
