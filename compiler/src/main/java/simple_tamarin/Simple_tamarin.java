@@ -15,119 +15,115 @@ import simple_tamarin.sourcesParser.*;
 import simple_tamarin.stParser.*;
 
 public class Simple_tamarin {
-  public static final String theoryFile = "theory.spthy";  // TODO: take name from arguments
-  public static void main(String[] args) throws IOException {
-    String fileName = args[args.length-1]; // TODO: temporary solution
-    FileInputStream inStream = new FileInputStream(fileName);
+  public static void main(String[] args) throws IOException { // TODO: catch IOException
+    // TODO: parse arguments properly
+    String inputFilePath = args[args.length-1];
+    boolean quitOnWarning = false;
+    boolean showInfo = true;
+    String tamarinTheoryFilePath = Constants.DEFAULT_THEORY_PATH + Constants.MANDATORY_THEORY_EXTENSION;
+    String tamarinExecutablePath = System.getProperty("user.home") + "/.local/bin/tamarin-prover";
 
-    Simple_tamarinLexer lexer = new Simple_tamarinLexer(CharStreams.fromStream(inStream));
-    CommonTokenStream tokens = new CommonTokenStream(lexer);
-    Simple_tamarinParser parser = new Simple_tamarinParser(tokens);
-
-    File out = new File(theoryFile);
-    FileWriter writer = new FileWriter(out);
-    boolean quitOnWarning = false; // TODO
-    boolean showInfo = true; // TODO
-    CompilerVisitor visitor = new CompilerVisitor(writer, quitOnWarning, showInfo);
     
     try {
-      // COMPILE INPUT
-      StModel model = visitor.visitModel(parser.model());
-
-      String homedir = System.getProperty("user.home");
-      String command = homedir + "/.local/bin/tamarin-prover " + theoryFile;
-
-      // COMPILE SOURCES
-      Process process = Runtime.getRuntime().exec(command);  //TODO: catch
-      // input stream contains standard Tamarin output
-      InputStream stdStream = process.getInputStream();
-
-      String sources = extractSourcesFromStdOutput(stdStream);
-      SourcesLexer sourcesLexer = new SourcesLexer(CharStreams.fromString(sources));
-
-      CommonTokenStream sourcesTokens = new CommonTokenStream(sourcesLexer);
-      SourcesParser sourcesParser = new SourcesParser(sourcesTokens);
-
-      out = new File("sources.txt"); // TODO: take name from arguments
-      writer = new FileWriter(out);
-
-      SourcesCompilerVisitor sourcesVisitor = new SourcesCompilerVisitor(model, writer);
-      sourcesVisitor.visitSources(sourcesParser.sources());
-
-      // COMPILE LOGGING
-      command = homedir + "/.local/bin/tamarin-prover --prove=secrecy0 " + theoryFile;
-      process = Runtime.getRuntime().exec(command);  //TODO: catch
-      // error output contains logging from Tamarin computation
-      InputStream errStream = process.getErrorStream();
-      BufferedReader errStreamReader = new BufferedReader(new InputStreamReader(errStream));
-      // standard output contains result after computation ends
-      stdStream = process.getInputStream();
-      BufferedReader stdStreamReader = new BufferedReader(new InputStreamReader(stdStream));
-      // declare objects used to compile logging messages
-      LoggingCompilerVisitor loggingVisitor = new LoggingCompilerVisitor(model);
-      String message = "";
-      int linesInMessage = 0;
-
-      while (true) {
-        if (errStream.available() == 0) {
-          // don't block if logging is not ready yet, end if computation is over
-          if (stdStream.available() == 0 || !resultWasPrinted(stdStreamReader)) {
-            Thread.yield();
-          } else {
-            break;
-          }
-        } else {
-          // log next line
-          String line = errStreamReader.readLine();
-          if (linesInMessage == 0) {
-            message = line;
-          } else {
-            message += line;
-          }
-          LoggingLexer loggingLexer = new LoggingLexer(CharStreams.fromString(message));
-          CommonTokenStream loggingTokes = new CommonTokenStream(loggingLexer);
-          LoggingParser loggingParser = new LoggingParser(loggingTokes);
-          loggingParser.removeErrorListeners();
-          loggingParser.addErrorListener(LoggingErrorListener.INSTANCE);
-          try {
-            loggingVisitor.visitMessage(loggingParser.message());
-          } catch (ParseCancellationException e) {
-            linesInMessage++;
-            continue;
-          }
-          linesInMessage = 0;
-        }
-      }
+      StModel model = compileInput(inputFilePath, tamarinTheoryFilePath, quitOnWarning, showInfo);
+      compileSources(tamarinExecutablePath, tamarinTheoryFilePath, Constants.DEFAULT_SOURCES_OUTPUT_PATH, model);
+      compileLogging(tamarinExecutablePath, tamarinTheoryFilePath, "secrecy0", model);
     } catch (STException e) {
       e.print();
     }
   }
 
-  private static String extractSourcesFromStdOutput(InputStream stdStream) throws IOException {
+  private static StModel compileInput(String inputFilePath, String tamarinTheoryFilePath,
+        boolean quitOnWarning, boolean showInfo) throws IOException, STException{
+    File out = new File(tamarinTheoryFilePath);
+    FileWriter writer = new FileWriter(out);
+    FileInputStream inputStream = new FileInputStream(inputFilePath);
+    Simple_tamarinLexer lexer = new Simple_tamarinLexer(CharStreams.fromStream(inputStream));
+    CommonTokenStream tokens = new CommonTokenStream(lexer);
+    Simple_tamarinParser parser = new Simple_tamarinParser(tokens);
+    CompilerVisitor visitor = new CompilerVisitor(writer, quitOnWarning, showInfo);
+    return visitor.visitModel(parser.model());
+  }
+
+  private static void compileSources(String tamarinExecutablePath, String tamarinTheoryFilePath,
+        String sourcesOutputFilePath, StModel model) throws STException, IOException {
+    String command = tamarinExecutablePath + " " + tamarinTheoryFilePath;
+    Process process = Runtime.getRuntime().exec(command);
+    InputStream stdStream = process.getInputStream();
     BufferedReader reader = new BufferedReader(new InputStreamReader(stdStream));
-    StringBuilder result = new StringBuilder();
-    
-    boolean sources = false;
-    for (String line = reader.readLine(); line != null; line = reader.readLine()){
-      // ignore untill sources heder
-      if (!sources && line.equals(Constants.OUTPUT_SEPARATOR)) {
+
+    StringBuilder sources = new StringBuilder();
+
+    // discard untill sources header
+    for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+      if (line.equals(Constants.OUTPUT_SEPARATOR)) {
         String maybeHeader = line + reader.readLine() + reader.readLine();
         if (maybeHeader.equals(Constants.SOURCES_HEADER)) {
-          sources = true;
+          break;
         }
-        else {
-          System.out.println("Unexpected lines in output:");
-          System.out.println(maybeHeader);
-        }
-      } else if (sources && line.equals(Constants.OUTPUT_SEPARATOR)) {// ignore after sources
-        break;
-      } else if (sources) {
-        result.append(line);
-        result.append("\n");
+        throw new STException("Unexpected lines in Tamarin output: \n" + maybeHeader);
       }
+    } 
+    // read sources and discard the rest
+    for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+      if (line.equals(Constants.OUTPUT_SEPARATOR)) {
+        break;
+      }
+      sources.append(line + "\n");
     }
 
-    return result.toString();
+    File outputFile = new File(sourcesOutputFilePath);
+    FileWriter fileWriter = new FileWriter(outputFile);
+    SourcesLexer sourcesLexer = new SourcesLexer(CharStreams.fromString(sources.toString()));
+    CommonTokenStream sourcesTokens = new CommonTokenStream(sourcesLexer);
+    SourcesParser sourcesParser = new SourcesParser(sourcesTokens);
+    SourcesCompilerVisitor sourcesVisitor = new SourcesCompilerVisitor(model, fileWriter);
+    sourcesVisitor.visitSources(sourcesParser.sources());
+  }
+
+  /**
+   * Compile logging messages from Tamarin and return input stream containing result from Tamarin
+   */
+  private static InputStream compileLogging(String tamarinExecutablePath, String tamarinTheoryFilePath,
+        String lemmaToProve, StModel model) throws STException, IOException {
+    String command = tamarinExecutablePath + " --prove=" + lemmaToProve + " " + tamarinTheoryFilePath;
+    Process process = Runtime.getRuntime().exec(command);
+    // error output contains logging from Tamarin computation
+    InputStream errStream = process.getErrorStream();
+    BufferedReader errStreamReader = new BufferedReader(new InputStreamReader(errStream));
+    // standard output contains result after computation ends
+    InputStream stdStream = process.getInputStream();
+    BufferedReader stdStreamReader = new BufferedReader(new InputStreamReader(stdStream));
+
+    LoggingCompilerVisitor loggingVisitor = new LoggingCompilerVisitor(model);
+    String message = "";
+    int storedUncompiledLines = 0;
+
+    while (true) {
+      if (errStream.available() == 0) {
+        if (stdStream.available() == 0 || !resultWasPrinted(stdStreamReader)) {
+          Thread.yield();
+          continue;
+        } else {
+          break;
+        }
+      }
+      String line = errStreamReader.readLine();
+      message = storedUncompiledLines == 0 ? line : message + line;
+      LoggingLexer loggingLexer = new LoggingLexer(CharStreams.fromString(message));
+      CommonTokenStream loggingTokes = new CommonTokenStream(loggingLexer);
+      LoggingParser loggingParser = new LoggingParser(loggingTokes);
+      loggingParser.removeErrorListeners();
+      loggingParser.addErrorListener(LoggingErrorListener.INSTANCE);
+      try {
+        loggingVisitor.visitMessage(loggingParser.message());
+      } catch (ParseCancellationException e) {
+        storedUncompiledLines++;
+        continue;
+      }
+      storedUncompiledLines = 0;
+    }
+    return stdStream;
   }
 
   private static boolean resultWasPrinted(BufferedReader stdStreamReader) throws IOException {

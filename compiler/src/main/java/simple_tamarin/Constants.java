@@ -116,6 +116,9 @@ public final class Constants{
   public static final String SOURCES_HEADER = OUTPUT_SEPARATOR + "SOURCES" + OUTPUT_SEPARATOR;
   public static final String INDENT = "  ";
   public static final String DEFAULT_THEORY_NAME = "spthy";
+  public static final String MANDATORY_THEORY_EXTENSION = ".spthy";
+  public static final String DEFAULT_THEORY_PATH = "theory";
+  public static final String DEFAULT_SOURCES_OUTPUT_PATH = "sources.txt";
   public static final String INIT = "init";
   public static final String TEMPORAL_NAME = "t";
   public static final String EXECUTABLE = "executable";
