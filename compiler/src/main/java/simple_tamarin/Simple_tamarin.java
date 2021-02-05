@@ -27,7 +27,8 @@ public class Simple_tamarin {
     try {
       StModel model = compileInput(inputFilePath, tamarinTheoryFilePath, quitOnWarning, showInfo);
       compileSources(tamarinExecutablePath, tamarinTheoryFilePath, Constants.DEFAULT_SOURCES_OUTPUT_PATH, model);
-      compileLogging(tamarinExecutablePath, tamarinTheoryFilePath, "secrecy0", model);
+      BufferedReader resultStdReader = compileLogging(tamarinExecutablePath, tamarinTheoryFilePath, "secrecy0", model);
+      compileResult(resultStdReader);
     } catch (STException e) {
       e.print();
     }
@@ -69,7 +70,8 @@ public class Simple_tamarin {
       if (line.equals(Constants.OUTPUT_SEPARATOR)) {
         break;
       }
-      sources.append(line + "\n");
+      sources.append(line);
+      sources.append("\n");
     }
 
     File outputFile = new File(sourcesOutputFilePath);
@@ -84,7 +86,7 @@ public class Simple_tamarin {
   /**
    * Compile logging messages from Tamarin and return input stream containing result from Tamarin
    */
-  private static InputStream compileLogging(String tamarinExecutablePath, String tamarinTheoryFilePath,
+  private static BufferedReader compileLogging(String tamarinExecutablePath, String tamarinTheoryFilePath,
         String lemmaToProve, StModel model) throws STException, IOException {
     String command = tamarinExecutablePath + " --prove=" + lemmaToProve + " " + tamarinTheoryFilePath;
     Process process = Runtime.getRuntime().exec(command);
@@ -123,7 +125,30 @@ public class Simple_tamarin {
       }
       storedUncompiledLines = 0;
     }
-    return stdStream;
+    return stdStreamReader;
+  }
+
+  private static void compileResult(BufferedReader stdReader) throws IOException, STException{
+    StringBuilder resultTrace = new StringBuilder();
+
+    // discard untill the proved lemma
+    for (String line = stdReader.readLine(); line != null; line = stdReader.readLine()) {
+      if (line.equals("simplify")) {
+        break;
+      }
+    }
+    // read trace untill an empty line
+    for (String line = stdReader.readLine(); line != null; line = stdReader.readLine()) {
+      if (line.equals("")) {
+        break;
+      }
+      resultTrace.append(line);
+      resultTrace.append("\n");
+    }
+
+    System.out.println();
+    System.out.println("TRACE:");
+    System.out.println(resultTrace.toString());
   }
 
   private static boolean resultWasPrinted(BufferedReader stdStreamReader) throws IOException {
