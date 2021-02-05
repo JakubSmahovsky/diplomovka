@@ -35,12 +35,12 @@ public class Simple_tamarin {
       StModel model = visitor.visitModel(parser.model());
 
       String homedir = System.getProperty("user.home");
-      String cmd = homedir + "/.local/bin/tamarin-prover " + theoryFile;
+      String command = homedir + "/.local/bin/tamarin-prover " + theoryFile;
 
       // COMPILE SOURCES
-      Process p = Runtime.getRuntime().exec(cmd);  //TODO: catch
+      Process process = Runtime.getRuntime().exec(command);  //TODO: catch
       // input stream contains standard Tamarin output
-      InputStream stdStream = p.getInputStream();
+      InputStream stdStream = process.getInputStream();
 
       String sources = extractSourcesFromStdOutput(stdStream);
       SourcesLexer sourcesLexer = new SourcesLexer(CharStreams.fromString(sources));
@@ -55,33 +55,48 @@ public class Simple_tamarin {
       sourcesVisitor.visitSources(sourcesParser.sources());
 
       // COMPILE LOGGING
-      cmd = homedir + "/.local/bin/tamarin-prover --prove=secrecy0 " + theoryFile;
-      p = Runtime.getRuntime().exec(cmd);  //TODO: catch
+      command = homedir + "/.local/bin/tamarin-prover --prove=secrecy0 " + theoryFile;
+      process = Runtime.getRuntime().exec(command);  //TODO: catch
       // error output contains logging from Tamarin computation
-      InputStream errStream = p.getErrorStream();
+      InputStream errStream = process.getErrorStream();
+      BufferedReader errStreamReader = new BufferedReader(new InputStreamReader(errStream));
+      // standard output contains result after computation ends
+      stdStream = process.getInputStream();
+      BufferedReader stdStreamReader = new BufferedReader(new InputStreamReader(stdStream));
+      // declare objects used to compile logging messages
       LoggingCompilerVisitor loggingVisitor = new LoggingCompilerVisitor(model);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(errStream));
       String message = "";
       int linesInMessage = 0;
 
-      for (String line = reader.readLine(); line != null; line = reader.readLine()){
-        if (linesInMessage == 0) {
-          message = line;
+      while (true) {
+        if (errStream.available() == 0) {
+          // don't block if logging is not ready yet, end if computation is over
+          if (stdStream.available() == 0 || !resultWasPrinted(stdStreamReader)) {
+            Thread.yield();
+          } else {
+            break;
+          }
         } else {
-          message += line;
+          // log next line
+          String line = errStreamReader.readLine();
+          if (linesInMessage == 0) {
+            message = line;
+          } else {
+            message += line;
+          }
+          LoggingLexer loggingLexer = new LoggingLexer(CharStreams.fromString(message));
+          CommonTokenStream loggingTokes = new CommonTokenStream(loggingLexer);
+          LoggingParser loggingParser = new LoggingParser(loggingTokes);
+          loggingParser.removeErrorListeners();
+          loggingParser.addErrorListener(LoggingErrorListener.INSTANCE);
+          try {
+            loggingVisitor.visitMessage(loggingParser.message());
+          } catch (ParseCancellationException e) {
+            linesInMessage++;
+            continue;
+          }
+          linesInMessage = 0;
         }
-        LoggingLexer loggingLexer = new LoggingLexer(CharStreams.fromString(message));
-        CommonTokenStream loggingTokes = new CommonTokenStream(loggingLexer);
-        LoggingParser loggingParser = new LoggingParser(loggingTokes);
-        loggingParser.removeErrorListeners();
-        loggingParser.addErrorListener(LoggingErrorListener.INSTANCE);
-        try {
-          loggingVisitor.visitMessage(loggingParser.message());
-        } catch (ParseCancellationException e) {
-          linesInMessage++;
-          continue;
-        }
-        linesInMessage = 0;
       }
     } catch (STException e) {
       e.print();
@@ -113,5 +128,11 @@ public class Simple_tamarin {
     }
 
     return result.toString();
+  }
+
+  private static boolean resultWasPrinted(BufferedReader stdStreamReader) throws IOException {
+    String line = stdStreamReader.readLine();
+    int length = ("theory ").length();
+    return line.length() >= length && line.substring(0, ("theory ").length()).equals("theory ");
   }
 }
