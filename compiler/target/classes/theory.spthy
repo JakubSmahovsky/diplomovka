@@ -5,46 +5,18 @@ builtins: symmetric-encryption, hashing
 
 rule init:
 [
-  Fr(~Kab),
-  Fr(~runid)
+  Fr(~runid),
+  Fr(~Kab)
 ]--[
-  Principals(~runid, $Bob, $Alice)
+  Principals(~runid, $Alice, $Bob)
 ]->[
-  !Bob_init(~runid, $Bob, ~Kab),
-  !PrincipalPrivate($Bob, ~Kab),
   !Alice_init(~runid, $Alice, ~Kab),
-  !PrincipalPrivate($Alice, ~Kab)
+  !PrincipalPrivate($Alice, ~Kab),
+  !Bob_init(~runid, $Bob, ~Kab),
+  !PrincipalPrivate($Bob, ~Kab)
 ]
 
-rule Bob_1_0:
-let
-  SuccNa = h(Na)
-  m2 = senc(<SuccNa, ~Nb>, Kab)
-in
-[
-  !Bob_init(runid, $Bob, Kab),
-  In($Alice),
-  In(senc(Na, Kab)),
-  Fr(~Nb)
-]--[
-  Bob_1_0(runid, $Bob, Kab, $Alice, senc(Na, Kab), Na, SuccNa, ~Nb, m2)
-]->[
-  Out(m2),
-  Bob_1_0(runid, $Bob, Kab, $Alice, senc(Na, Kab), Na, SuccNa, ~Nb, m2)
-]
-
-rule Bob_3_4:
-[
-  Bob_1_0(runid, $Bob, Kab, $Alice, m1, Na, SuccNa, Nb, m2),
-  In(senc(SuccNb, Kab))
-]--[
-  Bob_3_4(runid, $Bob, Kab, $Alice, m1, senc(SuccNb, Kab), SuccNb),
-  Eq(SuccNb, h(Nb))
-]->[
-  Bob_3_4(runid, $Bob, Kab, $Alice, m1, senc(SuccNb, Kab), SuccNb)
-]
-
-rule Alice_0_2:
+rule Alice_0_0:
 let
   m1 = senc(~Na, Kab)
 in
@@ -52,27 +24,71 @@ in
   !Alice_init(runid, $Alice, Kab),
   Fr(~Na)
 ]--[
-  Alice_0_2(runid, $Alice, Kab, ~Na, m1)
+  Alice_0_0(runid, $Alice, Kab, ~Na, m1)
 ]->[
   Out($Alice),
   Out(m1),
-  Alice_0_2(runid, $Alice, Kab, ~Na, m1)
+  Alice_0_0(runid, $Alice, Kab, ~Na, m1)
 ]
 
-rule Alice_2_3:
+rule Alice_1_2:
 let
-  SuccNb = h(Nb)
-  m3 = senc(SuccNb, Kab)
+  succNb = h(Nb)
+  m3 = senc(succNb, Kab)
 in
 [
-  Alice_0_2(runid, $Alice, Kab, Na, m1),
-  In(senc(<SuccNa, Nb>, Kab))
+  Alice_0_0(runid, $Alice, Kab, Na, m1),
+  In(senc(<succNa, Nb>, Kab))
 ]--[
-  Alice_2_3(runid, $Alice, Kab, senc(<SuccNa, Nb>, Kab), <SuccNa, Nb>, SuccNb, m3),
-  Eq(SuccNa, h(Na))
+  Alice_1_2(runid, $Alice, Kab, senc(<succNa, Nb>, Kab), succNa, Nb, succNb, m3),
+  Eq(succNa, h(Na))
 ]->[
   Out(m3),
-  Alice_2_3(runid, $Alice, Kab, senc(<SuccNa, Nb>, Kab), <SuccNa, Nb>, SuccNb, m3)
+  Alice_1_2(runid, $Alice, Kab, senc(<succNa, Nb>, Kab), succNa, Nb, succNb, m3)
+]
+
+rule Alice_3_4:
+[
+  Alice_1_2(runid, $Alice, Kab, m2, succNa, Nb, succNb, m3),
+  In(senc(<Kab2, Nb2>, Kab))
+]--[
+  Alice_3_4(runid, $Alice, Kab, m2, senc(<Kab2, Nb2>, Kab), Kab2, Nb2)
+]->[
+  Alice_3_4(runid, $Alice, Kab, m2, senc(<Kab2, Nb2>, Kab), Kab2, Nb2)
+]
+
+rule Bob_0_1:
+let
+  succNa = h(Na)
+  m2 = senc(<succNa, ~Nb>, Kab)
+in
+[
+  !Bob_init(runid, $Bob, Kab),
+  In($Alice),
+  In(senc(Na, Kab)),
+  Fr(~Nb)
+]--[
+  Bob_0_1(runid, $Bob, Kab, $Alice, senc(Na, Kab), Na, succNa, ~Nb, m2)
+]->[
+  Out(m2),
+  Bob_0_1(runid, $Bob, Kab, $Alice, senc(Na, Kab), Na, succNa, ~Nb, m2)
+]
+
+rule Bob_2_3:
+let
+  m4 = senc(<~Kab2, ~Nb2>, Kab)
+in
+[
+  Bob_0_1(runid, $Bob, Kab, $Alice, m1, Na, succNa, Nb, m2),
+  In(senc(succNb, Kab)),
+  Fr(~Kab2),
+  Fr(~Nb2)
+]--[
+  Bob_2_3(runid, $Bob, Kab, $Alice, m1, senc(succNb, Kab), succNb, ~Kab2, ~Nb2, m4),
+  Eq(succNb, h(Nb))
+]->[
+  Out(m4),
+  Bob_2_3(runid, $Bob, Kab, $Alice, m1, senc(succNb, Kab), succNb, ~Kab2, ~Nb2, m4)
 ]
 
 rule privateReveal: [
@@ -86,24 +102,15 @@ rule privateReveal: [
 restriction Equality:
   "All x y #i. Eq(x,y) @i ==> x = y"
 
-lemma executable:
-exists-trace "
-Ex runid Bob Kab Alice m1 m3 SuccNb m2 SuccNa Nb #t0 #t1.
-Bob_3_4(runid, Bob, Kab, Alice, m1, m3, SuccNb) @ #t0 &
-not (Ex #t2.Dishonest(Bob) @ #t2) &
-Alice_2_3(runid, Alice, Kab, m2, <SuccNa, Nb>, SuccNb, m3) @ #t1 &
-not (Ex #t3.Dishonest(Alice) @ #t3)
-"
-
 lemma secrecy0:
 all-traces "
-All runid Bob Alice Kab m1 Na SuccNa Nb m2 #t4 #t5.
-Principals(runid, Bob, Alice) @ #t4 &
-not (Ex #t6.Dishonest(Bob) @ #t6) &
-not (Ex #t7.Dishonest(Alice) @ #t7) &
-Bob_1_0(runid, Bob, Kab, Alice, m1, Na, SuccNa, Nb, m2) @ #t5
+All runid Alice Bob Kab m2 m4 Kab2 Nb2 #t0 #t1.
+Principals(runid, Alice, Bob) @ #t0 &
+not (Ex #t2.Dishonest(Alice) @ #t2) &
+not (Ex #t3.Dishonest(Bob) @ #t3) &
+Alice_3_4(runid, Alice, Kab, m2, m4, Kab2, Nb2) @ #t1
 ==>
-not (Ex #t8.K(Nb) @ #t8)
+not (Ex #t4.K(Kab2) @ #t4)
 "
 
 end

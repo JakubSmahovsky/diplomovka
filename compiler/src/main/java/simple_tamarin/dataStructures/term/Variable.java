@@ -193,6 +193,9 @@ public class Variable extends Term {
         block.aliases.add(new Alias(this, right));
       }
     }
+    if (!block.state.contains(this)) {
+      block.state.add(this);
+    }
     principal.learn(this);
     return true;
   }
