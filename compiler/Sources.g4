@@ -36,7 +36,7 @@ function: IDENTIFIER '(' term? (',' term)* ')';
 tuple: '<' term? (',' term)* '>';
 variable: ('$' | '~' | '#')? IDENTIFIER ('.' NUMBER)?;
 
-subst: term '<' '~' '{' variable '}';
+subst: term '<' '~' '{' variable (',' variable)* '}';
 formula: term '=' term;
 lemma: '∀' variable+ '.' lemmaStmt;
 lemmaStmt:

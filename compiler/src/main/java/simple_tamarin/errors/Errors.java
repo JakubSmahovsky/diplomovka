@@ -88,11 +88,6 @@ public final class Errors{
     warning(principal, message);
   }
 
-  public static void WarningVariableShadowed(Token variable) {
-    String message = "Variable \"" + variable.getText() + "\" shadows a public variable!";
-    warning(variable, message);
-  }
-
   public static void WarningVariableEphemeralShadowed(Token variable) {
     String message = "Ephemeral variable \"" + variable.getText() + "\" allready exists for some principal, this will create a different long-term variable \"" + variable.getText() + "\"!";
     warning(variable, message);
@@ -121,6 +116,11 @@ public final class Errors{
   public static void InfoDeclarePrincipal(Token principal) {
     String message = "Principal \"" + principal.getText() + "\" is not declared. It is recommended to declare all principals.";
     info(principal, message);
+  }
+
+  public static void InfoComparedPublicVariable(Token variable) {
+    String message = "Public variable \"" + variable.getText() + "\" was compared instead of declaring a new private variable.";
+    info(variable, message);
   }
 
   public static void InfoKnowsInFirstBlock(Token start) {

@@ -1,94 +1,108 @@
 theory spthy
 begin
 
-builtins: symmetric-encryption, hashing
+builtins: symmetric-encryption
 
 rule init:
 [
   Fr(~runid),
-  Fr(~Kab)
+  Fr(~Kas),
+  Fr(~Kbs)
 ]--[
-  Principals(~runid, $Alice, $Bob)
+  Principals(~runid, $Alice, $Bob, $Server)
 ]->[
-  !Alice_init(~runid, $Alice, ~Kab),
-  !PrincipalPrivate($Alice, ~Kab),
-  !Bob_init(~runid, $Bob, ~Kab),
-  !PrincipalPrivate($Bob, ~Kab)
+  !Alice_init(~runid, $Alice, ~Kas),
+  !PrincipalPrivate($Alice, ~Kas),
+  !Bob_init(~runid, $Bob, ~Kbs),
+  !PrincipalPrivate($Bob, ~Kbs),
+  !Server_init(~runid, $Server, ~Kas, ~Kbs),
+  !PrincipalPrivate($Server, ~Kas),
+  !PrincipalPrivate($Server, ~Kbs)
 ]
 
 rule Alice_0_0:
 let
-  m1 = senc(~Na, Kab)
+  m1 = senc(<~Na, ~M, $Alice, $Bob>, Kas)
 in
 [
-  !Alice_init(runid, $Alice, Kab),
-  Fr(~Na)
+  !Alice_init(runid, $Alice, Kas),
+  Fr(~Na),
+  Fr(~M)
 ]--[
-  Alice_0_0(runid, $Alice, Kab, ~Na, m1)
+  Alice_0_0(runid, $Alice, Kas, ~Na, ~M, m1)
 ]->[
+  Out(~M),
   Out($Alice),
+  Out($Bob),
   Out(m1),
-  Alice_0_0(runid, $Alice, Kab, ~Na, m1)
+  Alice_0_0(runid, $Alice, Kas, ~Na, ~M, m1)
 ]
 
-rule Alice_1_2:
-let
-  succNb = h(Nb)
-  m3 = senc(succNb, Kab)
-in
+rule Alice_2_3:
 [
-  Alice_0_0(runid, $Alice, Kab, Na, m1),
-  In(senc(<succNa, Nb>, Kab))
+  Alice_0_0(runid, $Alice, Kas, Na, M, m1),
+  In(senc(<Na, Kab>, Kas))
 ]--[
-  Alice_1_2(runid, $Alice, Kab, senc(<succNa, Nb>, Kab), succNa, Nb, succNb, m3),
-  Eq(succNa, h(Na))
+  Alice_2_3(runid, $Alice, Kas, senc(<Na, Kab>, Kas), Kab)
 ]->[
-  Out(m3),
-  Alice_1_2(runid, $Alice, Kab, senc(<succNa, Nb>, Kab), succNa, Nb, succNb, m3)
-]
-
-rule Alice_3_4:
-[
-  Alice_1_2(runid, $Alice, Kab, m2, succNa, Nb, succNb, m3),
-  In(senc(<Kab2, Nb2>, Kab))
-]--[
-  Alice_3_4(runid, $Alice, Kab, m2, senc(<Kab2, Nb2>, Kab), Kab2, Nb2)
-]->[
-  Alice_3_4(runid, $Alice, Kab, m2, senc(<Kab2, Nb2>, Kab), Kab2, Nb2)
+  Alice_2_3(runid, $Alice, Kas, senc(<Na, Kab>, Kas), Kab)
 ]
 
 rule Bob_0_1:
 let
-  succNa = h(Na)
-  m2 = senc(<succNa, ~Nb>, Kab)
+  m2 = senc(<~Nb, M, $Alice, $Bob>, Kbs)
 in
 [
-  !Bob_init(runid, $Bob, Kab),
+  !Bob_init(runid, $Bob, Kbs),
+  In(M),
   In($Alice),
-  In(senc(Na, Kab)),
+  In($Bob),
+  In(m1),
   Fr(~Nb)
 ]--[
-  Bob_0_1(runid, $Bob, Kab, $Alice, senc(Na, Kab), Na, succNa, ~Nb, m2)
+  Bob_0_1(runid, $Bob, Kbs, M, $Alice, $Bob, m1, ~Nb, m2)
 ]->[
+  Out(M),
+  Out($Alice),
+  Out($Bob),
+  Out(m1),
   Out(m2),
-  Bob_0_1(runid, $Bob, Kab, $Alice, senc(Na, Kab), Na, succNa, ~Nb, m2)
+  Bob_0_1(runid, $Bob, Kbs, M, $Alice, $Bob, m1, ~Nb, m2)
 ]
 
-rule Bob_2_3:
-let
-  m4 = senc(<~Kab2, ~Nb2>, Kab)
-in
+rule Bob_2_4:
 [
-  Bob_0_1(runid, $Bob, Kab, $Alice, m1, Na, succNa, Nb, m2),
-  In(senc(succNb, Kab)),
-  Fr(~Kab2),
-  Fr(~Nb2)
+  Bob_0_1(runid, $Bob, Kbs, M, $Alice, $Bob, m1, Nb, m2),
+  In(M),
+  In(senc(<Nb, Kab>, Kbs)),
+  In(m4)
 ]--[
-  Bob_2_3(runid, $Bob, Kab, $Alice, m1, senc(succNb, Kab), succNb, ~Kab2, ~Nb2, m4),
-  Eq(succNb, h(Nb))
+  Bob_2_4(runid, $Bob, Kbs, M, $Alice, $Bob, m1, senc(<Nb, Kab>, Kbs), m4, Kab)
 ]->[
   Out(m4),
-  Bob_2_3(runid, $Bob, Kab, $Alice, m1, senc(succNb, Kab), succNb, ~Kab2, ~Nb2, m4)
+  Bob_2_4(runid, $Bob, Kbs, M, $Alice, $Bob, m1, senc(<Nb, Kab>, Kbs), m4, Kab)
+]
+
+rule Server_1_2:
+let
+  m3 = senc(<Nb, ~Kab>, Kbs)
+  m4 = senc(<Na, ~Kab>, Kas)
+in
+[
+  !Server_init(runid, $Server, Kas, Kbs),
+  In(M),
+  In($Alice),
+  In($Bob),
+  In(senc(<Na, M, $Alice, $Bob>, Kas)),
+  In(senc(<Nb, M, $Alice, $Bob>, Kbs)),
+  Fr(~Kab)
+]--[
+  Server_1_2(runid, $Server, Kas, Kbs, M, $Alice, $Bob, senc(<Na, M, $Alice, $Bob>, Kas), senc(<Nb, M, $Alice, $Bob>, Kbs), Na, Nb, ~Kab, m3, m4)
+]->[
+  Out(M),
+  Out(m3),
+  Out(m4),
+  Server_1_2(runid, $Server, Kas, Kbs, M, $Alice, $Bob, senc(<Na, M, $Alice, $Bob>, Kas), senc(<Nb, M, $Alice, $Bob>, Kbs), Na, Nb, ~Kab, m3, m4)
 ]
 
 rule privateReveal: [
@@ -99,18 +113,16 @@ rule privateReveal: [
   Out(Private)
 ]
 
-restriction Equality:
-  "All x y #i. Eq(x,y) @i ==> x = y"
-
 lemma secrecy0:
 all-traces "
-All runid Alice Bob Kab m2 m4 Kab2 Nb2 #t0 #t1.
-Principals(runid, Alice, Bob) @ #t0 &
+All runid Alice Bob Server Kas m4 Kab #t0 #t1.
+Principals(runid, Alice, Bob, Server) @ #t0 &
 not (Ex #t2.Dishonest(Alice) @ #t2) &
 not (Ex #t3.Dishonest(Bob) @ #t3) &
-Alice_3_4(runid, Alice, Kab, m2, m4, Kab2, Nb2) @ #t1
+not (Ex #t4.Dishonest(Server) @ #t4) &
+Alice_2_3(runid, Alice, Kas, m4, Kab) @ #t1
 ==>
-not (Ex #t4.K(Kab2) @ #t4)
+not (Ex #t5.K(Kab) @ #t5)
 "
 
 end

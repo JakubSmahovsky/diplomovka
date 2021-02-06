@@ -282,8 +282,8 @@ public class CompilerVisitor {
 				case PRIVATE_KNOWS:
 				case PRIVATE_GENERATES:
 				case PRIVATE_LEFT:
-					Errors.WarningVariableShadowed(ctx.start);
-					break; // and go define it as private placeholder
+					Errors.InfoComparedPublicVariable(ctx.start);
+					// and go define it as private placeholder
 				default:
 					return result;
 			}
