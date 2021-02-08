@@ -89,6 +89,12 @@ public interface Simple_tamarinVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTerm(Simple_tamarinParser.TermContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Simple_tamarinParser#constant}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstant(Simple_tamarinParser.ConstantContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Simple_tamarinParser#variable}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -101,17 +107,17 @@ public interface Simple_tamarinVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunctionCall(Simple_tamarinParser.FunctionCallContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Simple_tamarinParser#checkedCall}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCheckedCall(Simple_tamarinParser.CheckedCallContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link Simple_tamarinParser#tuple}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitTuple(Simple_tamarinParser.TupleContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Simple_tamarinParser#checkedCall}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCheckedCall(Simple_tamarinParser.CheckedCallContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Simple_tamarinParser#query}.
 	 * @param ctx the parse tree

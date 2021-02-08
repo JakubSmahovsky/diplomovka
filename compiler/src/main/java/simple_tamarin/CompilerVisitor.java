@@ -240,6 +240,9 @@ public class CompilerVisitor {
 	}
 
 	public Term visitTerm(TermContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
+		if (ctx.constant() != null) {
+			return visitConstant(ctx.constant());
+		}
 		if (ctx.variable() != null) {
 			return visitVariable(ctx.variable(), principal, block, expectVD);
 		}
@@ -251,6 +254,10 @@ public class CompilerVisitor {
 		}
 		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitTerm()");
 		return null;
+	}
+
+	public Constant visitConstant(ConstantContext ctx) {
+		return new Constant(ctx.word.getText());
 	}
 
 	/**

@@ -68,14 +68,27 @@ public class SourcesCompilerVisitor {
   }
 
   public Term visitTerm(TermContext ctx) {
-    if (ctx.function() != null) {
-      return visitFunction(ctx.function());
-    } else if (ctx.tuple() != null) {
-      return visitTuple(ctx.tuple());
-    } else if (ctx.variable() != null) {
+    
+    if (ctx.variable() != null) {
       return visitVariable(ctx.variable());
     }
+    if (ctx.function() != null) {
+      return visitFunction(ctx.function());
+    }
+    if (ctx.tuple() != null) {
+      return visitTuple(ctx.tuple());
+    }
     return null; // TODO: debug
+  }
+
+  public Constant visitConstant(ConstantContext ctx) {
+    return new Constant(ctx.word.getText());
+  }
+
+  public OutputVariable visitVariable(VariableContext ctx) {
+    String name = ctx.IDENTIFIER().getText();
+    String number = (ctx.NUMBER() != null) ? ("." + ctx.NUMBER().getText()) : "";
+    return new OutputVariable(name, number);
   }
 
   /**
@@ -118,12 +131,6 @@ public class SourcesCompilerVisitor {
       subterms.add(visitTerm(tctx));
     }
     return new Tuple(subterms);
-  }
-
-  public OutputVariable visitVariable(VariableContext ctx) {
-    String name = ctx.IDENTIFIER().getText();
-    String number = (ctx.NUMBER() != null) ? ("." + ctx.NUMBER().getText()) : "";
-    return new OutputVariable(name, number);
   }
 
   public Graph visitGraph(JsonObjContext ctx, String sourceName) {

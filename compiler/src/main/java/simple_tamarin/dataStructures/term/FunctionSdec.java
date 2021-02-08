@@ -25,7 +25,7 @@ public class FunctionSdec extends Term{
   }
 
   @Override public Term toCanonical() {
-    return decodedValue;
+    return decodedValue.toCanonical();
   }
 
   @Override public boolean equals(Object obj) {

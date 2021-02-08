@@ -79,7 +79,7 @@ public final class Errors{
   }
 
   public static void ErrorCannotUnify(TermContext left, TermContext right) {
-    String message = "Ubale to unify term \"" + left.getText() + "\" with term \"" + right.getText() + "\"!";
+    String message = "Unable to unify term \"" + left.getText() + "\" with term \"" + right.getText() + "\"!";
     error(left.start, message);
   }
 

@@ -28,10 +28,12 @@ goal:
 fact: PERSISTENT? IDENTIFIER '(' term? (',' term)* ')';
 
 term:
+  constant |
+  variable |
   function |
-  tuple |
-  variable;
+  tuple;
 
+constant: '\'' word=IDENTIFIER '\'';
 function: IDENTIFIER '(' term? (',' term)* ')';
 tuple: '<' term? (',' term)* '>';
 variable: ('$' | '~' | '#')? IDENTIFIER ('.' NUMBER)?;
@@ -53,7 +55,7 @@ jsonKeyValue: jsonKey ':' jsonValue;
 jsonKey: '"' jsonString '"';
 jsonValue: '"' jsonString '"' | jsonObj | jsonArray | 'true' | 'false'; // todo? number, null
 
-jsonChars: '(' | ')' | '<' | '>' | '{' | '}' | '#' | ':' | '!' | '$' | '.' | ',' | '~';
+jsonChars: '(' | ')' | '<' | '>' | '{' | '}' | '#' | ':' | '!' | '$' | '.' | ',' | '~' | '\'';
 jsonString: (jsonChars | IDENTIFIER | NUMBER)*;
 
 

@@ -47,6 +47,12 @@ public interface SourcesVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTerm(SourcesParser.TermContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SourcesParser#constant}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstant(SourcesParser.ConstantContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SourcesParser#function}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

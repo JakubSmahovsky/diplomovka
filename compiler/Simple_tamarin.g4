@@ -29,10 +29,12 @@ message: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' term (',' term)*;
 queriesBlock: 'queries' '[' query* ']';
 
 term:
+  constant |
   variable |
   functionCall |
   tuple;
 
+constant: '\'' word=IDENTIFIER '\'';
 variable: IDENTIFIER;
 functionCall: FUNCTION '(' (argument+=term)? (',' argument+=term)* ')';
 tuple: '{' term (',' term)* '}';
