@@ -5,7 +5,22 @@ import java.util.List;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.StBlock;
 import simple_tamarin.errors.Errors;
-public abstract class Term{
+public abstract class Term implements Comparable<Term>{
+  private static int nextTerm = 0;
+  private int termId;
+
+  protected Term() {
+    termId = nextTerm;
+    nextTerm++;
+  }
+
+  public int compareTo(Term term) {
+    if (this.equals(term)) {
+      return 0;
+    }
+    return Integer.compare(this.termId, term.termId);
+  }
+
   public abstract Term toCanonical();
 
   /**
@@ -26,11 +41,8 @@ public abstract class Term{
    * Like render, but with respect to a block.
    * The term may be deconstructed in which case it is rendered
    * as it's deconstruction with the substitutions given by the deconstruction.
-   * Should be overriden where it makes sense. See Decontrustion class for more info.
    */
-  public String render(StBlock block) {
-    return render();
-  };
+  public abstract String render(StBlock block);
 
   /**
    * Like render but substitute a value that may be subtituted.

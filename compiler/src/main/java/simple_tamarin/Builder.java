@@ -52,6 +52,9 @@ public class Builder extends BuilderFormatting{
     if (model.builtins.hashing) {
       builtins.add(Constants.BUILTIN_HASHING);
     }
+    if (model.builtins.diffie_hellman) {
+      builtins.add(Constants.BUILTIN_DH);
+    }
     output.append(builtins(builtins));
   }
 

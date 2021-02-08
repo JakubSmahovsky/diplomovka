@@ -27,6 +27,7 @@ public class Variable extends Term {
    * Create an unowned variable, this mean the variable should be static
    */
   public Variable(String name) {
+    super();
     this.owner = null;
     this.name = name;
     this.cratedBy = null;
@@ -39,6 +40,7 @@ public class Variable extends Term {
    * Create an owned variable, the owner is taken from the creating block
    */
   public Variable(String name, StBlock block) {
+    super();
     this.owner = block.principal;
     this.name = name;
     this.cratedBy = block;
@@ -53,6 +55,7 @@ public class Variable extends Term {
    * while rendering a rule that generates them.
    */
   public Variable(String name, VariableSort sort) {
+    super();
     this.owner = null;
     this.name = name;
     this.cratedBy = null;
@@ -65,6 +68,7 @@ public class Variable extends Term {
    * Clone the variable for a new owner, e.g. when receiving it in a message.
    */
   public Variable(Variable variable, Principal newOwner) {
+    super();
     this.owner = newOwner;
     this.name = variable.name;
     this.cratedBy = null;

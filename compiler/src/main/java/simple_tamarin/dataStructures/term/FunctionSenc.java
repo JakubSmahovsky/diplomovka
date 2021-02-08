@@ -6,12 +6,14 @@ import java.util.List;
 
 import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
+import simple_tamarin.dataStructures.StBlock;
 
 public class FunctionSenc extends Term {
   public Term key;
   public Term value;
 
   public FunctionSenc(Term key, Term value) {
+    super();
     this.key = key;
     this.value = value;
   }
@@ -36,6 +38,10 @@ public class FunctionSenc extends Term {
 
   @Override public String render(){
     return BuilderFormatting.fact(Constants.SENC, Arrays.asList(value, key), null);
+  }
+
+  @Override public String render(StBlock block){
+    return BuilderFormatting.fact(Constants.SENC, Arrays.asList(value, key), block);
   }
 
   @Override public String render(Term substitution){

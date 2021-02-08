@@ -11,6 +11,7 @@ public class Tuple extends Term{
   public ArrayList<Term> subterms;
 
   public Tuple(ArrayList<Term> subterms) {
+    super();
     this.subterms = subterms;
   }
 
@@ -49,6 +50,14 @@ public class Tuple extends Term{
     ArrayList<String> renderedSubterms = new ArrayList<>();
     for (Term subterm : subterms) {
       renderedSubterms.add(subterm.render());
+    }
+    return "<" + String.join(", ", renderedSubterms) + ">";
+  }
+
+  @Override public String render(StBlock block) {
+    ArrayList<String> renderedSubterms = new ArrayList<>();
+    for (Term subterm : subterms) {
+      renderedSubterms.add(subterm.render(block));
     }
     return "<" + String.join(", ", renderedSubterms) + ">";
   }

@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
+import simple_tamarin.dataStructures.StBlock;
 
 /**
  * Term holding an instance of symmetric encoding.
@@ -19,6 +20,7 @@ public class FunctionSdec extends Term{
   public Term decodedValue;
 
   public FunctionSdec(Term key, Term encodedValue, Term decodedValue) {
+    super();
     this.key = key;
     this.encodedValue = encodedValue;
     this.decodedValue = decodedValue;
@@ -40,6 +42,10 @@ public class FunctionSdec extends Term{
 
   @Override public String render(){
     return BuilderFormatting.fact(Constants.SDEC, Arrays.asList(encodedValue, key), null);
+  }
+
+  @Override public String render(StBlock block){
+    return BuilderFormatting.fact(Constants.SDEC, Arrays.asList(encodedValue, key), block);
   }
 
   @Override public String renderLemma(){

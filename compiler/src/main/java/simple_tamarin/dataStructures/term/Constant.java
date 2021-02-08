@@ -10,6 +10,7 @@ public class Constant extends Term {
   public String word;
 
   public Constant(String word) {
+    super();
     this.word = word;
   }
 
@@ -37,6 +38,10 @@ public class Constant extends Term {
 
   @Override public String render() {
     return "'" + word + "'";
+  }
+
+  @Override public String render(StBlock block) {
+    return render();
   }
 
   @Override public String renderLemma() {

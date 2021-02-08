@@ -72,6 +72,7 @@ public final class Constants{
   // builtins and prefabs
   public static final String BUILTIN_SYMMETRIC_ENCRYPTION = "symmetric-encryption";
   public static final String BUILTIN_HASHING = "hashing";
+  public static final String BUILTIN_DH = "diffie-hellman";
   public static final String PREFAB_PRIVATE_REVEAL_NAME = "privateReveal";
   public static final String FACT_DISHONEST= "Dishonest";
   // custom fact names (restriction and prefab sources)
@@ -87,6 +88,7 @@ public final class Constants{
   public static final String SENC = "senc";
   public static final String SDEC = "sdec";
   public static final String HASH = "h";
+  public static final String MULT = "*";
   // VP functions
   public static final String VPSENC = "ENC";
   public static final String VPSDEC = "DEC";

@@ -89,6 +89,18 @@ public interface Simple_tamarinVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTerm(Simple_tamarinParser.TermContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Simple_tamarinParser#terminatingTerm}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTerminatingTerm(Simple_tamarinParser.TerminatingTermContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Simple_tamarinParser#multiplication}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMultiplication(Simple_tamarinParser.MultiplicationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Simple_tamarinParser#constant}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

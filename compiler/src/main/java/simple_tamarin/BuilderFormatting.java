@@ -23,6 +23,9 @@ import simple_tamarin.groupedFunctions.BlockNames;
  */
 public abstract class BuilderFormatting {
   public static String builtins(List<String> builtins) {
+    if (builtins.isEmpty()) {
+      return "";
+    }
     return "builtins: " + String.join(", ", builtins) + "\r\n\r\n";
   }
 

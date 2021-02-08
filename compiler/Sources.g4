@@ -28,10 +28,19 @@ goal:
 fact: PERSISTENT? IDENTIFIER '(' term? (',' term)* ')';
 
 term:
+  terminatingTerm |
+  '(' term ')' |
+  multiplication |
+  exponentiation;
+
+terminatingTerm:
   constant |
   variable |
   function |
   tuple;
+
+multiplication: terminatingTerm ('*' terminatingTerm)+;
+exponentiation: (terminatingTerm | multiplication) ('^' (terminatingTerm | multiplication))+;
 
 constant: '\'' word=IDENTIFIER '\'';
 function: IDENTIFIER '(' term? (',' term)* ')';
@@ -55,7 +64,7 @@ jsonKeyValue: jsonKey ':' jsonValue;
 jsonKey: '"' jsonString '"';
 jsonValue: '"' jsonString '"' | jsonObj | jsonArray | 'true' | 'false'; // todo? number, null
 
-jsonChars: '(' | ')' | '<' | '>' | '{' | '}' | '#' | ':' | '!' | '$' | '.' | ',' | '~' | '\'';
+jsonChars: '(' | ')' | '<' | '>' | '{' | '}' | '#' | ':' | '!' | '$' | '.' | ',' | '~' | '\'' | '*' | '^';
 jsonString: (jsonChars | IDENTIFIER | NUMBER)*;
 
 

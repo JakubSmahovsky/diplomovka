@@ -29,15 +29,23 @@ message: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' term (',' term)*;
 queriesBlock: 'queries' '[' query* ']';
 
 term:
+  terminatingTerm |
+  '(' term ')' |
+  multiplication;
+
+terminatingTerm:
   constant |
   variable |
   functionCall |
   tuple;
 
+multiplication: terminatingTerm ('*' terminatingTerm)+;
+
 constant: '\'' word=IDENTIFIER '\'';
 variable: IDENTIFIER;
 functionCall: FUNCTION '(' (argument+=term)? (',' argument+=term)* ')';
 tuple: '{' term (',' term)* '}';
+
 
 checkedCall: CHECKED '(' (argument+=term)? (',' argument+=term)* ')';
 

@@ -239,7 +239,33 @@ public class CompilerVisitor {
 		}
 	}
 
+	/**
+	 * Also verifies wheather term is transparent if needed (because of expectVD)
+	 */
 	public Term visitTerm(TermContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
+		if (ctx.terminatingTerm() != null) {
+			return visitTerminatingTerm(ctx.terminatingTerm(), principal, block, expectVD);
+		}
+		if (ctx.term() != null) { // bracketed term
+			return visitTerm(ctx.term(), principal, block, expectVD);
+		}
+
+		if (expectVD == VariableDefined.PRIVATE_LEFT) {
+			// multiplication and exponentiation are not transparent
+			Errors.ErrorLeftNontransparent(ctx.start);
+		}
+		if (expectVD == VariableDefined.USE_MESSAGE) {
+			// multiplication and exponentiation are not transparent
+			Errors.ErrorMessageNontransparent(ctx.start);
+		}
+		if (ctx.multiplication() != null) {
+			return visitMultiplication(ctx.multiplication(), principal, block, expectVD);
+		}
+		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitTerm()");
+		return null;
+	}
+
+	public Term visitTerminatingTerm(TerminatingTermContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
 		if (ctx.constant() != null) {
 			return visitConstant(ctx.constant());
 		}
@@ -252,8 +278,17 @@ public class CompilerVisitor {
 		if (ctx.tuple() != null) {
 			return visitTuple(ctx.tuple(), principal, block, expectVD);
 		}
-		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitTerm()");
+		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitTerminatingTerm()");
 		return null;
+	}
+
+	public Term visitMultiplication(MultiplicationContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
+		model.builtins.diffie_hellman = true;
+		ArrayList<Term> subterms = new ArrayList<>();
+		for (TerminatingTermContext tctx : ctx.terminatingTerm()) {
+			subterms.add(visitTerminatingTerm(tctx, principal, block, expectVD));
+		}
+		return new Multiplication(subterms);
 	}
 
 	public Constant visitConstant(ConstantContext ctx) {
@@ -307,6 +342,9 @@ public class CompilerVisitor {
 				return null;
 			case PUBLIC_KNOWS:
 				Errors.InfoDeclareLongTermVariable(ctx.start);
+				result = new Variable(name);
+				model.pubVariables.add(result);
+				return result;
 			case PRIVATE_KNOWS:
 				return new Variable(name);
 			case PRIVATE_LEFT:

@@ -47,6 +47,24 @@ public interface SourcesVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTerm(SourcesParser.TermContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SourcesParser#terminatingTerm}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTerminatingTerm(SourcesParser.TerminatingTermContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SourcesParser#multiplication}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMultiplication(SourcesParser.MultiplicationContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SourcesParser#exponentiation}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExponentiation(SourcesParser.ExponentiationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SourcesParser#constant}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

@@ -8,6 +8,7 @@ import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.StModel;
 import simple_tamarin.dataStructures.term.*;
 import simple_tamarin.errors.Errors;
+import simple_tamarin.errors.STException;
 import simple_tamarin.sourcesCompiler.term.*;
 import simple_tamarin.sourcesCompiler.graph.*;
 import simple_tamarin.sourcesCompiler.graph.node.*;
@@ -68,6 +69,20 @@ public class SourcesCompilerVisitor {
   }
 
   public Term visitTerm(TermContext ctx) {
+    if (ctx.terminatingTerm() != null) {
+      return visitTerminatingTerm(ctx.terminatingTerm());
+    }
+    if (ctx.term() != null) { // bracketed term
+      return visitTerm(ctx.term());
+    }
+
+    if (ctx.multiplication() != null) {
+      throw new STException("output compiling for multiplication is not implemented");
+    }
+    return null; // TODO debug
+  }
+
+  public Term visitTerminatingTerm(TerminatingTermContext ctx) {
     
     if (ctx.variable() != null) {
       return visitVariable(ctx.variable());
