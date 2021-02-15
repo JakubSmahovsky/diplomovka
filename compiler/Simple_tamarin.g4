@@ -31,7 +31,7 @@ queriesBlock: 'queries' '[' query* ']';
 term:
   terminatingTerm |
   '(' term ')' |
-  multiplication;
+  terminatingTerm multiplication;
 
 terminatingTerm:
   constant |
@@ -39,13 +39,14 @@ terminatingTerm:
   functionCall |
   tuple;
 
-multiplication: terminatingTerm ('*' terminatingTerm)+;
+multiplication:
+  '*' term multiplication |
+  /* epsilon */;
 
 constant: '\'' word=IDENTIFIER '\'';
 variable: IDENTIFIER;
 functionCall: FUNCTION '(' (argument+=term)? (',' argument+=term)* ')';
 tuple: '{' term (',' term)* '}';
-
 
 checkedCall: CHECKED '(' (argument+=term)? (',' argument+=term)* ')';
 

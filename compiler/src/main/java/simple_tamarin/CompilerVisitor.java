@@ -243,7 +243,7 @@ public class CompilerVisitor {
 	 * Also verifies wheather term is transparent if needed (because of expectVD)
 	 */
 	public Term visitTerm(TermContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
-		if (ctx.terminatingTerm() != null) {
+		if (ctx.terminatingTerm() != null && ctx.multiplication() == null) {
 			return visitTerminatingTerm(ctx.terminatingTerm(), principal, block, expectVD);
 		}
 		if (ctx.term() != null) { // bracketed term
@@ -259,7 +259,9 @@ public class CompilerVisitor {
 			Errors.ErrorMessageNontransparent(ctx.start);
 		}
 		if (ctx.multiplication() != null) {
-			return visitMultiplication(ctx.multiplication(), principal, block, expectVD);
+			ArrayList<Term> subterms = visitMultiplication(ctx.multiplication(), principal, block, expectVD);
+			subterms.add(visitTerminatingTerm(ctx.terminatingTerm(), principal, block, expectVD));
+			return new Multiplication(subterms);
 		}
 		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitTerm()");
 		return null;
@@ -282,13 +284,17 @@ public class CompilerVisitor {
 		return null;
 	}
 
-	public Term visitMultiplication(MultiplicationContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
+	/**
+	 * Compiles right side of a multiplication, returns a list of Terms multiplied to the right of '*' symbol
+	 */
+	public ArrayList<Term> visitMultiplication(MultiplicationContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
 		model.builtins.diffie_hellman = true;
-		ArrayList<Term> subterms = new ArrayList<>();
-		for (TerminatingTermContext tctx : ctx.terminatingTerm()) {
-			subterms.add(visitTerminatingTerm(tctx, principal, block, expectVD));
+		if (ctx.term() == null) {
+		 return new ArrayList<>();
 		}
-		return new Multiplication(subterms);
+		ArrayList<Term> subterms = visitMultiplication(ctx.multiplication(), principal, block, expectVD);
+		subterms.add(visitTerm(ctx.term(), principal, block, expectVD));
+		return subterms;
 	}
 
 	public Constant visitConstant(ConstantContext ctx) {

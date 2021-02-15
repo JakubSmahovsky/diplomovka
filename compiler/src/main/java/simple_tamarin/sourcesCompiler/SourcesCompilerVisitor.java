@@ -69,7 +69,7 @@ public class SourcesCompilerVisitor {
   }
 
   public Term visitTerm(TermContext ctx) {
-    if (ctx.terminatingTerm() != null) {
+    if (ctx.terminatingTerm() != null && ctx.multiplication() == null) {
       return visitTerminatingTerm(ctx.terminatingTerm());
     }
     if (ctx.term() != null) { // bracketed term
