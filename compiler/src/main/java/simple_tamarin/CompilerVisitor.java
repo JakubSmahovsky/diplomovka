@@ -243,31 +243,11 @@ public class CompilerVisitor {
 	 * Also verifies wheather term is transparent if needed (because of expectVD)
 	 */
 	public Term visitTerm(TermContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
-		if (ctx.terminatingTerm() != null && ctx.multiplication() == null) {
-			return visitTerminatingTerm(ctx.terminatingTerm(), principal, block, expectVD);
-		}
-		if (ctx.term() != null) { // bracketed term
-			return visitTerm(ctx.term(), principal, block, expectVD);
+		// bracketed term
+		if (ctx.term().size() == 1) {
+			return visitTerm(ctx.term(0), principal, block, expectVD);
 		}
 
-		if (expectVD == VariableDefined.PRIVATE_LEFT) {
-			// multiplication and exponentiation are not transparent
-			Errors.ErrorLeftNontransparent(ctx.start);
-		}
-		if (expectVD == VariableDefined.USE_MESSAGE) {
-			// multiplication and exponentiation are not transparent
-			Errors.ErrorMessageNontransparent(ctx.start);
-		}
-		if (ctx.multiplication() != null) {
-			ArrayList<Term> subterms = visitMultiplication(ctx.multiplication(), principal, block, expectVD);
-			subterms.add(visitTerminatingTerm(ctx.terminatingTerm(), principal, block, expectVD));
-			return new Multiplication(subterms);
-		}
-		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitTerm()");
-		return null;
-	}
-
-	public Term visitTerminatingTerm(TerminatingTermContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
 		if (ctx.constant() != null) {
 			return visitConstant(ctx.constant());
 		}
@@ -280,21 +260,29 @@ public class CompilerVisitor {
 		if (ctx.tuple() != null) {
 			return visitTuple(ctx.tuple(), principal, block, expectVD);
 		}
-		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitTerminatingTerm()");
-		return null;
-	}
 
-	/**
-	 * Compiles right side of a multiplication, returns a list of Terms multiplied to the right of '*' symbol
-	 */
-	public ArrayList<Term> visitMultiplication(MultiplicationContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
-		model.builtins.diffie_hellman = true;
-		if (ctx.term() == null) {
-		 return new ArrayList<>();
+		if (ctx.POWER_OP() != null && ctx.term().size() == 2) {
+			// exponentiation is not transparent
+			if (expectVD == VariableDefined.PRIVATE_LEFT) {
+				Errors.ErrorLeftNontransparent(ctx.start);
+			}
+			if (expectVD == VariableDefined.USE_MESSAGE) {
+				Errors.ErrorMessageNontransparent(ctx.start);
+			}
+
+			model.builtins.diffie_hellman = true;
+			Term base = visitTerm(ctx.term(0), principal, block, expectVD);
+			Term exponent = visitTerm(ctx.term(1), principal, block, expectVD);
+			if (base instanceof Exponentiation) {
+				((Exponentiation)base).addExponent(exponent);
+				return base;
+			} else {
+				return new Exponentiation(base, exponent);
+			}
 		}
-		ArrayList<Term> subterms = visitMultiplication(ctx.multiplication(), principal, block, expectVD);
-		subterms.add(visitTerm(ctx.term(), principal, block, expectVD));
-		return subterms;
+
+		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitTerm()");
+		return null;
 	}
 
 	public Constant visitConstant(ConstantContext ctx) {

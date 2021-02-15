@@ -29,19 +29,12 @@ message: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' term (',' term)*;
 queriesBlock: 'queries' '[' query* ']';
 
 term:
-  terminatingTerm |
-  '(' term ')' |
-  terminatingTerm multiplication;
-
-terminatingTerm:
+  '(' term ')' | 
+  term POWER_OP term |
   constant |
   variable |
   functionCall |
   tuple;
-
-multiplication:
-  '*' term multiplication |
-  /* epsilon */;
 
 constant: '\'' word=IDENTIFIER '\'';
 variable: IDENTIFIER;
@@ -64,6 +57,8 @@ FUNCTION:
 
 CHECKED:
   'ASSERT';
+
+POWER_OP: '^';
 
 KEYWORD_PRINCIPALS: 'principals';
 
