@@ -7,11 +7,30 @@ import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.StBlock;
 
 public class Constant extends Term {
+  private static int constants = 0;
+  protected final int id;
   public String word;
 
   public Constant(String word) {
-    super();
+    this.id = nextId();
     this.word = word;
+  }
+
+  private int nextId() {
+    return constants++;
+  }
+
+  @Override public CanonicalTypeOrder getTypeOrder() {
+    return CanonicalTypeOrder.Constant;
+  }
+
+  @Override public int canonicalCompareTo(Term term) {
+    int result = this.getTypeOrder().compareTo(term.getTypeOrder());
+    if (result != 0) {
+      return result;
+    }
+    // both have to be Variables, compare based on id
+    return Integer.compare(this.id, ((Variable)term).id);
   }
 
   @Override public boolean equals(Object obj) {

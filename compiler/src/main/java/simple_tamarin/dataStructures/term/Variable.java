@@ -13,7 +13,9 @@ import simple_tamarin.dataStructures.StBlock;
 import simple_tamarin.errors.Errors;
 
 public class Variable extends Term {
+  private static int variables = 0;
   private static int temporals = 0;
+  protected final int id;
   protected boolean placeholder = false;
 
   public final Principal owner;
@@ -27,7 +29,7 @@ public class Variable extends Term {
    * Create an unowned variable, this mean the variable should be static
    */
   public Variable(String name) {
-    super();
+    this.id = nextId();
     this.owner = null;
     this.name = name;
     this.cratedBy = null;
@@ -40,7 +42,7 @@ public class Variable extends Term {
    * Create an owned variable, the owner is taken from the creating block
    */
   public Variable(String name, StBlock block) {
-    super();
+    this.id = nextId();
     this.owner = block.principal;
     this.name = name;
     this.cratedBy = block;
@@ -55,7 +57,7 @@ public class Variable extends Term {
    * while rendering a rule that generates them.
    */
   public Variable(String name, VariableSort sort) {
-    super();
+    this.id = nextId();
     this.owner = null;
     this.name = name;
     this.cratedBy = null;
@@ -68,7 +70,7 @@ public class Variable extends Term {
    * Clone the variable for a new owner, e.g. when receiving it in a message.
    */
   public Variable(Variable variable, Principal newOwner) {
-    super();
+    this.id = nextId();
     this.owner = newOwner;
     this.name = variable.name;
     this.cratedBy = null;
@@ -92,6 +94,23 @@ public class Variable extends Term {
     String tName = Constants.TEMPORAL_NAME + temporals;
     temporals ++;
     return new Variable(tName, VariableSort.TEMPORAL);
+  }
+
+  private static int nextId() {
+    return variables++;
+  }
+
+  @Override public CanonicalTypeOrder getTypeOrder() {
+    return CanonicalTypeOrder.Variable;
+  }
+
+  @Override public int canonicalCompareTo(Term term) {
+    int result = this.getTypeOrder().compareTo(term.getTypeOrder());
+    if (result != 0) {
+      return result;
+    }
+    // both have to be Variables, compare based on id
+    return Integer.compare(this.id, ((Variable)term).id);
   }
 
   @Override public Term toCanonical() {

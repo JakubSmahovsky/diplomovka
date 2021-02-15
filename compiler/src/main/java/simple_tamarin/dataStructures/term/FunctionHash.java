@@ -14,8 +14,21 @@ public class FunctionHash extends Term {
   public Term subterm;
 
   public FunctionHash(Term subterm) {
-    super();
     this.subterm = subterm;
+  }
+
+  @Override public CanonicalTypeOrder getTypeOrder() {
+    return CanonicalTypeOrder.FunctionHash;
+  }
+
+  @Override public int canonicalCompareTo(Term term) {
+    int result = this.getTypeOrder().compareTo(term.getTypeOrder());
+    if (result != 0) {
+      return result;
+    }
+    // both have to be FunctionHash, compare based on subterms
+    FunctionHash functionHash = (FunctionHash)term;
+    return subterm.canonicalCompareTo(functionHash.subterm);
   }
 
   @Override public Term toCanonical() {

@@ -15,7 +15,6 @@ public class Exponentiation extends Term {
    * An exponenetiation object with a simple exponent, other exponents may be added using addExponenet(Term exponent)
    */
   public Exponentiation(Term base, Term exponent) {
-    super();
     this.base = base;
     this.exponent = new ArrayList<>();
     this.exponent.add(exponent);
@@ -24,6 +23,27 @@ public class Exponentiation extends Term {
   public void addExponent(Term exponent) {
     this.exponent.add(exponent);
     Collections.sort(this.exponent);
+  }
+
+  @Override public CanonicalTypeOrder getTypeOrder() {
+    return CanonicalTypeOrder.Exponentiation;
+  }
+
+  @Override public int canonicalCompareTo(Term term) {
+    int result = this.getTypeOrder().compareTo(term.getTypeOrder());
+    if (result != 0) {
+      return result;
+    }
+    // both have to be Exponentiation, compare based on subterms
+    Exponentiation exponentiation = (Exponentiation)term;
+    for (int i = 0; i < Math.min(this.exponent.size(), exponentiation.exponent.size()); i++) {
+      result = this.exponent.get(i).canonicalCompareTo(exponentiation.exponent.get(i));
+      if (result != 0) {
+        return result;
+      }
+    }
+    // one is a prefix of the other, the shorter one is smaller (or they might be equal)
+    return Integer.compare(this.exponent.size(), exponentiation.exponent.size());
   }
 
   @Override public Term toCanonical() {

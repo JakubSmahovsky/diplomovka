@@ -13,9 +13,26 @@ public class FunctionSenc extends Term {
   public Term value;
 
   public FunctionSenc(Term key, Term value) {
-    super();
     this.key = key;
     this.value = value;
+  }
+
+  @Override public CanonicalTypeOrder getTypeOrder() {
+    return CanonicalTypeOrder.FunctionSenc;
+  }
+
+  @Override public int canonicalCompareTo(Term term) {
+    int result = this.getTypeOrder().compareTo(term.getTypeOrder());
+    if (result != 0) {
+      return result;
+    }
+    // both have to be FunctionSenc, compare based on subterms
+    FunctionSenc functionSenc = (FunctionSenc)term;  
+    result = key.compareTo(functionSenc.key);
+    if (result != 0) {
+      return result;
+    }
+    return value.compareTo(functionSenc.value);
   }
 
   @Override public Term toCanonical() {

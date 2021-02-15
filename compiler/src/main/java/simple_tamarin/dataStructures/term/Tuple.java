@@ -11,8 +11,28 @@ public class Tuple extends Term{
   public ArrayList<Term> subterms;
 
   public Tuple(ArrayList<Term> subterms) {
-    super();
     this.subterms = subterms;
+  }
+
+  @Override public CanonicalTypeOrder getTypeOrder() {
+    return CanonicalTypeOrder.Tuple;
+  }
+
+  @Override public int canonicalCompareTo(Term term) {
+    int result = this.getTypeOrder().compareTo(term.getTypeOrder());
+    if (result != 0) {
+      return result;
+    }
+    // both have to be Tuples, compare based on subterms
+    Tuple tuple = (Tuple)term;
+    for (int i = 0; i < Math.min(this.subterms.size(), tuple.subterms.size()); i++) {
+      result = this.subterms.get(i).canonicalCompareTo(tuple.subterms.get(i));
+      if (result != 0) {
+        return result;
+      }
+    }
+    // one is a prefix of the other, the shorter one is smaller
+    return Integer.compare(this.subterms.size(), tuple.subterms.size());
   }
 
   @Override public Term toCanonical() {

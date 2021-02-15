@@ -5,6 +5,7 @@ import java.util.Arrays;
 import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.StBlock;
+import simple_tamarin.errors.Errors;
 
 /**
  * Term holding an instance of symmetric encoding.
@@ -20,10 +21,19 @@ public class FunctionSdec extends Term{
   public Term decodedValue;
 
   public FunctionSdec(Term key, Term encodedValue, Term decodedValue) {
-    super();
     this.key = key;
     this.encodedValue = encodedValue;
     this.decodedValue = decodedValue;
+  }
+
+  @Override public CanonicalTypeOrder getTypeOrder() {
+    return CanonicalTypeOrder.NON_CANONICAL;
+  }
+
+  @Override public int canonicalCompareTo(Term term) {
+    // throw error, this is not a canonicalForm
+    Errors.DebugUnexpectedCall("canonicalCompareTo", "FunctionSdec");
+    return 0;
   }
 
   @Override public Term toCanonical() {

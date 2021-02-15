@@ -6,20 +6,41 @@ import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.StBlock;
 import simple_tamarin.errors.Errors;
 public abstract class Term implements Comparable<Term>{
-  private static int nextTerm = 0;
-  private int termId;
-
-  protected Term() {
-    termId = nextTerm;
-    nextTerm++;
+  protected static enum CanonicalTypeOrder {
+    Constant,
+    Variable,
+    Tuple,
+    FunctionSenc,
+    FunctionHash,
+    Exponentiation,
+    NON_CANONICAL
   }
 
-  public int compareTo(Term term) {
-    if (this.equals(term)) {
-      return 0;
-    }
-    return Integer.compare(this.termId, term.termId);
+  /**
+   * Should return a static order number of term class.
+   * It should be declared as a constant in Constants
+   * so that each subclass has a different order.
+   */
+  public abstract CanonicalTypeOrder getTypeOrder();
+
+  /**
+   * Compare terms based on canonical forms.
+   */
+  public final int compareTo(Term term) {
+    return this.toCanonical().canonicalCompareTo(term.toCanonical());
   }
+
+  /**
+   * Compare 2 cannonical forms - this and term
+   * The idea is to compare canonical forms lexicographically, however individual lexems are not 
+   *    simple characters but rather entire function names / atomic term identifiers.
+   *    Order of individual lexems is well defined, but arbitrary.
+   * Compare term types based on getTypeOrder().
+   * Compare atomic terms (constants to constants, variables to variables) based on their id.
+   * Compare subterm in order (based on INPUT/VERIFPAL order, e.g. ENC(k, v)).
+   * Must be consistent with .equals(Term term)
+   */
+  public abstract int canonicalCompareTo(Term term);
 
   public abstract Term toCanonical();
 

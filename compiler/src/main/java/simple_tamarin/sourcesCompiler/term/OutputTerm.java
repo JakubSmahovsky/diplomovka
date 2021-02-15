@@ -11,6 +11,14 @@ import simple_tamarin.dataStructures.term.Term;
  * provide default implementations (throw exceptions).
  */
 public abstract class OutputTerm extends Term {
+  @Override public CanonicalTypeOrder getTypeOrder() {
+    return null; // TODO rework output Terms
+  }
+
+  @Override public int canonicalCompareTo(Term term) {
+    return 0; // TODO rework output Terms
+  }
+
   @Override public Term toCanonical() {
     return null; // TODO debug message
   }
