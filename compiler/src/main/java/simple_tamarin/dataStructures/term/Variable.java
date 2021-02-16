@@ -165,14 +165,14 @@ public class Variable extends Term {
     return sort == VariableSort.TEMPORAL ? render() : name;
   }
 
-  @Override public void addFresh() {
+  public void addFresh() {
+    if (sort != VariableSort.NOSORT && sort != VariableSort.FRESH) {
+      Errors.DebugUnexpectedCall("addFresh", render());
+    }
     this.sort = VariableSort.FRESH;
   }
 
-  @Override public void removeFresh() {
-    if (subterm != null) {
-      subterm.removeFresh();
-    }
+  public void removeFresh() {
     if (sort == VariableSort.FRESH) {
       sort = VariableSort.NOSORT;
     }

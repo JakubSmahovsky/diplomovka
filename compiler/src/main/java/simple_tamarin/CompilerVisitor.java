@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.Token;
 
 import simple_tamarin.Constants.*;
 import simple_tamarin.dataStructures.*;
+import simple_tamarin.dataStructures.command.*;
 import simple_tamarin.dataStructures.query.Confidentiality;
 import simple_tamarin.dataStructures.term.*;
 import simple_tamarin.stParser.Simple_tamarinParser.*;
@@ -186,7 +187,7 @@ public class CompilerVisitor {
 		for (VariableContext vctx : ctx.variable()) {
 			Variable variable = visitVariable(vctx, principal, block, VariableDefined.PRIVATE_GENERATES);
 			principal.learn(variable);
-			block.premise.add(new Command(CommandType.FRESH, variable));
+			block.premiseFresh.add(new CommandFr(variable, block));
 			block.state.add(variable);
 		}
 	}
@@ -222,8 +223,8 @@ public class CompilerVisitor {
 				sender.nextBlock();
 			}
 
-			sender.getLastBlock().result.add(new Command(CommandType.OUT, term));
-			receiver.nextBlock.premise.add(new Command(CommandType.IN, term));
+			sender.getLastBlock().resultOutputs.add(new CommandOut(term, sender.getLastBlock()));
+			receiver.nextBlock.premiseInputs.add(new CommandIn(term, receiver.nextBlock));
 			if (!receiver.nextBlock.state.contains(term)) {
 				receiver.nextBlock.state.add(term);
 			}

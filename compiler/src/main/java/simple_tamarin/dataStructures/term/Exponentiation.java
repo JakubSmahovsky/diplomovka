@@ -112,13 +112,6 @@ public class Exponentiation extends Term {
     return String.join(Constants.EXP, substrings);
   }
 
-  @Override public void removeFresh() {
-    base.removeFresh();
-    for (Term subterm : exponent) {
-      subterm.removeFresh();
-    }
-  }
-
   @Override public boolean isDeconstructionTerm() {
     return false;
   }

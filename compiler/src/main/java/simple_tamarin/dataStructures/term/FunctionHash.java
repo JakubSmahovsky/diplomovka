@@ -61,10 +61,6 @@ public class FunctionHash extends Term {
     return BuilderFormatting.lemmaFact(Constants.HASH, subterm);
   }
 
-  @Override public void removeFresh() {
-    subterm.removeFresh();
-  }
-
   @Override public boolean isDeconstructionTerm() {
     return false;
   }

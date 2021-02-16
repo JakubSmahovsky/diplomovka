@@ -17,12 +17,6 @@ public final class Constants{
     TEMPORAL
   }
 
-  public static enum CommandType {
-    IN,
-    OUT,
-    FRESH
-  }
-
   public static enum VariableDefined {
     PUBLIC_DEFINITION,
     PUBLIC_KNOWS,

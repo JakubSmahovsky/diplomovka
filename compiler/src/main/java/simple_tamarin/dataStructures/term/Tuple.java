@@ -99,12 +99,6 @@ public class Tuple extends Term{
     return "<" + String.join(", ", renderedSubterms) + ">";
   }
 
-  @Override public void removeFresh() {
-    for (Term term : subterms) {
-      term.removeFresh();
-    }
-  }
-
   @Override public boolean isDeconstructionTerm() {
     return false;
   }

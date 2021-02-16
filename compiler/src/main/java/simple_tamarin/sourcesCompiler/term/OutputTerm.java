@@ -31,10 +31,6 @@ public abstract class OutputTerm extends Term {
     return null; // TODO debug message
   }
 
-  @Override public void removeFresh() {
-    // TODO debug message
-  }
-
   @Override public boolean isDeconstructionTerm() {
     return false; // TODO debug message
   }

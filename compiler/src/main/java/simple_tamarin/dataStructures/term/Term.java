@@ -86,18 +86,6 @@ public abstract class Term implements Comparable<Term>{
   public abstract String renderLemma();
 
   /**
-   * Variable is about to be generated, add fresh sort (tag ~)
-   */
-  public void addFresh() {
-    Errors.DebugUnexpectedCall("addFresh", render());
-  }
-
-  /**
-   * Removed Fresh sort (tag ~) from variables in Term.
-   */
-  public abstract void removeFresh();
-
-  /**
    * Deconstruction terms are sort of abstract terms in the context
    * of a protocol model. We don't want to use them in the output, but 
    * they hold information about how a value was created. They are mostly

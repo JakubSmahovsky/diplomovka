@@ -7,9 +7,9 @@ import java.util.Iterator;
 
 import simple_tamarin.Constants.*;
 import simple_tamarin.dataStructures.*;
+import simple_tamarin.dataStructures.command.*;
 import simple_tamarin.dataStructures.query.Confidentiality;
 import simple_tamarin.dataStructures.term.*;
-import simple_tamarin.errors.Errors;
 
 /**
  * Class used for construction of Tamarin code from StModel. It consists of 2 files,
@@ -128,8 +128,6 @@ public class Builder extends BuilderFormatting{
   }
 
   private void block(StBlock previousBlock, StBlock block){
-    ArrayList<Term> generated = new ArrayList<>();
-
     // premises
     ArrayList<String> premises = new ArrayList<>();
     if (previousBlock == null) {
@@ -137,19 +135,12 @@ public class Builder extends BuilderFormatting{
     } else {
       premises.add(resultStateFact(previousBlock, block));
     }
-    for (Command command : block.premise) {
-      switch (command.type) {
-        case IN:
-          premises.add(fact(command.toString(), command.term, block));
-          break;
-        case FRESH:
-          command.term.addFresh();
-          generated.add(command.term);
-          premises.add(fact(command.toString(), command.term, null));
-          break;
-        default:
-          Errors.DebugCommandType(command.toString(), "premises of block()");
-      }
+    for (CommandIn in : block.premiseInputs) {
+      premises.add(in.render());
+    }
+    for (CommandFr fr : block.premiseFresh) {
+      fr.addFresh();
+      premises.add(fr.render());
     }
 
     // actions
@@ -162,12 +153,8 @@ public class Builder extends BuilderFormatting{
 
     // results
     ArrayList<String> results = new ArrayList<>();
-    for (Command command : block.result) {
-      if (command.type == CommandType.OUT) {
-        results.add(fact(command.toString(), command.term, block));
-      } else {
-        Errors.DebugCommandType(command.toString(), "results of block()");
-      }
+    for (CommandOut out : block.resultOutputs) {
+      results.add(out.render());
     }
     results.add(resultStateFact);
 
@@ -183,8 +170,8 @@ public class Builder extends BuilderFormatting{
     output.append(ruleResult(results));
     
     // remove fresh sort from generated variables
-    for (Term term : generated) {
-      term.removeFresh();
+    for (CommandFr fr : block.premiseFresh) {
+      fr.removeFresh();
     }
   }
 

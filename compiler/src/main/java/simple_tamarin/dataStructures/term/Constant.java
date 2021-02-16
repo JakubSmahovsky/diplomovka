@@ -67,8 +67,6 @@ public class Constant extends Term {
     return render();
   }
 
-  @Override public void removeFresh(){}
-
   @Override public boolean isDeconstructionTerm(){
     return false;
   }

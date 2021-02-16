@@ -71,11 +71,6 @@ public class FunctionSenc extends Term {
     return BuilderFormatting.lemmaFact(Constants.SENC, Arrays.asList(value, key));
   }
 
-  @Override public void removeFresh() {
-    key.removeFresh();
-    value.removeFresh();
-  }
-
   @Override public boolean isDeconstructionTerm() {
     return false;
   }

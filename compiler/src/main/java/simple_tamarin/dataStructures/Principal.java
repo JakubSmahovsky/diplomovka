@@ -3,7 +3,6 @@ package simple_tamarin.dataStructures;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import simple_tamarin.Constants.CommandType;
 import simple_tamarin.dataStructures.term.Variable;
 
 public class Principal {
@@ -76,24 +75,10 @@ public class Principal {
     ArrayList<StBlock> newBlocks = new ArrayList<>();
     Iterator<StBlock> it = blocks.iterator();
     StBlock last = it.next();
-    while (it.hasNext()) {      
+    while (it.hasNext()) {
       StBlock following = it.next();
-      
-      boolean sends = false;
-      for (Command command : last.result) {
-        if (command.type == CommandType.OUT) {
-          sends = true;
-          break;
-        }
-      }
-      boolean receives = false;
-      for (Command command : following.premise) {
-        if (command.type == CommandType.IN) {
-          receives = true;
-          break;
-        }
-      }
-      
+      boolean sends = !last.resultOutputs.isEmpty();
+      boolean receives = !following.premiseInputs.isEmpty();
       if (sends && receives) {
         newBlocks.add(last);
         last = following;

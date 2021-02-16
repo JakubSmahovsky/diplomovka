@@ -62,12 +62,6 @@ public class FunctionSdec extends Term{
     return BuilderFormatting.lemmaFact(Constants.SDEC, Arrays.asList(encodedValue, key));
   }
 
-  @Override public void removeFresh() {
-    key.removeFresh();
-    encodedValue.removeFresh();
-    decodedValue.removeFresh();    
-  }
-
   @Override public boolean isDeconstructionTerm() {
     return true;
   }
