@@ -80,7 +80,7 @@ public class FunctionSdec extends Term{
     return (key.unify(sdec.key) && encodedValue.unify(sdec.encodedValue) && decodedValue.unify(sdec.decodedValue)); 
   }
 
-  @Override public Term encoded(){
+  @Override public Term getEncodedValue(){
     return encodedValue;
   }
 }

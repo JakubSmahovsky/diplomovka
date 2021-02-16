@@ -129,24 +129,30 @@ public class Tuple extends Term{
     return result;
   }
 
+  /**
+   * When assigning a value to a tuple we avoid using aliases. Instead we "spread" the tuple
+   * in place of the term that's being assigned to it.
+   * A Tuple may be assigned the result of a deconstructon Term in which case we substitute
+   * it for the value that was deconstructed (for the encoded one, not the result).
+   * Otherwise a tuple is being assigned a Variable or another Tuple in which case we
+   * want to substitute this Tuple for the entire Term on the right.
+   * Afterwards we want to recursively assign subterms.
+   */
   @Override public boolean assign(Term right, StBlock block, Principal principal) {
-    // spread Tuple to deconstruct a deconstruction Term
-    if (right.isDeconstructionTerm()) {
-      Deconstruction dec = new Deconstruction(right.encoded(), this);
+    // spread
+    if (right.getEncodedValue() != null) {
+      Deconstruction dec = new Deconstruction(right.getEncodedValue(), this);
       if (!block.deconstructed.contains(dec)) {
         block.deconstructed.add(dec);
       }
-    }
-
-    // spread Tuple instead of making an Alias when assigning a Variable
-    if (right instanceof Variable) {
+    } else {
       Deconstruction dec = new Deconstruction(right, this);
       if (!block.deconstructed.contains(dec)) {
         block.deconstructed.add(dec);
       }
     }
     
-    // assign
+    // recursively assign subterms
     Term canonical = right.toCanonical();
     if (!(canonical instanceof Tuple) || subterms.size() != ((Tuple)canonical).subterms.size()) {
       return false;

@@ -121,14 +121,11 @@ public abstract class Term implements Comparable<Term>{
   }
 
   /**
-   * Return encoded value for deconstruction terms
-   * @return e for dec(k, e)
+   * Return the encoded form of the value in a decode function
+   * e.g. return e for DEC(k, e)
+   * Does NOT return a value if "this" is not an instance of decode function (e.g. variable with subterm of decode)
    */
-  public Term encoded() {
-    if (isDeconstructionTerm()) {
-      Errors.DebugMissingImplementation("encoded()", render());
-    }
-    Errors.DebugUnexpectedCall("encoded()", render());
+  public Term getEncodedValue() {
     return null;
   }
 

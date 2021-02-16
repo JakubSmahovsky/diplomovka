@@ -190,10 +190,6 @@ public class Variable extends Term {
     return Arrays.asList(this);    
   }
 
-  @Override public Term encoded(){
-    return subterm.encoded();
-  }
-
   @Override public boolean assign(Term right, StBlock block, Principal principal) {
     // if this is properly defined (principal already knew it) assert equality
     if (!this.placeholder) {
@@ -207,7 +203,7 @@ public class Variable extends Term {
     // this is not properly defined, assign
     this.subterm = right.toCanonical();
     if (right.isDeconstructionTerm()) {
-      Deconstruction dec = new Deconstruction(right.encoded(), this);
+      Deconstruction dec = new Deconstruction(right.getEncodedValue(), this);
       if (!block.deconstructed.contains(dec)) {
         block.deconstructed.add(dec);
       }
