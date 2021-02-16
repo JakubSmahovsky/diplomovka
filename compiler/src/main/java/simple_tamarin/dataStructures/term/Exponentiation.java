@@ -14,20 +14,7 @@ public class Exponentiation extends Term {
   public Exponentiation(Term base, ArrayList<Term> exponent) {
     this.base = base;
     this.exponent = exponent;
-  }
-
-  /**
-   * An exponenetiation object with a simple exponent, other exponents may be added using addExponenet(Term exponent)
-   */
-  public Exponentiation(Term base, Term exponent) {
-    this.base = base;
-    this.exponent = new ArrayList<>();
-    this.exponent.add(exponent);
-  }
-
-  public void addExponent(Term exponent) {
-    this.exponent.add(exponent);
-    Collections.sort(this.exponent);
+    Collections.sort(exponent);
   }
 
   @Override public CanonicalTypeOrder getTypeOrder() {

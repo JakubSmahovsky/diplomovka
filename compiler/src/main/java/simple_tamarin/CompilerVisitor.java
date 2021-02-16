@@ -269,20 +269,29 @@ public class CompilerVisitor {
 			if (expectVD == VariableDefined.USE_MESSAGE) {
 				Errors.ErrorMessageNontransparent(ctx.start);
 			}
-
 			model.builtins.diffie_hellman = true;
-			Term base = visitTerm(ctx.term(0), principal, block, expectVD);
-			Term exponent = visitTerm(ctx.term(1), principal, block, expectVD);
-			if (base instanceof Exponentiation) {
-				((Exponentiation)base).addExponent(exponent);
-				return base;
-			} else {
-				return new Exponentiation(base, exponent);
-			}
+			ArrayList<Term> exponent = new ArrayList<>();
+			exponent.add(visitTerm(ctx.term(1), principal, block, expectVD));
+			Term base = visitExponentiationBase(ctx.term(0), exponent, principal, block, expectVD);
+			return new Exponentiation(base, exponent);
 		}
 
 		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitTerm()");
 		return null;
+	}
+
+	/**
+	 * Since exponentiation is left-associative in Tamarin (and ST) we encounter exponents from the right.
+	 * This function gets a list of exponents to the right.
+	 * If ctx is an exponentiation, it adds another exponent to the list and recursively calls to the left.
+	 * Otherwise it returns the base.
+	 */
+	public Term visitExponentiationBase(TermContext ctx, ArrayList<Term> exponent, Principal principal, StBlock block, VariableDefined expectVD) {
+		if (ctx.POWER_OP() != null && ctx.term().size() == 2) {
+			exponent.add(visitTerm(ctx.term(1), principal, block, expectVD));
+			return visitExponentiationBase(ctx.term(0), exponent, principal, block, expectVD);
+		}
+		return visitTerm(ctx, principal, block, expectVD);
 	}
 
 	public Constant visitConstant(ConstantContext ctx) {
