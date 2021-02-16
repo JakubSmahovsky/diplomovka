@@ -4,6 +4,7 @@ import java.util.List;
 
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.StBlock;
+import simple_tamarin.dataStructures.StModel;
 import simple_tamarin.errors.Errors;
 import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 public abstract class Term implements Comparable<Term>{
@@ -153,5 +154,9 @@ public abstract class Term implements Comparable<Term>{
   public Term decode(Term key, TermContext keyCtx, TermContext valueCtx) {
     Errors.ErrorDecodingNotEncoded(valueCtx);
     return null;
+  }
+
+  public boolean isPublicVariable(StModel model) {
+    return false;
   }
 }

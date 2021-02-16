@@ -210,7 +210,7 @@ public class CompilerVisitor {
 			Term term = visitTerm(message, sender, null, VariableDefined.USE_MESSAGE);
 
 			// if it's not a public variable
-			if (!(term instanceof Variable) || model.findVariable(((Variable)term).name) == null) {
+			if (!term.isPublicVariable(model)) {
 				// add all new variables to receiver's knowledge
 				for (Variable variable : term.extractKnowledge()) {
 					receiver.learn(new Variable(variable, receiver));

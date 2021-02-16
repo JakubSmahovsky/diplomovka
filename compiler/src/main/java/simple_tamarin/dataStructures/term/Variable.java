@@ -10,6 +10,7 @@ import simple_tamarin.dataStructures.Deconstruction;
 import simple_tamarin.dataStructures.Fact;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.StBlock;
+import simple_tamarin.dataStructures.StModel;
 import simple_tamarin.errors.Errors;
 
 public class Variable extends Term {
@@ -221,5 +222,9 @@ public class Variable extends Term {
     }
     principal.learn(this);
     return true;
+  }
+
+  public boolean isPublicVariable(StModel model) {
+    return model.findVariable(name) != null;
   }
 }
