@@ -283,7 +283,8 @@ public class CompilerVisitor {
 	/**
 	 * Since exponentiation is left-associative in Tamarin (and ST) we encounter exponents from the right.
 	 * This function gets a list of exponents to the right.
-	 * If ctx is an exponentiation, it adds another exponent to the list and recursively calls to the left.
+	 * If ctx is an exponentiation (even if it's in brackets),
+	 * it adds another exponent to the list and recursively calls to the left.
 	 * Otherwise it returns the base.
 	 */
 	public Term visitExponentiationBase(TermContext ctx, ArrayList<Term> exponent, Principal principal, StBlock block, VariableDefined expectVD) {
@@ -291,6 +292,11 @@ public class CompilerVisitor {
 			exponent.add(visitTerm(ctx.term(1), principal, block, expectVD));
 			return visitExponentiationBase(ctx.term(0), exponent, principal, block, expectVD);
 		}
+		//bracketed term
+		if (ctx.term().size() == 1) {
+			return visitExponentiationBase(ctx.term(0), exponent, principal, block, expectVD);
+		}
+
 		return visitTerm(ctx, principal, block, expectVD);
 	}
 
