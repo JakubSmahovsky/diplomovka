@@ -405,15 +405,8 @@ public class CompilerVisitor {
 				}
 				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
 				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
-				// use canonical form in case value is not directly ENC function
-				Term encodedValue = value.toCanonical();
-				if (!(encodedValue instanceof FunctionSenc)) {
-					Errors.ErrorDecodingNotEncoded(ctx.argument.get(1));
-				}
-				if (!((FunctionSenc)encodedValue).key.equals(key)) {
-					Errors.ErrorWrongKey(ctx.argument.get(0));
-				}
-				return new FunctionSdec(key, value, ((FunctionSenc)encodedValue).value);
+				Term decoded = value.toCanonical().decode(key, ctx.argument.get(0), ctx.argument.get(1));
+				return new FunctionSdec(key, value, decoded);
 			}
 			case Constants.VPHASH: {
 				model.builtins.hashing = true;

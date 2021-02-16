@@ -5,6 +5,7 @@ import java.util.List;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.StBlock;
 import simple_tamarin.errors.Errors;
+import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 public abstract class Term implements Comparable<Term>{
   protected static enum CanonicalTypeOrder {
     Constant,
@@ -142,5 +143,15 @@ public abstract class Term implements Comparable<Term>{
   public boolean assign(Term right, StBlock block, Principal principal) {
     Errors.DebugUnexpectedCall("assign", render());
     return false;
+  }
+
+  /**
+   * Decode an encoded term.
+   * Should be extended by an enum to indicate type of encoding function
+   * once there is more than 1 encoding function.
+   */
+  public Term decode(Term key, TermContext keyCtx, TermContext valueCtx) {
+    Errors.ErrorDecodingNotEncoded(valueCtx);
+    return null;
   }
 }

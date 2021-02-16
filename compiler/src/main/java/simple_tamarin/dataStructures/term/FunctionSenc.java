@@ -7,6 +7,8 @@ import java.util.List;
 import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.StBlock;
+import simple_tamarin.errors.Errors;
+import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 
 public class FunctionSenc extends Term {
   public Term key;
@@ -91,5 +93,12 @@ public class FunctionSenc extends Term {
     result.addAll(key.freeVariables());
     result.addAll(value.freeVariables());
     return result;
+  }
+
+  @Override public Term decode(Term key, TermContext keyCtx, TermContext valueCtx) {
+    if (!this.key.equals(key)) {
+      Errors.ErrorWrongKey(keyCtx);
+    }
+    return value;
   }
 }
