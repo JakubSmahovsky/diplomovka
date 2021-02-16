@@ -11,6 +11,11 @@ public class Exponentiation extends Term {
   public Term base;
   public ArrayList<Term> exponent; // exponent is kept sorted (for canonical form)
 
+  public Exponentiation(Term base, ArrayList<Term> exponent) {
+    this.base = base;
+    this.exponent = exponent;
+  }
+
   /**
    * An exponenetiation object with a simple exponent, other exponents may be added using addExponenet(Term exponent)
    */
@@ -47,7 +52,11 @@ public class Exponentiation extends Term {
   }
 
   @Override public Term toCanonical() {
-    return this;
+    ArrayList<Term> canonicalExponent = new ArrayList<>();
+    for (Term e : exponent) {
+      canonicalExponent.add(e.toCanonical());
+    }
+    return new Exponentiation(base.toCanonical(), canonicalExponent);
   }
 
   @Override public boolean equals(Object obj) {

@@ -32,7 +32,7 @@ public class FunctionHash extends Term {
   }
 
   @Override public Term toCanonical() {
-    return this;
+    return new FunctionHash(subterm.toCanonical());
   }
 
   @Override public boolean equals(Object obj) {

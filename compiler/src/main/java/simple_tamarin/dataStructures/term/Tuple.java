@@ -36,7 +36,11 @@ public class Tuple extends Term{
   }
 
   @Override public Term toCanonical() {
-    return this;
+    ArrayList<Term> canonicalSubterms = new ArrayList<>();
+    for (Term subterm : subterms) {
+      canonicalSubterms.add(subterm.toCanonical());
+    }
+    return new Tuple(canonicalSubterms);
   }
 
   @Override public boolean equals(Object obj) {

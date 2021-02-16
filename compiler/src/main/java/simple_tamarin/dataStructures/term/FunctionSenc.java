@@ -36,7 +36,7 @@ public class FunctionSenc extends Term {
   }
 
   @Override public Term toCanonical() {
-    return this;
+    return new FunctionSenc(key.toCanonical(), value.toCanonical());
   }
 
   @Override public boolean equals(Object obj) {
