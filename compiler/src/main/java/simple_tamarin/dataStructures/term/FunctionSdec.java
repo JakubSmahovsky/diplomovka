@@ -19,11 +19,13 @@ public class FunctionSdec extends Term{
   private final Term key;
   private final Term encodedValue;
   private final Term decodedValue;
+  private final Term canonical;
 
   public FunctionSdec(Term key, Term encodedValue, Term decodedValue) {
     this.key = key;
     this.encodedValue = encodedValue;
     this.decodedValue = decodedValue;
+    this.canonical = decodedValue.getCanonical();
   }
 
   @Override public CanonicalTypeOrder getTypeOrder() {
@@ -36,8 +38,8 @@ public class FunctionSdec extends Term{
     return 0;
   }
 
-  @Override public Term toCanonical() {
-    return decodedValue.toCanonical();
+  @Override public Term getCanonical() {
+    return canonical;
   }
 
   @Override public boolean equals(Object obj) {
@@ -47,7 +49,7 @@ public class FunctionSdec extends Term{
     if (!(obj instanceof Term)) {
       return false;
     }
-    return this.toCanonical().equals(((Term)obj).toCanonical());
+    return this.getCanonical().equals(((Term)obj).getCanonical());
   }
 
   @Override public String render(){

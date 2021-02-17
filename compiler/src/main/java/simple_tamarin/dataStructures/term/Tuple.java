@@ -9,9 +9,22 @@ import simple_tamarin.dataStructures.STBlock;
 
 public class Tuple extends Term{
   private final ArrayList<Term> subterms; // invariant: never add to or remove form
+  private final Tuple canonical;
 
   public Tuple(ArrayList<Term> subterms) {
     this.subterms = subterms;
+    this.canonical = new Tuple(this);
+  }
+
+  /**
+   * Canonical form constructor
+   */
+  private Tuple(Tuple original) {
+    this.canonical = this;
+    this.subterms = new ArrayList<>();
+    for (Term subterm : original.subterms) {
+      this.subterms.add(subterm.getCanonical());
+    }
   }
 
   @Override public CanonicalTypeOrder getTypeOrder() {
@@ -35,12 +48,8 @@ public class Tuple extends Term{
     return Integer.compare(this.subterms.size(), tuple.subterms.size());
   }
 
-  @Override public Term toCanonical() {
-    ArrayList<Term> canonicalSubterms = new ArrayList<>();
-    for (Term subterm : subterms) {
-      canonicalSubterms.add(subterm.toCanonical());
-    }
-    return new Tuple(canonicalSubterms);
+  @Override public Term getCanonical() {
+    return canonical;
   }
 
   @Override public boolean equals(Object obj) {
@@ -50,7 +59,7 @@ public class Tuple extends Term{
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term term = ((Term)obj).toCanonical();
+    Term term = ((Term)obj).getCanonical();
     if (!(term instanceof Tuple) || subterms.size() != ((Tuple)term).subterms.size()) {
       return false;
     }
@@ -147,7 +156,7 @@ public class Tuple extends Term{
     }
     
     // recursively assign subterms
-    Term canonical = right.toCanonical();
+    Term canonical = right.getCanonical();
     if (!(canonical instanceof Tuple) || subterms.size() != ((Tuple)canonical).subterms.size()) {
       return false;
     }

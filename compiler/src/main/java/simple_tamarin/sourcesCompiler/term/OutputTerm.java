@@ -19,7 +19,7 @@ public abstract class OutputTerm extends Term {
     return 0; // TODO rework output Terms
   }
 
-  @Override public Term toCanonical() {
+  @Override public Term getCanonical() {
     return null; // TODO debug message
   }
   

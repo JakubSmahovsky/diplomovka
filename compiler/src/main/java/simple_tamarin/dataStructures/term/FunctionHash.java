@@ -12,9 +12,19 @@ import simple_tamarin.dataStructures.STBlock;
  */
 public class FunctionHash extends Term {
   private final Term subterm;
+  private final FunctionHash canonical;
 
   public FunctionHash(Term subterm) {
     this.subterm = subterm;
+    this.canonical = new FunctionHash(this);
+  }
+
+  /**
+   * Canonical form constructor
+   */
+  private FunctionHash(FunctionHash original) {
+    this.canonical = this;
+    this.subterm = original.subterm.getCanonical();
   }
 
   @Override public CanonicalTypeOrder getTypeOrder() {
@@ -31,8 +41,8 @@ public class FunctionHash extends Term {
     return subterm.canonicalCompareTo(functionHash.subterm);
   }
 
-  @Override public Term toCanonical() {
-    return new FunctionHash(subterm.toCanonical());
+  @Override public Term getCanonical() {
+    return canonical;
   }
 
   @Override public boolean equals(Object obj) {
@@ -42,7 +52,7 @@ public class FunctionHash extends Term {
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term term = ((Term)obj).toCanonical();
+    Term term = ((Term)obj).getCanonical();
     if (!(term instanceof FunctionHash)) {
       return false;
     }

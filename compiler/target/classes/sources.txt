@@ -37,7 +37,7 @@ Group: intruder learns senc(t.1, t.2)
         Intruder may receive it from Server after block 1.
         Intruder gets it from unknown source (source endpoint).
 
-Group: intruder learns sdec(t.1, t.2)
+Group: intruder learns DEC(t.1, t.2)
   Source (28) by construction
     Intruder may get it by construction using function DEC from values it got from:
       Intruder gets it from unknown source (source endpoint).

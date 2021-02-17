@@ -40,14 +40,14 @@ public class Constant extends Term {
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term canonical = ((Term)obj).toCanonical();
+    Term canonical = ((Term)obj).getCanonical();
     if (canonical instanceof Constant && ((Constant)canonical).word.equals(this.word)) {
       return true;
     }
     return false;
   }
 
-  @Override public Term toCanonical() {
+  @Override public Term getCanonical() {
     return this;
   }
 

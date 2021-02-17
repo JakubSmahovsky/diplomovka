@@ -119,10 +119,9 @@ public class SourcesCompilerVisitor {
         return new FunctionSenc(key, value);
       }
       case Constants.SDEC: {
-        Term value = visitTerm(ctx.term(0));
+        Term encodedValue = visitTerm(ctx.term(0));
         Term key = visitTerm(ctx.term(1));
-        Term decoded = null;
-        return new FunctionSdec(key, value, decoded);
+        return new OutputFSdec(key, encodedValue);
       }
       case Constants.HASH: {
         Term subterm = visitTerm(ctx.term(0));

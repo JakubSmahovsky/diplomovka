@@ -29,7 +29,7 @@ public abstract class Term implements Comparable<Term>{
    * Compare terms based on canonical forms.
    */
   public final int compareTo(Term term) {
-    return this.toCanonical().canonicalCompareTo(term.toCanonical());
+    return this.getCanonical().canonicalCompareTo(term.getCanonical());
   }
 
   /**
@@ -44,7 +44,7 @@ public abstract class Term implements Comparable<Term>{
    */
   public abstract int canonicalCompareTo(Term term);
 
-  public abstract Term toCanonical();
+  public abstract Term getCanonical();
 
   /**
    * Extracts variables that can be learnt from a transparent Term.

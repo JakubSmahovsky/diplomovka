@@ -8,13 +8,27 @@ import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.STBlock;
 
 public class Exponentiation extends Term {
+  private final Exponentiation canoncical;
   private final Term base;
   private final ArrayList<Term> exponent; // invariant: never add to or remove form; keep sorted
 
   public Exponentiation(Term base, ArrayList<Term> exponent) {
     this.base = base;
     this.exponent = exponent;
-    Collections.sort(exponent);
+    this.canoncical = new Exponentiation(this);
+  }
+
+  /**
+   * Canonical form constructor
+   */
+  private Exponentiation(Exponentiation original) {
+    this.canoncical = this;
+    this.base = original.base.getCanonical();
+    this.exponent = new ArrayList<>();
+    for (Term e : original.exponent) {
+      this.exponent.add(e.getCanonical());
+    }
+    Collections.sort(this.exponent);
   }
 
   @Override public CanonicalTypeOrder getTypeOrder() {
@@ -38,12 +52,8 @@ public class Exponentiation extends Term {
     return Integer.compare(this.exponent.size(), exponentiation.exponent.size());
   }
 
-  @Override public Term toCanonical() {
-    ArrayList<Term> canonicalExponent = new ArrayList<>();
-    for (Term e : exponent) {
-      canonicalExponent.add(e.toCanonical());
-    }
-    return new Exponentiation(base.toCanonical(), canonicalExponent);
+  @Override public Term getCanonical() {
+    return canoncical;
   }
 
   @Override public boolean equals(Object obj) {
@@ -53,7 +63,7 @@ public class Exponentiation extends Term {
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term term = ((Term)obj).toCanonical();
+    Term term = ((Term)obj).getCanonical();
     if (!(term instanceof Exponentiation) ||
         !base.equals(((Exponentiation)term).base) || 
         exponent.size() != ((Exponentiation)term).exponent.size()) {

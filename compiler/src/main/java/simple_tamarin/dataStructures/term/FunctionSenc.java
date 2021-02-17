@@ -13,10 +13,21 @@ import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 public class FunctionSenc extends Term {
   private final Term key;
   private final Term value;
+  private final FunctionSenc canonical;
 
   public FunctionSenc(Term key, Term value) {
     this.key = key;
     this.value = value;
+    this.canonical = new FunctionSenc(this);
+  }
+
+  /**
+   * Canonical form constructor
+   */
+  private FunctionSenc(FunctionSenc original) {
+    this.canonical = this;
+    this.key = original.key.getCanonical();
+    this.value = original.value.getCanonical();
   }
 
   @Override public CanonicalTypeOrder getTypeOrder() {
@@ -37,8 +48,8 @@ public class FunctionSenc extends Term {
     return value.compareTo(functionSenc.value);
   }
 
-  @Override public Term toCanonical() {
-    return new FunctionSenc(key.toCanonical(), value.toCanonical());
+  @Override public Term getCanonical() {
+    return canonical;
   }
 
   @Override public boolean equals(Object obj) {
@@ -48,7 +59,7 @@ public class FunctionSenc extends Term {
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term term = ((Term)obj).toCanonical();
+    Term term = ((Term)obj).getCanonical();
     if (!(term instanceof FunctionSenc)) {
       return false;
     }

@@ -24,11 +24,10 @@ public class Variable extends Term {
   private static int temporals = 0;
   private final int id;
   private boolean placeholder = false; // invariant: only set to true in a constructor
-
   private final String name;
   private final STBlock cratedBy; // null for long term variables
-
-  private Term subterm = null; // invariant: never set to null elsewhere
+  private Term subterm = null; // invariant: only change using setSubterm
+  private Term canonical = this; // invariant: only change using setSubterm
   private VariableSort sort;
 
   /**
@@ -38,8 +37,8 @@ public class Variable extends Term {
     this.id = nextId();
     this.name = name;
     this.cratedBy = null;
-
     this.sort = VariableSort.NOSORT;
+    this.canonical = this;
   }
 
   /**
@@ -49,8 +48,8 @@ public class Variable extends Term {
     this.id = nextId();
     this.name = name;
     this.cratedBy = block;
-
     this.sort = VariableSort.NOSORT;
+    this.canonical = this;
   }
 
   /**
@@ -62,8 +61,8 @@ public class Variable extends Term {
     this.id = nextId();
     this.name = name;
     this.cratedBy = null;
-
     this.sort = sort;
+    this.canonical = this;
   }
 
   /**
@@ -71,7 +70,7 @@ public class Variable extends Term {
    */
   public Variable clone() {
     Variable result = new Variable(name);
-    result.subterm = this;
+    result.setSubterm(this);
     return result;
   }
 
@@ -109,11 +108,8 @@ public class Variable extends Term {
     return Integer.compare(this.id, ((Variable)term).id);
   }
 
-  @Override public Term toCanonical() {
-    if (subterm != null) {
-      return subterm.toCanonical();
-    }
-    return this;
+  @Override public Term getCanonical() {
+    return canonical;
   }
 
   @Override public boolean equals(Object obj) {
@@ -123,8 +119,8 @@ public class Variable extends Term {
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term term = ((Term)obj).toCanonical();
-    Term thisTerm = this.toCanonical();
+    Term term = ((Term)obj).getCanonical();
+    Term thisTerm = this.getCanonical();
     if (thisTerm instanceof Variable) {
       return thisTerm == term;
     } else {
@@ -151,17 +147,17 @@ public class Variable extends Term {
   @Override public String render(STBlock block) {
     for (Deconstruction dec : block.deconstructed) {
       if (dec.term.equals(this)) {
-        return this.toCanonical().render(dec.substitution);
+        return this.getCanonical().render(dec.substitution);
       }
     }
     return render();
   }
 
   @Override public String render(Term substitution) {
-    if (this.toCanonical() == this) {
+    if (this.getCanonical() == this) {
       Errors.DebugUnexpectedCall("render(substitution)", render());
     }
-    return this.toCanonical().render(substitution);
+    return this.getCanonical().render(substitution);
   }
 
   @Override public String renderLemma() {
@@ -204,7 +200,7 @@ public class Variable extends Term {
     }
 
     // this is not properly defined, assign
-    this.subterm = right.toCanonical();
+    this.setSubterm(right);
     this.placeholder = false;
     if (right.isDeconstructionTerm()) {
       Deconstruction dec = new Deconstruction(right.getEncodedValue(), this);
@@ -234,5 +230,13 @@ public class Variable extends Term {
 
   public boolean isLongTerm(){
     return cratedBy == null;
+  }
+
+  private void setSubterm(Term subterm) {
+    if (this.subterm != null) {
+      Errors.DebugUnexpectedCall("setSubterm on a Variable with subterm", render());
+    }
+    this.subterm = subterm;
+    this.canonical = subterm.getCanonical();
   }
 }

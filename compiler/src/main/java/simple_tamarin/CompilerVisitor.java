@@ -410,7 +410,7 @@ public class CompilerVisitor {
 				}
 				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
 				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
-				Term decoded = value.toCanonical().decode(key, ctx.argument.get(0), ctx.argument.get(1));
+				Term decoded = value.getCanonical().decode(key, ctx.argument.get(0), ctx.argument.get(1));
 				return new FunctionSdec(key, value, decoded);
 			}
 			case Constants.VPHASH: {
