@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import simple_tamarin.dataStructures.Principal;
-import simple_tamarin.dataStructures.StBlock;
+import simple_tamarin.dataStructures.STBlock;
 
 public class Constant extends Term {
   private static int constants = 0;
@@ -59,7 +59,7 @@ public class Constant extends Term {
     return "'" + word + "'";
   }
 
-  @Override public String render(StBlock block) {
+  @Override public String render(STBlock block) {
     return render();
   }
 
@@ -79,7 +79,7 @@ public class Constant extends Term {
     return new ArrayList<>(); 
   }
 
-  @Override public boolean assign(Term right, StBlock block, Principal principal) {
+  @Override public boolean assign(Term right, STBlock block, Principal principal) {
     return this.equals(right);
   }
 }

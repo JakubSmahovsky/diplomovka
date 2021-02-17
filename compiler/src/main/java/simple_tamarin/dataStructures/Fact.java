@@ -26,7 +26,7 @@ public class Fact {
   /** render with respect to block (for substitutions)
    * @param block to take substitutions from, pass null if no substitutions are needed
    */
-  public String render(StBlock block){
+  public String render(STBlock block){
     String persMark = persistent ? "!" : "";
     return BuilderFormatting.fact(persMark + name, terms, block);
   }

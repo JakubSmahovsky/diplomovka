@@ -4,7 +4,7 @@ import java.util.List;
 
 import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
-import simple_tamarin.dataStructures.StBlock;
+import simple_tamarin.dataStructures.STBlock;
 
 /**
  * An unary hash function, should be created with a tuple
@@ -53,7 +53,7 @@ public class FunctionHash extends Term {
     return BuilderFormatting.fact(Constants.HASH, subterm, null);
   }
 
-  @Override public String render(StBlock block) {
+  @Override public String render(STBlock block) {
     return BuilderFormatting.fact(Constants.HASH, subterm, block);
   }
 

@@ -5,7 +5,7 @@ import java.util.List;
 
 import simple_tamarin.dataStructures.Deconstruction;
 import simple_tamarin.dataStructures.Principal;
-import simple_tamarin.dataStructures.StBlock;
+import simple_tamarin.dataStructures.STBlock;
 
 public class Tuple extends Term{
   public ArrayList<Term> subterms;
@@ -78,7 +78,7 @@ public class Tuple extends Term{
     return "<" + String.join(", ", renderedSubterms) + ">";
   }
 
-  @Override public String render(StBlock block) {
+  @Override public String render(STBlock block) {
     ArrayList<String> renderedSubterms = new ArrayList<>();
     for (Term subterm : subterms) {
       renderedSubterms.add(subterm.render(block));
@@ -132,7 +132,7 @@ public class Tuple extends Term{
    * want to substitute this Tuple for the entire Term on the right.
    * Afterwards we want to recursively assign subterms.
    */
-  @Override public boolean assign(Term right, StBlock block, Principal principal) {
+  @Override public boolean assign(Term right, STBlock block, Principal principal) {
     // spread
     if (right.getEncodedValue() != null) {
       Deconstruction dec = new Deconstruction(right.getEncodedValue(), this);

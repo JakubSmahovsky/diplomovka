@@ -2,7 +2,7 @@ package simple_tamarin.dataStructures.command;
 
 import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
-import simple_tamarin.dataStructures.StBlock;
+import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.dataStructures.term.Variable;
 
 /**
@@ -10,9 +10,9 @@ import simple_tamarin.dataStructures.term.Variable;
  */
 public class CommandFr {
   private final Variable variable;
-  private final StBlock block;
+  private final STBlock block;
   
-  public CommandFr(Variable variable, StBlock block){
+  public CommandFr(Variable variable, STBlock block){
     this.variable = variable;
     this.block = block;
   }

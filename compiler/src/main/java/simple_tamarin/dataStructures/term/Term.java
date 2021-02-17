@@ -3,8 +3,8 @@ package simple_tamarin.dataStructures.term;
 import java.util.List;
 
 import simple_tamarin.dataStructures.Principal;
-import simple_tamarin.dataStructures.StBlock;
-import simple_tamarin.dataStructures.StModel;
+import simple_tamarin.dataStructures.STBlock;
+import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.errors.Errors;
 import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 public abstract class Term implements Comparable<Term>{
@@ -65,7 +65,7 @@ public abstract class Term implements Comparable<Term>{
    * The term may be deconstructed in which case it is rendered
    * as it's deconstruction with the substitutions given by the deconstruction.
    */
-  public abstract String render(StBlock block);
+  public abstract String render(STBlock block);
 
   /**
    * Like render but substitute a value that may be subtituted.
@@ -126,7 +126,7 @@ public abstract class Term implements Comparable<Term>{
    * This function should be overriden by "transparent" Terms and no other.
    * @return false if left and right cannot be unified
    */
-  public boolean assign(Term right, StBlock block, Principal principal) {
+  public boolean assign(Term right, STBlock block, Principal principal) {
     Errors.DebugUnexpectedCall("assign", render());
     return false;
   }
@@ -141,7 +141,7 @@ public abstract class Term implements Comparable<Term>{
     return null;
   }
 
-  public boolean isPublicVariable(StModel model) {
+  public boolean isPublicVariable(STModel model) {
     return false;
   }
 }

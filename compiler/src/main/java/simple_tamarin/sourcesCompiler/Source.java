@@ -1,18 +1,18 @@
 package simple_tamarin.sourcesCompiler;
 
-import simple_tamarin.dataStructures.StModel;
+import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.dataStructures.document.Document;
 import simple_tamarin.sourcesCompiler.graph.*;
 
 public class Source {
-  public final StModel model;
+  public final STModel model;
   public final int indexInModel;
 
   public String name;
   public Graph graph;
   public String printLabel;
 
-  public Source(StModel model, String name, Graph graph) {
+  public Source(STModel model, String name, Graph graph) {
     this.model = model;
     this.indexInModel = model.registerSource(this);
 

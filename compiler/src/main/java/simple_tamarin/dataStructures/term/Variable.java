@@ -9,8 +9,8 @@ import simple_tamarin.dataStructures.Alias;
 import simple_tamarin.dataStructures.Deconstruction;
 import simple_tamarin.dataStructures.Fact;
 import simple_tamarin.dataStructures.Principal;
-import simple_tamarin.dataStructures.StBlock;
-import simple_tamarin.dataStructures.StModel;
+import simple_tamarin.dataStructures.STBlock;
+import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.errors.Errors;
 
 public class Variable extends Term {
@@ -21,7 +21,7 @@ public class Variable extends Term {
 
   public final Principal owner;
   public final String name;
-  public final StBlock cratedBy; // null for long term variables
+  public final STBlock cratedBy; // null for long term variables
 
   public Term subterm;
   public VariableSort sort;
@@ -42,7 +42,7 @@ public class Variable extends Term {
   /**
    * Create an owned variable, the owner is taken from the creating block
    */
-  public Variable(String name, StBlock block) {
+  public Variable(String name, STBlock block) {
     this.id = nextId();
     this.owner = block.principal;
     this.name = name;
@@ -145,7 +145,7 @@ public class Variable extends Term {
     return Constants.sortString(sort) + name;
   }
 
-  @Override public String render(StBlock block) {
+  @Override public String render(STBlock block) {
     for (Deconstruction dec : block.deconstructed) {
       if (dec.term.equals(this)) {
         return this.toCanonical().render(dec.substitution);
@@ -190,7 +190,7 @@ public class Variable extends Term {
     return Arrays.asList(this);    
   }
 
-  @Override public boolean assign(Term right, StBlock block, Principal principal) {
+  @Override public boolean assign(Term right, STBlock block, Principal principal) {
     // if this is properly defined (principal already knew it) assert equality
     if (!this.placeholder) {
       if (right instanceof Variable && name.equals(((Variable)right).name)) { // equality guaranteed by usage of the same name, no action fact is needed
@@ -220,7 +220,7 @@ public class Variable extends Term {
     return true;
   }
 
-  public boolean isPublicVariable(StModel model) {
+  public boolean isPublicVariable(STModel model) {
     return model.findVariable(name) != null;
   }
 }

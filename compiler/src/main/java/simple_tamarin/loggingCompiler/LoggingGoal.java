@@ -1,17 +1,17 @@
 package simple_tamarin.loggingCompiler;
 
-import simple_tamarin.dataStructures.StModel;
+import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.errors.Errors;
 import simple_tamarin.sourcesCompiler.Goal;
 import simple_tamarin.sourcesCompiler.SourceGroup;
 
 public class LoggingGoal {
-  public final StModel model;
+  public final STModel model;
   public int number;
   public Goal goal;
   public SourceGroup group;
 
-  public LoggingGoal(StModel model ,int number, Goal goal) {
+  public LoggingGoal(STModel model ,int number, Goal goal) {
     this.model = model;
     this.number = number;
     this.goal = goal;

@@ -1,6 +1,6 @@
 package simple_tamarin.sourcesCompiler.term;
 
-import simple_tamarin.dataStructures.StBlock;
+import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.dataStructures.term.Term;
 
 /**
@@ -23,7 +23,7 @@ public abstract class OutputTerm extends Term {
     return null; // TODO debug message
   }
   
-  @Override public String render(StBlock block) {
+  @Override public String render(STBlock block) {
     return null; // TODO debug message
   }
 

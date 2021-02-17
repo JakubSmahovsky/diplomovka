@@ -13,7 +13,7 @@ import simple_tamarin.sourcesCompiler.SourceGroup;
 /**
  * Simple_tamarin Model
  */
-public class StModel {
+public class STModel {
   private ArrayList<Principal> principals;
   public ArrayList<Variable> pubVariables; // long term public variables
   public Queries queries;
@@ -23,10 +23,10 @@ public class StModel {
   public ArrayList<SourceGroup> sourceGroups;
 
   // lists of all objects of type
-  public ArrayList<StBlock> blocks;
+  public ArrayList<STBlock> blocks;
   public ArrayList<Source> sources;
 
-  public StModel(){
+  public STModel(){
     this.principals = new ArrayList<>();
     this.pubVariables = new ArrayList<>();
     this.queries = new Queries();
@@ -89,7 +89,7 @@ public class StModel {
     sourceGroups = new ArrayList<>(Arrays.asList(array));
   }
 
-  public int registerBlock(StBlock block) {
+  public int registerBlock(STBlock block) {
     int index = blocks.size();
     blocks.add(block);
     return index;

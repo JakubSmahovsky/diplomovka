@@ -6,17 +6,17 @@ import java.util.Iterator;
 import simple_tamarin.dataStructures.term.Variable;
 
 public class Principal {
-  public final StModel model;
+  public final STModel model;
   public final Variable principalID;
 
   public String name;
   private ArrayList<Variable> knowledge;
-  private ArrayList<StBlock> blocks;
-  public StBlock nextBlock;
+  private ArrayList<STBlock> blocks;
+  public STBlock nextBlock;
   public ArrayList<Variable> initState;
   public ArrayList<Fact> initResults;
 
-  public Principal(StModel model, Variable principalID, String name){
+  public Principal(STModel model, Variable principalID, String name){
     this.model = model;
     this.principalID = principalID;
     this.initState = new ArrayList<>();
@@ -58,9 +58,9 @@ public class Principal {
   public void nextBlock() {
     if (nextBlock != null) {
       blocks.add(nextBlock);
-      nextBlock = new StBlock(model, this, blocks.size(), nextBlock.state);
+      nextBlock = new STBlock(model, this, blocks.size(), nextBlock.state);
     } else {
-      nextBlock = new StBlock(model, this, 0);
+      nextBlock = new STBlock(model, this, 0);
     }
     return;
   }
@@ -72,11 +72,11 @@ public class Principal {
     if (blocks.isEmpty()) {
       return;
     }
-    ArrayList<StBlock> newBlocks = new ArrayList<>();
-    Iterator<StBlock> it = blocks.iterator();
-    StBlock last = it.next();
+    ArrayList<STBlock> newBlocks = new ArrayList<>();
+    Iterator<STBlock> it = blocks.iterator();
+    STBlock last = it.next();
     while (it.hasNext()) {
-      StBlock following = it.next();
+      STBlock following = it.next();
       boolean sends = !last.resultOutputs.isEmpty();
       boolean receives = !following.premiseInputs.isEmpty();
       if (sends && receives) {
@@ -95,15 +95,15 @@ public class Principal {
     return name;
   }
 
-  public ArrayList<StBlock> getBlocks() {
+  public ArrayList<STBlock> getBlocks() {
     return blocks;
   }
 
-  public StBlock getFirstBlock() {
+  public STBlock getFirstBlock() {
     return blocks.get(0);
   }
 
-  public StBlock getLastBlock() {
+  public STBlock getLastBlock() {
     return blocks.get(blocks.size()-1);
   }
 }

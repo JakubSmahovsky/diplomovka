@@ -12,7 +12,7 @@ import simple_tamarin.dataStructures.query.Confidentiality;
 import simple_tamarin.dataStructures.term.*;
 
 /**
- * Class used for construction of Tamarin code from StModel. It consists of 2 files,
+ * Class used for construction of Tamarin code from STModel. It consists of 2 files,
  * this one and BuilderFormatting. This class works  with logical parts 
  * of Tamarin code whereas BuilderFormatting handles all the speciffic
  * formatting of those parts.
@@ -20,9 +20,9 @@ import simple_tamarin.dataStructures.term.*;
  */
 public class Builder extends BuilderFormatting{
   public StringBuilder output;
-  public StModel model;
+  public STModel model;
 
-  public Builder(StModel model){
+  public Builder(STModel model){
     this.output = new StringBuilder();
     this.model = model;
     
@@ -119,15 +119,15 @@ public class Builder extends BuilderFormatting{
    */
   private void blocks() {
     for (Principal principal : model.getPrincipals()) {
-      StBlock previousBlock = null;
-      for (StBlock curBlock : principal.getBlocks()) {
+      STBlock previousBlock = null;
+      for (STBlock curBlock : principal.getBlocks()) {
         block(previousBlock, curBlock);
         previousBlock = curBlock;
       }
     }
   }
 
-  private void block(StBlock previousBlock, StBlock block){
+  private void block(STBlock previousBlock, STBlock block){
     // premises
     ArrayList<String> premises = new ArrayList<>();
     if (previousBlock == null) {
@@ -253,8 +253,8 @@ public class Builder extends BuilderFormatting{
     Variable principalsTemporal = Variable.nextTemporal();
 
     // find first block with varible from query
-    StBlock originalBlock = null;
-    for (StBlock block : query.principal.getBlocks()) {
+    STBlock originalBlock = null;
+    for (STBlock block : query.principal.getBlocks()) {
       if (block.completeState().contains(query.variable)) {
         originalBlock = block;
         break;

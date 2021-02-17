@@ -2,7 +2,7 @@ package simple_tamarin.dataStructures.command;
 
 import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
-import simple_tamarin.dataStructures.StBlock;
+import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.dataStructures.term.Term;
 
 /**
@@ -10,9 +10,9 @@ import simple_tamarin.dataStructures.term.Term;
  */
 public class CommandIn {
   private final Term term;
-  private final StBlock block;
+  private final STBlock block;
   
-  public CommandIn(Term term, StBlock block){
+  public CommandIn(Term term, STBlock block){
     this.term = term;
     this.block = block;
   }

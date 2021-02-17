@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.CharStreams;
 
-import simple_tamarin.dataStructures.StModel;
+import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.errors.STException;
 import simple_tamarin.loggingCompiler.*;
 import simple_tamarin.loggingParser.*;
@@ -25,7 +25,7 @@ public class Simple_tamarin {
 
     
     try {
-      StModel model = compileInput(inputFilePath, tamarinTheoryFilePath, quitOnWarning, showInfo);
+      STModel model = compileInput(inputFilePath, tamarinTheoryFilePath, quitOnWarning, showInfo);
       compileSources(tamarinExecutablePath, tamarinTheoryFilePath, Constants.DEFAULT_SOURCES_OUTPUT_PATH, model);
       BufferedReader resultStdReader = compileLogging(tamarinExecutablePath, tamarinTheoryFilePath, "secrecy0", model);
       compileResult(resultStdReader);
@@ -34,7 +34,7 @@ public class Simple_tamarin {
     }
   }
 
-  private static StModel compileInput(String inputFilePath, String tamarinTheoryFilePath,
+  private static STModel compileInput(String inputFilePath, String tamarinTheoryFilePath,
         boolean quitOnWarning, boolean showInfo) throws IOException, STException{
     File out = new File(tamarinTheoryFilePath);
     FileWriter writer = new FileWriter(out);
@@ -47,7 +47,7 @@ public class Simple_tamarin {
   }
 
   private static void compileSources(String tamarinExecutablePath, String tamarinTheoryFilePath,
-        String sourcesOutputFilePath, StModel model) throws STException, IOException {
+        String sourcesOutputFilePath, STModel model) throws STException, IOException {
     String command = tamarinExecutablePath + " " + tamarinTheoryFilePath;
     Process process = Runtime.getRuntime().exec(command);
     InputStream stdStream = process.getInputStream();
@@ -87,7 +87,7 @@ public class Simple_tamarin {
    * Compile logging messages from Tamarin and return input stream containing result from Tamarin
    */
   private static BufferedReader compileLogging(String tamarinExecutablePath, String tamarinTheoryFilePath,
-        String lemmaToProve, StModel model) throws STException, IOException {
+        String lemmaToProve, STModel model) throws STException, IOException {
     String command = tamarinExecutablePath + " --prove=" + lemmaToProve + " " + tamarinTheoryFilePath;
     Process process = Runtime.getRuntime().exec(command);
     // error output contains logging from Tamarin computation

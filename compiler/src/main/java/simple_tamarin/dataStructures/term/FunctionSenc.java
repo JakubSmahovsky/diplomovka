@@ -6,7 +6,7 @@ import java.util.List;
 
 import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
-import simple_tamarin.dataStructures.StBlock;
+import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.errors.Errors;
 import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 
@@ -59,7 +59,7 @@ public class FunctionSenc extends Term {
     return BuilderFormatting.fact(Constants.SENC, Arrays.asList(value, key), null);
   }
 
-  @Override public String render(StBlock block){
+  @Override public String render(STBlock block){
     return BuilderFormatting.fact(Constants.SENC, Arrays.asList(value, key), block);
   }
 

@@ -21,7 +21,7 @@ import simple_tamarin.errors.STException;
  */
 public class CompilerVisitor {	
 	private FileWriter writer;
-	private StModel model;
+	private STModel model;
 
 	public CompilerVisitor(FileWriter writer, boolean quitOnWarning, boolean showInfo) {
 		this.writer = writer;
@@ -29,8 +29,8 @@ public class CompilerVisitor {
 		Errors.showInfo = showInfo;
 	}
 
-	public StModel visitModel(ModelContext ctx) {
-		this.model = new StModel();
+	public STModel visitModel(ModelContext ctx) {
+		this.model = new STModel();
 		for (DeclarationContext dctx : ctx.declaration()) {
 			visitDeclaration(dctx);
 		}
@@ -111,14 +111,14 @@ public class CompilerVisitor {
 			principal = model.addPrincipal(principalName);
 		}
 
-		StBlock curBlock = principal.nextBlock;
+		STBlock curBlock = principal.nextBlock;
 		principal.nextBlock();
 		for (CommandContext command : ctx.command()) {
 			visitCommand(command, principal, curBlock);
 		}
 	}
 
-	public void visitCommand(CommandContext ctx, Principal principal, StBlock block) {
+	public void visitCommand(CommandContext ctx, Principal principal, STBlock block) {
 		if (ctx.knows() != null) {
 			visitKnows(ctx.knows(), principal, block);
 			return;
@@ -138,7 +138,7 @@ public class CompilerVisitor {
 		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitCommad");
 	}
 
-	public void visitKnows(KnowsContext ctx, Principal principal, StBlock block) {
+	public void visitKnows(KnowsContext ctx, Principal principal, STBlock block) {
 		if (principal.getFirstBlock() != block) {
 			Errors.InfoKnowsInFirstBlock(ctx.getStart());
 		}
@@ -183,7 +183,7 @@ public class CompilerVisitor {
 		}
 	}
 
-	public void visitGenerates(GeneratesContext ctx, Principal principal, StBlock block) {
+	public void visitGenerates(GeneratesContext ctx, Principal principal, STBlock block) {
 		for (VariableContext vctx : ctx.variable()) {
 			Variable variable = visitVariable(vctx, principal, block, VariableDefined.PRIVATE_GENERATES);
 			principal.learn(variable);
@@ -192,7 +192,7 @@ public class CompilerVisitor {
 		}
 	}
 
-	public void visitCheck(CheckContext ctx, Principal principal, StBlock block){
+	public void visitCheck(CheckContext ctx, Principal principal, STBlock block){
 		visitCheckedCall(ctx.checkedCall(), principal, block, VariableDefined.USE_RIGHT);
 	}
 
@@ -231,7 +231,7 @@ public class CompilerVisitor {
 		}
 	}
 
-	public void visitAssignment(AssignmentContext ctx, Principal principal, StBlock block) {
+	public void visitAssignment(AssignmentContext ctx, Principal principal, STBlock block) {
 		Term left = visitTerm(ctx.left, principal, block, VariableDefined.PRIVATE_LEFT);
 		Term right = visitTerm(ctx.right, principal, block, VariableDefined.USE_RIGHT);
 
@@ -243,7 +243,7 @@ public class CompilerVisitor {
 	/**
 	 * Also verifies wheather term is transparent if needed (because of expectVD)
 	 */
-	public Term visitTerm(TermContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
+	public Term visitTerm(TermContext ctx, Principal principal, STBlock block, VariableDefined expectVD) {
 		// bracketed term
 		if (ctx.term().size() == 1) {
 			return visitTerm(ctx.term(0), principal, block, expectVD);
@@ -288,7 +288,7 @@ public class CompilerVisitor {
 	 * it adds another exponent to the list and recursively calls to the left.
 	 * Otherwise it returns the base.
 	 */
-	public Term visitExponentiationBase(TermContext ctx, ArrayList<Term> exponent, Principal principal, StBlock block, VariableDefined expectVD) {
+	public Term visitExponentiationBase(TermContext ctx, ArrayList<Term> exponent, Principal principal, STBlock block, VariableDefined expectVD) {
 		if (ctx.POWER_OP() != null && ctx.term().size() == 2) {
 			exponent.add(visitTerm(ctx.term(1), principal, block, expectVD));
 			return visitExponentiationBase(ctx.term(0), exponent, principal, block, expectVD);
@@ -308,7 +308,7 @@ public class CompilerVisitor {
 	/**
 	 * Finds a variable if it should have existed or creates a new one otherwise.
 	 */
-	public Variable visitVariable(VariableContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
+	public Variable visitVariable(VariableContext ctx, Principal principal, STBlock block, VariableDefined expectVD) {
 		String name = ctx.IDENTIFIER().getText();
 		
 		Variable result = principal.knows(name);
@@ -364,7 +364,7 @@ public class CompilerVisitor {
 		}
 	}
 
-	public void visitCheckedCall(CheckedCallContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
+	public void visitCheckedCall(CheckedCallContext ctx, Principal principal, STBlock block, VariableDefined expectVD) {
 		switch (ctx.CHECKED().getText()) {
 			case Constants.VPASSERT: {
 				model.builtins.restriction_eq = true;
@@ -386,7 +386,7 @@ public class CompilerVisitor {
 	}
 	
 
-	public Term visitFunctionCall(FunctionCallContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
+	public Term visitFunctionCall(FunctionCallContext ctx, Principal principal, STBlock block, VariableDefined expectVD) {
 		if (expectVD == VariableDefined.PRIVATE_LEFT) {
 			// so far we have no transparent functions
 			Errors.ErrorLeftNontransparent(ctx.start);
@@ -437,7 +437,7 @@ public class CompilerVisitor {
 		}
 	}
 
-	public Term visitTuple(TupleContext ctx, Principal principal, StBlock block, VariableDefined expectVD) {
+	public Term visitTuple(TupleContext ctx, Principal principal, STBlock block, VariableDefined expectVD) {
 		ArrayList<Term> subterms = new ArrayList<>();
 		for (TermContext termctx : ctx.term()) {
 			subterms.add(visitTerm(termctx, principal, block, expectVD));

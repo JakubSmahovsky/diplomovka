@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import simple_tamarin.Constants;
-import simple_tamarin.dataStructures.StModel;
+import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.dataStructures.term.*;
 import simple_tamarin.loggingParser.LoggingParser.*;
 import simple_tamarin.sourcesCompiler.Goal;
@@ -14,11 +14,11 @@ import simple_tamarin.sourcesCompiler.term.FunctionSecond;
 import simple_tamarin.sourcesCompiler.term.OutputVariable;
 
 public class LoggingCompilerVisitor {
-  private StModel model;
+  private STModel model;
   private Queue<LoggingGoal> solved;
   private Queue<LoggingSource> by;
 
-  public LoggingCompilerVisitor(StModel model) {
+  public LoggingCompilerVisitor(STModel model) {
     this.model = model;
     this.solved = new LinkedList<>();
     this.by = new LinkedList<>();

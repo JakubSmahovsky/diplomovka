@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import simple_tamarin.Constants;
-import simple_tamarin.dataStructures.StModel;
+import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.dataStructures.term.*;
 import simple_tamarin.errors.Errors;
 import simple_tamarin.errors.STException;
@@ -16,9 +16,9 @@ import simple_tamarin.sourcesParser.SourcesParser.*;
 
 public class SourcesCompilerVisitor {
 	private FileWriter writer;
-  private StModel model;
+  private STModel model;
   
-  public SourcesCompilerVisitor(StModel model, FileWriter writer) {
+  public SourcesCompilerVisitor(STModel model, FileWriter writer) {
     this.model = model;
     this.writer = writer;
   }

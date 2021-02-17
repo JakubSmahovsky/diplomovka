@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import simple_tamarin.Constants;
-import simple_tamarin.dataStructures.StBlock;
+import simple_tamarin.dataStructures.STBlock;
 
 public class Exponentiation extends Term {
   public Term base;
@@ -82,7 +82,7 @@ public class Exponentiation extends Term {
     return String.join(Constants.EXP, substrings);
   }
 
-  @Override public String render(StBlock block) {
+  @Override public String render(STBlock block) {
     ArrayList<Term> subterms = new ArrayList<>();
     subterms.add(base);
     subterms.addAll(exponent);

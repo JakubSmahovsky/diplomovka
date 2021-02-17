@@ -8,7 +8,7 @@ import java.util.List;
 import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.Alias;
 import simple_tamarin.dataStructures.Principal;
-import simple_tamarin.dataStructures.StBlock;
+import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.dataStructures.term.*;
 import simple_tamarin.errors.Errors;
 import simple_tamarin.groupedFunctions.BlockNames;
@@ -33,7 +33,7 @@ public abstract class BuilderFormatting {
     return alias.left.render() + " = " + alias.right.render();
   }
 
-  public static String fact(String name, List<? extends Term> terms, StBlock block) {
+  public static String fact(String name, List<? extends Term> terms, STBlock block) {
     ArrayList<String> renders = new ArrayList<>();
     for (Term term : terms) {
       renders.add(block == null ? term.render() : term.render(block));
@@ -41,11 +41,11 @@ public abstract class BuilderFormatting {
     return name + "(" + String.join(", ", renders) + ")";
   }
 
-  public static String fact(String name, Term term, StBlock block) {
+  public static String fact(String name, Term term, STBlock block) {
     return fact(name, Arrays.asList(term), block);
   }
 
-  public static String persistentFact(String name, List<Variable> variables, StBlock block) {
+  public static String persistentFact(String name, List<Variable> variables, STBlock block) {
     return "!" + fact(name, variables, block);
   }
 
@@ -53,18 +53,18 @@ public abstract class BuilderFormatting {
    * @param sourceBlock is block whose state we are rendering
    * @param contextBlock is block whose body requires the state fact
    */
-  public static String resultStateFact(StBlock sourceBlock, StBlock contextBlock) {
+  public static String resultStateFact(STBlock sourceBlock, STBlock contextBlock) {
     return fact(BlockNames.render(sourceBlock), sourceBlock.completeState(), contextBlock);
   }
 
-  public static String initStateFact(Principal principal, StBlock block) {
+  public static String initStateFact(Principal principal, STBlock block) {
     return persistentFact(principal.name + "_init", principal.initState, block);
   }
 
   /**
    * @param block is null for init block
    */
-  public static String ruleAliases(StBlock block, List<String> aliases) {
+  public static String ruleAliases(STBlock block, List<String> aliases) {
     String label = block == null ? BlockNames.renderInit() : BlockNames.render(block);
     StringBuilder result = new StringBuilder("rule " + label + ":\r\n");
     if (aliases.isEmpty()) {
@@ -113,7 +113,7 @@ public abstract class BuilderFormatting {
     return result.toString();
   }
 
-  public static String lemmaResultStateFact(StBlock block, Variable temporal) {
+  public static String lemmaResultStateFact(STBlock block, Variable temporal) {
     return lemmaFact(BlockNames.render(block), block.completeState(), temporal);
   }
 

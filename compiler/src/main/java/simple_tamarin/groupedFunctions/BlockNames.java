@@ -1,8 +1,8 @@
 package simple_tamarin.groupedFunctions;
 
 import simple_tamarin.Constants;
-import simple_tamarin.dataStructures.StBlock;
-import simple_tamarin.dataStructures.StModel;
+import simple_tamarin.dataStructures.STBlock;
+import simple_tamarin.dataStructures.STModel;
 
 public abstract class BlockNames{
   /**
@@ -10,7 +10,7 @@ public abstract class BlockNames{
   * The label goes something like: principalName_principalBlockId_modelBlockId
   * Must be consistent with read().
   */
-  public static String render(StBlock block) {
+  public static String render(STBlock block) {
     return block.principal.name + Constants.NAMES_SEPARATOR
       + block.rangeEnd + Constants.NAMES_SEPARATOR + block.indexInModel;
   }
@@ -21,7 +21,7 @@ public abstract class BlockNames{
    * (using function defined in this file).
    * Must be consistent with render().
    */
-  public static StBlock read(StModel model, String label) {
+  public static STBlock read(STModel model, String label) {
     String id = label.split("_")[2];
     return model.blocks.get(Integer.parseInt(id));
   }

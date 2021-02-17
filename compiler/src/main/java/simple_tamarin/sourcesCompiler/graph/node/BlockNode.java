@@ -1,15 +1,15 @@
 package simple_tamarin.sourcesCompiler.graph.node;
 
-import simple_tamarin.dataStructures.StBlock;
-import simple_tamarin.dataStructures.StModel;
+import simple_tamarin.dataStructures.STBlock;
+import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.dataStructures.document.Document;
 import simple_tamarin.groupedFunctions.BlockNames;
 import simple_tamarin.sourcesCompiler.graph.Description;
 
 public class BlockNode extends Node {
-  public StBlock block; // null for custom rule (e.g. init, key reveals)
+  public STBlock block; // null for custom rule (e.g. init, key reveals)
 
-  public BlockNode(String id, String label, StModel model) {
+  public BlockNode(String id, String label, STModel model) {
     super(id, label);
     // assign block to node unless it's a custom rule (e.g. init, key reveals)
     if (!BlockNames.isCustomLabel(label)) {
