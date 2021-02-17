@@ -16,9 +16,9 @@ import simple_tamarin.errors.Errors;
  * These conditions are not verified here, because we need to log more speciffic errors in VisitorImp.
  */
 public class FunctionSdec extends Term{
-  public Term key;
-  public Term encodedValue;
-  public Term decodedValue;
+  private final Term key;
+  private final Term encodedValue;
+  private final Term decodedValue;
 
   public FunctionSdec(Term key, Term encodedValue, Term decodedValue) {
     this.key = key;

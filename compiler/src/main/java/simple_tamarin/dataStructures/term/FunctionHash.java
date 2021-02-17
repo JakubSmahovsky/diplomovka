@@ -11,7 +11,7 @@ import simple_tamarin.dataStructures.STBlock;
  * to simulate an n-ary hash function.
  */
 public class FunctionHash extends Term {
-  public Term subterm;
+  private final Term subterm;
 
   public FunctionHash(Term subterm) {
     this.subterm = subterm;

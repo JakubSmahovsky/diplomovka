@@ -8,8 +8,8 @@ import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.STBlock;
 
 public class Exponentiation extends Term {
-  public Term base;
-  public ArrayList<Term> exponent; // exponent is kept sorted (for canonical form)
+  private final Term base;
+  private final ArrayList<Term> exponent; // invariant: never add to or remove form; keep sorted
 
   public Exponentiation(Term base, ArrayList<Term> exponent) {
     this.base = base;

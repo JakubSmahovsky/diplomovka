@@ -8,7 +8,7 @@ import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.STBlock;
 
 public class Tuple extends Term{
-  public ArrayList<Term> subterms;
+  private final ArrayList<Term> subterms; // invariant: never add to or remove form
 
   public Tuple(ArrayList<Term> subterms) {
     this.subterms = subterms;

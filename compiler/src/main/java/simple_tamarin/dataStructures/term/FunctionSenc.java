@@ -11,8 +11,8 @@ import simple_tamarin.errors.Errors;
 import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 
 public class FunctionSenc extends Term {
-  public Term key;
-  public Term value;
+  private final Term key;
+  private final Term value;
 
   public FunctionSenc(Term key, Term value) {
     this.key = key;
