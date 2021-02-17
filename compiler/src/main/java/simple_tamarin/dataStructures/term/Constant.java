@@ -8,8 +8,8 @@ import simple_tamarin.dataStructures.STBlock;
 
 public class Constant extends Term {
   private static int constants = 0;
-  protected final int id;
-  public String word;
+  private final int id;
+  private final String word;
 
   public Constant(String word) {
     this.id = nextId();
@@ -29,8 +29,8 @@ public class Constant extends Term {
     if (result != 0) {
       return result;
     }
-    // both have to be Variables, compare based on id
-    return Integer.compare(this.id, ((Variable)term).id);
+    // both have to be Constants, compare based on id
+    return Integer.compare(this.id, ((Constant)term).id);
   }
 
   @Override public boolean equals(Object obj) {

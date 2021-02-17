@@ -68,7 +68,7 @@ public class STModel {
    */
   public Variable findVariable(String name){
     for (Variable variable : pubVariables) {
-      if (variable.name.equals(name)) {
+      if (variable.equalsByName(name)) {
         return variable;
       }
     }

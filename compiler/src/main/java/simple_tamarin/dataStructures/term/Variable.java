@@ -13,29 +13,32 @@ import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.errors.Errors;
 
+/**
+ * A Class representing a Simple Tamarin variable. In the thesis a variable
+ * is fully defined by a name and an owner. In code it's fully defined by a java
+ * object, so the owner is unnecessary (when looking for, say, Alice's Na we only
+ * search among Alice's private varibales)
+ */
 public class Variable extends Term {
   private static int variables = 0;
   private static int temporals = 0;
-  protected final int id;
-  protected boolean placeholder = false;
+  private final int id;
+  private boolean placeholder = false; // invariant: only set to true in a constructor
 
-  public final Principal owner;
-  public final String name;
-  public final STBlock cratedBy; // null for long term variables
+  private final String name;
+  private final STBlock cratedBy; // null for long term variables
 
-  public Term subterm;
-  public VariableSort sort;
+  private Term subterm = null; // invariant: never set to null elsewhere
+  private VariableSort sort;
 
   /**
    * Create an unowned variable, this mean the variable should be static
    */
   public Variable(String name) {
     this.id = nextId();
-    this.owner = null;
     this.name = name;
     this.cratedBy = null;
 
-    this.subterm = null;
     this.sort = VariableSort.NOSORT;
   }
 
@@ -44,11 +47,9 @@ public class Variable extends Term {
    */
   public Variable(String name, STBlock block) {
     this.id = nextId();
-    this.owner = block.principal;
     this.name = name;
     this.cratedBy = block;
 
-    this.subterm = null;
     this.sort = VariableSort.NOSORT;
   }
 
@@ -59,25 +60,19 @@ public class Variable extends Term {
    */
   public Variable(String name, VariableSort sort) {
     this.id = nextId();
-    this.owner = null;
     this.name = name;
     this.cratedBy = null;
 
-    this.subterm = null;
     this.sort = sort;
   }
 
   /**
-   * Clone the variable for a new owner, e.g. when receiving it in a message.
+   * Clone this variable for a new owner, e.g. when receiving it in a message.
    */
-  public Variable(Variable variable, Principal newOwner) {
-    this.id = nextId();
-    this.owner = newOwner;
-    this.name = variable.name;
-    this.cratedBy = null;
-    
-    this.subterm = variable;
-    this.sort = VariableSort.NOSORT;
+  public Variable clone() {
+    Variable result = new Variable(name);
+    result.subterm = this;
+    return result;
   }
 
   /**
@@ -135,6 +130,14 @@ public class Variable extends Term {
     } else {
       return thisTerm.equals(term);
     }
+  }
+
+  public boolean equalsByName(String name){
+    return this.name.equals(name);
+  }
+
+  public boolean equalsByName(Variable variable){
+    return this.name.equals(variable.name);
   }
 
   @Override public List<Variable> extractKnowledge() {
@@ -202,6 +205,7 @@ public class Variable extends Term {
 
     // this is not properly defined, assign
     this.subterm = right.toCanonical();
+    this.placeholder = false;
     if (right.isDeconstructionTerm()) {
       Deconstruction dec = new Deconstruction(right.getEncodedValue(), this);
       if (!block.deconstructed.contains(dec)) {
@@ -220,7 +224,15 @@ public class Variable extends Term {
     return true;
   }
 
-  public boolean isPublicVariable(STModel model) {
+  public boolean isPublicInModel(STModel model) {
     return model.findVariable(name) != null;
+  }
+
+  public boolean isPublic() {
+    return sort == VariableSort.PUBLIC;
+  }
+
+  public boolean isLongTerm(){
+    return cratedBy == null;
   }
 }

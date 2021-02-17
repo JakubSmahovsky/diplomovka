@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import simple_tamarin.Constants.*;
 import simple_tamarin.dataStructures.*;
 import simple_tamarin.dataStructures.command.*;
 import simple_tamarin.dataStructures.query.Confidentiality;
@@ -68,7 +67,7 @@ public class Builder extends BuilderFormatting{
     for (Principal principal : model.getPrincipals()) {
       for (Variable variable : principal.initState) {
         // private static variables are generated in init block 
-        if (variable.sort != VariableSort.PUBLIC && variable.cratedBy == null) {
+        if (!variable.isPublic() && variable.isLongTerm()) {
           variable.addFresh();
           toGenerate.add(variable);
         }

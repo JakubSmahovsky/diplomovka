@@ -5,12 +5,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.Alias;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.dataStructures.term.*;
-import simple_tamarin.errors.Errors;
 import simple_tamarin.groupedFunctions.BlockNames;
 
 /**
@@ -154,9 +152,6 @@ public abstract class BuilderFormatting {
   }
 
   public static String atTemporal(Variable temporal) {
-    if (temporal.sort != VariableSort.TEMPORAL) {
-      Errors.DebugNotTemporal("atTemporal");
-    }
     return "@ " + temporal.render();
   }
 

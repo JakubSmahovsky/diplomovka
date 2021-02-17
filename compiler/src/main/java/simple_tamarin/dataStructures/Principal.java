@@ -35,8 +35,21 @@ public class Principal {
    */
   public Variable knows(String name) {
     for (Variable variable : knowledge) {
-      if (variable.name.equals(name)) {
+      if (variable.equalsByName(name)) {
         return variable;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Finds the variable among known variables, does NOT compare canonical forms, only names
+   * @return known variable with the same name or null if principal doesn't know it
+   */
+  public Variable knows(Variable variable) {
+    for (Variable known : knowledge) {
+      if (known.equalsByName(variable)) {
+        return known;
       }
     }
     return null;

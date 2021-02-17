@@ -141,7 +141,7 @@ public abstract class Term implements Comparable<Term>{
     return null;
   }
 
-  public boolean isPublicVariable(STModel model) {
+  public boolean isPublicInModel(STModel model) {
     return false;
   }
 }

@@ -159,17 +159,15 @@ public class CompilerVisitor {
 			Variable variable = visitVariable(vctx, principal, block, expectVD);
 
 			if (pub) {
-				variable.sort = VariableSort.PUBLIC;
 				principal.initState.add(variable);
 			} else {
-				// sort will be set to fresh when init block is rendered
 				// possibly unify the private variable with one known by another principal
 				for (Principal anyPrincipal : model.getPrincipals()) {
-					Variable existing = anyPrincipal.knows(variable.name);
+					Variable existing = anyPrincipal.knows(variable);
 					if (existing != null) {
-						if (existing.cratedBy == null) {
-							// created by null confirms it's a long term variable
+						if (existing.isLongTerm()) {
 							variable = existing;
+							break;
 						} else {
 							Errors.WarningVariableEphemeralShadowed(vctx.start);
 						}
@@ -211,10 +209,10 @@ public class CompilerVisitor {
 			Term term = visitTerm(message, sender, null, VariableDefined.USE_MESSAGE);
 
 			// if it's not a public variable
-			if (!term.isPublicVariable(model)) {
+			if (!term.isPublicInModel(model)) {
 				// add all new variables to receiver's knowledge
 				for (Variable variable : term.extractKnowledge()) {
-					receiver.learn(new Variable(variable, receiver));
+					receiver.learn(variable.clone());
 				}
 			}
 
@@ -352,7 +350,7 @@ public class CompilerVisitor {
 				return null;
 			case PUBLIC_KNOWS:
 				Errors.InfoDeclareLongTermVariable(ctx.start);
-				result = new Variable(name);
+				result = new Variable(name, VariableSort.PUBLIC);
 				model.pubVariables.add(result);
 				return result;
 			case PRIVATE_KNOWS:
