@@ -55,8 +55,8 @@ public abstract class BuilderFormatting {
     return fact(BlockNames.render(sourceBlock), sourceBlock.completeState(), contextBlock);
   }
 
-  public static String initStateFact(Principal principal, STBlock block) {
-    return persistentFact(principal.name + "_init", principal.initState, block);
+  public static String initStateFact(Principal principal) {
+    return persistentFact(principal.name + "_init", principal.composeInitState(), null);
   }
 
   /**

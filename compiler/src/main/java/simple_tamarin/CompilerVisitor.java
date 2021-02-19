@@ -3,7 +3,6 @@ package simple_tamarin;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.antlr.v4.runtime.Token;
 
@@ -83,7 +82,7 @@ public class CompilerVisitor {
 				Errors.ErrorReservedName(pctx);
 			}
 			// check for name collision, allso covers duplicite principals
-			if (model.findVariable(principalName) != null) {
+			if (model.findPublic(principalName) != null) {
 				Errors.ErrorPrincipalNameCollision(pctx);
 			}
 
@@ -105,7 +104,7 @@ public class CompilerVisitor {
 			} else {
 				Errors.InfoDeclarePrincipal(ctx.principal);
 			}
-			if (model.findVariable(principalName) != null) {
+			if (model.findPublic(principalName) != null) {
 				Errors.ErrorPrincipalNameCollision(ctx.principal);
 			}
 			principal = model.addPrincipal(principalName);
@@ -144,54 +143,32 @@ public class CompilerVisitor {
 		}
 
 		String modifier = ctx.modifier.getText();
-		boolean pub;
-		if (modifier.equals("public")){
-			pub = true;
-		} else if (modifier.equals("private")){
-			pub = false;
-		} else {
-			Errors.DebugUnexpectedTokenType(modifier, "modifier in knows");
-			return;
-		}
+		boolean pub = modifier.equals("public");
 
-		VariableDefined expectVD = pub ? VariableDefined.PUBLIC_KNOWS : VariableDefined.PRIVATE_KNOWS;
+		VariableDefined expectVD = pub ? VariableDefined.KNOWS_PUBLIC : VariableDefined.KNOWS_PRIVATE;
 		for (VariableContext vctx : ctx.variable()) {
 			Variable variable = visitVariable(vctx, principal, block, expectVD);
 
 			if (pub) {
-				principal.initState.add(variable);
+				principal.learnPublic(variable);
 			} else {
-				// possibly unify the private variable with one known by another principal
-				for (Principal anyPrincipal : model.getPrincipals()) {
-					Variable existing = anyPrincipal.knows(variable);
-					if (existing != null) {
-						if (existing.isLongTerm()) {
-							variable = existing;
-							break;
-						} else {
-							Errors.WarningVariableEphemeralShadowed(vctx.start);
-						}
-					}
-				}
+				principal.learnLongTermPrivate(variable);
+				model.builtins.prefab_private_reveal = true;
 			}
-			principal.learn(variable);
-			principal.initState.add(variable);
-			model.builtins.prefab_private_reveal = true;
-			principal.initResults.add(new Fact(true, Constants.PRINCIPAL_PRIVATE, Arrays.asList(principal.principalID, variable)));
 		}
 	}
 
 	public void visitGenerates(GeneratesContext ctx, Principal principal, STBlock block) {
 		for (VariableContext vctx : ctx.variable()) {
-			Variable variable = visitVariable(vctx, principal, block, VariableDefined.PRIVATE_GENERATES);
-			principal.learn(variable);
+			Variable variable = visitVariable(vctx, principal, block, VariableDefined.GENERATES);
+			principal.learnEphemeralPrivate(variable);
 			block.premiseFresh.add(new CommandFr(variable, block));
 			block.state.add(variable);
 		}
 	}
 
 	public void visitCheck(CheckContext ctx, Principal principal, STBlock block){
-		visitCheckedCall(ctx.checkedCall(), principal, block, VariableDefined.USE_RIGHT);
+		visitCheckedCall(ctx.checkedCall(), principal, block, VariableDefined.CHECK);
 	}
 
 	public void visitMessage(MessageContext ctx) {
@@ -206,19 +183,15 @@ public class CompilerVisitor {
 
 		for (TermContext message : ctx.term()) {
 			// visitTerm verifies that message is transparent (when expectVD is USE_MESSAGE)
-			Term term = visitTerm(message, sender, null, VariableDefined.USE_MESSAGE);
+			Term term = visitTerm(message, sender, null, VariableDefined.MESSAGE);
 
-			// if it's not a public variable
-			if (!term.isPublicInModel(model)) {
-				// add all new variables to receiver's knowledge
-				for (Variable variable : term.extractKnowledge()) {
-					receiver.learn(variable.clone());
+			// add all new variables to receiver's knowledge
+			for (Variable variable : term.extractKnowledge()) {
+				// do not learn a public variable again as private if you aleady know it (it is implicitly compared, because it's in the state)
+				if (receiver.knowsPublicByName(variable) == null) {
+					receiver.learnEphemeralPrivate(variable.clone());
 				}
-			}
-
-			if (sender.getBlocks().isEmpty()) {
-				// sender may send a public variable before doing anything else, in that case it needs an initial block
-				sender.nextBlock();
+				// TODO unary ASSERT
 			}
 
 			sender.getLastBlock().resultOutputs.add(new CommandOut(term, sender.getLastBlock()));
@@ -230,8 +203,8 @@ public class CompilerVisitor {
 	}
 
 	public void visitAssignment(AssignmentContext ctx, Principal principal, STBlock block) {
-		Term left = visitTerm(ctx.left, principal, block, VariableDefined.PRIVATE_LEFT);
-		Term right = visitTerm(ctx.right, principal, block, VariableDefined.USE_RIGHT);
+		Term left = visitTerm(ctx.left, principal, block, VariableDefined.ASSIGNMENT_LEFT);
+		Term right = visitTerm(ctx.right, principal, block, VariableDefined.ASSIGNMENT_RIGHT);
 
 		if (!left.assign(right, block, principal)) {
 			Errors.ErrorCannotUnify(ctx.left, ctx.right);
@@ -262,10 +235,10 @@ public class CompilerVisitor {
 
 		if (ctx.POWER_OP() != null && ctx.term().size() == 2) {
 			// exponentiation is not transparent
-			if (expectVD == VariableDefined.PRIVATE_LEFT) {
+			if (expectVD == VariableDefined.ASSIGNMENT_LEFT) {
 				Errors.ErrorLeftNontransparent(ctx.start);
 			}
-			if (expectVD == VariableDefined.USE_MESSAGE) {
+			if (expectVD == VariableDefined.MESSAGE) {
 				Errors.ErrorMessageNontransparent(ctx.start);
 			}
 			model.builtins.diffie_hellman = true;
@@ -308,57 +281,96 @@ public class CompilerVisitor {
 	 */
 	public Variable visitVariable(VariableContext ctx, Principal principal, STBlock block, VariableDefined expectVD) {
 		String name = ctx.IDENTIFIER().getText();
-		
-		Variable result = principal.knows(name);
+
+		// principal knows it as private
+		Variable result = principal.knowsEphemeralPrivate(name);
+		if (result == null) {
+			result = principal.knowsLongTermPrivate(name);
+		}
 		if (result != null) {
 			switch (expectVD) {
-				case PUBLIC_DEFINITION:
-				case PRIVATE_KNOWS:
-				case PRIVATE_GENERATES:
-				case PUBLIC_KNOWS:
-					Errors.ErrorVariableCollisionPrivate(principal, ctx.start);
+				case KNOWS_PUBLIC:
+				case KNOWS_PRIVATE:
+				case GENERATES:
+					Errors.ErrorVariableAlreadyKnown(principal, ctx.start, false);
 					return null;
 				default:
 					return result;
 			}
 		}
 
-		result = model.findVariable(name);
+		// principal knows it as public
+		result = principal.knowsPublic(name);
 		if (result != null) {
 			switch (expectVD) {
-				case PUBLIC_DEFINITION:
-					Errors.ErrorVariableCollisionPublic(result, ctx.start);
-					return result;
-				case PRIVATE_KNOWS:
-				case PRIVATE_GENERATES:
-				case PRIVATE_LEFT:
-					Errors.InfoComparedPublicVariable(ctx.start);
-					// and go define it as private placeholder
+				case KNOWS_PUBLIC:
+				case KNOWS_PRIVATE:
+				case GENERATES:
+					Errors.ErrorVariableAlreadyKnown(principal, ctx.start, true);
 				default:
 					return result;
 			}
 		}
 
+		// it exists somewhere else
+		if (expectVD == VariableDefined.KNOWS_PUBLIC ||
+				expectVD == VariableDefined.KNOWS_PRIVATE ||
+				expectVD == VariableDefined.GENERATES) {
+			// it exists as public
+			result = model.findPublic(name);
+			if (result != null) {
+				switch (expectVD) {
+					case KNOWS_PUBLIC:
+						return result;
+					case KNOWS_PRIVATE:
+					case GENERATES:
+						Errors.WarningShadowedPublic(ctx.start);
+					default:
+				}
+			}
+			
+			// some other principal knows it as long-term private, there can only be one long-term private with this name
+			result = null;
+			for (Principal p : model.getPrincipals()){
+				if (p != principal) {
+					result = p.knowsLongTermPrivate(name);
+					if (result != null) {
+						break;
+					}
+				}
+			}
+			if (result != null) {
+				switch (expectVD) {
+					case KNOWS_PUBLIC:
+						Errors.WarningShadowedLongTermPrivate(ctx.start);
+						break;
+					case KNOWS_PRIVATE:
+						return result;
+					case GENERATES:
+						Errors.WarningShadowedLongTermPrivate(ctx.start);
+						break;
+					default:
+				}
+			}
+		}
+
+		// it does not exist (or we don't care if it does)
 		if (!identifierNameValid(name)) {
 			Errors.ErrorReservedName(ctx.start);
 		}
-
 		switch (expectVD) {
-			case USE_RIGHT:
-			case USE_MESSAGE:
-				Errors.ErrorVariableUnknown(principal, ctx.start);
-				return null;
-			case PUBLIC_KNOWS:
-				Errors.InfoDeclareLongTermVariable(ctx.start);
-				result = new Variable(name, VariableSort.PUBLIC);
+			case KNOWS_PUBLIC:
+				result = new Variable(name);
 				model.pubVariables.add(result);
 				return result;
-			case PRIVATE_KNOWS:
+			case KNOWS_PRIVATE:
+			case GENERATES:
 				return new Variable(name);
-			case PRIVATE_LEFT:
+			case ASSIGNMENT_LEFT:
 				return Variable.placeholder(name);
 			default:
-				return new Variable(name, block);
+				Errors.ErrorVariableUnknown(principal, ctx.start);
+				return null;
 		}
 	}
 
@@ -385,12 +397,11 @@ public class CompilerVisitor {
 	
 
 	public Term visitFunctionCall(FunctionCallContext ctx, Principal principal, STBlock block, VariableDefined expectVD) {
-		if (expectVD == VariableDefined.PRIVATE_LEFT) {
+		if (expectVD == VariableDefined.ASSIGNMENT_LEFT) {
 			// so far we have no transparent functions
 			Errors.ErrorLeftNontransparent(ctx.start);
 		}
-		if (expectVD == VariableDefined.USE_MESSAGE) {
-			// so far we have no transparent functions
+		if (expectVD == VariableDefined.MESSAGE) {
 			Errors.ErrorMessageNontransparent(ctx.start);
 		}
 		switch (ctx.FUNCTION().getText()) {
@@ -473,7 +484,7 @@ public class CompilerVisitor {
 		if (principal == null) {
 			Errors.ErrorPrincipalDoesNotExist(ctx.principal);
 		}
-		Variable variable = visitVariable(ctx.variable(), principal, null, VariableDefined.USE_MESSAGE);
+		Variable variable = visitVariable(ctx.variable(), principal, null, VariableDefined.QUERY);
 		for (Confidentiality query : model.queries.confidentiality) {
 			if (query.principal == principal && query.variable.equals(variable)) {
 				Errors.WarningQueryConfidentialityDuplicite(ctx.variable().start);

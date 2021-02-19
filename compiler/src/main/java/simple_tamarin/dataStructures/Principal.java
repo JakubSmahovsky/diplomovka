@@ -10,31 +10,31 @@ public class Principal {
   public final Variable principalID;
 
   public String name;
-  private ArrayList<Variable> knowledge;
+  private final ArrayList<Variable> knownEphemeralPrivate;
+  private final ArrayList<Variable> knownLongTermPrivate;
+  private final ArrayList<Variable> knownPublic;
   private ArrayList<STBlock> blocks;
   public STBlock nextBlock;
-  public ArrayList<Variable> initState;
-  public ArrayList<Fact> initResults;
 
   public Principal(STModel model, Variable principalID, String name){
     this.model = model;
     this.principalID = principalID;
-    this.initState = new ArrayList<>();
-    initState.add(model.runID);
-    initState.add(principalID);
 
     this.name = name;
-    this.knowledge = new ArrayList<>();
-    this.blocks = new ArrayList<>();
+    knownEphemeralPrivate = new ArrayList<>();
+    knownLongTermPrivate = new ArrayList<>();
+    knownLongTermPrivate.add(model.instanceID);
+    knownPublic = new ArrayList<>();
+    knownPublic.add(principalID);
+    blocks = new ArrayList<>();
     nextBlock();
-    this.initResults = new ArrayList<>();
   }
 
   /**
-   * @return known variable with given name or null if principal doesn't know it
+   * @return known ephemeral private variable with given name or null if principal doesn't know it
    */
-  public Variable knows(String name) {
-    for (Variable variable : knowledge) {
+  public Variable knowsEphemeralPrivate(String name) {
+    for (Variable variable : knownEphemeralPrivate) {
       if (variable.equalsByName(name)) {
         return variable;
       }
@@ -43,11 +43,11 @@ public class Principal {
   }
 
   /**
-   * Finds the variable among known variables, does NOT compare canonical forms, only names
+   * Finds the variable among known ephemeral private variables, does NOT compare canonical forms, only names
    * @return known variable with the same name or null if principal doesn't know it
    */
-  public Variable knows(Variable variable) {
-    for (Variable known : knowledge) {
+  public Variable knowsEphemeralPrivateByName(Variable variable) {
+    for (Variable known : knownEphemeralPrivate) {
       if (known.equalsByName(variable)) {
         return known;
       }
@@ -56,13 +56,82 @@ public class Principal {
   }
 
   /**
-   * Add all variables from a transparent Term to knowledge.
-   * Undefined bahavior for non-transparent Terms (likely crash).
+   * @return known long-term private variable with given name or null if principal doesn't know it
    */
-  public void learn(Variable variable) {
-    if (!knowledge.contains(variable)) {
-      knowledge.add(variable);
+  public Variable knowsLongTermPrivate(String name) {
+    for (Variable variable : knownLongTermPrivate) {
+      if (variable.equalsByName(name)) {
+        return variable;
+      }
     }
+    return null;
+  }
+
+  /**
+   * Finds the variable among known long-term private variables, does NOT compare canonical forms, only names
+   * @return known variable with the same name or null if principal doesn't know it
+   */
+  public Variable knowsLongTermPrivateByName(Variable variable) {
+    for (Variable known : knownLongTermPrivate) {
+      if (known.equalsByName(variable)) {
+        return known;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @return known long term public variable with given name or null if principal doesn't know it
+   */
+  public Variable knowsPublic(String name) {
+    for (Variable variable : knownPublic) {
+      if (variable.equalsByName(name)) {
+        return variable;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Finds the variable among known public variables, does NOT compare canonical forms, only names
+   * @return known variable with the same name or null if principal doesn't know it
+   */
+  public Variable knowsPublicByName(Variable variable) {
+    for (Variable known : knownPublic) {
+      if (known.equalsByName(variable)) {
+        return known;
+      }
+    }
+    return null;
+  }
+
+  public void learnEphemeralPrivate(Variable variable) {
+    if (knowsEphemeralPrivateByName(variable) == null) {
+      knownEphemeralPrivate.add(variable);
+    }
+  }
+
+  public void learnLongTermPrivate(Variable variable) {
+    if (knowsLongTermPrivateByName(variable) == null) {
+      knownLongTermPrivate.add(variable);
+    }
+  }
+
+  public void learnPublic(Variable variable) {
+    if (knowsPublicByName(variable) == null) {
+      knownPublic.add(variable);
+    }
+  }
+
+  public ArrayList<Variable> composeInitState() {
+    ArrayList<Variable> result = new ArrayList<>();
+    result.addAll(knownPublic);
+    result.addAll(knownLongTermPrivate);
+    return result;
+  }
+
+  public ArrayList<Variable> getLongTermPrivate() {
+    return knownLongTermPrivate;    
   }
 
   /**
@@ -107,6 +176,7 @@ public class Principal {
   @Override public String toString() {
     return name;
   }
+
 
   public ArrayList<STBlock> getBlocks() {
     return blocks;

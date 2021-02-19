@@ -18,13 +18,14 @@ public final class Constants{
   }
 
   public static enum VariableDefined {
-    PUBLIC_DEFINITION,
-    PUBLIC_KNOWS,
-    PRIVATE_KNOWS,
-    PRIVATE_GENERATES,
-    PRIVATE_LEFT,
-    USE_RIGHT,
-    USE_MESSAGE
+    KNOWS_PUBLIC,
+    KNOWS_PRIVATE,
+    GENERATES,
+    ASSIGNMENT_LEFT,
+    ASSIGNMENT_RIGHT,
+    CHECK,
+    MESSAGE,
+    QUERY
   }
 
   public static final String[] reservedNames = {
@@ -34,7 +35,7 @@ public final class Constants{
     "generates",
     "public",
     "private",
-    "runid"
+    "instanceid"
   };
 
   public static String sortString(VariableSort sort) {
@@ -123,5 +124,5 @@ public final class Constants{
   public static final String INTRUDER_KNOWS_OUTPUT = "KU";
   public static final String INTRUDER_KNOWS_LEMMA = "K";
   public static final String SOLVEDHOW_DIRECTLY = "(directly)";
-  public static final String VARIABLE_RUNID = "runid";
+  public static final String VARIABLE_INSTANCEID = "instanceid";
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import simple_tamarin.Constants;
-import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.query.Queries;
 import simple_tamarin.dataStructures.term.Variable;
 import simple_tamarin.sourcesCompiler.Source;
@@ -15,10 +14,10 @@ import simple_tamarin.sourcesCompiler.SourceGroup;
  */
 public class STModel {
   private ArrayList<Principal> principals;
-  public ArrayList<Variable> pubVariables; // long term public variables
+  public ArrayList<Variable> pubVariables; // public variables
   public Queries queries;
   public Builtins builtins;
-  public final Variable runID = new Variable(Constants.VARIABLE_RUNID);
+  public final Variable instanceID = new Variable(Constants.VARIABLE_INSTANCEID);
 
   public ArrayList<SourceGroup> sourceGroups;
 
@@ -55,7 +54,7 @@ public class STModel {
    * @return newly created principal with given parameters
    */
   public Principal addPrincipal(String name) {
-    Variable principalID = new Variable(name, VariableSort.PUBLIC);
+    Variable principalID = new Variable(name);
     pubVariables.add(principalID);
     Principal principal = new Principal(this, principalID, name);
     principals.add(principal);
@@ -63,10 +62,9 @@ public class STModel {
   }
 
   /**
-   * Finds a long term public variable with given parameters
-   * @return variable with given parameters or null if it doesn't exist
+   * @return public variable with given parameters or null if it doesn't exist
    */
-  public Variable findVariable(String name){
+  public Variable findPublic(String name){
     for (Variable variable : pubVariables) {
       if (variable.equalsByName(name)) {
         return variable;

@@ -65,20 +65,22 @@ public class Builder extends BuilderFormatting{
     // gather fresh variables
     HashSet<Variable> toGenerate = new HashSet<>();
     for (Principal principal : model.getPrincipals()) {
-      for (Variable variable : principal.initState) {
-        // private static variables are generated in init block 
-        if (!variable.isPublic() && variable.isLongTerm()) {
-          variable.addFresh();
-          toGenerate.add(variable);
-        }
+      for (Variable variable : principal.getLongTermPrivate()) {
+        variable.addFresh();
+        toGenerate.add(variable);
       }
     }
-    model.runID.addFresh();
-    toGenerate.add(model.runID);
+    model.instanceID.addFresh();
+    toGenerate.add(model.instanceID);
 
-    // gather principal IDs (to bind principals with runID)
+    // public variables are "created/declared" in init too
+    for (Variable variable : model.pubVariables) {
+      variable.addPublic();
+    }
+
+    // gather principal IDs (to bind principals with instanceID)
     ArrayList<Variable> principalIDs = new ArrayList<>();
-    principalIDs.add(model.runID);
+    principalIDs.add(model.instanceID);
     for (Principal principal : model.getPrincipals()) {
       principalIDs.add(principal.principalID);
     }
@@ -96,21 +98,25 @@ public class Builder extends BuilderFormatting{
     facts.add(fact(Constants.FACT_PRINCIPALS, principalIDs, null));
     output.append(ruleAction(facts));
 
-    // render init states of principals and initResults
+    // render init states of principals
     facts = new ArrayList<>();
     for (Principal principal : model.getPrincipals()) {
-      facts.add(initStateFact(principal, null));
-      for (Fact fact : principal.initResults) {
-        facts.add(fact.render(null));
+      facts.add(initStateFact(principal));
+      // add fact binding a long-term private variable to pricipal (for use in reveal)
+      for (Variable variable : principal.getLongTermPrivate()) {
+        facts.add(persistentFact(Constants.PRINCIPAL_PRIVATE, Arrays.asList(principal.principalID, variable), null));
       }
     }
     output.append(ruleResult(facts));
 
-    // remove fresh sort from variables
+    // remove fresh and public sort from variables
     for (Variable variable : toGenerate) {
       variable.removeFresh();
     }
-    model.runID.removeFresh();
+    model.instanceID.removeFresh();
+    for (Variable variable : model.pubVariables) {
+      variable.removePublic();
+    }
   }
 
   /**
@@ -130,7 +136,7 @@ public class Builder extends BuilderFormatting{
     // premises
     ArrayList<String> premises = new ArrayList<>();
     if (previousBlock == null) {
-      premises.add(initStateFact(block.principal, null));
+      premises.add(initStateFact(block.principal));
     } else {
       premises.add(resultStateFact(previousBlock, block));
     }
@@ -245,7 +251,7 @@ public class Builder extends BuilderFormatting{
     output.append(lemma(Constants.CONFIDENTIALITY + Confidentiality.nextConfidentialityQuery(), false));
     // gather principal IDs
     ArrayList<Variable> principalIDs = new ArrayList<>();
-    principalIDs.add(model.runID);
+    principalIDs.add(model.instanceID);
     for (Principal principal : model.getPrincipals()) {
       principalIDs.add(principal.principalID);
     }

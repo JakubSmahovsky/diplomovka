@@ -23,50 +23,22 @@ public class Variable extends Term {
   private static int variables = 0;
   private static int temporals = 0;
   private final int id;
-  private boolean placeholder = false; // invariant: only set to true in a constructor
-  private final String name;
-  private final STBlock cratedBy; // null for long term variables
   private Term subterm = null; // invariant: only change using setSubterm
   private Term canonical = this; // invariant: only change using setSubterm
-  private VariableSort sort;
+  private boolean placeholder = false; // invariant: only set to true in the placeholder() method
 
-  /**
-   * Create an unowned variable, this mean the variable should be static
-   */
+  private final String name;
+  private VariableSort sort; // invariant: fresh a public sorts are added only when rendering the origination block
+  
   public Variable(String name) {
     this.id = nextId();
+
     this.name = name;
-    this.cratedBy = null;
     this.sort = VariableSort.NOSORT;
-    this.canonical = this;
   }
 
   /**
-   * Create an owned variable, the owner is taken from the creating block
-   */
-  public Variable(String name, STBlock block) {
-    this.id = nextId();
-    this.name = name;
-    this.cratedBy = block;
-    this.sort = VariableSort.NOSORT;
-    this.canonical = this;
-  }
-
-  /**
-   * Create an unowned variable with a defined sort, variables with sort
-   * FRESH should not be created this way, they sould be assigned sort FRESH
-   * while rendering a rule that generates them.
-   */
-  public Variable(String name, VariableSort sort) {
-    this.id = nextId();
-    this.name = name;
-    this.cratedBy = null;
-    this.sort = sort;
-    this.canonical = this;
-  }
-
-  /**
-   * Clone this variable for a new owner, e.g. when receiving it in a message.
+   * Clone this variable for a new owner when receiving it in a message.
    */
   public Variable clone() {
     Variable result = new Variable(name);
@@ -86,9 +58,9 @@ public class Variable extends Term {
   }
 
   public static Variable nextTemporal(){
-    String tName = Constants.TEMPORAL_NAME + temporals;
-    temporals ++;
-    return new Variable(tName, VariableSort.TEMPORAL);
+    Variable temporal = new Variable(Constants.TEMPORAL_NAME + (temporals++));
+    temporal.sort = VariableSort.TEMPORAL;
+    return temporal;
   }
 
   private static int nextId() {
@@ -177,6 +149,19 @@ public class Variable extends Term {
     }
   }
 
+  public void addPublic() {
+    if (sort != VariableSort.NOSORT && sort != VariableSort.PUBLIC) {
+      Errors.DebugUnexpectedCall("addPublic", render());
+    }
+    this.sort = VariableSort.PUBLIC;
+  }
+
+  public void removePublic() {
+    if (sort == VariableSort.PUBLIC) {
+      sort = VariableSort.NOSORT;
+    }
+  }
+
   @Override public boolean isDeconstructionTerm() {
     return false;
   }
@@ -216,20 +201,12 @@ public class Variable extends Term {
     if (!block.state.contains(this)) {
       block.state.add(this);
     }
-    principal.learn(this);
+    principal.learnEphemeralPrivate(this);
     return true;
   }
 
   public boolean isPublicInModel(STModel model) {
-    return model.findVariable(name) != null;
-  }
-
-  public boolean isPublic() {
-    return sort == VariableSort.PUBLIC;
-  }
-
-  public boolean isLongTerm(){
-    return cratedBy == null;
+    return model.findPublic(name) != null;
   }
 
   private void setSubterm(Term subterm) {

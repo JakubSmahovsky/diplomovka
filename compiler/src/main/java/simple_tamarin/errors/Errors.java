@@ -3,7 +3,6 @@ package simple_tamarin.errors;
 import org.antlr.v4.runtime.Token;
 
 import simple_tamarin.dataStructures.Principal;
-import simple_tamarin.dataStructures.term.Term;
 import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 import simple_tamarin.Constants;
 
@@ -58,14 +57,9 @@ public final class Errors{
     error(variable, message);
   }
 
-  public static void ErrorVariableCollisionPrivate(Principal principal, Token variable) {
-    String message = "Principal \"" + principal + "\" allready knows a variable with name \"" + variable.getText() + "\" as priate!";
+  public static void ErrorVariableAlreadyKnown(Principal principal, Token variable, boolean pub) {
+    String message = "Principal \"" + principal + "\" already knows a variable with name \"" + variable.getText() + "\" as " + (pub ? "public" : "private") + "!";
     error(variable, message);
-  }
-
-  public static void ErrorVariableCollisionPublic(Term variable, Token posToken) {
-    String message = "Public variable \"" + variable + "\" allready exists!";
-    error(posToken, message);
   }
 
   public static void ErrorMessageNontransparent(Token start) {
@@ -88,8 +82,13 @@ public final class Errors{
     warning(principal, message);
   }
 
-  public static void WarningVariableEphemeralShadowed(Token variable) {
-    String message = "Ephemeral variable \"" + variable.getText() + "\" allready exists for some principal, this will create a different long-term variable \"" + variable.getText() + "\"!";
+  public static void WarningShadowedPublic(Token variable) {
+    String message = "A public variable \"" + variable.getText() + "\" already exists, this will declare a different private variable!";
+    warning(variable, message);
+  }
+
+  public static void WarningShadowedLongTermPrivate(Token variable) {
+    String message = "A long-term private variable \"" + variable.getText() + "\" already exists for some principal, this will declare a different variable!";
     warning(variable, message);
   }
 
@@ -108,19 +107,9 @@ public final class Errors{
     warning(variable, message);
   }
 
-  public static void InfoDeclareLongTermVariable(Token variable) {
-    String message = "Long term variable \"" + variable.getText() + "\" is not declared. It is recommended to declare all long-term variables.";
-    info(variable, message);
-  }
-
   public static void InfoDeclarePrincipal(Token principal) {
     String message = "Principal \"" + principal.getText() + "\" is not declared. It is recommended to declare all principals.";
     info(principal, message);
-  }
-
-  public static void InfoComparedPublicVariable(Token variable) {
-    String message = "Public variable \"" + variable.getText() + "\" was compared instead of declaring a new private variable.";
-    info(variable, message);
   }
 
   public static void InfoKnowsInFirstBlock(Token start) {

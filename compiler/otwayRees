@@ -1,21 +1,33 @@
 principals: Alice, Bob, Server
 
 Alice [
+  knows public Bob
   knows private Kas
+]
+
+Bob [
+  knows public Alice
+  knows private Kbs
+]
+
+Server [
+  knows public Alice, Bob
+  knows private Kas, Kbs
+]
+
+Alice [
   generates Na, M
   m1 = ENC(Kas, {Na, M, Alice, Bob})
 ]
 Alice -> Bob: M, Alice, Bob, m1
 
 Bob [
-  knows private Kbs
   generates Nb
   m2 = ENC(Kbs, {Nb, M, Alice, Bob})
 ]
 Bob -> Server: M, Alice, Bob, m1, m2
 
 Server [
-  knows private Kas, Kbs
   {Na, M, Alice, Bob} = DEC(Kas, m1)
   {Nb, M, Alice, Bob} = DEC(Kbs, m2)
   

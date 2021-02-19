@@ -64,7 +64,7 @@ public class STBlock {
 
   public ArrayList<Term> completeState() {
     ArrayList<Term> result = new ArrayList<>();
-    result.addAll(principal.initState);
+    result.addAll(principal.composeInitState());
     result.addAll(state);
     return result;
   }
