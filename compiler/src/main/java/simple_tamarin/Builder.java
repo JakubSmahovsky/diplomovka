@@ -48,6 +48,9 @@ public class Builder extends BuilderFormatting{
     if (model.builtins.symmetric_encryption) {
       builtins.add(Constants.BUILTIN_SYMMETRIC_ENCRYPTION);
     }
+    if (model.builtins.signing) {
+      builtins.add(Constants.BUILTIN_SIGNING);
+    }
     if (model.builtins.hashing) {
       builtins.add(Constants.BUILTIN_HASHING);
     }
@@ -73,11 +76,25 @@ public class Builder extends BuilderFormatting{
     model.instanceID.addFresh();
     toGenerate.add(model.instanceID);
 
-    // public variables are "created/declared" in init too
-    for (Variable variable : model.pubVariables) {
-      variable.addPublic();
+    // gather variables that need to be constructed (public variables tagged as constructed)
+    HashSet<Variable> toConstruct = new HashSet<>();
+    for (Principal principal : model.getPrincipals()) {
+      for (Variable variable : principal.getKnownPublic()) {
+        if (variable.isConstructed()) { 
+          toConstruct.add(variable);
+        }
+      }
     }
 
+    // truely long-term public variables are "created/declared" in init too
+    for (Principal principal : model.getPrincipals()) {
+      for (Variable variable : principal.getKnownPublic()) {
+        if (!variable.isConstructed()) { 
+          variable.addPublic();
+        }
+      }
+    }
+    
     // gather principal IDs (to bind principals with instanceID)
     ArrayList<Variable> principalIDs = new ArrayList<>();
     principalIDs.add(model.instanceID);
@@ -85,9 +102,15 @@ public class Builder extends BuilderFormatting{
       principalIDs.add(principal.principalID);
     }
 
-    // render fresh facts
+    // render aliases
     ArrayList<String> facts = new ArrayList<>();
-    output.append(ruleAliases(null, new ArrayList<>()));
+    for (Variable variable : toConstruct) {
+      facts.add(variable.renderAlias());
+    }
+    output.append(ruleAliases(null, facts));
+
+    // render fresh facts
+    facts = new ArrayList<>();
     for (Variable variable : toGenerate) {
       facts.add(fact(Constants.COMMAND_FRESH, variable, null));
     }
@@ -114,8 +137,12 @@ public class Builder extends BuilderFormatting{
       variable.removeFresh();
     }
     model.instanceID.removeFresh();
-    for (Variable variable : model.pubVariables) {
-      variable.removePublic();
+    for (Principal principal : model.getPrincipals()) {
+      for (Variable variable : principal.getKnownPublic()) {
+        if (!variable.isConstructed()) {
+          variable.removePublic();
+        }
+      }
     }
   }
 
@@ -163,10 +190,10 @@ public class Builder extends BuilderFormatting{
     }
     results.add(resultStateFact);
 
-    // aliases; they need to be rendered last, cause they are affected by other parts
+    // aliases; we render them last, because they are affected by fresh rules
     ArrayList<String> aliases = new ArrayList<>();
-    for (Alias alias : block.aliases) {
-      aliases.add(alias(alias));
+    for (Variable alias : block.aliases) {
+      aliases.add(alias.renderAlias());
     }
 
     output.append(ruleAliases(block, aliases));

@@ -4,7 +4,6 @@ import java.util.List;
 
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.STBlock;
-import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.errors.Errors;
 import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 public abstract class Term implements Comparable<Term>{
@@ -12,6 +11,7 @@ public abstract class Term implements Comparable<Term>{
     Constant,
     Variable,
     Tuple,
+    FunctionPk,
     FunctionSenc,
     FunctionHash,
     Exponentiation,
@@ -105,7 +105,7 @@ public abstract class Term implements Comparable<Term>{
    */
   public List<Variable> freeVariables(){
     Errors.DebugUnexpectedCall("freeVariables", render());
-    return null;  
+    return null;
   }
 
   /**
@@ -139,9 +139,5 @@ public abstract class Term implements Comparable<Term>{
   public Term decode(Term key, TermContext keyCtx, TermContext valueCtx) {
     Errors.ErrorDecodingNotEncoded(valueCtx);
     return null;
-  }
-
-  public boolean isPublicInModel(STModel model) {
-    return false;
   }
 }

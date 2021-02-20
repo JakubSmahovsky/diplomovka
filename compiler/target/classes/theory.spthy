@@ -1,111 +1,55 @@
 theory spthy
 begin
 
-builtins: symmetric-encryption
+builtins: symmetric-encryption, diffie-hellman
 
 rule init:
+let
+  gb = 'g'^~b
+  ga = 'g'^~a
+in
 [
-  Fr(~Kas),
-  Fr(~Kbs),
-  Fr(~instanceid)
+  Fr(~a),
+  Fr(~b),
+  Fr(~instanceid),
+  Fr(~secret)
 ]--[
-  Principals(~instanceid, $Alice, $Bob, $Server)
+  Principals(~instanceid, $Alice, $Bob)
 ]->[
-  !Alice_init($Alice, $Bob, ~instanceid, ~Kas),
+  !Alice_init($Alice, ga, gb, ~instanceid, ~a, ~secret),
   !PrincipalPrivate($Alice, ~instanceid),
-  !PrincipalPrivate($Alice, ~Kas),
-  !Bob_init($Bob, $Alice, ~instanceid, ~Kbs),
+  !PrincipalPrivate($Alice, ~a),
+  !PrincipalPrivate($Alice, ~secret),
+  !Bob_init($Bob, gb, ga, ~instanceid, ~b),
   !PrincipalPrivate($Bob, ~instanceid),
-  !PrincipalPrivate($Bob, ~Kbs),
-  !Server_init($Server, $Alice, $Bob, ~instanceid, ~Kas, ~Kbs),
-  !PrincipalPrivate($Server, ~instanceid),
-  !PrincipalPrivate($Server, ~Kas),
-  !PrincipalPrivate($Server, ~Kbs)
+  !PrincipalPrivate($Bob, ~b)
 ]
 
-rule Alice_1_0:
+rule Alice_2_0:
 let
-  m1 = senc(<~Na, ~M, Alice, Bob>, Kas)
+  k = gb^a
+  m = senc(secret, k)
 in
 [
-  !Alice_init(Alice, Bob, instanceid, Kas),
-  Fr(~Na),
-  Fr(~M)
+  !Alice_init(Alice, ga, gb, instanceid, a, secret)
 ]--[
-  Alice_1_0(Alice, Bob, instanceid, Kas, ~Na, ~M, m1)
+  Alice_2_0(Alice, ga, gb, instanceid, a, secret, k, m)
 ]->[
-  Out(~M),
-  Out(Alice),
-  Out(Bob),
-  Out(m1),
-  Alice_1_0(Alice, Bob, instanceid, Kas, ~Na, ~M, m1)
+  Out(m),
+  Alice_2_0(Alice, ga, gb, instanceid, a, secret, k, m)
 ]
 
-rule Alice_3_6:
-[
-  Alice_1_0(Alice, Bob, instanceid, Kas, Na, M, m1),
-  In(senc(<Na, Kab>, Kas))
-]--[
-  Alice_3_6(Alice, Bob, instanceid, Kas, senc(<Na, Kab>, Kas), Kab)
-]->[
-  Alice_3_6(Alice, Bob, instanceid, Kas, senc(<Na, Kab>, Kas), Kab)
-]
-
-rule Bob_1_1:
+rule Bob_2_1:
 let
-  m2 = senc(<~Nb, M, Alice, Bob>, Kbs)
+  k = ga^b
 in
 [
-  !Bob_init(Bob, Alice, instanceid, Kbs),
-  In(M),
-  In(Alice),
-  In(Bob),
-  In(m1),
-  Fr(~Nb)
+  !Bob_init(Bob, gb, ga, instanceid, b),
+  In(senc(secret, 'g'^a^b))
 ]--[
-  Bob_1_1(Bob, Alice, instanceid, Kbs, M, Alice, Bob, m1, ~Nb, m2)
+  Bob_2_1(Bob, gb, ga, instanceid, b, senc(secret, 'g'^a^b), k, secret)
 ]->[
-  Out(M),
-  Out(Alice),
-  Out(Bob),
-  Out(m1),
-  Out(m2),
-  Bob_1_1(Bob, Alice, instanceid, Kbs, M, Alice, Bob, m1, ~Nb, m2)
-]
-
-rule Bob_3_7:
-[
-  Bob_1_1(Bob, Alice, instanceid, Kbs, M, Alice, Bob, m1, Nb, m2),
-  In(M),
-  In(senc(<Nb, Kab>, Kbs)),
-  In(m4)
-]--[
-  Bob_3_7(Bob, Alice, instanceid, Kbs, M, Alice, Bob, m1, senc(<Nb, Kab>, Kbs), m4, Kab)
-]->[
-  Out(m4),
-  Bob_3_7(Bob, Alice, instanceid, Kbs, M, Alice, Bob, m1, senc(<Nb, Kab>, Kbs), m4, Kab)
-]
-
-rule Server_2_2:
-let
-  m3 = senc(<Nb, ~Kab>, Kbs)
-  m4 = senc(<Na, ~Kab>, Kas)
-in
-[
-  !Server_init(Server, Alice, Bob, instanceid, Kas, Kbs),
-  In(M),
-  In(Alice),
-  In(Bob),
-  In(senc(<Na, M, Alice, Bob>, Kas)),
-  In(senc(<Nb, M, Alice, Bob>, Kbs)),
-  Fr(~Kab)
-]--[
-  Server_2_2(Server, Alice, Bob, instanceid, Kas, Kbs, M, Alice, Bob, senc(<Na, M, Alice, Bob>, Kas), senc(<Nb, M, Alice, Bob>, Kbs), Na, Nb, ~Kab, m3, m4)
-]->[
-  Out(M),
-  Out(m3),
-  Out(m4),
-  Server_2_2(Server, Alice, Bob, instanceid, Kas, Kbs, M, Alice, Bob, senc(<Na, M, Alice, Bob>, Kas), senc(<Nb, M, Alice, Bob>, Kbs), Na, Nb, ~Kab, m3, m4)
+  Bob_2_1(Bob, gb, ga, instanceid, b, senc(secret, 'g'^a^b), k, secret)
 ]
 
 rule privateReveal: [
@@ -118,14 +62,13 @@ rule privateReveal: [
 
 lemma secrecy0:
 all-traces "
-All instanceid Alice Bob Server Kas m4 Kab #t0 #t1.
-Principals(instanceid, Alice, Bob, Server) @ #t0 &
+All instanceid Alice Bob gb ga b m k secret #t0 #t1.
+Principals(instanceid, Alice, Bob) @ #t0 &
 not (Ex #t2.Dishonest(Alice) @ #t2) &
 not (Ex #t3.Dishonest(Bob) @ #t3) &
-not (Ex #t4.Dishonest(Server) @ #t4) &
-Alice_3_6(Alice, Bob, instanceid, Kas, m4, Kab) @ #t1
+Bob_2_1(Bob, gb, ga, instanceid, b, m, k, secret) @ #t1
 ==>
-not (Ex #t5.K(Kab) @ #t5)
+not (Ex #t4.K(secret) @ #t4)
 "
 
 end

@@ -14,7 +14,6 @@ import simple_tamarin.sourcesCompiler.SourceGroup;
  */
 public class STModel {
   private ArrayList<Principal> principals;
-  public ArrayList<Variable> pubVariables; // public variables
   public Queries queries;
   public Builtins builtins;
   public final Variable instanceID = new Variable(Constants.VARIABLE_INSTANCEID);
@@ -27,7 +26,6 @@ public class STModel {
 
   public STModel(){
     this.principals = new ArrayList<>();
-    this.pubVariables = new ArrayList<>();
     this.queries = new Queries();
     this.builtins = new Builtins();
 
@@ -55,19 +53,20 @@ public class STModel {
    */
   public Principal addPrincipal(String name) {
     Variable principalID = new Variable(name);
-    pubVariables.add(principalID);
     Principal principal = new Principal(this, principalID, name);
     principals.add(principal);
     return principal;
   }
 
   /**
-   * @return public variable with given parameters or null if it doesn't exist
+   * @return public variable with given name among all the principal's knowledge
    */
   public Variable findPublic(String name){
-    for (Variable variable : pubVariables) {
-      if (variable.equalsByName(name)) {
-        return variable;
+    Variable result;
+    for (Principal principal : principals) {
+      result = principal.knowsPublic(name);
+      if (result != null) {
+        return result;
       }
     }
     return null;

@@ -177,6 +177,12 @@ public class Principal {
     return name;
   }
 
+  /**
+   * Only for iterating, not adding or removing
+   */
+  public ArrayList<Variable> getKnownPublic() {
+    return knownPublic;
+  }
 
   public ArrayList<STBlock> getBlocks() {
     return blocks;

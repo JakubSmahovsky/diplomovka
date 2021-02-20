@@ -8,6 +8,7 @@ public class Builtins {
   public boolean symmetric_encryption = false;
   public boolean hashing = false;
   public boolean diffie_hellman = false;
+  public boolean signing = false;
   // custom
   public boolean restriction_eq = false;
   public boolean prefab_private_reveal = false;

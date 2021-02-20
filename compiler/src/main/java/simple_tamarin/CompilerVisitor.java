@@ -118,6 +118,10 @@ public class CompilerVisitor {
 	}
 
 	public void visitCommand(CommandContext ctx, Principal principal, STBlock block) {
+		if (ctx.distributed() != null) {
+			visitDistributed(ctx.distributed(), principal, block);
+			return;
+		}
 		if (ctx.knows() != null) {
 			visitKnows(ctx.knows(), principal, block);
 			return;
@@ -137,17 +141,24 @@ public class CompilerVisitor {
 		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitCommad");
 	}
 
-	public void visitKnows(KnowsContext ctx, Principal principal, STBlock block) {
-		if (principal.getFirstBlock() != block) {
-			Errors.InfoKnowsInFirstBlock(ctx.getStart());
-		}
+	public void visitDistributed(DistributedContext ctx, Principal principal, STBlock block) {
+		Variable left = visitVariable(ctx.variable(), principal, block, VariableDefined.DISTRIBUTED_LEFT);
+		Term right = visitTerm(ctx.term(), principal, block, VariableDefined.DISTRIBUTED_RIGHT);
+		left.distributedAssign(right);
+		principal.learnPublic(left);
+	}
 
+	public void visitKnows(KnowsContext ctx, Principal principal, STBlock block) {
 		String modifier = ctx.modifier.getText();
 		boolean pub = modifier.equals("public");
 
 		VariableDefined expectVD = pub ? VariableDefined.KNOWS_PUBLIC : VariableDefined.KNOWS_PRIVATE;
 		for (VariableContext vctx : ctx.variable()) {
 			Variable variable = visitVariable(vctx, principal, block, expectVD);
+
+			if (principal.getFirstBlock() != block && !variable.isConstructed()) {
+				Errors.InfoKnowsInFirstBlock(vctx.start);
+			}
 
 			if (pub) {
 				principal.learnPublic(variable);
@@ -282,13 +293,29 @@ public class CompilerVisitor {
 	public Variable visitVariable(VariableContext ctx, Principal principal, STBlock block, VariableDefined expectVD) {
 		String name = ctx.IDENTIFIER().getText();
 
-		// principal knows it as private
+		// principal knows it as ephemeral private
 		Variable result = principal.knowsEphemeralPrivate(name);
-		if (result == null) {
-			result = principal.knowsLongTermPrivate(name);
-		}
 		if (result != null) {
 			switch (expectVD) {
+				case DISTRIBUTED_LEFT:
+				case KNOWS_PUBLIC:
+				case KNOWS_PRIVATE:
+				case GENERATES:
+					Errors.ErrorVariableAlreadyKnown(principal, ctx.start, false);
+					return null;
+				case DISTRIBUTED_RIGHT:
+					Errors.ErrorVariableNotLongTerm(ctx.start);
+					return null;
+				default:
+					return result;
+			}
+		}
+		
+		// principal knows it as long-term private
+		result = principal.knowsLongTermPrivate(name);
+		if (result != null) {
+			switch (expectVD) {
+				case DISTRIBUTED_LEFT:
 				case KNOWS_PUBLIC:
 				case KNOWS_PRIVATE:
 				case GENERATES:
@@ -299,7 +326,7 @@ public class CompilerVisitor {
 			}
 		}
 
-		// principal knows it as public
+		// principal knows it as public 
 		result = principal.knowsPublic(name);
 		if (result != null) {
 			switch (expectVD) {
@@ -307,19 +334,29 @@ public class CompilerVisitor {
 				case KNOWS_PRIVATE:
 				case GENERATES:
 					Errors.ErrorVariableAlreadyKnown(principal, ctx.start, true);
+					return null;
+				case DISTRIBUTED_RIGHT:
+					if (result.isConstructed()) {
+						Errors.ErrorVariableNotLongTerm(ctx.start);
+						return null;
+					}
 				default:
 					return result;
 			}
 		}
 
-		// it exists somewhere else
-		if (expectVD == VariableDefined.KNOWS_PUBLIC ||
+		// it exists for some other principal (and we care)
+		if (expectVD == VariableDefined.DISTRIBUTED_LEFT ||
+				expectVD == VariableDefined.KNOWS_PUBLIC ||
 				expectVD == VariableDefined.KNOWS_PRIVATE ||
 				expectVD == VariableDefined.GENERATES) {
 			// it exists as public
 			result = model.findPublic(name);
 			if (result != null) {
 				switch (expectVD) {
+					case DISTRIBUTED_LEFT:
+						Errors.ErrorVariableNameCollisionPublic(ctx.start);
+						return null;
 					case KNOWS_PUBLIC:
 						return result;
 					case KNOWS_PRIVATE:
@@ -341,6 +378,7 @@ public class CompilerVisitor {
 			}
 			if (result != null) {
 				switch (expectVD) {
+					case DISTRIBUTED_LEFT:
 					case KNOWS_PUBLIC:
 						Errors.WarningShadowedLongTermPrivate(ctx.start);
 						break;
@@ -354,15 +392,14 @@ public class CompilerVisitor {
 			}
 		}
 
-		// it does not exist (or we don't care if it does)
+		// it does not exist (or at least principal doesn't know it and we don't care if someone else does)
 		if (!identifierNameValid(name)) {
 			Errors.ErrorReservedName(ctx.start);
 		}
 		switch (expectVD) {
+			case DISTRIBUTED_LEFT:
+				return Variable.placeholder(name);
 			case KNOWS_PUBLIC:
-				result = new Variable(name);
-				model.pubVariables.add(result);
-				return result;
 			case KNOWS_PRIVATE:
 			case GENERATES:
 				return new Variable(name);
@@ -389,7 +426,7 @@ public class CompilerVisitor {
 				block.actions.add(Fact.equality(term1, term2));
 			}
 			return;
-			default: {	
+			default: {
 				Errors.DebugUnexpectedTokenType(ctx.CHECKED().getText(), "visitCheckedCall");
 			}
 		}
@@ -438,6 +475,13 @@ public class CompilerVisitor {
 					subterms.add(visitTerm(termctx, principal, block, expectVD));
 				}
 				return new FunctionHash(new Tuple(subterms));
+			}
+			case Constants.VPPK: {
+				model.builtins.signing = true;
+				if (ctx.argument.size() != 1) {
+					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 1, ctx.argument.size());
+				}
+				return new FunctionPk(visitTerm(ctx.argument.get(0), principal, block, expectVD));
 			}
 			default: {
 				Errors.DebugUnexpectedTokenType(ctx.FUNCTION().getText(), "visitFunctionCall");

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import simple_tamarin.dataStructures.Alias;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.dataStructures.term.*;
@@ -27,8 +26,8 @@ public abstract class BuilderFormatting {
     return "builtins: " + String.join(", ", builtins) + "\r\n\r\n";
   }
 
-  public static String alias(Alias alias) {
-    return alias.left.render() + " = " + alias.right.render();
+  public static String alias(String left, String right) {
+    return left + " = " + right;
   }
 
   public static String fact(String name, List<? extends Term> terms, STBlock block) {

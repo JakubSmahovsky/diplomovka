@@ -18,6 +18,8 @@ public final class Constants{
   }
 
   public static enum VariableDefined {
+    DISTRIBUTED_LEFT,
+    DISTRIBUTED_RIGHT,
     KNOWS_PUBLIC,
     KNOWS_PRIVATE,
     GENERATES,
@@ -66,6 +68,7 @@ public final class Constants{
 
   // builtins and prefabs
   public static final String BUILTIN_SYMMETRIC_ENCRYPTION = "symmetric-encryption";
+  public static final String BUILTIN_SIGNING = "signing";
   public static final String BUILTIN_HASHING = "hashing";
   public static final String BUILTIN_DH = "diffie-hellman";
   public static final String PREFAB_PRIVATE_REVEAL_NAME = "privateReveal";
@@ -80,11 +83,13 @@ public final class Constants{
   public static final String COMMAND_FRESH = "Fr";
   public static final String FIRST = "fst";
   public static final String SECOND = "snd";
+  public static final String PK = "pk";
   public static final String SENC = "senc";
   public static final String SDEC = "sdec";
   public static final String HASH = "h";
   public static final String EXP = "^";
   // VP functions
+  public static final String VPPK = "PK";
   public static final String VPSENC = "ENC";
   public static final String VPSDEC = "DEC";
   public static final String VPASSERT = "ASSERT";

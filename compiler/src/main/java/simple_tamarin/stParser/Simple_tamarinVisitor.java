@@ -47,6 +47,12 @@ public interface Simple_tamarinVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCommand(Simple_tamarinParser.CommandContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Simple_tamarinParser#distributed}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDistributed(Simple_tamarinParser.DistributedContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Simple_tamarinParser#knows}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

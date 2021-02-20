@@ -3,14 +3,13 @@ package simple_tamarin.dataStructures.term;
 import java.util.Arrays;
 import java.util.List;
 
+import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
 import simple_tamarin.Constants.VariableSort;
-import simple_tamarin.dataStructures.Alias;
 import simple_tamarin.dataStructures.Deconstruction;
 import simple_tamarin.dataStructures.Fact;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.STBlock;
-import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.errors.Errors;
 
 /**
@@ -136,6 +135,13 @@ public class Variable extends Term {
     return sort == VariableSort.TEMPORAL ? render() : name;
   }
 
+  /**
+   * Render an alias defined by this variable, simply as "this = subterm".
+   */
+  public String renderAlias() {
+    return BuilderFormatting.alias(this.render(), subterm.render());
+  }
+
   public void addFresh() {
     if (sort != VariableSort.NOSORT && sort != VariableSort.FRESH) {
       Errors.DebugUnexpectedCall("addFresh", render());
@@ -195,7 +201,7 @@ public class Variable extends Term {
     } else {
       // add alias if it wouldn't create an alias like "x = x"
       if (!(right instanceof Variable) || !((Variable)right).name.equals(this.name)) {
-        block.aliases.add(new Alias(this, right));
+        block.aliases.add(this);
       }
     }
     if (!block.state.contains(this)) {
@@ -205,8 +211,22 @@ public class Variable extends Term {
     return true;
   }
 
-  public boolean isPublicInModel(STModel model) {
-    return model.findPublic(name) != null;
+  /**
+   * Assign for use in distributed command, much simpler than the assign for assignment.
+   * Just assign the term to the subterm, make sure this is a placeholder before assigning.
+   */
+  public void distributedAssign(Term right) {
+    if (!placeholder) {
+      Errors.DebugUnexpectedCall("DistributedAssign", "placeholder " + render());
+    }
+    setSubterm(right);
+  }
+
+  /**
+   * @return true if this has a defined subterm and false if it is a generated/declare variable with subterm == null
+   */
+  public boolean isConstructed() {
+    return subterm != null;
   }
 
   private void setSubterm(Term subterm) {

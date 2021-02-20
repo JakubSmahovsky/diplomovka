@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import simple_tamarin.dataStructures.command.*;
 import simple_tamarin.dataStructures.term.Term;
+import simple_tamarin.dataStructures.term.Variable;
 
 /**
  * Simple_tamarin Block
@@ -13,7 +14,7 @@ public class STBlock {
   public final int indexInModel;
   public final Principal principal;
 
-  public ArrayList<Alias> aliases;
+  public ArrayList<Variable> aliases;
   public ArrayList<Deconstruction> deconstructed;
   public ArrayList<CommandFr> premiseFresh;
   public ArrayList<CommandIn> premiseInputs;

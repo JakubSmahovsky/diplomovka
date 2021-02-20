@@ -14,11 +14,13 @@ specificationSegment:
 principalBlock: principal=IDENTIFIER '[' command* ']';
 
 command:
+  distributed |
   knows |
   generates |
   assignment |
   check;
 
+distributed: 'distributed' variable '=' term;
 knows: 'knows' modifier=('public' | 'private') variable (',' variable)*;
 generates: 'generates' variable (',' variable)*;
 assignment: left=term '=' right=term;
@@ -51,6 +53,7 @@ confidentiality: 'confidentiality?' (principal=IDENTIFIER '\'s')? variable;
 executable: 'executable?';
 
 FUNCTION:
+  'PK' |
   'ENC' |
   'DEC' |
   'HASH';

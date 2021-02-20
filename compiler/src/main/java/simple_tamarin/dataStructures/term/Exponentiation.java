@@ -23,8 +23,15 @@ public class Exponentiation extends Term {
    */
   private Exponentiation(Exponentiation original) {
     this.canoncical = this;
-    this.base = original.base.getCanonical();
     this.exponent = new ArrayList<>();
+    // if the base is already an exponentiation we need to add all exponents together and the base is it's base
+    if (original.base.getCanonical() instanceof Exponentiation) {
+      Exponentiation canonicalBase = (Exponentiation)original.base.getCanonical(); 
+      this.exponent.addAll(canonicalBase.exponent);
+      this.base = canonicalBase.base;
+    } else {
+      this.base = original.base.getCanonical();
+    }
     for (Term e : original.exponent) {
       this.exponent.add(e.getCanonical());
     }

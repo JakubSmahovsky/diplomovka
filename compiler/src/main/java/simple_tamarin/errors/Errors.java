@@ -43,8 +43,13 @@ public final class Errors{
   }
 
   public static void ErrorPrincipalNameCollision(Token principal) {
-    String message = "Principal's name \"" + principal.getText() + "\" is allready used for a public variable!";
+    String message = "Principal's name \"" + principal.getText() + "\" is already used for a public variable!";
     error(principal, message);
+  }
+
+  public static void ErrorVariableNameCollisionPublic(Token variable) {
+    String message = "A public variable name \"" + variable.getText() + "\" already exists!";
+    error(variable, message);
   }
 
   public static void ErrorPrincipalDoesNotExist(Token principal) {
@@ -59,6 +64,11 @@ public final class Errors{
 
   public static void ErrorVariableAlreadyKnown(Principal principal, Token variable, boolean pub) {
     String message = "Principal \"" + principal + "\" already knows a variable with name \"" + variable.getText() + "\" as " + (pub ? "public" : "private") + "!";
+    error(variable, message);
+  }
+
+  public static void ErrorVariableNotLongTerm(Token variable) {
+    String message = "Variable + \"" + variable + "\" is not long-term!";
     error(variable, message);
   }
 
@@ -112,9 +122,9 @@ public final class Errors{
     info(principal, message);
   }
 
-  public static void InfoKnowsInFirstBlock(Token start) {
-    String message = "Effects of the \"knows\" command are global, it is recommended to use it in the first block.";
-    info(start, message);
+  public static void InfoKnowsInFirstBlock(Token variable) {
+    String message = "It's recommended to use the knows command in the first block unless declaring knows on a distributed variable.";
+    info(variable, message);
   }
 
   public static void DebugUnexpectedCall(String called, String where) {

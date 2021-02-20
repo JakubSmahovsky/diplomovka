@@ -1,0 +1,28 @@
+principals: Alice, Bob
+
+Alice [
+  knows private a, secret
+  distributed ga = 'g'^a
+]
+
+Bob [
+  knows private b
+  distributed gb = 'g'^b
+]
+
+Alice [
+  knows public gb
+  k = gb^a
+  m = ENC(k, secret)
+]
+Alice -> Bob: m
+
+Bob [
+  knows public ga
+  k = ga^b
+  secret = DEC(k, m)
+]
+
+queries [
+  confidentiality? Bob's secret
+]
