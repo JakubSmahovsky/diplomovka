@@ -4,10 +4,14 @@ import simple_tamarin.dataStructures.term.Term;
 
 /**
  * When deconstructing a non-transparent Term, for example when decoding an encoded value,
- * we spread the Term in Tamarin code instead of using aliases. To do this we create
- * a decondtruction object in the corresponding block, so that all occourences of such term
- * are being spread out. The decoded calue inside this term needs to be substituted by
- * the resut of this deconstrution, therefore we remember this substiturion term.
+ * we spread the Term in Tamarin code instead of deconstructing using aliases.
+ * To do this we create a decondtruction object in the corresponding block:
+ *   The term is the term that was deconstructed e.g. in "x = sdec(senc(v, k), k)" it is "senc(v, k)"
+ *   The substitution is the Term that would have been assigned the value e.g. in "x = sdec(senc(v, k), k)" it is "x"
+ *   We then want to render "term" in place of variables with the meaning of "term"
+ *   And we want to render "substitution" in that term instead of the decodedValue
+ *   e.g. instead of receiving "m" and deconstructing "x = sdec(m, k)" we receive "senc(x, k)"
+ *   for tuples, instead of deconstructing "{x, y} = sdec(m, k)" we receive "senc({x, y}, k)"
  */
 public class Deconstruction {
   public Term term;

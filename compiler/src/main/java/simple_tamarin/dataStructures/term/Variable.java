@@ -118,17 +118,14 @@ public class Variable extends Term {
   @Override public String render(STBlock block) {
     for (Deconstruction dec : block.deconstructed) {
       if (dec.term.equals(this)) {
-        return this.getCanonical().render(dec.substitution);
+        return subterm.render(dec.substitution);
       }
     }
     return render();
   }
 
   @Override public String render(Term substitution) {
-    if (this.getCanonical() == this) {
-      Errors.DebugUnexpectedCall("render(substitution)", render());
-    }
-    return this.getCanonical().render(substitution);
+    return subterm.render(substitution);
   }
 
   @Override public String renderLemma() {
