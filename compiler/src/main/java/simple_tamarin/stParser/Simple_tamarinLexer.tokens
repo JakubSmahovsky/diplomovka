@@ -46,6 +46,5 @@ WHITESPACE=27
 'confidentiality?'=19
 '\'s'=20
 'executable?'=21
-'ASSERT'=23
 '^'=24
 'principals'=25

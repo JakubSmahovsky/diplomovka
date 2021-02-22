@@ -12,9 +12,11 @@ public abstract class Term implements Comparable<Term>{
     Variable,
     Tuple,
     FunctionPk,
+    FunctionSign,
     FunctionSenc,
     FunctionHash,
     Exponentiation,
+    ValueTrue,
     NON_CANONICAL
   }
 
@@ -45,6 +47,8 @@ public abstract class Term implements Comparable<Term>{
   public abstract int canonicalCompareTo(Term term);
 
   public abstract Term getCanonical();
+
+  @Override public abstract boolean equals(Object obj);
 
   /**
    * Extracts variables that can be learnt from a transparent Term.
@@ -139,5 +143,22 @@ public abstract class Term implements Comparable<Term>{
   public Term decode(Term key, TermContext keyCtx, TermContext valueCtx) {
     Errors.ErrorDecodingNotEncoded(valueCtx);
     return null;
+  }
+
+  /**
+   * Verify this signature. (chceck that pk and message fit).
+   * Should only be used on a canonical form.
+   */
+  public void verifySignature(Term pk, Term message, TermContext pkCtx, TermContext messageCtx, TermContext signatureCtx) {
+    Errors.ErrorVerifyingNotSigned(signatureCtx);
+  }
+
+  /**
+   * Verify this pk. (chceck that sk fits).
+   * Should only be used on a canonical form.
+   */
+  public boolean verifyPk(Term sk, TermContext pkCtx) {
+    Errors.ErrorKeyNotPublicKey(pkCtx);
+    return false;
   }
 }

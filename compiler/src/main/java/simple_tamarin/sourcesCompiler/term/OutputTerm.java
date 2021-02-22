@@ -22,6 +22,10 @@ public abstract class OutputTerm extends Term {
   @Override public Term getCanonical() {
     return null; // TODO debug message
   }
+
+  @Override public boolean equals(Object obj) {
+    return this == obj;
+  }
   
   @Override public String render(STBlock block) {
     return null; // TODO debug message

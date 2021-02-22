@@ -54,11 +54,13 @@ executable: 'executable?';
 
 FUNCTION:
   'PK' |
+  'SIGN' |
   'ENC' |
   'DEC' |
   'HASH';
 
 CHECKED:
+  'SIGNVERIF' |
   'ASSERT';
 
 POWER_OP: '^';

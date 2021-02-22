@@ -424,8 +424,21 @@ public class CompilerVisitor {
 					Errors.WarningAssertNeverTrue(ctx.start);
 				}
 				block.actions.add(Fact.equality(term1, term2));
+				return;
 			}
-			return;
+			case Constants.VPSIGNVERIF: {
+				model.builtins.restriction_eq = true;
+				if (ctx.argument.size() != 3) {
+					Errors.ErrorArgumentsCount(ctx.CHECKED().getSymbol(), 3, ctx.argument.size());
+				}
+				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
+				Term message = visitTerm(ctx.argument.get(1), principal, block, expectVD);
+				Term signature = visitTerm(ctx.argument.get(2), principal, block, expectVD);
+				signature.getCanonical().verifySignature(key, message, ctx.argument.get(0), ctx.argument.get(1), ctx.argument.get(2));
+				FunctionVerify verify = new FunctionVerify(key, message, signature);
+				block.actions.add(Fact.equality(ValueTrue.instance(), verify));
+				return;
+			}
 			default: {
 				Errors.DebugUnexpectedTokenType(ctx.CHECKED().getText(), "visitCheckedCall");
 			}
@@ -482,6 +495,15 @@ public class CompilerVisitor {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 1, ctx.argument.size());
 				}
 				return new FunctionPk(visitTerm(ctx.argument.get(0), principal, block, expectVD));
+			}
+			case Constants.VPSIGN: {
+				model.builtins.signing = true;
+				if (ctx.argument.size() != 2) {
+					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
+				}
+				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
+				Term message = visitTerm(ctx.argument.get(1), principal, block, expectVD);
+				return new FunctionSign(key, message);
 			}
 			default: {
 				Errors.DebugUnexpectedTokenType(ctx.FUNCTION().getText(), "visitFunctionCall");

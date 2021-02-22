@@ -84,16 +84,21 @@ public final class Constants{
   public static final String FIRST = "fst";
   public static final String SECOND = "snd";
   public static final String PK = "pk";
+  public static final String SIGN = "sign";
+  public static final String VERIFY = "verify";
   public static final String SENC = "senc";
   public static final String SDEC = "sdec";
   public static final String HASH = "h";
   public static final String EXP = "^";
   // VP functions
   public static final String VPPK = "PK";
+  public static final String VPSIGN = "SIGN";
   public static final String VPSENC = "ENC";
   public static final String VPSDEC = "DEC";
-  public static final String VPASSERT = "ASSERT";
   public static final String VPHASH = "HASH";
+  // VP checks
+  public static final String VPASSERT = "ASSERT";
+  public static final String VPSIGNVERIF = "SIGNVERIF";
   // JSON Graph keys
   public static final String JSON_EDGES = "jgEdges";
   public static final String JSON_NODES = "jgNodes";

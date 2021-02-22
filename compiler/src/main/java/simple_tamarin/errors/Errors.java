@@ -22,8 +22,28 @@ public final class Errors{
     error(got.start, message);
   }
 
+  public static void ErrorKeyNotPublicKey(TermContext got) {
+    String message = "Key \"" + got.getText() + "\" is not a public key!";
+    error(got.start, message);
+  }
+
+  public static void ErrorWrongPublicKeySigning(TermContext got) {
+    String message = "Public key \"" + got.getText() + "\" does not match the key used for signing!";
+    error(got.start, message);
+  }
+
+  public static void ErrorWrongMessageSigning(TermContext got) {
+    String message = "Message \"" + got.getText() + "\" does not match the message used for signing!";
+    error(got.start, message);
+  }
+
   public static void ErrorDecodingNotEncoded(TermContext value){
     String message = "Attempting to decode value \"" + value.getText() + "\" which is not symmetrically encoded!";
+    error(value.start, message);
+  }
+
+  public static void ErrorVerifyingNotSigned(TermContext value){
+    String message = "Attempting to verify signature \"" + value.getText() + "\" which is not actually a signature!";
     error(value.start, message);
   }
 

@@ -5,6 +5,7 @@ import java.util.List;
 import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.STBlock;
+import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 
 public class FunctionPk extends Term {
   private final Term sk;
@@ -41,6 +42,20 @@ public class FunctionPk extends Term {
     return canonical;
   }
 
+  @Override public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof Term)) {
+      return false;
+    }
+    Term term = ((Term)obj).getCanonical();
+    if (!(term instanceof FunctionPk)) {
+      return false;
+    }
+    return sk.equals(((FunctionPk)term).sk);
+  }
+
   @Override public String render() {
     return BuilderFormatting.fact(Constants.PK, sk, null);
   }
@@ -64,5 +79,9 @@ public class FunctionPk extends Term {
 
   @Override public List<Variable> freeVariables(){
     return sk.freeVariables();
+  }
+
+  @Override public boolean verifyPk(Term sk, TermContext pkCtx) {
+    return this.sk.equals(sk);
   }
 }

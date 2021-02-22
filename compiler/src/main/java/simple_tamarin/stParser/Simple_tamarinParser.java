@@ -43,7 +43,7 @@ public class Simple_tamarinParser extends Parser {
 			null, "':'", "','", "'['", "']'", "'distributed'", "'='", "'knows'", 
 			"'public'", "'private'", "'generates'", "'?'", "'->'", "'queries'", "'('", 
 			"')'", "'''", "'{'", "'}'", "'confidentiality?'", "''s'", "'executable?'", 
-			null, "'ASSERT'", "'^'", "'principals'"
+			null, null, "'^'", "'principals'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
