@@ -135,15 +135,28 @@ public abstract class BuilderFormatting {
   }
 
   public static String negation(String fact) {
-    return "not (" + fact + ")";
+    return "not " + fact;
   }
 
   public static String conjunction(List<String> facts) {
     return String.join(" &\r\n", facts);
   }
 
+  public static String disjunction(List<String> facts) {
+    return String.join(" |\r\n", facts);
+  }
+
   public static String implication(String from, String to) {
     return from + "\r\n" + "==>\r\n" + to;
+  }
+
+  public static String dishonest(Principal principal, Variable temporal) {
+    String dishonest = lemmaFact(Constants.FACT_DISHONEST, principal.principalID, temporal);
+    return lemmaVariables(Arrays.asList(temporal), true) + dishonest;
+  }
+
+  public static String bracket(String statement) {
+    return "(" + statement + ")";
   }
 
   public static String lemmaEnd() {

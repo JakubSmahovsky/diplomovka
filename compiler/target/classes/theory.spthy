@@ -1,102 +1,111 @@
 theory spthy
 begin
 
-builtins: symmetric-encryption, signing, hashing, diffie-hellman
+builtins: symmetric-encryption
 
 rule init:
-let
-  gIKB = 'g'^~sIKB
-  pIKB = pk(~sIKB)
-in
 [
-  Fr(~instanceid),
-  Fr(~sIKB),
-  Fr(~sSPKB),
-  Fr(~sIKA),
-  Fr(~plaintext)
+  Fr(~Kas),
+  Fr(~Kbs),
+  Fr(~instanceid)
 ]--[
-  Principals(~instanceid, $Alice, $Bob)
+  Principals(~instanceid, $Alice, $Bob, $Server)
 ]->[
-  !Alice_init($Alice, pIKB, gIKB, ~instanceid, ~sIKA, ~plaintext),
+  !Alice_init($Alice, $Bob, ~instanceid, ~Kas),
   !PrincipalPrivate($Alice, ~instanceid),
-  !PrincipalPrivate($Alice, ~sIKA),
-  !PrincipalPrivate($Alice, ~plaintext),
-  !Bob_init($Bob, pIKB, gIKB, ~instanceid, ~sIKB, ~sSPKB),
+  !PrincipalPrivate($Alice, ~Kas),
+  !Bob_init($Bob, ~instanceid, ~Kbs),
   !PrincipalPrivate($Bob, ~instanceid),
-  !PrincipalPrivate($Bob, ~sIKB),
-  !PrincipalPrivate($Bob, ~sSPKB)
+  !PrincipalPrivate($Bob, ~Kbs),
+  !Server_init($Server, ~instanceid, ~Kas, ~Kbs),
+  !PrincipalPrivate($Server, ~instanceid),
+  !PrincipalPrivate($Server, ~Kas),
+  !PrincipalPrivate($Server, ~Kbs)
 ]
 
-rule Alice_2_0:
+rule Alice_0_0:
 let
-  gIKA = 'g'^sIKA
-  gEKA = 'g'^~sEKA
-  DH1 = gSPKB^sIKA
-  DH2 = gIKB^~sEKA
-  DH3 = gSPKB^~sEKA
-  DH4 = gOPKB^~sEKA
-  SK = h(<DH1, DH2, DH3, DH4>)
-  AD = <gIKA, gIKB>
-  message = senc(plaintext, SK)
-  MAC = h(<SK, plaintext, AD>)
+  m1 = senc(<~Na, ~M, Alice, Bob>, Kas)
 in
 [
-  !Alice_init(Alice, pIKB, gIKB, instanceid, sIKA, plaintext),
-  In(gSPKB),
-  In(sigSPKB),
-  In(gOPKB),
-  Fr(~sEKA)
+  !Alice_init(Alice, Bob, instanceid, Kas),
+  Fr(~M),
+  Fr(~Na)
 ]--[
-  Alice_2_0(Alice, pIKB, gIKB, instanceid, sIKA, plaintext, gSPKB, sigSPKB, gOPKB, gIKA, ~sEKA, gEKA, DH1, DH2, DH3, DH4, SK, AD, message, MAC),
-  Eq(true, verify(sigSPKB, gSPKB, pIKB))
+  Alice_0_0(Alice, Bob, instanceid, Kas, ~M, ~Na, m1)
 ]->[
-  Out(gIKA),
-  Out(gEKA),
-  Out(gOPKB),
-  Out(message),
-  Out(MAC),
-  Alice_2_0(Alice, pIKB, gIKB, instanceid, sIKA, plaintext, gSPKB, sigSPKB, gOPKB, gIKA, ~sEKA, gEKA, DH1, DH2, DH3, DH4, SK, AD, message, MAC)
+  Out(~M),
+  Out(Alice),
+  Out(Bob),
+  Out(m1),
+  Alice_0_0(Alice, Bob, instanceid, Kas, ~M, ~Na, m1)
 ]
 
-rule Bob_1_1:
-let
-  gSPKB = 'g'^sSPKB
-  sigSPKB = sign(gSPKB, sIKB)
-  gOPKB = 'g'^~sOPKB
-in
+rule Alice_2_3:
 [
-  !Bob_init(Bob, pIKB, gIKB, instanceid, sIKB, sSPKB),
-  Fr(~sOPKB)
+  Alice_0_0(Alice, Bob, instanceid, Kas, M, Na, m1),
+  In(senc(<Na, Kab>, Kas))
 ]--[
-  Bob_1_1(Bob, pIKB, gIKB, instanceid, sIKB, sSPKB, gSPKB, sigSPKB, ~sOPKB, gOPKB)
+  Alice_2_3(Alice, Bob, instanceid, Kas, senc(<Na, Kab>, Kas), Kab)
 ]->[
-  Out(gSPKB),
-  Out(sigSPKB),
-  Out(gOPKB),
-  Bob_1_1(Bob, pIKB, gIKB, instanceid, sIKB, sSPKB, gSPKB, sigSPKB, ~sOPKB, gOPKB)
+  Alice_2_3(Alice, Bob, instanceid, Kas, senc(<Na, Kab>, Kas), Kab)
 ]
 
-rule Bob_3_4:
+rule Bob_0_1:
 let
-  DH1 = gIKA^sSPKB
-  DH2 = gEKA^sIKB
-  DH3 = gEKA^sSPKB
-  DH4 = gEKA^sOPKB
-  SK = h(<DH1, DH2, DH3, DH4>)
-  AD = <gIKA, gIKB>
+  m2 = senc(<~Nb, M, Alice, Bob>, Kbs)
 in
 [
-  Bob_1_1(Bob, pIKB, gIKB, instanceid, sIKB, sSPKB, gSPKB, sigSPKB, sOPKB, gOPKB),
-  In(gIKA),
-  In(gEKA),
-  In(gOPKB),
-  In(senc(plaintext, SK)),
-  In(MAC)
+  !Bob_init(Bob, instanceid, Kbs),
+  In(M),
+  In(Alice),
+  In(Bob),
+  In(m1),
+  Fr(~Nb)
 ]--[
-  Bob_3_4(Bob, pIKB, gIKB, instanceid, sIKB, sSPKB, gIKA, gEKA, gOPKB, senc(plaintext, SK), MAC, DH1, DH2, DH3, DH4, SK, AD, plaintext),
-  Eq(MAC, h(<SK, plaintext, AD>))
+  Bob_0_1(Bob, instanceid, Kbs, M, Alice, Bob, m1, ~Nb, m2)
 ]->[
-  Bob_3_4(Bob, pIKB, gIKB, instanceid, sIKB, sSPKB, gIKA, gEKA, gOPKB, senc(plaintext, SK), MAC, DH1, DH2, DH3, DH4, SK, AD, plaintext)
+  Out(M),
+  Out(Alice),
+  Out(Bob),
+  Out(m1),
+  Out(m2),
+  Bob_0_1(Bob, instanceid, Kbs, M, Alice, Bob, m1, ~Nb, m2)
+]
+
+rule Bob_2_4:
+[
+  Bob_0_1(Bob, instanceid, Kbs, M, Alice, Bob, m1, Nb, m2),
+  In(M),
+  In(senc(<Nb, Kab>, Kbs)),
+  In(m4)
+]--[
+  Bob_2_4(Bob, instanceid, Kbs, M, Alice, Bob, m1, senc(<Nb, Kab>, Kbs), m4, Kab)
+]->[
+  Out(m4),
+  Bob_2_4(Bob, instanceid, Kbs, M, Alice, Bob, m1, senc(<Nb, Kab>, Kbs), m4, Kab)
+]
+
+rule Server_1_2:
+let
+  m3 = senc(<Nb, ~Kab>, Kbs)
+  m4 = senc(<Na, ~Kab>, Kas)
+in
+[
+  !Server_init(Server, instanceid, Kas, Kbs),
+  In(M),
+  In(Alice),
+  In(Bob),
+  In(senc(<Na, M, Alice, Bob>, Kas)),
+  In(senc(<Nb, M, Alice, Bob>, Kbs)),
+  Fr(~Kab)
+]--[
+  Server_1_2(Server, instanceid, Kas, Kbs, M, Alice, Bob, senc(<Na, M, Alice, Bob>, Kas), senc(<Nb, M, Alice, Bob>, Kbs), Na, Nb, ~Kab, m3, m4)
+]->[
+  Out(M),
+  Out(m3),
+  Out(m4),
+  Server_1_2(Server, instanceid, Kas, Kbs, M, Alice, Bob, senc(<Na, M, Alice, Bob>, Kas), senc(<Nb, M, Alice, Bob>, Kbs), Na, Nb, ~Kab, m3, m4)
 ]
 
 rule privateReveal: [
@@ -107,18 +116,16 @@ rule privateReveal: [
   Out(Private)
 ]
 
-restriction Equality:
-  "All x y #i. Eq(x,y) @i ==> x = y"
-
 lemma secrecy0:
 all-traces "
-All instanceid Alice Bob pIKB gIKB sIKB sSPKB gIKA gEKA gOPKB message MAC DH1 DH2 DH3 DH4 SK AD plaintext #t0 #t1.
-Principals(instanceid, Alice, Bob) @ #t0 &
-not (Ex #t2.Dishonest(Alice) @ #t2) &
-not (Ex #t3.Dishonest(Bob) @ #t3) &
-Bob_3_4(Bob, pIKB, gIKB, instanceid, sIKB, sSPKB, gIKA, gEKA, gOPKB, message, MAC, DH1, DH2, DH3, DH4, SK, AD, plaintext) @ #t1
+All instanceid Alice Bob Server Kas m4 Kab #t0 #t1 #t2.
+Principals(instanceid, Alice, Bob, Server) @ #t0 &
+Alice_2_3(Alice, Bob, instanceid, Kas, m4, Kab) @ #t1 &
+K(Kab) @ #t2
 ==>
-not (Ex #t4.K(plaintext) @ #t4)
+(Ex #t3.Dishonest(Alice) @ #t3) |
+(Ex #t4.Dishonest(Bob) @ #t4) |
+(Ex #t5.Dishonest(Server) @ #t5)
 "
 
 end

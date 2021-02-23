@@ -260,7 +260,8 @@ public class Builder extends BuilderFormatting{
     Iterator<Variable> tempIt = temporals.iterator();
     for (Principal principal : model.getPrincipals()) {
       facts.add(lemmaResultStateFact(principal.getLastBlock(), tempIt.next()));
-      facts.add(honest(principal));
+      Variable temporal = Variable.nextTemporal();
+      facts.add(negation(dishonest(principal, temporal)));
     }
 
     output.append(conjunction(facts) + lineBreak());
@@ -275,7 +276,6 @@ public class Builder extends BuilderFormatting{
    * intruder doesn't know the variable from query.
    */
   private void confidentiality(Confidentiality query) {
-    output.append(lemma(Constants.CONFIDENTIALITY + Confidentiality.nextConfidentialityQuery(), false));
     // gather principal IDs
     ArrayList<Variable> principalIDs = new ArrayList<>();
     principalIDs.add(model.instanceID);
@@ -294,6 +294,8 @@ public class Builder extends BuilderFormatting{
     }
     Variable stateTemporal = Variable.nextTemporal();
 
+    Variable intruderTemporal = Variable.nextTemporal();
+
     ArrayList<Variable> allVariables = new ArrayList<>(principalIDs);
     for (Term term : originalBlock.completeState()) {
       for (Variable variable : term.freeVariables()) {
@@ -304,33 +306,24 @@ public class Builder extends BuilderFormatting{
     }
     allVariables.add(principalsTemporal);
     allVariables.add(stateTemporal);
+    allVariables.add(intruderTemporal);
 
+    output.append(lemma(Constants.CONFIDENTIALITY + Confidentiality.nextConfidentialityQuery(), false));
     output.append(lemmaVariables(allVariables, false));
     output.append(lineBreak());
 
-    ArrayList<String> facts = new ArrayList<>();
-    facts.add(lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal));
+    ArrayList<String> presumptionClauses = new ArrayList<>();
+    presumptionClauses.add(lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal));
+    presumptionClauses.add(lemmaResultStateFact(originalBlock, stateTemporal));
+    presumptionClauses.add(lemmaFact(Constants.INTRUDER_KNOWS_LEMMA, query.variable, intruderTemporal));
+    ArrayList<String> dishonestClauses = new ArrayList<>();
     for (Principal principal : model.getPrincipals()) {
-      facts.add(honest(principal));
+      Variable temporal = Variable.nextTemporal();
+      dishonestClauses.add(bracket(dishonest(principal, temporal)));
     }
-    facts.add(lemmaResultStateFact(originalBlock, stateTemporal));
     
-    output.append(implication(conjunction(facts), intruderDoesntKnow(query.variable)));
+    output.append(implication(conjunction(presumptionClauses), disjunction(dishonestClauses)));
     output.append(lineBreak());
     output.append(lemmaEnd());
-  }
-
-  private String intruderDoesntKnow(Variable variable) {
-    Variable temporal = Variable.nextTemporal();
-    String knows = lemmaFact(Constants.INTRUDER_KNOWS_LEMMA, variable, temporal);
-    knows = lemmaVariables(Arrays.asList(temporal), true) + knows;
-    return negation(knows);
-  }
-
-  private String honest(Principal principal) {
-    Variable temporal = Variable.nextTemporal();
-    String dishonest = lemmaFact(Constants.FACT_DISHONEST, principal.principalID, temporal);
-    dishonest = lemmaVariables(Arrays.asList(temporal), true) + dishonest;
-    return negation(dishonest);
   }
 }

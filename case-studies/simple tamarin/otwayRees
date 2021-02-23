@@ -2,7 +2,8 @@ principals: Alice, Bob, Server
 
 Alice [
   knows private Kas
-  generates M
+  knows public Bob
+  generates M, Na
   m1 = ENC(Kas, {Na, M, Alice, Bob})
 ]
 Alice -> Bob: M, Alice, Bob, m1
