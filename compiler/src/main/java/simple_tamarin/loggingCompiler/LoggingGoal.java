@@ -29,7 +29,7 @@ public class LoggingGoal {
       }
     }
     if (source.source == null) {
-      Errors.debug("Could not find source for goal " + toString() + " and source" + source.name);
+      Errors.debug("Could not find source for goal " + toString() + " and source " + source.name);
     }
   }
 

@@ -159,6 +159,10 @@ public abstract class BuilderFormatting {
     return "(" + statement + ")";
   }
 
+  public static String beforeAfter(Variable temporalBefore, Variable temporalAfter) {
+    return temporalBefore.render() + "<" + temporalAfter.render();
+  }
+
   public static String lemmaEnd() {
     return "\"\r\n";
   }

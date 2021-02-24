@@ -47,10 +47,12 @@ checkedCall: CHECKED '(' (argument+=term)? (',' argument+=term)* ')';
 
 query: 
   executable |
-  confidentiality;
+  confidentiality |
+  forwardSecrecy;
 
-confidentiality: 'confidentiality?' (principal=IDENTIFIER '\'s')? variable;
 executable: 'executable?';
+confidentiality: 'confidentiality?' principal=IDENTIFIER '\'s' variable;
+forwardSecrecy: 'forward-secrecy?' principal=IDENTIFIER '\'s' variable;
 
 FUNCTION:
   'PK' |

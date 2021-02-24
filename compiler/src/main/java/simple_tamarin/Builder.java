@@ -8,6 +8,7 @@ import java.util.Iterator;
 import simple_tamarin.dataStructures.*;
 import simple_tamarin.dataStructures.command.*;
 import simple_tamarin.dataStructures.query.Confidentiality;
+import simple_tamarin.dataStructures.query.ForwardSecrecy;
 import simple_tamarin.dataStructures.term.*;
 
 /**
@@ -228,6 +229,11 @@ public class Builder extends BuilderFormatting{
       confidentiality(query);
       output.append(lineBreak());
     }
+
+    for (ForwardSecrecy query : model.queries.forwardSecrecy) {
+      forwardSecrecy(query);
+      output.append(lineBreak());
+    }
   }
 
   /**
@@ -270,10 +276,11 @@ public class Builder extends BuilderFormatting{
 
   /**
    * Create a confidentiality lemma saying that if
-   * all principals from init are honest
-   * principal from query can reach the first state mentioning the variable from query
+   *   all principal are such and such,
+   *   variable from query exists -> pricipal reached the first state that contains it,
+   *   attacker knows the variable from query
    * then
-   * intruder doesn't know the variable from query.
+   *   at least one of the principals was dishones
    */
   private void confidentiality(Confidentiality query) {
     // gather principal IDs
@@ -308,7 +315,7 @@ public class Builder extends BuilderFormatting{
     allVariables.add(stateTemporal);
     allVariables.add(intruderTemporal);
 
-    output.append(lemma(Constants.CONFIDENTIALITY + Confidentiality.nextConfidentialityQuery(), false));
+    output.append(lemma(query.renderName(), false));
     output.append(lemmaVariables(allVariables, false));
     output.append(lineBreak());
 
@@ -320,6 +327,63 @@ public class Builder extends BuilderFormatting{
     for (Principal principal : model.getPrincipals()) {
       Variable temporal = Variable.nextTemporal();
       dishonestClauses.add(bracket(dishonest(principal, temporal)));
+    }
+    
+    output.append(implication(conjunction(presumptionClauses), disjunction(dishonestClauses)));
+    output.append(lineBreak());
+    output.append(lemmaEnd());
+  }
+
+
+  /**
+   * Create a forward secrecy lemma saying that if
+   *   all principal are such and such,
+   *   variable from query exists -> pricipal reached the first state that contains it,
+   *   attacker knows the variable from query
+   * then
+   *   at least one of the principals was dishones BEFORE the variable existed
+   */
+  private void forwardSecrecy(ForwardSecrecy query) {
+    // gather principal IDs
+    ArrayList<Variable> principalIDs = new ArrayList<>();
+    principalIDs.add(model.instanceID);
+    for (Principal principal : model.getPrincipals()) {
+      principalIDs.add(principal.principalID);
+    }
+    Variable principalsTemporal = Variable.nextTemporal();
+
+    // find first block with varible from query
+    STBlock finalBlock = query.principal.getLastBlock();
+    Variable stateTemporal = Variable.nextTemporal();
+
+    Variable intruderTemporal = Variable.nextTemporal();
+
+    ArrayList<Variable> allVariables = new ArrayList<>(principalIDs);
+    for (Term term : finalBlock.completeState()) {
+      for (Variable variable : term.freeVariables()) {
+        if (!allVariables.contains(variable)) {
+            allVariables.add(variable);
+        }
+      }
+    }
+    allVariables.add(principalsTemporal);
+    allVariables.add(stateTemporal);
+    allVariables.add(intruderTemporal);
+
+    output.append(lemma(query.renderName(), false));
+    output.append(lemmaVariables(allVariables, false));
+    output.append(lineBreak());
+
+    ArrayList<String> presumptionClauses = new ArrayList<>();
+    presumptionClauses.add(lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal));
+    presumptionClauses.add(lemmaResultStateFact(finalBlock, stateTemporal));
+    presumptionClauses.add(lemmaFact(Constants.INTRUDER_KNOWS_LEMMA, query.variable, intruderTemporal));
+    ArrayList<String> dishonestClauses = new ArrayList<>();
+    for (Principal principal : model.getPrincipals()) {
+      Variable dishonestTemporal = Variable.nextTemporal();
+      String dishonest = dishonest(principal, dishonestTemporal);
+      String before = beforeAfter(dishonestTemporal, stateTemporal);
+      dishonestClauses.add(bracket(conjunction(Arrays.asList(dishonest, before))));
     }
     
     output.append(implication(conjunction(presumptionClauses), disjunction(dishonestClauses)));

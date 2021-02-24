@@ -41,4 +41,5 @@ Alice [
 
 queries [
   confidentiality? Alice's Kab2
+  forward-secrecy? Alice's Kab2
 ]

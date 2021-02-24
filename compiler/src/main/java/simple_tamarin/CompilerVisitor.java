@@ -10,6 +10,7 @@ import simple_tamarin.Constants.*;
 import simple_tamarin.dataStructures.*;
 import simple_tamarin.dataStructures.command.*;
 import simple_tamarin.dataStructures.query.Confidentiality;
+import simple_tamarin.dataStructures.query.ForwardSecrecy;
 import simple_tamarin.dataStructures.term.*;
 import simple_tamarin.stParser.Simple_tamarinParser.*;
 import simple_tamarin.errors.Errors;
@@ -40,6 +41,7 @@ public class CompilerVisitor {
 			visitQueriesBlock(ctx.queriesBlock());
 		}
 
+		// TODO: check that each principal has at least one block
 		for (Principal principal : model.getPrincipals()) {
 			principal.nextBlock(); // add last nextBlock to blocks list
 			principal.squishBlocks();
@@ -531,6 +533,8 @@ public class CompilerVisitor {
 			visitExecutable(ctx.executable());
 		} else if (ctx.confidentiality() != null) {
 			visitConfidentiality(ctx.confidentiality());			
+		} else if (ctx.forwardSecrecy() != null) {
+			visitForwardSecrecy(ctx.forwardSecrecy());			
 		}
 	}
 
@@ -543,9 +547,6 @@ public class CompilerVisitor {
 	}
 
 	public void visitConfidentiality(ConfidentialityContext ctx) {
-		if (ctx.principal == null) {
-			Errors.debug("Not yet implemented: confidentiality without specific principal!");
-		}
 		Principal principal = model.findPrincipal(ctx.principal.getText());
 		if (principal == null) {
 			Errors.ErrorPrincipalDoesNotExist(ctx.principal);
@@ -558,6 +559,21 @@ public class CompilerVisitor {
 			}
 		}
 		model.queries.confidentiality.add(new Confidentiality(principal, variable));
+	}
+
+	public void visitForwardSecrecy(ForwardSecrecyContext ctx) {
+		Principal principal = model.findPrincipal(ctx.principal.getText());
+		if (principal == null) {
+			Errors.ErrorPrincipalDoesNotExist(ctx.principal);
+		}
+		Variable variable = visitVariable(ctx.variable(), principal, null, VariableDefined.QUERY);
+		for (ForwardSecrecy query : model.queries.forwardSecrecy) {
+			if (query.principal == principal && query.variable.equals(variable)) {
+				Errors.WarningQueryConfidentialityDuplicite(ctx.variable().start);
+				return;
+			}
+		}
+		model.queries.forwardSecrecy.add(new ForwardSecrecy(principal, variable));
 	}
 
 	private boolean identifierNameValid(String id) {

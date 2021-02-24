@@ -8,4 +8,5 @@ import java.util.ArrayList;
 public class Queries {
   public boolean executable = false;
   public ArrayList<Confidentiality> confidentiality = new ArrayList<>();
+  public ArrayList<ForwardSecrecy> forwardSecrecy = new ArrayList<>();
 }

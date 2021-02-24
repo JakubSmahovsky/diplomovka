@@ -118,6 +118,10 @@ public final class Constants{
   public static final String JSON_FUNCTION_LABEL_FRESH = "FreshConstr";
   public static final String JSON_FUNCTION_PREFIX_CONSTRUCT = "Constrc";
   public static final String JSON_FUNCTION_PREFIX_DECONSTRUCT = "Destrd";
+  // target query names
+  public static final String EXECUTABLE = "executable";
+  public static final String CONFIDENTIALITY = "secrecy";
+  public static final String FORWARD_SECRECY = "forwardSecrecy";
   // miscelaneous
   public static final String OUTPUT_SEPARATOR = "==============================================================================";
   public static final String SOURCES_HEADER = OUTPUT_SEPARATOR + "SOURCES" + OUTPUT_SEPARATOR;
@@ -128,8 +132,6 @@ public final class Constants{
   public static final String DEFAULT_SOURCES_OUTPUT_PATH = "sources.txt";
   public static final String INIT = "init";
   public static final String TEMPORAL_NAME = "t";
-  public static final String EXECUTABLE = "executable";
-  public static final String CONFIDENTIALITY = "secrecy";
   public static final String NAMES_SEPARATOR = "_";
   public static final String INTRUDER_KNOWS_OUTPUT = "KU";
   public static final String INTRUDER_KNOWS_LEMMA = "K";

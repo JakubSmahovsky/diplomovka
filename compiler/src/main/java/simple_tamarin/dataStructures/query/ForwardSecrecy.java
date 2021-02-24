@@ -4,13 +4,13 @@ import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.term.Variable;
 
-public class Confidentiality {
+public class ForwardSecrecy {
   private static int queries = 0;
   private final int queryID;
   public final Principal principal;
   public final Variable variable;
 
-  public Confidentiality(Principal principal, Variable variable) {
+  public ForwardSecrecy(Principal principal, Variable variable) {
     this.queryID = nextConfidentialityQuery();
     this.principal = principal;
     this.variable = variable;
@@ -21,6 +21,6 @@ public class Confidentiality {
   }
 
   public String renderName() {
-    return Constants.CONFIDENTIALITY + queryID;
+    return Constants.FORWARD_SECRECY + queryID;
   }
 }

@@ -131,15 +131,21 @@ public interface Simple_tamarinVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitQuery(Simple_tamarinParser.QueryContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Simple_tamarinParser#executable}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExecutable(Simple_tamarinParser.ExecutableContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Simple_tamarinParser#confidentiality}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitConfidentiality(Simple_tamarinParser.ConfidentialityContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Simple_tamarinParser#executable}.
+	 * Visit a parse tree produced by {@link Simple_tamarinParser#forwardSecrecy}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitExecutable(Simple_tamarinParser.ExecutableContext ctx);
+	T visitForwardSecrecy(Simple_tamarinParser.ForwardSecrecyContext ctx);
 }
