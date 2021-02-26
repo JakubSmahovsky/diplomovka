@@ -26,4 +26,4 @@ yarn-error.log*
 client_session_key.aes
 
 # java build
-compiler/simple_tamarin/target
+compiler/target
