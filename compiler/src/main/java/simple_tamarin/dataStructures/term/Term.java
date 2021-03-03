@@ -97,12 +97,6 @@ public abstract class Term implements Comparable<Term>{
    */
   public abstract boolean isDeconstructionTerm();
 
-
-  /**
-   * Check if terms have the same structure, variable unifies with anything
-   */
-  public abstract boolean unify(Term term);
-
   /**
    * Generate list of free variables of a Term to be declared when
    * rendering a lemma. Deconstruction Terms don't need to Override it.

@@ -17,14 +17,12 @@ import simple_tamarin.errors.Errors;
  */
 public class FunctionSdec extends Term{
   private final Term key;
-  private final Term encodedValue;
-  private final Term decodedValue;
+  private final Term encodedValue; // v in DEC(k, v) 
   private final Term canonical;
 
   public FunctionSdec(Term key, Term encodedValue, Term decodedValue) {
     this.key = key;
     this.encodedValue = encodedValue;
-    this.decodedValue = decodedValue;
     this.canonical = decodedValue.getCanonical();
   }
 
@@ -66,14 +64,6 @@ public class FunctionSdec extends Term{
 
   @Override public boolean isDeconstructionTerm() {
     return true;
-  }
-
-  @Override public boolean unify(Term term) {
-    if (!(term instanceof FunctionSdec)) {
-      return false;
-    }
-    FunctionSdec sdec = (FunctionSdec)term;
-    return (key.unify(sdec.key) && encodedValue.unify(sdec.encodedValue) && decodedValue.unify(sdec.decodedValue)); 
   }
 
   @Override public Term getEncodedValue(){

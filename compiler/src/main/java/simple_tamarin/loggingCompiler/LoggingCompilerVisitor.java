@@ -6,12 +6,9 @@ import java.util.Queue;
 
 import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.STModel;
-import simple_tamarin.dataStructures.term.*;
+import simple_tamarin.dataStructures.outputTerm.*;
 import simple_tamarin.loggingParser.LoggingParser.*;
 import simple_tamarin.sourcesCompiler.Goal;
-import simple_tamarin.sourcesCompiler.term.FunctionFirst;
-import simple_tamarin.sourcesCompiler.term.FunctionSecond;
-import simple_tamarin.sourcesCompiler.term.OutputVariable;
 
 public class LoggingCompilerVisitor {
   private STModel model;
@@ -60,7 +57,7 @@ public class LoggingCompilerVisitor {
   public Goal visitFact(FactContext ctx) {
     boolean persistent = ctx.PERSISTENT() != null;
     String factName = ctx.IDENTIFIER().getText();
-    ArrayList<Term> terms = new ArrayList<>();
+    ArrayList<OutputTerm> terms = new ArrayList<>();
     for (TermContext tctx : ctx.term()) {
       terms.add(visitTerm(tctx));
     }
@@ -68,7 +65,7 @@ public class LoggingCompilerVisitor {
     return new Goal(persistent, factName, terms);
   }
 
-  public Term visitTerm(TermContext ctx) {
+  public OutputTerm visitTerm(TermContext ctx) {
     if (ctx.function() != null) {
       return visitFunction(ctx.function());
     } else if (ctx.tuple() != null) {
@@ -83,42 +80,41 @@ public class LoggingCompilerVisitor {
    * IMPORTANT: order of key and value are reversed in Tamarin,
    * functions have format f(value, key)
    */
-  public Term visitFunction(FunctionContext ctx) {
+  public OutputTerm visitFunction(FunctionContext ctx) {
     String functionName = ctx.IDENTIFIER().getText();
     switch (functionName) {
       case Constants.SENC: {
-        Term value = visitTerm(ctx.term(0));
-        Term key = visitTerm(ctx.term(1));
-        return new FunctionSenc(key, value);
+        OutputTerm value = visitTerm(ctx.term(0));
+        OutputTerm key = visitTerm(ctx.term(1));
+        return new OutputFunctionSenc(key, value);
       }
       case Constants.SDEC: {
-        Term value = visitTerm(ctx.term(0));
-        Term key = visitTerm(ctx.term(1));
-        Term decoded = null;
-        return new FunctionSdec(key, value, decoded);
+        OutputTerm value = visitTerm(ctx.term(0));
+        OutputTerm key = visitTerm(ctx.term(1));
+        return new OutputFunctionSdec(key, value);
       }
       case Constants.HASH: {
-        Term subterm = visitTerm(ctx.term(0));
-        return new FunctionHash(subterm);
+        OutputTerm subterm = visitTerm(ctx.term(0));
+        return new OutputFunctionHash(subterm);
       }
       case Constants.FIRST: {
-        Term subterm = visitTerm(ctx.term(0));
+        OutputTerm subterm = visitTerm(ctx.term(0));
         return new FunctionFirst(subterm);
       }
       case Constants.SECOND: {
-        Term subterm = visitTerm(ctx.term(0));
+        OutputTerm subterm = visitTerm(ctx.term(0));
         return new FunctionSecond(subterm);
       }
     }
-    return new Variable("Function ph"); // TODO debug
+    return new OutputVariable("Function ph", "47"); // TODO debug
   }
 
-  public Term visitTuple(TupleContext ctx) {
-    ArrayList<Term> subterms = new ArrayList<>();
+  public OutputTuple visitTuple(TupleContext ctx) {
+    ArrayList<OutputTerm> subterms = new ArrayList<>();
     for (TermContext tctx : ctx.term()) {
       subterms.add(visitTerm(tctx));
     }
-    return new Tuple(subterms);
+    return new OutputTuple(subterms);
   }
 
   public OutputVariable visitVariable(VariableContext ctx) {

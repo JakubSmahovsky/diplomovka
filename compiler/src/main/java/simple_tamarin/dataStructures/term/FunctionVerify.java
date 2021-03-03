@@ -60,14 +60,6 @@ public class FunctionVerify extends Term {
     return true;
   }
 
-  @Override public boolean unify(Term term) {
-    if (!(term instanceof FunctionVerify)) {
-      return false;
-    }
-    FunctionVerify verify = (FunctionVerify)term;
-    return key.unify(verify.key) && message.unify(verify.message) && signature.unify(verify.signature); 
-  }
-
   @Override public List<Variable> freeVariables(){
     ArrayList<Variable> result = new ArrayList<>();
     result.addAll(key.freeVariables());

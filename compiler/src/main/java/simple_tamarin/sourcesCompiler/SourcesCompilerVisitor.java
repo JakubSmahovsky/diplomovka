@@ -6,10 +6,9 @@ import java.util.ArrayList;
 
 import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.STModel;
-import simple_tamarin.dataStructures.term.*;
+import simple_tamarin.dataStructures.outputTerm.*;
 import simple_tamarin.errors.Errors;
 import simple_tamarin.errors.STException;
-import simple_tamarin.sourcesCompiler.term.*;
 import simple_tamarin.sourcesCompiler.graph.*;
 import simple_tamarin.sourcesCompiler.graph.node.*;
 import simple_tamarin.sourcesParser.SourcesParser.*;
@@ -60,7 +59,7 @@ public class SourcesCompilerVisitor {
   public Goal visitFact(FactContext ctx) {
     boolean persistent = ctx.PERSISTENT() != null;
     String factName = ctx.IDENTIFIER().getText();
-    ArrayList<Term> terms = new ArrayList<>();
+    ArrayList<OutputTerm> terms = new ArrayList<>();
     for (TermContext tctx : ctx.term()) {
       terms.add(visitTerm(tctx));
     }
@@ -68,7 +67,7 @@ public class SourcesCompilerVisitor {
     return new Goal(persistent, factName, terms);
   }
 
-  public Term visitTerm(TermContext ctx) {
+  public OutputTerm visitTerm(TermContext ctx) {
     if (ctx.terminatingTerm() != null && ctx.multiplication() == null) {
       return visitTerminatingTerm(ctx.terminatingTerm());
     }
@@ -82,7 +81,7 @@ public class SourcesCompilerVisitor {
     return null; // TODO debug
   }
 
-  public Term visitTerminatingTerm(TerminatingTermContext ctx) {
+  public OutputTerm visitTerminatingTerm(TerminatingTermContext ctx) {
     
     if (ctx.variable() != null) {
       return visitVariable(ctx.variable());
@@ -96,8 +95,8 @@ public class SourcesCompilerVisitor {
     return null; // TODO: debug
   }
 
-  public Constant visitConstant(ConstantContext ctx) {
-    return new Constant(ctx.word.getText());
+  public OutputConstant visitConstant(ConstantContext ctx) {
+    return new OutputConstant(ctx.word.getText());
   }
 
   public OutputVariable visitVariable(VariableContext ctx) {
@@ -110,41 +109,41 @@ public class SourcesCompilerVisitor {
    * IMPORTANT: order of key and value are reversed in Tamarin,
    * functions have format f(value, key)
    */
-  public Term visitFunction(FunctionContext ctx) {
+  public OutputTerm visitFunction(FunctionContext ctx) {
     String functionName = ctx.IDENTIFIER().getText();
     switch (functionName) {
       case Constants.SENC: {
-        Term value = visitTerm(ctx.term(0));
-        Term key = visitTerm(ctx.term(1));
-        return new FunctionSenc(key, value);
+        OutputTerm value = visitTerm(ctx.term(0));
+        OutputTerm key = visitTerm(ctx.term(1));
+        return new OutputFunctionSenc(key, value);
       }
       case Constants.SDEC: {
-        Term encodedValue = visitTerm(ctx.term(0));
-        Term key = visitTerm(ctx.term(1));
-        return new OutputFSdec(key, encodedValue);
+        OutputTerm encodedValue = visitTerm(ctx.term(0));
+        OutputTerm key = visitTerm(ctx.term(1));
+        return new OutputFunctionSdec(key, encodedValue);
       }
       case Constants.HASH: {
-        Term subterm = visitTerm(ctx.term(0));
-        return new FunctionHash(subterm);
+        OutputTerm subterm = visitTerm(ctx.term(0));
+        return new OutputFunctionHash(subterm);
       }
       case Constants.FIRST: {
-        Term subterm = visitTerm(ctx.term(0));
+        OutputTerm subterm = visitTerm(ctx.term(0));
         return new FunctionFirst(subterm);
       }
       case Constants.SECOND: {
-        Term subterm = visitTerm(ctx.term(0));
+        OutputTerm subterm = visitTerm(ctx.term(0));
         return new FunctionSecond(subterm);
       }
     }
     return new OutputVariable("Function ph", ""); // TODO debug
   }
 
-  public Term visitTuple(TupleContext ctx) {
-    ArrayList<Term> subterms = new ArrayList<>();
+  public OutputTuple visitTuple(TupleContext ctx) {
+    ArrayList<OutputTerm> subterms = new ArrayList<>();
     for (TermContext tctx : ctx.term()) {
       subterms.add(visitTerm(tctx));
     }
-    return new Tuple(subterms);
+    return new OutputTuple(subterms);
   }
 
   public Graph visitGraph(JsonObjContext ctx, String sourceName) {

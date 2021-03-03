@@ -83,14 +83,6 @@ public class FunctionSign extends Term {
     return false;
   }
 
-  @Override public boolean unify(Term term) {
-    if (!(term instanceof FunctionSign)) {
-      return false;
-    }
-    FunctionSign sign = (FunctionSign)term;
-    return (key.unify(sign.key) && message.unify(sign.message)); 
-  }
-
   @Override public List<Variable> freeVariables(){
     ArrayList<Variable> result = new ArrayList<>();
     result.addAll(key.freeVariables());

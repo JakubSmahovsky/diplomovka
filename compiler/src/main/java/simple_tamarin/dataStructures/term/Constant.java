@@ -71,10 +71,6 @@ public class Constant extends Term {
     return false;
   }
 
-  @Override public boolean unify(Term term) {
-    return this.equals(term);
-  }
-
   public List<Variable> freeVariables(){
     return new ArrayList<>(); 
   }

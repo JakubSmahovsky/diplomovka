@@ -2,18 +2,17 @@ package simple_tamarin.sourcesCompiler;
 
 import java.util.ArrayList;
 
-import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
-import simple_tamarin.dataStructures.term.Term;
-import simple_tamarin.errors.Errors;
+import simple_tamarin.OutputFormatting;
+import simple_tamarin.dataStructures.outputTerm.OutputTerm;
 
 public class Goal {
   public boolean persistent;
   public String name; 
-  public ArrayList<Term> terms;
+  public ArrayList<OutputTerm> terms;
   public boolean intruderGoal;
 
-  public Goal(boolean persistent, String name, ArrayList<Term> terms) {
+  public Goal(boolean persistent, String name, ArrayList<OutputTerm> terms) {
     this.persistent = persistent;
     this.name = name;
     this.terms = terms;
@@ -25,10 +24,6 @@ public class Goal {
    */
   private boolean isIntruderGoal() {
     if (persistent && name.equals(Constants.INTRUDER_KNOWS_OUTPUT)) {
-      if (terms.size() != 1) {
-        Errors.debug("Intruder goal " + BuilderFormatting.fact(name, terms, null) 
-            + " contains " + terms.size() + " terms!");
-      }
       return true;
     }
     return false;
@@ -57,7 +52,7 @@ public class Goal {
     if (intruderGoal) {
       fact = terms.get(0).render();
     } else {
-      fact = (persistent ? "!" : "") + BuilderFormatting.fact(name, terms, null);
+      fact = (persistent ? "!" : "") + OutputFormatting.term(name, terms);
     }
     return description + fact;
   }

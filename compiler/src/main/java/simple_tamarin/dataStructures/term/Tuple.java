@@ -112,18 +112,6 @@ public class Tuple extends Term{
     return false;
   }
 
-  @Override public boolean unify(Term term) {
-    if (!(term instanceof Tuple) || subterms.size() != ((Tuple)term).subterms.size() ) {
-      return false;
-    }
-    for (int i = 0; i < subterms.size(); i++) {
-      if (!subterms.get(i).unify(((Tuple)term).subterms.get(i))) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   @Override public List<Variable> freeVariables() {
     ArrayList<Variable> result = new ArrayList<>();
     for (Term subterm : subterms) {

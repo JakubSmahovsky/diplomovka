@@ -169,10 +169,6 @@ public class Variable extends Term {
     return false;
   }
 
-  @Override public boolean unify(Term term) {
-    return true;
-  }
-
   @Override public List<Variable> freeVariables() {
     return Arrays.asList(this);    
   }

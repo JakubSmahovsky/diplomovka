@@ -72,11 +72,6 @@ public class FunctionPk extends Term {
     return false;
   }
 
-
-  @Override public boolean unify(Term term) {
-    return ((term instanceof FunctionPk) && sk.unify(((FunctionPk)term).sk));
-  }
-
   @Override public List<Variable> freeVariables(){
     return sk.freeVariables();
   }

@@ -41,8 +41,4 @@ public class ValueTrue extends Term {
   @Override public boolean isDeconstructionTerm() {
     return false;
   }
-
-  @Override public boolean unify(Term term) {
-    return this == term;
-  }
 }

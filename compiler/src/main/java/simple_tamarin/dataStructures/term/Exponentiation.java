@@ -133,18 +133,6 @@ public class Exponentiation extends Term {
     return false;
   }
 
-  @Override public boolean unify(Term term) {
-    if (!(term instanceof Exponentiation) || !base.unify(((Exponentiation)term).base) || exponent.size() != ((Exponentiation)term).exponent.size()) {
-      return false;
-    }
-    for (int i = 0; i < exponent.size(); i++) {
-      if (!exponent.get(i).unify(((Exponentiation)term).exponent.get(i))) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   @Override public List<Variable> freeVariables(){
     return new ArrayList<>();
   }
