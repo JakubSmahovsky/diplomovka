@@ -131,6 +131,7 @@ public final class Constants{
   public static final String DEFAULT_THEORY_PATH = "theory";
   public static final String DEFAULT_SOURCES_OUTPUT_PATH = "sources.txt";
   public static final String INIT = "init";
+  public static final String VARIABLE_NAME = "qq";
   public static final String TEMPORAL_NAME = "t";
   public static final String NAMES_SEPARATOR = "_";
   public static final String INTRUDER_KNOWS_OUTPUT = "KU";

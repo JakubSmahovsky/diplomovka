@@ -63,10 +63,6 @@ public class Constant extends Term {
     return render();
   }
 
-  @Override public String renderLemma() {
-    return render();
-  }
-
   @Override public boolean isDeconstructionTerm(){
     return false;
   }

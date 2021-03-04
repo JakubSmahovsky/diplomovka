@@ -58,10 +58,6 @@ public class FunctionSdec extends Term{
     return BuilderFormatting.fact(Constants.SDEC, Arrays.asList(encodedValue, key), block);
   }
 
-  @Override public String renderLemma(){
-    return BuilderFormatting.lemmaFact(Constants.SDEC, Arrays.asList(encodedValue, key));
-  }
-
   @Override public boolean isDeconstructionTerm() {
     return true;
   }

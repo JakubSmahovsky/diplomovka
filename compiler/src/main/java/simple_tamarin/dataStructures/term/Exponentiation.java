@@ -114,21 +114,6 @@ public class Exponentiation extends Term {
     return String.join(Constants.EXP, substrings);
   }
 
-  @Override public String renderLemma() {
-    ArrayList<Term> subterms = new ArrayList<>();
-    subterms.add(base);
-    subterms.addAll(exponent);
-    ArrayList<String> substrings = new ArrayList<>();    
-    for (Term subterm : subterms) {
-      String substring = subterm.renderLemma();
-      if (subterm instanceof Exponentiation) {
-        substring = '(' + substring + ')';
-      }
-      substrings.add(substring);
-    }
-    return String.join(Constants.EXP, substrings);
-  }
-
   @Override public boolean isDeconstructionTerm() {
     return false;
   }

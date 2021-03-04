@@ -104,7 +104,7 @@ public abstract class BuilderFormatting {
   public static String lemmaVariables(Collection<Variable> variables, boolean exQuantifier){
     StringBuilder result = new StringBuilder(exQuantifier ? "Ex" : "All");
     for (Variable variable : variables) {
-      result.append(" " + variable.renderLemma());
+      result.append(" " + variable.render());
     }
     result.append(".");
     return result.toString();
@@ -114,20 +114,8 @@ public abstract class BuilderFormatting {
     return lemmaFact(BlockNames.render(block), block.completeState(), temporal);
   }
 
-  public static String lemmaFact(String name, List<? extends Term> terms) {
-    ArrayList<String> renders = new ArrayList<>();
-    for (Term term : terms) {
-      renders.add(term.renderLemma());
-    }
-    return name + "(" + String.join(", ", renders) + ")";
-  }
-
-  public static String lemmaFact(String name, Term term) {
-    return lemmaFact(name, Arrays.asList(term));
-  }
-
   public static String lemmaFact(String name, List<? extends Term> terms, Variable temporal) {
-    return lemmaFact(name, terms) + " " + atTemporal(temporal);
+    return fact(name, terms, null) + " " + atTemporal(temporal);
   }
 
   public static String lemmaFact(String name, Term term, Variable temporal) {

@@ -10,6 +10,7 @@ import simple_tamarin.dataStructures.Deconstruction;
 import simple_tamarin.dataStructures.Fact;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.STBlock;
+import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.errors.Errors;
 
 /**
@@ -19,7 +20,6 @@ import simple_tamarin.errors.Errors;
  * search among Alice's private varibales)
  */
 public class Variable extends Term {
-  private static int variables = 0;
   private static int temporals = 0;
   private final int id;
   private Term subterm = null; // invariant: only change using setSubterm
@@ -29,18 +29,28 @@ public class Variable extends Term {
   private final String name;
   private VariableSort sort; // invariant: fresh a public sorts are added only when rendering the origination block
   
-  public Variable(String name) {
-    this.id = nextId();
+  public Variable(STModel model, String name) {
+    this.id = model.registerVariable(this);
 
     this.name = name;
     this.sort = VariableSort.NOSORT;
   }
 
   /**
+   * Private constructor for temporal only, we don't need to register temporals.
+   */
+  private Variable() {
+    this.id = -1;
+
+    this.name = Constants.TEMPORAL_NAME + (temporals++);
+    this.sort = VariableSort.TEMPORAL;
+  }
+
+  /**
    * Clone this variable for a new owner when receiving it in a message.
    */
-  public Variable clone() {
-    Variable result = new Variable(name);
+  public Variable clone(STModel model) {
+    Variable result = new Variable(model, name);
     result.setSubterm(this);
     return result;
   }
@@ -50,20 +60,14 @@ public class Variable extends Term {
    * defined variable, which should not be rendered or used as a normal variable
    * until it is properly defined.
    */
-  public static Variable placeholder(String name) {
-    Variable result = new Variable(name);
+  public static Variable placeholder(STModel model, String name) {
+    Variable result = new Variable(model, name);
     result.placeholder = true;
     return result;
   }
 
   public static Variable nextTemporal(){
-    Variable temporal = new Variable(Constants.TEMPORAL_NAME + (temporals++));
-    temporal.sort = VariableSort.TEMPORAL;
-    return temporal;
-  }
-
-  private static int nextId() {
-    return variables++;
+    return new Variable();
   }
 
   @Override public CanonicalTypeOrder getTypeOrder() {
@@ -112,7 +116,9 @@ public class Variable extends Term {
   }
 
   @Override public String render(){
-    return Constants.sortString(sort) + name;
+    // rename variables but not temporals
+    String renderedName = sort == VariableSort.TEMPORAL ? name : Constants.VARIABLE_NAME + id;
+    return Constants.sortString(sort) + renderedName;
   }
 
   @Override public String render(STBlock block) {
@@ -128,8 +134,8 @@ public class Variable extends Term {
     return subterm.render(substitution);
   }
 
-  @Override public String renderLemma() {
-    return sort == VariableSort.TEMPORAL ? render() : name;
+  public String renderOutput() {
+    return name;
   }
 
   /**

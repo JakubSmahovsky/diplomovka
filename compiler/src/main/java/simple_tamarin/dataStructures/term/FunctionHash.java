@@ -67,10 +67,6 @@ public class FunctionHash extends Term {
     return BuilderFormatting.fact(Constants.HASH, subterm, block);
   }
 
-  @Override public String renderLemma() {
-    return BuilderFormatting.lemmaFact(Constants.HASH, subterm);
-  }
-
   @Override public boolean isDeconstructionTerm() {
     return false;
   }

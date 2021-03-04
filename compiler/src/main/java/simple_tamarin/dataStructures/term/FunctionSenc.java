@@ -78,10 +78,6 @@ public class FunctionSenc extends Term {
     return (new FunctionSenc(key, substitution).render());
   }
 
-  @Override public String renderLemma(){
-    return BuilderFormatting.lemmaFact(Constants.SENC, Arrays.asList(value, key));
-  }
-
   @Override public boolean isDeconstructionTerm() {
     return false;
   }

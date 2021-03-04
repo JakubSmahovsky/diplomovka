@@ -100,14 +100,6 @@ public class Tuple extends Term{
     return substitution.render();
   }
 
-  @Override public String renderLemma() {
-    ArrayList<String> renderedSubterms = new ArrayList<>();
-    for (Term subterm : subterms) {
-      renderedSubterms.add(subterm.renderLemma());
-    }
-    return "<" + String.join(", ", renderedSubterms) + ">";
-  }
-
   @Override public boolean isDeconstructionTerm() {
     return false;
   }

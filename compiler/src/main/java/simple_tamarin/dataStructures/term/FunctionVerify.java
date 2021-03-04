@@ -52,10 +52,6 @@ public class FunctionVerify extends Term {
     return BuilderFormatting.fact(Constants.VERIFY, Arrays.asList(signature, message, key), block);
   }
 
-  @Override public String renderLemma(){
-    return BuilderFormatting.lemmaFact(Constants.VERIFY, Arrays.asList(signature, message, key), null);
-  }
-
   @Override public boolean isDeconstructionTerm() {
     return true;
   }

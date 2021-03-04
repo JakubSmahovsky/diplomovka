@@ -82,13 +82,7 @@ public abstract class Term implements Comparable<Term>{
     Errors.DebugUnexpectedCall("render(substiturion)", render());
     return null;
   }
-
-  /**
-   * Render Term for use in a lemma, rendering Variables without sorts
-   * other than temporal.
-   */
-  public abstract String renderLemma();
-
+  
   /**
    * Deconstruction terms are sort of abstract terms in the context
    * of a protocol model. We don't want to use them in the output, but 

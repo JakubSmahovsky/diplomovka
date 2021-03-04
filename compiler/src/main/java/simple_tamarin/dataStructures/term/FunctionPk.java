@@ -64,10 +64,6 @@ public class FunctionPk extends Term {
     return BuilderFormatting.fact(Constants.PK, sk, block);
   }
 
-  @Override public String renderLemma() {
-    return BuilderFormatting.lemmaFact(Constants.PK, sk, null);
-  }
-
   @Override public boolean isDeconstructionTerm() {
     return false;
   }

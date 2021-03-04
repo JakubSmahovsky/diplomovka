@@ -75,10 +75,6 @@ public class FunctionSign extends Term {
     return BuilderFormatting.fact(Constants.SIGN, Arrays.asList(message, key), block);
   }
 
-  @Override public String renderLemma(){
-    return BuilderFormatting.lemmaFact(Constants.SIGN, Arrays.asList(message, key), null);
-  }
-
   @Override public boolean isDeconstructionTerm() {
     return false;
   }

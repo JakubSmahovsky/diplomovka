@@ -13,16 +13,17 @@ import simple_tamarin.sourcesCompiler.SourceGroup;
  * Simple_tamarin Model
  */
 public class STModel {
-  private ArrayList<Principal> principals;
+  private final ArrayList<Principal> principals;
   public Queries queries;
   public Builtins builtins;
-  public final Variable instanceID = new Variable(Constants.VARIABLE_INSTANCEID);
+  public final Variable instanceID;
 
   public ArrayList<SourceGroup> sourceGroups;
 
   // lists of all objects of type
-  public ArrayList<STBlock> blocks;
-  public ArrayList<Source> sources;
+  private final ArrayList<Variable> variables;
+  public final ArrayList<STBlock> blocks;
+  private final ArrayList<Source> sources;
 
   public STModel(){
     this.principals = new ArrayList<>();
@@ -31,8 +32,11 @@ public class STModel {
 
     this.sourceGroups = new ArrayList<>();
 
+    this.variables = new ArrayList<>();
     this.blocks = new ArrayList<>();
     this.sources = new ArrayList<>();
+
+    instanceID = new Variable(this, Constants.VARIABLE_INSTANCEID);
   }
 
   /**
@@ -52,7 +56,7 @@ public class STModel {
    * @return newly created principal with given parameters
    */
   public Principal addPrincipal(String name) {
-    Variable principalID = new Variable(name);
+    Variable principalID = new Variable(this, name);
     Principal principal = new Principal(this, principalID, name);
     principals.add(principal);
     return principal;
@@ -86,6 +90,12 @@ public class STModel {
     sourceGroups = new ArrayList<>(Arrays.asList(array));
   }
 
+  public int registerVariable(Variable variable) {
+    int index = variables.size();
+    variables.add(variable);
+    return index;
+  }
+
   public int registerBlock(STBlock block) {
     int index = blocks.size();
     blocks.add(block);
@@ -96,5 +106,12 @@ public class STModel {
     int index = sources.size();
     sources.add(source);
     return index;
+  }
+
+  public Variable getVariable(int id) {
+    if (variables.size() > id) {
+      return variables.get(id);
+    }
+    return null;
   }
 }

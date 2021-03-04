@@ -106,7 +106,7 @@ public class LoggingCompilerVisitor {
         return new FunctionSecond(subterm);
       }
     }
-    return new OutputVariable("Function ph", "47"); // TODO debug
+    return new OutputVariable(model, "Function ph", "47"); // TODO debug
   }
 
   public OutputTuple visitTuple(TupleContext ctx) {
@@ -120,6 +120,6 @@ public class LoggingCompilerVisitor {
   public OutputVariable visitVariable(VariableContext ctx) {
     String name = ctx.IDENTIFIER().getText();
     String number = (ctx.NUMBER() != null) ? ("." + ctx.NUMBER().getText()) : "";
-    return new OutputVariable(name, number);
+    return new OutputVariable(model, name, number);
   }
 }

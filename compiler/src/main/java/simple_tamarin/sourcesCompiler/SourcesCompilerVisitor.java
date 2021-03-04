@@ -102,7 +102,7 @@ public class SourcesCompilerVisitor {
   public OutputVariable visitVariable(VariableContext ctx) {
     String name = ctx.IDENTIFIER().getText();
     String number = (ctx.NUMBER() != null) ? ("." + ctx.NUMBER().getText()) : "";
-    return new OutputVariable(name, number);
+    return new OutputVariable(model, name, number);
   }
 
   /**
@@ -135,7 +135,7 @@ public class SourcesCompilerVisitor {
         return new FunctionSecond(subterm);
       }
     }
-    return new OutputVariable("Function ph", ""); // TODO debug
+    return new OutputVariable(model, "Function ph", ""); // TODO debug
   }
 
   public OutputTuple visitTuple(TupleContext ctx) {

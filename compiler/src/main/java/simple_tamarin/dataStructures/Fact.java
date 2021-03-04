@@ -31,10 +31,6 @@ public class Fact {
     return BuilderFormatting.fact(persMark + name, terms, block);
   }
 
-  public String renderLemma(){
-    return BuilderFormatting.lemmaFact(name, terms);
-  }
-
   /**
    * Create a classic fact to declare equality of 2 terms
    */

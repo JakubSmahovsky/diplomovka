@@ -202,7 +202,7 @@ public class CompilerVisitor {
 			for (Variable variable : term.extractKnowledge()) {
 				// do not learn a public variable again as private if you aleady know it (it is implicitly compared, because it's in the state)
 				if (receiver.knowsPublicByName(variable) == null) {
-					receiver.learnEphemeralPrivate(variable.clone());
+					receiver.learnEphemeralPrivate(variable.clone(model));
 				}
 				// TODO unary ASSERT
 			}
@@ -400,13 +400,13 @@ public class CompilerVisitor {
 		}
 		switch (expectVD) {
 			case DISTRIBUTED_LEFT:
-				return Variable.placeholder(name);
+				return Variable.placeholder(model, name);
 			case KNOWS_PUBLIC:
 			case KNOWS_PRIVATE:
 			case GENERATES:
-				return new Variable(name);
+				return new Variable(model, name);
 			case ASSIGNMENT_LEFT:
-				return Variable.placeholder(name);
+				return Variable.placeholder(model, name);
 			default:
 				Errors.ErrorVariableUnknown(principal, ctx.start);
 				return null;
