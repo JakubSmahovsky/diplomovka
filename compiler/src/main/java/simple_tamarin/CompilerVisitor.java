@@ -204,7 +204,7 @@ public class CompilerVisitor {
 				if (receiver.knowsPublicByName(variable) == null) {
 					receiver.learnEphemeralPrivate(variable.clone(model));
 				}
-				// TODO unary ASSERT
+				// TODO unary EQUALS
 			}
 
 			sender.getLastBlock().resultOutputs.add(new CommandOut(term, sender.getLastBlock()));
@@ -415,7 +415,7 @@ public class CompilerVisitor {
 
 	public void visitCheckedCall(CheckedCallContext ctx, Principal principal, STBlock block, VariableDefined expectVD) {
 		switch (ctx.CHECKED().getText()) {
-			case Constants.VPASSERT: {
+			case Constants.VPEQUALS: {
 				model.builtins.restriction_eq = true;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.CHECKED().getSymbol(), 2, ctx.argument.size());
@@ -423,7 +423,7 @@ public class CompilerVisitor {
 				Term term1 = visitTerm(ctx.argument.get(0), principal, block, expectVD);
 				Term term2 = visitTerm(ctx.argument.get(1), principal, block, expectVD);
 				if (!(term1.equals(term2))) {
-					Errors.WarningAssertNeverTrue(ctx.start);
+					Errors.ErrorEqualsNeverTrue(ctx.start);
 				}
 				block.actions.add(Fact.equality(term1, term2));
 				return;

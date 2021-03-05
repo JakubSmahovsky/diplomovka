@@ -107,6 +107,11 @@ public final class Errors{
     error(left.start, message);
   }
 
+  public static void ErrorEqualsNeverTrue(Token start) {
+    String message = "The terms being compared can never be equal! This likely means the model will not be executable!";
+    error(start, message);
+  }
+
   public static void WarningUndeclaredPrincipal(Token principal) {
     String message = "Principal \"" + principal.getText() + "\" was not declared even though some principals were declared!";
     warning(principal, message);
@@ -120,11 +125,6 @@ public final class Errors{
   public static void WarningShadowedLongTermPrivate(Token variable) {
     String message = "A long-term private variable \"" + variable.getText() + "\" already exists for some principal, this will declare a different variable!";
     warning(variable, message);
-  }
-
-  public static void WarningAssertNeverTrue(Token assertStart) {
-    String message = "The terms being compared can never be equal! This likely means the model will not be executable!";
-    warning(assertStart, message);
   }
 
   public static void WarningQueryExecutableDuplicite(Token query) {

@@ -19,7 +19,7 @@ Bob -> Alice: m2
 
 Alice [
   {SuccNa, Nb} = DEC(Kab, m2)
-  ASSERT(SuccNa, HASH(Na))?
+  EQUALS(SuccNa, HASH(Na))?
   SuccNb = HASH(Nb)
   m3 = ENC(Kab, SuccNb)
 ]
@@ -27,7 +27,7 @@ Alice -> Bob: m3
 
 Bob [
   SuccNb = DEC(Kab, m3)
-  ASSERT(SuccNb, HASH(Nb))?
+  EQUALS(SuccNb, HASH(Nb))?
 ]
 
 queries [

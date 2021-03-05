@@ -97,7 +97,7 @@ public final class Constants{
   public static final String VPSDEC = "DEC";
   public static final String VPHASH = "HASH";
   // VP checks
-  public static final String VPASSERT = "ASSERT";
+  public static final String VPEQUALS = "EQUALS";
   public static final String VPSIGNVERIF = "SIGNVERIF";
   // JSON Graph keys
   public static final String JSON_EDGES = "jgEdges";

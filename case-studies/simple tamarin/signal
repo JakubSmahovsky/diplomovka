@@ -44,7 +44,7 @@ Bob [
   SK = HASH(DH1, DH2, DH3, DH4)
   AD = {gIKA, gIKB}
   plaintext = DEC(SK, message)
-  ASSERT(MAC, HASH(SK, plaintext, AD))?
+  EQUALS(MAC, HASH(SK, plaintext, AD))?
 ]
 
 queries [

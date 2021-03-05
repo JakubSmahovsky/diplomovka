@@ -63,7 +63,7 @@ FUNCTION:
 
 CHECKED:
   'SIGNVERIF' |
-  'ASSERT';
+  'EQUALS';
 
 POWER_OP: '^';
 
