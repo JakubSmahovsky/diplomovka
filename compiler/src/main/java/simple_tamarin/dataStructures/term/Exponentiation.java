@@ -8,41 +8,41 @@ import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.STBlock;
 
 public class Exponentiation extends Term {
-  private final Exponentiation canoncical;
+  private final Exponentiation normalForm;
   private final Term base;
   private final ArrayList<Term> exponent; // invariant: never add to or remove form other than in the constructor
 
   public Exponentiation(Term base, ArrayList<Term> exponent) {
     this.base = base;
     this.exponent = exponent;
-    this.canoncical = new Exponentiation(this);
+    this.normalForm = new Exponentiation(this);
   }
 
   /**
-   * Canonical form constructor
+   * normal form constructor
    */
   private Exponentiation(Exponentiation original) {
-    this.canoncical = this;
+    this.normalForm = this;
     this.exponent = new ArrayList<>();
     // if the base is already an exponentiation we need to add all exponents together and the base is it's base
-    if (original.base.getCanonical() instanceof Exponentiation) {
-      Exponentiation canonicalBase = (Exponentiation)original.base.getCanonical(); 
-      this.exponent.addAll(canonicalBase.exponent);
-      this.base = canonicalBase.base;
+    if (original.base.getNormalForm() instanceof Exponentiation) {
+      Exponentiation normalFormBase = (Exponentiation)original.base.getNormalForm(); 
+      this.exponent.addAll(normalFormBase.exponent);
+      this.base = normalFormBase.base;
     } else {
-      this.base = original.base.getCanonical();
+      this.base = original.base.getNormalForm();
     }
     for (Term e : original.exponent) {
-      this.exponent.add(e.getCanonical());
+      this.exponent.add(e.getNormalForm());
     }
     Collections.sort(this.exponent);
   }
 
-  @Override public CanonicalTypeOrder getTypeOrder() {
-    return CanonicalTypeOrder.Exponentiation;
+  @Override public NormalFormTypeOrder getTypeOrder() {
+    return NormalFormTypeOrder.Exponentiation;
   }
 
-  @Override public int canonicalCompareTo(Term term) {
+  @Override public int normalFormCompareTo(Term term) {
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
@@ -50,7 +50,7 @@ public class Exponentiation extends Term {
     // both have to be Exponentiation, compare based on subterms
     Exponentiation exponentiation = (Exponentiation)term;
     for (int i = 0; i < Math.min(this.exponent.size(), exponentiation.exponent.size()); i++) {
-      result = this.exponent.get(i).canonicalCompareTo(exponentiation.exponent.get(i));
+      result = this.exponent.get(i).normalFormCompareTo(exponentiation.exponent.get(i));
       if (result != 0) {
         return result;
       }
@@ -59,8 +59,8 @@ public class Exponentiation extends Term {
     return Integer.compare(this.exponent.size(), exponentiation.exponent.size());
   }
 
-  @Override public Term getCanonical() {
-    return canoncical;
+  @Override public Term getNormalForm() {
+    return normalForm;
   }
 
   @Override public boolean equals(Object obj) {
@@ -70,7 +70,7 @@ public class Exponentiation extends Term {
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term term = ((Term)obj).getCanonical();
+    Term term = ((Term)obj).getNormalForm();
     if (!(term instanceof Exponentiation) ||
         !base.equals(((Exponentiation)term).base) || 
         exponent.size() != ((Exponentiation)term).exponent.size()) {

@@ -18,26 +18,26 @@ import simple_tamarin.errors.Errors;
 public class FunctionSdec extends Term{
   private final Term key;
   private final Term encodedValue; // v in DEC(k, v) 
-  private final Term canonical;
+  private final Term normalForm;
 
   public FunctionSdec(Term key, Term encodedValue, Term decodedValue) {
     this.key = key;
     this.encodedValue = encodedValue;
-    this.canonical = decodedValue.getCanonical();
+    this.normalForm = decodedValue.getNormalForm();
   }
 
-  @Override public CanonicalTypeOrder getTypeOrder() {
-    return CanonicalTypeOrder.NON_CANONICAL;
+  @Override public NormalFormTypeOrder getTypeOrder() {
+    return NormalFormTypeOrder.NON_NORMAL;
   }
 
-  @Override public int canonicalCompareTo(Term term) {
-    // throw error, this is not a canonicalForm
-    Errors.DebugUnexpectedCall("canonicalCompareTo", "FunctionSdec");
+  @Override public int normalFormCompareTo(Term term) {
+    // throw error, this is not a normal form
+    Errors.DebugUnexpectedCall("normalFormCompareTo", "FunctionSdec");
     return 0;
   }
 
-  @Override public Term getCanonical() {
-    return canonical;
+  @Override public Term getNormalForm() {
+    return normalForm;
   }
 
   @Override public boolean equals(Object obj) {
@@ -47,7 +47,7 @@ public class FunctionSdec extends Term{
     if (!(obj instanceof Term)) {
       return false;
     }
-    return this.getCanonical().equals(((Term)obj).getCanonical());
+    return this.getNormalForm().equals(((Term)obj).getNormalForm());
   }
 
   @Override public String render(){

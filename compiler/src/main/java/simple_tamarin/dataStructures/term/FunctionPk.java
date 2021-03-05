@@ -9,37 +9,37 @@ import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 
 public class FunctionPk extends Term {
   private final Term sk;
-  private final FunctionPk canonical;
+  private final FunctionPk normalForm;
 
   public FunctionPk(Term sk) {
     this.sk = sk;
-    this.canonical = new FunctionPk(this);
+    this.normalForm = new FunctionPk(this);
   }
 
   /**
-   * Canonical form constructor
+   * normal form constructor
    */
   private FunctionPk(FunctionPk original) {
-    this.canonical = this;
-    this.sk = original.sk.getCanonical();
+    this.normalForm = this;
+    this.sk = original.sk.getNormalForm();
   }
 
-  @Override public CanonicalTypeOrder getTypeOrder(){
-    return CanonicalTypeOrder.FunctionPk;
+  @Override public NormalFormTypeOrder getTypeOrder(){
+    return NormalFormTypeOrder.FunctionPk;
   }
 
-  @Override public int canonicalCompareTo(Term term) {
+  @Override public int normalFormCompareTo(Term term) {
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
     }
     // both have to be FunctionPk, compare based on subterms
     FunctionPk functionPk = (FunctionPk)term;
-    return sk.canonicalCompareTo(functionPk.sk);
+    return sk.normalFormCompareTo(functionPk.sk);
   }
 
-  @Override public Term getCanonical() {
-    return canonical;
+  @Override public Term getNormalForm() {
+    return normalForm;
   }
 
   @Override public boolean equals(Object obj) {
@@ -49,7 +49,7 @@ public class FunctionPk extends Term {
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term term = ((Term)obj).getCanonical();
+    Term term = ((Term)obj).getNormalForm();
     if (!(term instanceof FunctionPk)) {
       return false;
     }

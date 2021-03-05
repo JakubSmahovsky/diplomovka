@@ -13,28 +13,28 @@ import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 public class FunctionSenc extends Term {
   private final Term key;
   private final Term value;
-  private final FunctionSenc canonical;
+  private final FunctionSenc normalForm;
 
   public FunctionSenc(Term key, Term value) {
     this.key = key;
     this.value = value;
-    this.canonical = new FunctionSenc(this);
+    this.normalForm = new FunctionSenc(this);
   }
 
   /**
-   * Canonical form constructor
+   * normal form constructor
    */
   private FunctionSenc(FunctionSenc original) {
-    this.canonical = this;
-    this.key = original.key.getCanonical();
-    this.value = original.value.getCanonical();
+    this.normalForm = this;
+    this.key = original.key.getNormalForm();
+    this.value = original.value.getNormalForm();
   }
 
-  @Override public CanonicalTypeOrder getTypeOrder() {
-    return CanonicalTypeOrder.FunctionSenc;
+  @Override public NormalFormTypeOrder getTypeOrder() {
+    return NormalFormTypeOrder.FunctionSenc;
   }
 
-  @Override public int canonicalCompareTo(Term term) {
+  @Override public int normalFormCompareTo(Term term) {
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
@@ -48,8 +48,8 @@ public class FunctionSenc extends Term {
     return value.compareTo(functionSenc.value);
   }
 
-  @Override public Term getCanonical() {
-    return canonical;
+  @Override public Term getNormalForm() {
+    return normalForm;
   }
 
   @Override public boolean equals(Object obj) {
@@ -59,7 +59,7 @@ public class FunctionSenc extends Term {
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term term = ((Term)obj).getCanonical();
+    Term term = ((Term)obj).getNormalForm();
     if (!(term instanceof FunctionSenc)) {
       return false;
     }

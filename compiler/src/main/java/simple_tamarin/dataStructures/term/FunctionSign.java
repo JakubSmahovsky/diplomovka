@@ -13,28 +13,28 @@ import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 public class FunctionSign extends Term {
   private final Term key;
   private final Term message;
-  private final FunctionSign canonical;
+  private final FunctionSign normalForm;
 
   public FunctionSign(Term key, Term message) {
     this.key = key;
     this.message = message;
-    this.canonical = new FunctionSign(this);
+    this.normalForm = new FunctionSign(this);
   }
 
   /**
-   * Canonical form constructor
+   * normal form constructor
    */
   private FunctionSign(FunctionSign original) {
-    this.canonical = this;
-    this.key = original.key.getCanonical();
-    this.message = original.message.getCanonical();
+    this.normalForm = this;
+    this.key = original.key.getNormalForm();
+    this.message = original.message.getNormalForm();
   }
 
-  @Override public CanonicalTypeOrder getTypeOrder() {
-    return CanonicalTypeOrder.FunctionSign;
+  @Override public NormalFormTypeOrder getTypeOrder() {
+    return NormalFormTypeOrder.FunctionSign;
   }
 
-  @Override public int canonicalCompareTo(Term term){
+  @Override public int normalFormCompareTo(Term term){
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
@@ -48,8 +48,8 @@ public class FunctionSign extends Term {
     return message.compareTo(functionSign.message);
   }
 
-  @Override public Term getCanonical() {
-    return canonical;
+  @Override public Term getNormalForm() {
+    return normalForm;
   }
 
   @Override public boolean equals(Object obj) {
@@ -59,7 +59,7 @@ public class FunctionSign extends Term {
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term term = ((Term)obj).getCanonical();
+    Term term = ((Term)obj).getNormalForm();
     if (!(term instanceof FunctionSign)) {
       return false;
     }
@@ -87,7 +87,7 @@ public class FunctionSign extends Term {
   }
 
   @Override public void verifySignature(Term pk, Term message, TermContext pkCtx, TermContext messageCtx, TermContext signatureCtx) {
-    if (!pk.getCanonical().verifyPk(key, pkCtx)) {
+    if (!pk.getNormalForm().verifyPk(key, pkCtx)) {
       Errors.ErrorWrongPublicKeySigning(pkCtx);
     }
     if (!this.message.equals(message)) {

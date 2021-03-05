@@ -436,7 +436,7 @@ public class CompilerVisitor {
 				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
 				Term message = visitTerm(ctx.argument.get(1), principal, block, expectVD);
 				Term signature = visitTerm(ctx.argument.get(2), principal, block, expectVD);
-				signature.getCanonical().verifySignature(key, message, ctx.argument.get(0), ctx.argument.get(1), ctx.argument.get(2));
+				signature.getNormalForm().verifySignature(key, message, ctx.argument.get(0), ctx.argument.get(1), ctx.argument.get(2));
 				FunctionVerify verify = new FunctionVerify(key, message, signature);
 				block.actions.add(Fact.equality(ValueTrue.instance(), verify));
 				return;
@@ -473,7 +473,7 @@ public class CompilerVisitor {
 				}
 				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
 				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
-				Term decoded = value.getCanonical().decode(key, ctx.argument.get(0), ctx.argument.get(1));
+				Term decoded = value.getNormalForm().decode(key, ctx.argument.get(0), ctx.argument.get(1));
 				return new FunctionSdec(key, value, decoded);
 			}
 			case Constants.VPHASH: {

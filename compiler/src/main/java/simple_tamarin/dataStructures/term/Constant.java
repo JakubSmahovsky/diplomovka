@@ -20,11 +20,11 @@ public class Constant extends Term {
     return constants++;
   }
 
-  @Override public CanonicalTypeOrder getTypeOrder() {
-    return CanonicalTypeOrder.Constant;
+  @Override public NormalFormTypeOrder getTypeOrder() {
+    return NormalFormTypeOrder.Constant;
   }
 
-  @Override public int canonicalCompareTo(Term term) {
+  @Override public int normalFormCompareTo(Term term) {
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
@@ -40,14 +40,14 @@ public class Constant extends Term {
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term canonical = ((Term)obj).getCanonical();
-    if (canonical instanceof Constant && ((Constant)canonical).word.equals(this.word)) {
+    Term normalForm = ((Term)obj).getNormalForm();
+    if (normalForm instanceof Constant && ((Constant)normalForm).word.equals(this.word)) {
       return true;
     }
     return false;
   }
 
-  @Override public Term getCanonical() {
+  @Override public Term getNormalForm() {
     return this;
   }
 

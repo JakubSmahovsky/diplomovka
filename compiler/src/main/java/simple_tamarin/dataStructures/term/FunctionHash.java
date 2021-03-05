@@ -12,37 +12,37 @@ import simple_tamarin.dataStructures.STBlock;
  */
 public class FunctionHash extends Term {
   private final Term subterm;
-  private final FunctionHash canonical;
+  private final FunctionHash normalForm;
 
   public FunctionHash(Term subterm) {
     this.subterm = subterm;
-    this.canonical = new FunctionHash(this);
+    this.normalForm = new FunctionHash(this);
   }
 
   /**
-   * Canonical form constructor
+   * normal form constructor
    */
   private FunctionHash(FunctionHash original) {
-    this.canonical = this;
-    this.subterm = original.subterm.getCanonical();
+    this.normalForm = this;
+    this.subterm = original.subterm.getNormalForm();
   }
 
-  @Override public CanonicalTypeOrder getTypeOrder() {
-    return CanonicalTypeOrder.FunctionHash;
+  @Override public NormalFormTypeOrder getTypeOrder() {
+    return NormalFormTypeOrder.FunctionHash;
   }
 
-  @Override public int canonicalCompareTo(Term term) {
+  @Override public int normalFormCompareTo(Term term) {
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
     }
     // both have to be FunctionHash, compare based on subterms
     FunctionHash functionHash = (FunctionHash)term;
-    return subterm.canonicalCompareTo(functionHash.subterm);
+    return subterm.normalFormCompareTo(functionHash.subterm);
   }
 
-  @Override public Term getCanonical() {
-    return canonical;
+  @Override public Term getNormalForm() {
+    return normalForm;
   }
 
   @Override public boolean equals(Object obj) {
@@ -52,7 +52,7 @@ public class FunctionHash extends Term {
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term term = ((Term)obj).getCanonical();
+    Term term = ((Term)obj).getNormalForm();
     if (!(term instanceof FunctionHash)) {
       return false;
     }

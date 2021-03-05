@@ -7,7 +7,7 @@ import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.errors.Errors;
 import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 public abstract class Term implements Comparable<Term>{
-  protected static enum CanonicalTypeOrder {
+  protected static enum NormalFormTypeOrder {
     Constant,
     Variable,
     Tuple,
@@ -17,7 +17,7 @@ public abstract class Term implements Comparable<Term>{
     FunctionHash,
     Exponentiation,
     ValueTrue,
-    NON_CANONICAL
+    NON_NORMAL
   }
 
   /**
@@ -25,18 +25,18 @@ public abstract class Term implements Comparable<Term>{
    * It should be declared as a constant in Constants
    * so that each subclass has a different order.
    */
-  public abstract CanonicalTypeOrder getTypeOrder();
+  public abstract NormalFormTypeOrder getTypeOrder();
 
   /**
-   * Compare terms based on canonical forms.
+   * Compare terms based on normal forms.
    */
   public final int compareTo(Term term) {
-    return this.getCanonical().canonicalCompareTo(term.getCanonical());
+    return this.getNormalForm().normalFormCompareTo(term.getNormalForm());
   }
 
   /**
    * Compare 2 cannonical forms - this and term
-   * The idea is to compare canonical forms lexicographically, however individual lexems are not 
+   * The idea is to compare normal forms lexicographically, however individual lexems are not 
    *    simple characters but rather entire function names / atomic term identifiers.
    *    Order of individual lexems is well defined, but arbitrary.
    * Compare term types based on getTypeOrder().
@@ -44,9 +44,9 @@ public abstract class Term implements Comparable<Term>{
    * Compare subterm in order (based on INPUT/VERIFPAL order, e.g. ENC(k, v)).
    * Must be consistent with .equals(Term term)
    */
-  public abstract int canonicalCompareTo(Term term);
+  public abstract int normalFormCompareTo(Term term);
 
-  public abstract Term getCanonical();
+  public abstract Term getNormalForm();
 
   @Override public abstract boolean equals(Object obj);
 
@@ -73,7 +73,7 @@ public abstract class Term implements Comparable<Term>{
 
   /**
    * Like render but substitute a value that may be subtituted.
-   * Only makes sense for Terms that may be canonical forms of Variables
+   * Only makes sense for Terms that may be normal forms of Variables
    * that are being deconstructed, e.g. Variable x with canoncical form
    * of senc(k, v) may get deconstructed and assigned to substitution 
    * in which case we want to render "senc(k, substitution)" instead of "x".
@@ -135,7 +135,7 @@ public abstract class Term implements Comparable<Term>{
 
   /**
    * Verify this signature. (chceck that pk and message fit).
-   * Should only be used on a canonical form.
+   * Should only be used on a nornal form.
    */
   public void verifySignature(Term pk, Term message, TermContext pkCtx, TermContext messageCtx, TermContext signatureCtx) {
     Errors.ErrorVerifyingNotSigned(signatureCtx);
@@ -143,7 +143,7 @@ public abstract class Term implements Comparable<Term>{
 
   /**
    * Verify this pk. (chceck that sk fits).
-   * Should only be used on a canonical form.
+   * Should only be used on a normal form.
    */
   public boolean verifyPk(Term sk, TermContext pkCtx) {
     Errors.ErrorKeyNotPublicKey(pkCtx);

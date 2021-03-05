@@ -10,15 +10,15 @@ public class ValueTrue extends Term {
     return instance;
   }
 
-  @Override public CanonicalTypeOrder getTypeOrder() {
-    return CanonicalTypeOrder.ValueTrue;
+  @Override public NormalFormTypeOrder getTypeOrder() {
+    return NormalFormTypeOrder.ValueTrue;
   }
 
-  @Override public int canonicalCompareTo(Term term) {
+  @Override public int normalFormCompareTo(Term term) {
     return this.getTypeOrder().compareTo(term.getTypeOrder());
   }
 
-  @Override public Term getCanonical() {
+  @Override public Term getNormalForm() {
     return this;
   }
 

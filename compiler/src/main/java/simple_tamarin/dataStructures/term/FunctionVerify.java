@@ -24,22 +24,22 @@ public class FunctionVerify extends Term {
     this.signature = signature;
   }
 
-  @Override public CanonicalTypeOrder getTypeOrder() {
-    return CanonicalTypeOrder.NON_CANONICAL;
+  @Override public NormalFormTypeOrder getTypeOrder() {
+    return NormalFormTypeOrder.NON_NORMAL;
   }
 
-  @Override public int canonicalCompareTo(Term term){
-    // throw error, this is not a canonicalForm
-    Errors.DebugUnexpectedCall("canonicalCompareTo", "FunctionVerify");
+  @Override public int normalFormCompareTo(Term term){
+    // throw error, this is not a normal form
+    Errors.DebugUnexpectedCall("normalFormCompareTo", "FunctionVerify");
     return 0;
   }
 
-  @Override public Term getCanonical() {
-    return ValueTrue.instance();
+  @Override public Term getNormalForm() {
+    return null;
   }
 
   @Override public boolean equals(Object obj) {
-    // throw error, this is not a canonicalForm
+    // throw error, this does not have a valid normal form
     Errors.DebugUnexpectedCall("equals", "FunctionVerify");
     return false;
   }

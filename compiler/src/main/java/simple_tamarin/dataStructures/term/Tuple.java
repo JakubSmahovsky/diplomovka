@@ -9,29 +9,29 @@ import simple_tamarin.dataStructures.STBlock;
 
 public class Tuple extends Term{
   private final ArrayList<Term> subterms; // invariant: never add to or remove form
-  private final Tuple canonical;
+  private final Tuple normalForm;
 
   public Tuple(ArrayList<Term> subterms) {
     this.subterms = subterms;
-    this.canonical = new Tuple(this);
+    this.normalForm = new Tuple(this);
   }
 
   /**
-   * Canonical form constructor
+   * normal form constructor
    */
   private Tuple(Tuple original) {
-    this.canonical = this;
+    this.normalForm = this;
     this.subterms = new ArrayList<>();
     for (Term subterm : original.subterms) {
-      this.subterms.add(subterm.getCanonical());
+      this.subterms.add(subterm.getNormalForm());
     }
   }
 
-  @Override public CanonicalTypeOrder getTypeOrder() {
-    return CanonicalTypeOrder.Tuple;
+  @Override public NormalFormTypeOrder getTypeOrder() {
+    return NormalFormTypeOrder.Tuple;
   }
 
-  @Override public int canonicalCompareTo(Term term) {
+  @Override public int normalFormCompareTo(Term term) {
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
@@ -39,7 +39,7 @@ public class Tuple extends Term{
     // both have to be Tuples, compare based on subterms
     Tuple tuple = (Tuple)term;
     for (int i = 0; i < Math.min(this.subterms.size(), tuple.subterms.size()); i++) {
-      result = this.subterms.get(i).canonicalCompareTo(tuple.subterms.get(i));
+      result = this.subterms.get(i).normalFormCompareTo(tuple.subterms.get(i));
       if (result != 0) {
         return result;
       }
@@ -48,8 +48,8 @@ public class Tuple extends Term{
     return Integer.compare(this.subterms.size(), tuple.subterms.size());
   }
 
-  @Override public Term getCanonical() {
-    return canonical;
+  @Override public Term getNormalForm() {
+    return normalForm;
   }
 
   @Override public boolean equals(Object obj) {
@@ -59,7 +59,7 @@ public class Tuple extends Term{
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term term = ((Term)obj).getCanonical();
+    Term term = ((Term)obj).getNormalForm();
     if (!(term instanceof Tuple) || subterms.size() != ((Tuple)term).subterms.size()) {
       return false;
     }
@@ -136,12 +136,12 @@ public class Tuple extends Term{
     }
     
     // recursively assign subterms
-    Term canonical = right.getCanonical();
-    if (!(canonical instanceof Tuple) || subterms.size() != ((Tuple)canonical).subterms.size()) {
+    Term normalForm = right.getNormalForm();
+    if (!(normalForm instanceof Tuple) || subterms.size() != ((Tuple)normalForm).subterms.size()) {
       return false;
     }
     for (int i = 0; i < subterms.size(); i++) {
-      if (!subterms.get(i).assign(((Tuple)canonical).subterms.get(i), block, principal)) {
+      if (!subterms.get(i).assign(((Tuple)normalForm).subterms.get(i), block, principal)) {
         return false;
       }
     }

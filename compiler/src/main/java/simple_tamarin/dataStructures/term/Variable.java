@@ -23,7 +23,7 @@ public class Variable extends Term {
   private static int temporals = 0;
   private final int id;
   private Term subterm = null; // invariant: only change using setSubterm
-  private Term canonical = this; // invariant: only change using setSubterm
+  private Term normalForm = this; // invariant: only change using setSubterm
   private boolean placeholder = false; // invariant: only set to true in the placeholder() method
 
   private final String name;
@@ -70,11 +70,11 @@ public class Variable extends Term {
     return new Variable();
   }
 
-  @Override public CanonicalTypeOrder getTypeOrder() {
-    return CanonicalTypeOrder.Variable;
+  @Override public NormalFormTypeOrder getTypeOrder() {
+    return NormalFormTypeOrder.Variable;
   }
 
-  @Override public int canonicalCompareTo(Term term) {
+  @Override public int normalFormCompareTo(Term term) {
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
@@ -83,8 +83,8 @@ public class Variable extends Term {
     return Integer.compare(this.id, ((Variable)term).id);
   }
 
-  @Override public Term getCanonical() {
-    return canonical;
+  @Override public Term getNormalForm() {
+    return normalForm;
   }
 
   @Override public boolean equals(Object obj) {
@@ -94,8 +94,8 @@ public class Variable extends Term {
     if (!(obj instanceof Term)) {
       return false;
     }
-    Term term = ((Term)obj).getCanonical();
-    Term thisTerm = this.getCanonical();
+    Term term = ((Term)obj).getNormalForm();
+    Term thisTerm = this.getNormalForm();
     if (thisTerm instanceof Variable) {
       return thisTerm == term;
     } else {
@@ -233,6 +233,6 @@ public class Variable extends Term {
       Errors.DebugUnexpectedCall("setSubterm on a Variable with subterm", render());
     }
     this.subterm = subterm;
-    this.canonical = subterm.getCanonical();
+    this.normalForm = subterm.getNormalForm();
   }
 }

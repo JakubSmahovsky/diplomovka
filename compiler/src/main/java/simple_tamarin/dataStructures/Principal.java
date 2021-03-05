@@ -43,7 +43,7 @@ public class Principal {
   }
 
   /**
-   * Finds the variable among known ephemeral private variables, does NOT compare canonical forms, only names
+   * Finds the variable among known ephemeral private variables, does NOT compare normal forms, only names
    * @return known variable with the same name or null if principal doesn't know it
    */
   public Variable knowsEphemeralPrivateByName(Variable variable) {
@@ -68,7 +68,7 @@ public class Principal {
   }
 
   /**
-   * Finds the variable among known long-term private variables, does NOT compare canonical forms, only names
+   * Finds the variable among known long-term private variables, does NOT compare normal forms, only names
    * @return known variable with the same name or null if principal doesn't know it
    */
   public Variable knowsLongTermPrivateByName(Variable variable) {
@@ -93,7 +93,7 @@ public class Principal {
   }
 
   /**
-   * Finds the variable among known public variables, does NOT compare canonical forms, only names
+   * Finds the variable among known public variables, does NOT compare normal forms, only names
    * @return known variable with the same name or null if principal doesn't know it
    */
   public Variable knowsPublicByName(Variable variable) {
