@@ -1,11 +1,11 @@
 
-grammar Simple_tamarin;
+grammar SimpleT;
 
 model: declaration* specificationSegment+ queriesBlock?;
 
 declaration: decPrincipals;
 
-decPrincipals: KEYWORD_PRINCIPALS ':' principal+=IDENTIFIER (',' principal+=IDENTIFIER)*;
+decPrincipals: 'principals' ':' principal+=IDENTIFIER (',' principal+=IDENTIFIER)*;
 
 specificationSegment:
   principalBlock | 
@@ -66,8 +66,6 @@ CHECKED:
   'EQUALS';
 
 POWER_OP: '^';
-
-KEYWORD_PRINCIPALS: 'principals';
 
 IDENTIFIER : [a-zA-Z0-9]+;
 WHITESPACE : [ \t\r\n]+ -> skip;
