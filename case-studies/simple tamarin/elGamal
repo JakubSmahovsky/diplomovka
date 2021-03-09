@@ -6,9 +6,8 @@ Alice [
 ]
 
 Bob [
-  knows private m
   knows public h
-  generates y
+  generates y, m
   s = h^y
   c1 = 'g'^y
   c2 = ENC(s, m)

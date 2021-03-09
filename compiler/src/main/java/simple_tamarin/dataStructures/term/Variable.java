@@ -132,15 +132,11 @@ public class Variable extends Term {
 
   @Override public String render(STBlock block) {
     for (Deconstruction dec : block.deconstructed) {
-      if (dec.term.equals(this)) {
-        return subterm.render(dec.substitution);
+      if (dec.substituted.equals(this)) {
+        return dec.substitution.render();
       }
     }
     return render();
-  }
-
-  @Override public String render(Term substitution) {
-    return subterm.render(substitution);
   }
 
   public String renderOutput() {
@@ -202,7 +198,7 @@ public class Variable extends Term {
     this.setSubterm(right);
     this.placeholder = false;
     if (right.isDeconstructionTerm()) {
-      Deconstruction dec = new Deconstruction(right.getEncodedValue(), this);
+      Deconstruction dec = right.createDeconstruction(this);
       if (!block.deconstructed.contains(dec)) {
         block.deconstructed.add(dec);
       }

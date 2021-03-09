@@ -6,6 +6,7 @@ import java.util.List;
 
 import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
+import simple_tamarin.dataStructures.Deconstruction;
 import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.errors.Errors;
 import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
@@ -71,11 +72,13 @@ public class FunctionSenc extends Term {
   }
 
   @Override public String render(STBlock block){
-    return BuilderFormatting.fact(Constants.SENC, Arrays.asList(value, key), block);
-  }
+    for (Deconstruction dec : block.deconstructed) {
+      if (dec.substituted.equals(this)) {
+        return dec.substitution.render();
+      }
+    }
 
-  @Override public String render(Term substitution){
-    return (new FunctionSenc(key, substitution).render());
+    return BuilderFormatting.fact(Constants.SENC, Arrays.asList(value, key), block);
   }
 
   @Override public boolean isDeconstructionTerm() {

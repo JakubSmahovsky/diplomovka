@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
+import simple_tamarin.dataStructures.Deconstruction;
 import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.errors.Errors;
 
@@ -62,7 +63,7 @@ public class FunctionSdec extends Term{
     return true;
   }
 
-  @Override public Term getEncodedValue(){
-    return encodedValue;
+  @Override public Deconstruction createDeconstruction(Term assignedTo) {
+    return new Deconstruction(encodedValue, new FunctionSenc(key, assignedTo));
   }
 }

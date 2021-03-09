@@ -90,16 +90,17 @@ public class Tuple extends Term{
   }
 
   @Override public String render(STBlock block) {
+    for (Deconstruction dec : block.deconstructed) {
+      if (dec.substituted.equals(this)) {
+        return dec.substitution.render();
+      }
+    }
+
     ArrayList<String> renderedSubterms = new ArrayList<>();
     for (Term subterm : subterms) {
       renderedSubterms.add(subterm.render(block));
     }
     return "<" + String.join(", ", renderedSubterms) + ">";
-  }
-
-  @Override public String render(Term substitution) {
-    // substitute this entire Tuple
-    return substitution.render();
   }
 
   @Override public boolean isDeconstructionTerm() {
@@ -125,8 +126,8 @@ public class Tuple extends Term{
    */
   @Override public boolean assign(Term right, STBlock block, Principal principal) {
     // spread
-    if (right.getEncodedValue() != null) {
-      Deconstruction dec = new Deconstruction(right.getEncodedValue(), this);
+    if (right.isDeconstructionTerm()) {
+      Deconstruction dec = right.createDeconstruction(this);
       if (!block.deconstructed.contains(dec)) {
         block.deconstructed.add(dec);
       }

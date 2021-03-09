@@ -2,6 +2,7 @@ package simple_tamarin.dataStructures.term;
 
 import java.util.List;
 
+import simple_tamarin.dataStructures.Deconstruction;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.dataStructures.STModel;
@@ -67,22 +68,10 @@ public abstract class Term implements Comparable<Term>{
 
   /**
    * Like render, but with respect to a block.
-   * The term may be deconstructed in which case it is rendered
-   * as it's deconstruction with the substitutions given by the deconstruction.
+   * If "this" might have been substituted, check if there is a deconstruction substituting "this"
+   * for something else and render that instead. Otherwise render normally but recursively call with block.
    */
   public abstract String render(STBlock block);
-
-  /**
-   * Like render but substitute a value that may be subtituted.
-   * Only makes sense for Terms that may be normal forms of Variables
-   * that are being deconstructed, e.g. Variable x with canoncical form
-   * of senc(k, v) may get deconstructed and assigned to substitution 
-   * in which case we want to render "senc(k, substitution)" instead of "x".
-   */
-  public String render(Term substitution) {
-    Errors.DebugUnexpectedCall("render(substiturion)", render());
-    return null;
-  }
   
   /**
    * Deconstruction terms are sort of abstract terms in the context
@@ -102,11 +91,13 @@ public abstract class Term implements Comparable<Term>{
   }
 
   /**
-   * Return the encoded form of the value in a decode function
-   * e.g. return e for DEC(k, e)
-   * Does NOT return a value if "this" is not an instance of decode function (e.g. variable with subterm of decode)
+   * Create a deconstruction that replaces the term that "this" deconstructs by the 
+   * correct substitution according to the term that the result of deconstruction was assigned to.
+   * e.g. v2 = sdec(senc(v, k), k2) makes senc(v, k) render as senc(v2, k2).  
+   * Only deconstruction terms should override this.
    */
-  public Term getEncodedValue() {
+  public Deconstruction createDeconstruction(Term assignedTo) {
+    Errors.DebugUnexpectedCall("createDeconstruction", render());
     return null;
   }
 
