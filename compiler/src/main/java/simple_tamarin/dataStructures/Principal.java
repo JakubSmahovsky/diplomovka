@@ -31,6 +31,21 @@ public class Principal {
   }
 
   /**
+  * @return ANY known variable with given name or null if principal doesn't know it
+  */
+  public Variable knowsAnyVariableByName(Variable variable) {
+    Variable known = knowsEphemeralPrivateByName(variable);
+    if (known != null) {
+      return known;
+    }
+    known = knowsLongTermPrivateByName(variable);
+    if (known != null) {
+      return known;
+    }
+    return knowsPublicByName(variable);
+  }
+
+  /**
    * @return known ephemeral private variable with given name or null if principal doesn't know it
    */
   public Variable knowsEphemeralPrivate(String name) {

@@ -197,20 +197,20 @@ public class CompilerVisitor {
 		for (TermContext message : ctx.term()) {
 			// visitTerm verifies that message is transparent (when expectVD is USE_MESSAGE)
 			Term term = visitTerm(message, sender, null, VariableDefined.MESSAGE);
+			Term receivedTerm = term.sentToReceived(model, receiver, message);
 
 			// add all new variables to receiver's knowledge
-			for (Variable variable : term.extractKnowledge()) {
-				// do not learn a public variable again as private if you aleady know it (it is implicitly compared, because it's in the state)
-				if (receiver.knowsPublicByName(variable) == null) {
-					receiver.learnEphemeralPrivate(variable.clone(model));
+			for (Variable variable : receivedTerm.extractKnowledge()) {
+				// do not learn a variable again if you aleady know it (it is implicitly compared, because it's in the state)
+				if (receiver.knowsAnyVariableByName(variable) == null) {
+					receiver.learnEphemeralPrivate(variable);
 				}
-				// TODO unary EQUALS
 			}
 
 			sender.getLastBlock().resultOutputs.add(new CommandOut(term, sender.getLastBlock()));
-			receiver.nextBlock.premiseInputs.add(new CommandIn(term, receiver.nextBlock));
-			if (!receiver.nextBlock.state.contains(term)) {
-				receiver.nextBlock.state.add(term);
+			receiver.nextBlock.premiseInputs.add(new CommandIn(receivedTerm, receiver.nextBlock));
+			if (!receiver.nextBlock.state.contains(receivedTerm)) {
+				receiver.nextBlock.state.add(receivedTerm);
 			}
 		}
 	}

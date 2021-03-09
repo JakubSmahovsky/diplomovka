@@ -6,6 +6,8 @@ import java.util.List;
 import simple_tamarin.dataStructures.Deconstruction;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.STBlock;
+import simple_tamarin.dataStructures.STModel;
+import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 
 public class Tuple extends Term{
   private final ArrayList<Term> subterms; // invariant: never add to or remove form
@@ -147,5 +149,14 @@ public class Tuple extends Term{
     }
 
     return true;
+  }
+
+  @Override
+  public Term sentToReceived(STModel model, Principal recipient, TermContext messageCtx) {
+    ArrayList<Term> clonedSubterms = new ArrayList<>();
+    for (Term subterm : subterms) {
+      clonedSubterms.add(subterm.sentToReceived(model, recipient, messageCtx));
+    }
+    return new Tuple(clonedSubterms);
   }
 }

@@ -1,0 +1,25 @@
+principals: Alice, Bob
+
+Alice [
+  knows private x
+  distributed h = 'g'^x
+]
+
+Bob [
+  knows private m
+  knows public h
+  generates y
+  s = h^y
+  c1 = 'g'^y
+  c2 = ENC(s, m)
+]
+Bob -> Alice: {c1, c2}
+
+Alice [
+  s = c1^x
+  m = DEC(s, c2)
+]
+
+queries [
+  confidentiality? Alice's m
+]

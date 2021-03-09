@@ -12,6 +12,7 @@ import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.errors.Errors;
+import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 
 /**
  * A Class representing a Simple Tamarin variable. In the thesis a variable
@@ -46,10 +47,18 @@ public class Variable extends Term {
     this.sort = VariableSort.TEMPORAL;
   }
 
-  /**
-   * Clone this variable for a new owner when receiving it in a message.
-   */
-  public Variable clone(STModel model) {
+  @Override
+  public Term sentToReceived(STModel model, Principal recipient, TermContext messageCtx) {
+    // if the recipient knows a variable with the same name
+    // compare equality to this and the recipient receives the known variable (makes implicit equality assertion in Tamarin)
+    Variable alreadyKnown = recipient.knowsAnyVariableByName(this);
+    if (alreadyKnown != null) {
+      if (!this.equals(alreadyKnown)) {
+        Errors.ErrorReceivedNotEqual(messageCtx.start, name);
+      }
+      return alreadyKnown;
+    }
+    // otherwise clone this variable
     Variable result = new Variable(model, name);
     result.setSubterm(this);
     return result;

@@ -4,6 +4,7 @@ import java.util.List;
 
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.STBlock;
+import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.errors.Errors;
 import simple_tamarin.stParser.Simple_tamarinParser.TermContext;
 public abstract class Term implements Comparable<Term>{
@@ -121,6 +122,15 @@ public abstract class Term implements Comparable<Term>{
   public boolean assign(Term right, STBlock block, Principal principal) {
     Errors.DebugUnexpectedCall("assign", render());
     return false;
+  }
+
+  /**
+   * Clone this Term for a new owner when receiving it in a message.
+   * This function should be overriden by "transparent" Terms only
+  */
+  public Term sentToReceived(STModel model, Principal recipient, TermContext messageCtx) {
+    Errors.DebugUnexpectedCall("clone", render());
+    return null;
   }
 
   /**

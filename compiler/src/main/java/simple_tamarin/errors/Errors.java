@@ -107,6 +107,11 @@ public final class Errors{
     error(left.start, message);
   }
 
+  public static void ErrorReceivedNotEqual(Token start, String variable) {
+    String message = "Variable " + variable + " is not expected to be equal to the one known by the recipient!";
+    error(start, message);
+  }
+
   public static void ErrorEqualsNeverTrue(Token start) {
     String message = "The terms being compared can never be equal! This likely means the model will not be executable!";
     error(start, message);
