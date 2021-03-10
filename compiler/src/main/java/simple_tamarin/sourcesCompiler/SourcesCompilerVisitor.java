@@ -71,6 +71,9 @@ public class SourcesCompilerVisitor {
     if (ctx.term().size() == 1) {
       return visitTerm(ctx.term(0));
     }
+    if (ctx.constant() != null) {
+      return visitConstant(ctx.constant());
+    }
     if (ctx.variable() != null) {
       return visitVariable(ctx.variable());
     }
@@ -90,7 +93,7 @@ public class SourcesCompilerVisitor {
     }
 
     Errors.DebugUnexpectedTokenType(ctx.getText(), "soucres compiler visitTerm");;
-    return null; // TODO debug
+    return null;
   }
 
   public OutputConstant visitConstant(ConstantContext ctx) {

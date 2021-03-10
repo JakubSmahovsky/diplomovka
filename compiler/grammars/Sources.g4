@@ -24,7 +24,7 @@ source:
 
 goal:
   fact ATTIMEPOINT variable |
-  fact | // special actions e.g. splitEqs(NUMBER)
+  function | // special actions e.g. splitEqs(NUMBER)
   '(' variable ',' NUMBER ')' '~~>' '(' variable ',' NUMBER ')';
 fact: (persistent='!')? IDENTIFIER '(' term? (',' term)* ')';
 

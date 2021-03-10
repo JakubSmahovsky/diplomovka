@@ -13,8 +13,8 @@ public class OutputMultiplication extends OutputTerm{
   @Override
   public boolean unify(OutputTerm term) {
     return (term instanceof OutputMultiplication) && 
-           ((OutputMultiplication)term).left.unify(left) &&
-           ((OutputMultiplication)term).right.unify(right);
+           (left.unify(((OutputMultiplication)term).left)) &&
+           (right.unify(((OutputMultiplication)term).right));
   }
   @Override
   public String render() {

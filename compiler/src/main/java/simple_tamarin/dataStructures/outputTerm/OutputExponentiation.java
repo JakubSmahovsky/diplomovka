@@ -14,8 +14,8 @@ public class OutputExponentiation extends OutputTerm{
   @Override
   public boolean unify(OutputTerm term) {
     return (term instanceof OutputExponentiation) && 
-           ((OutputExponentiation)term).base.unify(base) &&
-           ((OutputExponentiation)term).exponent.unify(exponent);
+           (base.unify(((OutputExponentiation)term).base)) &&
+           (exponent.unify(((OutputExponentiation)term).exponent));
   }
   @Override
   public String render() {

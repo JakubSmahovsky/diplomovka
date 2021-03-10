@@ -19,6 +19,4 @@ public class OutputFunctionHash extends OutputTerm{
   public String render() {
     return OutputFormatting.term(Constants.VPHASH, subterm);
   }
-
-  
 }

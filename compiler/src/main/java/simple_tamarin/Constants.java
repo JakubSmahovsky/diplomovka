@@ -91,6 +91,7 @@ public final class Constants{
   public static final String HASH = "h";
   public static final String EXP = "^";
   public static final String MUL = "*";
+  public static final String INVERSE = "inv";
   public static final String EXP_WORD = "exp";
   // VP functions
   public static final String VPPK = "PK";
@@ -103,7 +104,8 @@ public final class Constants{
   public static final String VPSIGNVERIF = "SIGNVERIF";
   // VP forbiden in specification
   public static final String VPFIRST = "FIRST";
-  public static final String VPSECOND = "SECOND";  
+  public static final String VPSECOND = "SECOND";
+  public static final String VPINVERSE = "INV";
   // JSON Graph keys
   public static final String JSON_EDGES = "jgEdges";
   public static final String JSON_NODES = "jgNodes";

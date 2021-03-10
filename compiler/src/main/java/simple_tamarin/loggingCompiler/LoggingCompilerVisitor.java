@@ -7,6 +7,7 @@ import java.util.Queue;
 import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.dataStructures.outputTerm.*;
+import simple_tamarin.errors.Errors;
 import simple_tamarin.loggingParser.LoggingParser.*;
 import simple_tamarin.sourcesCompiler.Goal;
 
@@ -66,14 +67,37 @@ public class LoggingCompilerVisitor {
   }
 
   public OutputTerm visitTerm(TermContext ctx) {
-    if (ctx.function() != null) {
-      return visitFunction(ctx.function());
-    } else if (ctx.tuple() != null) {
-      return visitTuple(ctx.tuple());
-    } else if (ctx.variable() != null) {
+    // bracketed term
+    if (ctx.term().size() == 1) {
+      return visitTerm(ctx.term(0));
+    }
+    if (ctx.constant() != null) {
+      return visitConstant(ctx.constant());
+    }
+    if (ctx.variable() != null) {
       return visitVariable(ctx.variable());
     }
-    return null; // TODO: debug
+    if (ctx.function() != null) {
+      return visitFunction(ctx.function());
+    }
+    if (ctx.tuple() != null) {
+      return visitTuple(ctx.tuple());
+    }
+    if (ctx.infixOp != null) {
+      if (ctx.infixOp.getText().equals(Constants.EXP)) {
+        return new OutputExponentiation(visitTerm(ctx.term(0)), visitTerm(ctx.term(1)));
+      }
+      if (ctx.infixOp.getText().equals(Constants.MUL)) {
+        return new OutputMultiplication(visitTerm(ctx.term(0)), visitTerm(ctx.term(1)));
+      }
+    }
+
+    Errors.DebugUnexpectedTokenType(ctx.getText(), "logging compiler visitTerm");;
+    return null;
+  }
+
+  public OutputConstant visitConstant(ConstantContext ctx) {
+    return new OutputConstant(ctx.word.getText());
   }
 
   /**
@@ -105,8 +129,13 @@ public class LoggingCompilerVisitor {
         OutputTerm subterm = visitTerm(ctx.term(0));
         return new FunctionSecond(subterm);
       }
+      case Constants.INVERSE: {
+        OutputTerm subterm = visitTerm(ctx.term(0));
+        return new OutputFunctionInverse(subterm);
+      }
     }
-    return new OutputVariable(model, "Function ph", "47"); // TODO debug
+    Errors.DebugUnexpectedTokenType(ctx.getText(), "logging compiler visitFunction");
+    return null;
   }
 
   public OutputTuple visitTuple(TupleContext ctx) {
