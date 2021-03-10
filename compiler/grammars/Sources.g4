@@ -11,8 +11,8 @@ source:
   'formulas:'
   'equations:'
     'subst:' subst*
-    'conj:'
-  'lemmas:' lemma*
+    'conj:' (NUMBER '.' lemma?)*
+  'lemmas:' (NUMBER '.' lemma?)*
   'allowed cases: refined'
   'solved formulas:' formula*
   'unsolved goals:'
@@ -24,23 +24,19 @@ source:
 
 goal:
   fact ATTIMEPOINT variable |
+  fact | // special actions e.g. splitEqs(NUMBER)
   '(' variable ',' NUMBER ')' '~~>' '(' variable ',' NUMBER ')';
-fact: PERSISTENT? IDENTIFIER '(' term? (',' term)* ')';
+fact: (persistent='!')? IDENTIFIER '(' term? (',' term)* ')';
+
 
 term:
-  terminatingTerm |
   '(' term ')' |
-  multiplication |
-  exponentiation;
-
-terminatingTerm:
+  term infixOp=('^' | '*') term |
   constant |
   variable |
   function |
-  tuple;
-
-multiplication: terminatingTerm ('*' terminatingTerm)+;
-exponentiation: (terminatingTerm | multiplication) ('^' (terminatingTerm | multiplication))+;
+  tuple |
+  constantFunction = (NUMBER | 'true');
 
 constant: '\'' word=IDENTIFIER '\'';
 function: IDENTIFIER '(' term? (',' term)* ')';
@@ -49,14 +45,12 @@ variable: ('$' | '~' | '#')? IDENTIFIER ('.' NUMBER)?;
 
 subst: term '<' '~' '{' variable (',' variable)* '}';
 formula: term '=' term;
-lemma: '∀' variable+ '.' lemmaStmt;
+lemma: ('∀' | '∃') variable+ '.' lemmaStmt;
 lemmaStmt:
   '(' lemmaStmt ')' |
   goal |
-  variable '=' variable |
-  variable '<' variable |
-  variable '>' variable |
-  lemmaStmt '⇒' lemmaStmt;
+  term ('=' | '<' | '>') term |
+  lemmaStmt ('⇒' | '∧') lemmaStmt;
 
 jsonObj: '{' jsonKeyValue? (',' jsonKeyValue)* '}';
 jsonArray: '[' jsonValue? (',' jsonValue)* ']';
@@ -70,7 +64,6 @@ jsonString: (jsonChars | IDENTIFIER | NUMBER)*;
 
 SEPARATOR: '------------------------------------------------------------------------------';
 ATTIMEPOINT: '▶₀' | '@';
-PERSISTENT: '!';
 PARTIAL_DECONSTRUCTIONS: '(partial deconstructions)';
 USEFUL: '" (useful2)"' | '" (currently deducible)"' | '" (probably constructible)"';
 NUMBER: [0-9]+;

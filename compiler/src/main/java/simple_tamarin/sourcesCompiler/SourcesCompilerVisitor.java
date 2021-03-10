@@ -8,7 +8,6 @@ import simple_tamarin.Constants;
 import simple_tamarin.dataStructures.STModel;
 import simple_tamarin.dataStructures.outputTerm.*;
 import simple_tamarin.errors.Errors;
-import simple_tamarin.errors.STException;
 import simple_tamarin.sourcesCompiler.graph.*;
 import simple_tamarin.sourcesCompiler.graph.node.*;
 import simple_tamarin.sourcesParser.SourcesParser.*;
@@ -57,7 +56,7 @@ public class SourcesCompilerVisitor {
   }
 
   public Goal visitFact(FactContext ctx) {
-    boolean persistent = ctx.PERSISTENT() != null;
+    boolean persistent = ctx.persistent != null;
     String factName = ctx.IDENTIFIER().getText();
     ArrayList<OutputTerm> terms = new ArrayList<>();
     for (TermContext tctx : ctx.term()) {
@@ -68,21 +67,10 @@ public class SourcesCompilerVisitor {
   }
 
   public OutputTerm visitTerm(TermContext ctx) {
-    if (ctx.terminatingTerm() != null && ctx.multiplication() == null) {
-      return visitTerminatingTerm(ctx.terminatingTerm());
+    // bracketed term
+    if (ctx.term().size() == 1) {
+      return visitTerm(ctx.term(0));
     }
-    if (ctx.term() != null) { // bracketed term
-      return visitTerm(ctx.term());
-    }
-
-    if (ctx.multiplication() != null) {
-      throw new STException("output compiling for multiplication is not implemented");
-    }
-    return null; // TODO debug
-  }
-
-  public OutputTerm visitTerminatingTerm(TerminatingTermContext ctx) {
-    
     if (ctx.variable() != null) {
       return visitVariable(ctx.variable());
     }
@@ -92,7 +80,17 @@ public class SourcesCompilerVisitor {
     if (ctx.tuple() != null) {
       return visitTuple(ctx.tuple());
     }
-    return null; // TODO: debug
+    if (ctx.infixOp != null) {
+      if (ctx.infixOp.getText().equals(Constants.EXP)) {
+        return new OutputExponentiation(visitTerm(ctx.term(0)), visitTerm(ctx.term(1)));
+      }
+      if (ctx.infixOp.getText().equals(Constants.MUL)) {
+        return new OutputMultiplication(visitTerm(ctx.term(0)), visitTerm(ctx.term(1)));
+      }
+    }
+
+    Errors.DebugUnexpectedTokenType(ctx.getText(), "soucres compiler visitTerm");;
+    return null; // TODO debug
   }
 
   public OutputConstant visitConstant(ConstantContext ctx) {
