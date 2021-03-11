@@ -1,5 +1,7 @@
 package simple_tamarin.errors;
 
+import java.util.ArrayList;
+
 import org.antlr.v4.runtime.Token;
 
 import simple_tamarin.dataStructures.Principal;
@@ -112,6 +114,16 @@ public final class Errors{
     error(start, message);
   }
 
+  public static void ErrorUnaryEqualsNotVariable(Token start, String term) {
+    String message = "Unexpected term " + term + " in unary EQUALS! Only variables make sense in this check!";
+    error(start, message);
+  }
+
+  public static void ErrorUnaryEqualsNotPending(Token start, String variable) {
+    String message = "Unary EQUALS not applicable to varibale " + variable + "! No implicit euqlity check was made for this variable!";
+    error(start, message);
+  }
+
   public static void ErrorEqualsNeverTrue(Token start) {
     String message = "The terms being compared can never be equal! This likely means the model will not be executable!";
     error(start, message);
@@ -145,6 +157,11 @@ public final class Errors{
   public static void InfoDeclarePrincipal(Token principal) {
     String message = "Principal \"" + principal.getText() + "\" is not declared. It is recommended to declare all principals.";
     info(principal, message);
+  }
+
+  public static void InfoUnaryEquals(Token block, ArrayList<String> pendingVariables) {
+    String message = "Block performs implicit equality checks on variable(s) " + String.join(", ", pendingVariables) + ". Add unary EQUALS to explicitly mark these checks.";
+    info(block, message);
   }
 
   public static void InfoKnowsInFirstBlock(Token variable) {

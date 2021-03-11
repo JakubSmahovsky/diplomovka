@@ -120,7 +120,6 @@ public class Simple_tamarin {
       try {
         loggingVisitor.visitMessage(loggingParser.message());
       } catch (ParseCancellationException e) {
-        System.out.println(e.getMessage());
         storedUncompiledLines++;
         continue;
       }

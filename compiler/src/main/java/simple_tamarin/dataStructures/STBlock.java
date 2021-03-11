@@ -14,6 +14,7 @@ public class STBlock {
   public final int indexInModel;
   public final Principal principal;
 
+  public ArrayList<Variable> unaryEqualsPending;
   public ArrayList<Variable> aliases;
   public ArrayList<Deconstruction> deconstructed;
   public ArrayList<CommandFr> premiseFresh;
@@ -27,8 +28,9 @@ public class STBlock {
   public STBlock(STModel model, Principal principal, int index){
     this.model = model;
     this.indexInModel = model.registerBlock(this);
-
     this.principal = principal;
+
+    this.unaryEqualsPending = new ArrayList<>();
     this.aliases = new ArrayList<>();
     this.deconstructed = new ArrayList<>();
     this.premiseFresh = new ArrayList<>();

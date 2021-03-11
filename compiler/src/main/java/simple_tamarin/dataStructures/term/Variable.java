@@ -7,7 +7,6 @@ import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
 import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.Deconstruction;
-import simple_tamarin.dataStructures.Fact;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.dataStructures.STModel;
@@ -187,10 +186,7 @@ public class Variable extends Term {
   @Override public boolean assign(Term right, STBlock block, Principal principal) {
     // if this is properly defined (principal already knew it) assert equality
     if (!this.placeholder) {
-      if (right instanceof Variable && name.equals(((Variable)right).name)) { // equality guaranteed by usage of the same name, no action fact is needed
-        return true;
-      }
-      block.actions.add(Fact.equality(this, right));
+      block.unaryEqualsPending.add(this);
       return this.equals(right);
     }
 

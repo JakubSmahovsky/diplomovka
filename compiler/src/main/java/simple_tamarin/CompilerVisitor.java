@@ -117,6 +117,14 @@ public class CompilerVisitor {
 		for (CommandContext command : ctx.command()) {
 			visitCommand(command, principal, curBlock);
 		}
+
+		if (!curBlock.unaryEqualsPending.isEmpty()) {
+			ArrayList<String> varnames = new ArrayList<>();
+			for (Variable variable : curBlock.unaryEqualsPending) {
+				varnames.add(variable.renderOutput());
+			}
+			Errors.InfoUnaryEquals(ctx.stop, varnames);
+		}
 	}
 
 	public void visitCommand(CommandContext ctx, Principal principal, STBlock block) {
@@ -204,6 +212,8 @@ public class CompilerVisitor {
 				// do not learn a variable again if you aleady know it (it is implicitly compared, because it's in the state)
 				if (receiver.knowsAnyVariableByName(variable) == null) {
 					receiver.learnEphemeralPrivate(variable);
+				} else {
+					receiver.nextBlock.unaryEqualsPending.add(variable);
 				}
 			}
 
@@ -416,17 +426,36 @@ public class CompilerVisitor {
 	public void visitCheckedCall(CheckedCallContext ctx, Principal principal, STBlock block, VariableDefined expectVD) {
 		switch (ctx.CHECKED().getText()) {
 			case Constants.VPEQUALS: {
-				model.builtins.restriction_eq = true;
-				if (ctx.argument.size() != 2) {
-					Errors.ErrorArgumentsCount(ctx.CHECKED().getSymbol(), 2, ctx.argument.size());
+				if (ctx.argument.size() == 1) {
+					if (ctx.argument.get(0).variable() == null) {
+						Errors.ErrorUnaryEqualsNotVariable(ctx.argument.get(0).start, ctx.argument.get(0).getText());
+					}
+					Variable variable = visitVariable(ctx.argument.get(0).variable(), principal, block, expectVD);
+					boolean removed = false;
+					for (int i = 0; i < block.unaryEqualsPending.size(); i++) {
+						// it is important to compare using '==' here, we want the same object, not just equal terms
+						if (variable == block.unaryEqualsPending.get(i)) {
+							block.unaryEqualsPending.remove(i);
+							removed = true;
+							break;
+						}
+					}
+					if (!removed) {
+						Errors.ErrorUnaryEqualsNotPending(ctx.argument.get(0).start, ctx.argument.get(0).getText());
+					}
+					return;
 				}
-				Term term1 = visitTerm(ctx.argument.get(0), principal, block, expectVD);
-				Term term2 = visitTerm(ctx.argument.get(1), principal, block, expectVD);
-				if (!(term1.equals(term2))) {
-					Errors.ErrorEqualsNeverTrue(ctx.start);
+				if (ctx.argument.size() == 2) {	
+					model.builtins.restriction_eq = true;
+					Term term1 = visitTerm(ctx.argument.get(0), principal, block, expectVD);
+					Term term2 = visitTerm(ctx.argument.get(1), principal, block, expectVD);
+					if (!(term1.equals(term2))) {
+						Errors.ErrorEqualsNeverTrue(ctx.start);
+					}
+					block.actions.add(Fact.equality(term1, term2));
+					return;
 				}
-				block.actions.add(Fact.equality(term1, term2));
-				return;
+				Errors.ErrorArgumentsCount(ctx.CHECKED().getSymbol(), 2, ctx.argument.size());
 			}
 			case Constants.VPSIGNVERIF: {
 				model.builtins.restriction_eq = true;
