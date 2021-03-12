@@ -11,8 +11,8 @@ source:
   'formulas:'
   'equations:'
     'subst:' subst*
-    'conj:' (NUMBER '.' lemma?)*
-  'lemmas:' (NUMBER '.' lemma?)*
+    'conj:' (lemma | (NUMBER '.' lemma?)*)
+  'lemmas:' (lemma | (NUMBER '.' lemma?)*)
   'allowed cases: refined'
   'solved formulas:' formula*
   'unsolved goals:'

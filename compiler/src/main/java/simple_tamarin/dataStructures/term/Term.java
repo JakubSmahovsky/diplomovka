@@ -110,7 +110,7 @@ public abstract class Term implements Comparable<Term>{
    * This function should be overriden by "transparent" Terms and no other.
    * @return false if left and right cannot be unified
    */
-  public boolean assign(Term right, STBlock block, Principal principal) {
+  public boolean assign(Term right, boolean rightIndirection, STBlock block) {
     Errors.DebugUnexpectedCall("assign", render());
     return false;
   }

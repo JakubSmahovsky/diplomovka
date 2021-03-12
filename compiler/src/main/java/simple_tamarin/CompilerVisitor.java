@@ -229,7 +229,7 @@ public class CompilerVisitor {
 		Term left = visitTerm(ctx.left, principal, block, VariableDefined.ASSIGNMENT_LEFT);
 		Term right = visitTerm(ctx.right, principal, block, VariableDefined.ASSIGNMENT_RIGHT);
 
-		if (!left.assign(right, block, principal)) {
+		if (!left.assign(right, false, block)) {
 			Errors.ErrorCannotUnify(ctx.left, ctx.right);
 		}
 	}

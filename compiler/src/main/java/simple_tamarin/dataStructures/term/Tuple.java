@@ -124,7 +124,7 @@ public class Tuple extends Term{
    * want to substitute this Tuple for the entire Term on the right.
    * Afterwards we want to recursively assign subterms.
    */
-  @Override public boolean assign(Term right, STBlock block, Principal principal) {
+  @Override public boolean assign(Term right, boolean rightIndirection, STBlock block) {
     // spread
     if (right.isDeconstructionTerm()) {
       Deconstruction dec = right.createDeconstruction(this);
@@ -139,12 +139,16 @@ public class Tuple extends Term{
     }
     
     // recursively assign subterms
-    Term normalForm = right.getNormalForm();
-    if (!(normalForm instanceof Tuple) || subterms.size() != ((Tuple)normalForm).subterms.size()) {
+    Term rightTuple = right;
+    if (!(rightTuple instanceof Tuple)) {
+      rightTuple = right.getNormalForm();
+      rightIndirection = true;
+    }
+    if (!(rightTuple instanceof Tuple) || subterms.size() != ((Tuple)rightTuple).subterms.size()) {
       return false;
     }
     for (int i = 0; i < subterms.size(); i++) {
-      if (!subterms.get(i).assign(((Tuple)normalForm).subterms.get(i), block, principal)) {
+      if (!subterms.get(i).assign(((Tuple)rightTuple).subterms.get(i), rightIndirection, block)) {
         return false;
       }
     }

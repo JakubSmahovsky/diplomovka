@@ -3,7 +3,7 @@ package simple_tamarin.dataStructures.term;
 import java.util.ArrayList;
 import java.util.List;
 
-import simple_tamarin.dataStructures.Principal;
+import simple_tamarin.dataStructures.Fact;
 import simple_tamarin.dataStructures.STBlock;
 
 public class Constant extends Term {
@@ -71,7 +71,11 @@ public class Constant extends Term {
     return new ArrayList<>(); 
   }
 
-  @Override public boolean assign(Term right, STBlock block, Principal principal) {
+  @Override public boolean assign(Term right, boolean rightIndirection, STBlock block) {
+    if (!rightIndirection) {
+      block.principal.model.builtins.restriction_eq = true;
+      block.actions.add(Fact.equality(this, right));
+    }
     return this.equals(right);
   }
 }

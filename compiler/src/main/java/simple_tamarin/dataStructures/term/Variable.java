@@ -7,6 +7,7 @@ import simple_tamarin.BuilderFormatting;
 import simple_tamarin.Constants;
 import simple_tamarin.Constants.VariableSort;
 import simple_tamarin.dataStructures.Deconstruction;
+import simple_tamarin.dataStructures.Fact;
 import simple_tamarin.dataStructures.Principal;
 import simple_tamarin.dataStructures.STBlock;
 import simple_tamarin.dataStructures.STModel;
@@ -183,10 +184,14 @@ public class Variable extends Term {
     return Arrays.asList(this);    
   }
 
-  @Override public boolean assign(Term right, STBlock block, Principal principal) {
+  @Override public boolean assign(Term right, boolean rightIndirection, STBlock block) {
     // if this is properly defined (principal already knew it) assert equality
     if (!this.placeholder) {
       block.unaryEqualsPending.add(this);
+      if (!rightIndirection) {
+        block.principal.model.builtins.restriction_eq = true;
+        block.actions.add(Fact.equality(this, right));
+      }
       return this.equals(right);
     }
 
@@ -207,7 +212,7 @@ public class Variable extends Term {
     if (!block.state.contains(this)) {
       block.state.add(this);
     }
-    principal.learnEphemeralPrivate(this);
+    block.principal.learnEphemeralPrivate(this);
     return true;
   }
 
