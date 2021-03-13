@@ -29,6 +29,6 @@ client_session_key.aes
 compiler/target
 
 # antlr generated parsers
-compiler/src/main/java/simple_tamarin/stParser
-compiler/src/main/java/simple_tamarin/sourcesParser
-compiler/src/main/java/simple_tamarin/loggingParser
+compiler/src/main/java/simpleT/stParser
+compiler/src/main/java/simpleT/sourcesParser
+compiler/src/main/java/simpleT/loggingParser
