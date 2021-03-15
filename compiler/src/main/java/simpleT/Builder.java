@@ -131,6 +131,10 @@ public class Builder extends BuilderFormatting{
         facts.add(persistentFact(Constants.PRINCIPAL_PRIVATE, Arrays.asList(principal.principalID, variable), null));
       }
     }
+    // render output of distributed variables
+    for (Variable variable : toConstruct) {
+      facts.add((new CommandOut(variable, null)).render());
+    }
     output.append(ruleResult(facts));
 
     // remove fresh and public sort from variables
