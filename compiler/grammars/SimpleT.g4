@@ -67,5 +67,6 @@ CHECKED:
 
 POWER_OP: '^';
 
-IDENTIFIER : [a-zA-Z0-9]+;
-WHITESPACE : [ \t\r\n]+ -> skip;
+IDENTIFIER: [a-zA-Z0-9]+;
+LINE_COMMENT: ('//' (~'\n')*) -> skip;
+WHITESPACE: [ \t\r\n]+ -> skip;
