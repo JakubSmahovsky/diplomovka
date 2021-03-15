@@ -146,8 +146,8 @@ public class Variable extends Term {
   /**
    * Render an alias defined by this variable, simply as "this = subterm".
    */
-  public String renderAlias() {
-    return BuilderFormatting.alias(this.render(), subterm.render());
+  public String renderAlias(STBlock block) {
+    return BuilderFormatting.alias(this.render(), block == null ? subterm.render() : subterm.render(block));
   }
 
   public void addFresh() {

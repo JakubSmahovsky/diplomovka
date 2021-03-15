@@ -106,7 +106,7 @@ public class Builder extends BuilderFormatting{
     // render aliases
     ArrayList<String> facts = new ArrayList<>();
     for (Variable variable : toConstruct) {
-      facts.add(variable.renderAlias());
+      facts.add(variable.renderAlias(null));
     }
     output.append(ruleAliases(null, facts));
 
@@ -194,7 +194,7 @@ public class Builder extends BuilderFormatting{
     // aliases; we render them last, because they are affected by fresh rules
     ArrayList<String> aliases = new ArrayList<>();
     for (Variable alias : block.aliases) {
-      aliases.add(alias.renderAlias());
+      aliases.add(alias.renderAlias(block));
     }
 
     output.append(ruleAliases(block, aliases));

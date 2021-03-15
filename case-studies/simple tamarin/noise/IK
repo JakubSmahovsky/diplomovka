@@ -1,0 +1,78 @@
+// notation: 
+// key XYZ; X: Static/Ephemeral, Y: Secret/Public, Z: Alice/Bob
+// temp_k = tk
+// we ignore deterministic steps depening only on protocol_name or prologue
+//   instead we set ck0 to the constant 'ck0'
+principals: Alice, Bob
+
+// <- s
+Bob [
+  knows private SSB
+  distributed SPB = 'g'^SSB
+]
+
+Alice [
+  generates payload
+  knows private SSA
+  SPA = 'g'^SSA
+  knows public SPB
+  // Initialize()
+  // handshake pattern is IK
+  // initiator is Alice
+  // s = {SSA, SPA}; rs = SPB
+  // MixHash(s)
+  h0 = HASH(SPB)
+  ck0 = 'ck0'
+  // -> e, es, s, ss
+  // "e"; e = {ESA, EPA}
+  generates ESA
+  EPA = 'g'^ESA
+  h1 = HASH({h0, EPA})
+  // "es"
+  DHes = SPB^ESA
+  ck1 = HASH({HASH({ck0, DHes}), '0x01'})
+  k1 = HASH({HASH({ck0, DHes}), ck1, '0x02'})
+  // "s"
+  Mspa = ENC(HASH({k1, '0', h1}), SPA)
+  macMspa = HASH({k1, '0', h1, SPA})
+  h2 = HASH({h1, Mspa})
+  // "ss"
+  DHss = SPB^SSA
+  ck2 = HASH({HASH({ck1, DHss}), '0x01'})
+  k2 = HASH({HASH({ck1, DHss}), ck2, '0x02'})
+  // EncryptAndHash(payload)
+  M = ENC(HASH({k2, '0', h2}), payload)
+  macM = HASH({k2, '0', h2, payload})
+  h3 = HASH({h2, M})
+]
+Alice -> Bob: EPA, {Mspa, macMspa}, {M, macM}
+
+Bob [
+  // Initialize()
+  // MixHash(s)
+  h0 = HASH(SPB)
+  ck0 = 'ck0'
+  // -> e, es, s, ss
+  // "e"; re = EPA
+  h1 = HASH({h0, EPA})
+  // "es"
+  DHes = EPA^SSB
+  ck1 = HASH({HASH({ck0, DHes}), '0x01'})
+  k1 = HASH({HASH({ck0, DHes}), ck1, '0x02'})
+  // "s"
+  SPA = DEC(HASH({k1, '0', h1}), Mspa)
+  EQUALS(HASH({k1, '0', h1, SPA}), macMspa)?
+  h2 = HASH({h1, Mspa})
+  // "ss"
+  DHss = SPA^SSB
+  ck2 = HASH({HASH({ck1, DHss}), '0x01'})
+  k2 = HASH({HASH({ck1, DHss}), ck2, '0x02'})
+  // DecryptAndHash(M)
+  payload = DEC(HASH({k2, '0', h2}), M)
+  EQUALS(macM, HASH({k2, '0', h2, payload}))?
+  h3 = HASH({h2, M})
+]
+
+queries [
+  confidentiality? Alice's payload
+]
