@@ -21,4 +21,5 @@ Alice [
 
 queries [
   confidentiality? Alice's m
+  forward-secrecy? Alice's m
 ]

@@ -209,9 +209,7 @@ public class Variable extends Term {
         block.aliases.add(this);
       }
     }
-    if (!block.state.contains(this)) {
-      block.state.add(this);
-    }
+    block.addToState(this);
     block.principal.learnEphemeralPrivate(this);
     return true;
   }

@@ -155,7 +155,7 @@ public class Principal {
   public void nextBlock() {
     if (nextBlock != null) {
       blocks.add(nextBlock);
-      nextBlock = new STBlock(model, this, blocks.size(), nextBlock.state);
+      nextBlock = new STBlock(model, this, blocks.size(), nextBlock.getState());
     } else {
       nextBlock = new STBlock(model, this, 0);
     }
@@ -201,10 +201,6 @@ public class Principal {
 
   public ArrayList<STBlock> getBlocks() {
     return blocks;
-  }
-
-  public STBlock getFirstBlock() {
-    return blocks.get(0);
   }
 
   public STBlock getLastBlock() {

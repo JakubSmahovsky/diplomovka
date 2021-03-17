@@ -246,13 +246,13 @@ public class Builder extends BuilderFormatting{
    */
   private void executable() {
     output.append(lemma(Constants.EXECUTABLE, true));
-    ArrayList<Variable> variables = new ArrayList<>();
+    ArrayList<Variable> allVariables = new ArrayList<>();
     for (Principal principal : model.getPrincipals()) {
       ArrayList<Term> finalState = principal.getLastBlock().completeState();
       for (Term term : finalState) {
         for (Variable variable : term.freeVariables()) {
-          if (!variables.contains(variable)) {
-              variables.add(variable);
+          if (!Term.containsByObjectEquality(allVariables, variable)) {
+              allVariables.add(variable);
           }
         }
       }
@@ -260,10 +260,10 @@ public class Builder extends BuilderFormatting{
     ArrayList<Variable> temporals = new ArrayList<>();
     for (int principalNo = 0; principalNo < model.getPrincipals().size(); principalNo ++) {
       Variable t = Variable.nextTemporal();
-      variables.add(t);
+      allVariables.add(t);
       temporals.add(t);
     }
-    output.append(lemmaVariables(variables, true));
+    output.append(lemmaVariables(allVariables, true));
     output.append(lineBreak());
 
     ArrayList<String> facts = new ArrayList<>();
@@ -310,8 +310,8 @@ public class Builder extends BuilderFormatting{
     ArrayList<Variable> allVariables = new ArrayList<>(principalIDs);
     for (Term term : originalBlock.completeState()) {
       for (Variable variable : term.freeVariables()) {
-        if (!allVariables.contains(variable)) {
-            allVariables.add(variable);
+        if (!Term.containsByObjectEquality(allVariables, variable)) {
+          allVariables.add(variable);
         }
       }
     }
@@ -365,8 +365,8 @@ public class Builder extends BuilderFormatting{
     ArrayList<Variable> allVariables = new ArrayList<>(principalIDs);
     for (Term term : finalBlock.completeState()) {
       for (Variable variable : term.freeVariables()) {
-        if (!allVariables.contains(variable)) {
-            allVariables.add(variable);
+        if (!Term.containsByObjectEquality(allVariables, variable)) {
+          allVariables.add(variable);
         }
       }
     }

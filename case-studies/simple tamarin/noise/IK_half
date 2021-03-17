@@ -30,20 +30,19 @@ Alice [
   h1 = HASH({h0, EPA})
   // "es"
   DHes = SPB^ESA
-  ck1 = HASH({HASH({ck0, DHes}), '0x01'})
-  k1 = HASH({HASH({ck0, DHes}), ck1, '0x02'})
+  ck1 = HASH({HASH({ck0, DHes})})
+  k1 = HASH({HASH({ck0, DHes}), ck1})
   // "s"
-  Mspa = ENC(HASH({k1, '0', h1}), SPA)
-  macMspa = HASH({k1, '0', h1, SPA})
+  Mspa = ENC(HASH({k1, h1}), SPA)
+  macMspa = HASH({k1, h1, SPA})
   h2 = HASH({h1, Mspa})
   // "ss"
   DHss = SPB^SSA
-  ck2 = HASH({HASH({ck1, DHss}), '0x01'})
-  k2 = HASH({HASH({ck1, DHss}), ck2, '0x02'})
+  ck2 = HASH({HASH({ck1, DHss})})
+  k2 = HASH({HASH({ck1, DHss}), ck2})
   // EncryptAndHash(payload)
-  M = ENC(HASH({k2, '0', h2}), payload)
-  macM = HASH({k2, '0', h2, payload})
-  h3 = HASH({h2, M})
+  M = ENC(HASH({k2, h2}), payload)
+  macM = HASH({k2, h2, payload})
 ]
 Alice -> Bob: EPA, {Mspa, macMspa}, {M, macM}
 
@@ -57,20 +56,19 @@ Bob [
   h1 = HASH({h0, EPA})
   // "es"
   DHes = EPA^SSB
-  ck1 = HASH({HASH({ck0, DHes}), '0x01'})
-  k1 = HASH({HASH({ck0, DHes}), ck1, '0x02'})
+  ck1 = HASH({HASH({ck0, DHes})})
+  k1 = HASH({HASH({ck0, DHes}), ck1})
   // "s"
-  SPA = DEC(HASH({k1, '0', h1}), Mspa)
-  EQUALS(HASH({k1, '0', h1, SPA}), macMspa)?
+  SPA = DEC(HASH({k1, h1}), Mspa)
+  EQUALS(macMspa, HASH({k1, h1, SPA}))?
   h2 = HASH({h1, Mspa})
   // "ss"
   DHss = SPA^SSB
-  ck2 = HASH({HASH({ck1, DHss}), '0x01'})
-  k2 = HASH({HASH({ck1, DHss}), ck2, '0x02'})
+  ck2 = HASH({HASH({ck1, DHss})})
+  k2 = HASH({HASH({ck1, DHss}), ck2})
   // DecryptAndHash(M)
-  payload = DEC(HASH({k2, '0', h2}), M)
-  EQUALS(macM, HASH({k2, '0', h2, payload}))?
-  h3 = HASH({h2, M})
+  payload = DEC(HASH({k2, h2}), M)
+  EQUALS(macM, HASH({k2, h2, payload}))?
 ]
 
 queries [

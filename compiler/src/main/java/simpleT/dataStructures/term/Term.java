@@ -1,5 +1,6 @@
 package simpleT.dataStructures.term;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import simpleT.dataStructures.Deconstruction;
@@ -20,6 +21,15 @@ public abstract class Term implements Comparable<Term>{
     Exponentiation,
     ValueTrue,
     NON_NORMAL
+  }
+
+  public static boolean containsByObjectEquality(ArrayList<? extends Term> termList, Term term) {
+    for (Term inList : termList) {
+      if (inList == term) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

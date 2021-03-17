@@ -21,7 +21,7 @@ public class STBlock {
   public ArrayList<CommandIn> premiseInputs;
   public ArrayList<Fact> actions;
   public ArrayList<CommandOut> resultOutputs;
-  public ArrayList<Term> state;
+  private final ArrayList<Term> state;
   public int rangeBegin;
   public int rangeEnd;
   
@@ -58,9 +58,7 @@ public class STBlock {
     actions.addAll(block.actions);
     resultOutputs.addAll(block.resultOutputs);
     for (Term term : block.state) {
-      if (!state.contains(term)) {
-        state.add(term);
-      }
+      addToState(term);
     }
     rangeEnd = block.rangeEnd;
   }
@@ -70,5 +68,15 @@ public class STBlock {
     result.addAll(principal.composeInitState());
     result.addAll(state);
     return result;
+  }
+
+  public ArrayList<Term> getState() {
+    return state;
+  }
+
+  public void addToState(Term term) {
+    if (!Term.containsByObjectEquality(state, term)) {
+      state.add(term);
+    }
   }
 }

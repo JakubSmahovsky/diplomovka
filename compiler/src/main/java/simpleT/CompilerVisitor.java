@@ -113,10 +113,10 @@ public class CompilerVisitor {
 		}
 
 		STBlock curBlock = principal.nextBlock;
-		principal.nextBlock();
 		for (CommandContext command : ctx.command()) {
 			visitCommand(command, principal, curBlock);
 		}
+		principal.nextBlock();
 
 		if (!curBlock.unaryEqualsPending.isEmpty()) {
 			ArrayList<String> varnames = new ArrayList<>();
@@ -166,7 +166,7 @@ public class CompilerVisitor {
 		for (VariableContext vctx : ctx.variable()) {
 			Variable variable = visitVariable(vctx, principal, block, expectVD);
 
-			if (principal.getFirstBlock() != block && !variable.isConstructed()) {
+			if (!principal.getBlocks().isEmpty() && !variable.isConstructed()) {
 				Errors.InfoKnowsInFirstBlock(vctx.start);
 			}
 
@@ -184,7 +184,7 @@ public class CompilerVisitor {
 			Variable variable = visitVariable(vctx, principal, block, VariableDefined.GENERATES);
 			principal.learnEphemeralPrivate(variable);
 			block.premiseFresh.add(new CommandFr(variable, block));
-			block.state.add(variable);
+			block.addToState(variable);
 		}
 	}
 
@@ -219,9 +219,7 @@ public class CompilerVisitor {
 
 			sender.getLastBlock().resultOutputs.add(new CommandOut(term, sender.getLastBlock()));
 			receiver.nextBlock.premiseInputs.add(new CommandIn(receivedTerm, receiver.nextBlock));
-			if (!receiver.nextBlock.state.contains(receivedTerm)) {
-				receiver.nextBlock.state.add(receivedTerm);
-			}
+			receiver.nextBlock.addToState(receivedTerm);
 		}
 	}
 

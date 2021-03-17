@@ -1,3 +1,5 @@
+principals: Alice, Bob
+
 Bob [
   knows private Kab
 ]
@@ -31,6 +33,6 @@ Bob [
 ]
 
 queries [
-  executable?
   confidentiality? Bob's Nb
+  forward-secrecy? Bob's Nb
 ]
