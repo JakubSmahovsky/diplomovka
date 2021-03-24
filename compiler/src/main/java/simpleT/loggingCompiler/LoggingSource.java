@@ -1,12 +1,13 @@
 package simpleT.loggingCompiler;
 
-import simpleT.Constants;
+import simpleT.dataStructures.document.Document;
 import simpleT.sourcesCompiler.Source;
 
 public class LoggingSource {
   public int goalNr;
   public String name;
   public Source source;
+  public String printLabel;
 
   public LoggingSource(int goalNr, String name) {
     this.goalNr = goalNr;
@@ -23,7 +24,7 @@ public class LoggingSource {
     }
   }
 
-  @Override public String toString() {
-    return Constants.INDENT + "by (" + source.indexInModel + ") " + name;
+  public Document render() {
+    return new Document("by (" + source.indexInModel + "): " + source.renderLabel());
   }
 }

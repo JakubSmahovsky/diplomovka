@@ -1,7 +1,5 @@
 package simpleT;
 
-import simpleT.groupedFunctions.BlockNames;
-
 public final class Constants{
   // private contrustor to forbid instances of Constants
   private Constants(){}
@@ -57,7 +55,7 @@ public final class Constants{
     "\r\n";
 
   public static final String PREFAB_PRIVATE_REVEAL =
-    "rule "+ BlockNames.renderPrivateReveal() +": [\r\n" +
+    "rule "+ Constants.PREFAB_PRIVATE_REVEAL_NAME +": [\r\n" +
     Constants.INDENT + "!" + Constants.PRINCIPAL_PRIVATE + "(Principal, Private)\r\n" +
     "]--[\r\n" +
     Constants.INDENT + Constants.FACT_DISHONEST + "(Principal)\r\n" +
@@ -137,8 +135,9 @@ public final class Constants{
   public static final String MANDATORY_THEORY_EXTENSION = ".spthy";
   public static final String DEFAULT_THEORY_PATH = "theory";
   public static final String DEFAULT_SOURCES_OUTPUT_PATH = "sources.txt";
-  public static final String INIT = "init";
+  public static final String INIT = "INIT";
   public static final String VARIABLE_NAME = "qq";
+  public static final String FACT_NAME = "QQ";
   public static final String TEMPORAL_NAME = "t";
   public static final String NAMES_SEPARATOR = "_";
   public static final String INTRUDER_KNOWS_OUTPUT = "KU";

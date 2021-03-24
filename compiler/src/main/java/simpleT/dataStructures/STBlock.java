@@ -2,6 +2,7 @@ package simpleT.dataStructures;
 
 import java.util.ArrayList;
 
+import simpleT.Constants;
 import simpleT.dataStructures.command.*;
 import simpleT.dataStructures.term.Term;
 import simpleT.dataStructures.term.Variable;
@@ -45,6 +46,14 @@ public class STBlock {
   public STBlock(STModel model, Principal principal, int index, ArrayList<Term> state){
     this(model, principal, index);
     this.state.addAll(state);
+  }
+
+  /**
+  * Render the label of this block.
+  * Must be consistent with read().
+  */
+  public String render() {
+    return principal.render() + Constants.NAMES_SEPARATOR + indexInModel;
   }
 
   /**

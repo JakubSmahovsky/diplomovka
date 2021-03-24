@@ -9,7 +9,7 @@ public class Principal {
   public final STModel model;
   public final Variable principalID;
 
-  public String name;
+  private final String name;
   private final ArrayList<Variable> knownEphemeralPrivate;
   private final ArrayList<Variable> knownLongTermPrivate;
   private final ArrayList<Variable> knownPublic;
@@ -188,13 +188,21 @@ public class Principal {
     blocks = newBlocks;
   }
 
-  @Override public String toString() {
-    return name;
+  public boolean nameEquals(String name) {
+    return this.name.equals(name);
   }
 
   /**
-   * Only for iterating, not adding or removing
+   * Render the principal's identifier for use in fact and rule labels.
    */
+  public String render() {
+    return principalID.renderFactName();
+  }
+
+  public String renderOutput() {
+    return name;
+  }
+
   public ArrayList<Variable> getKnownPublic() {
     return knownPublic;
   }

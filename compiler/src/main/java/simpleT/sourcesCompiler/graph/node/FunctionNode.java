@@ -96,17 +96,9 @@ public class FunctionNode extends Node{
       if (!(parents.get(0) instanceof BlockNode)) {
         Errors.debug("FunctionNode of Receive has a parent that is not a block rule!");
       }
-      BlockNode block = (BlockNode)parents.get(0);
+      BlockNode blockNode = (BlockNode)parents.get(0);
 
-      if (block.block == null) {
-        // TODO: identities in reveals
-        String myLine = "Intruder may receive it from a compromited principal.";
-        return new Description(new Document(myLine), new Document(myLine), block, block.label);
-      }
-
-      String myLine = "Intruder may receive it from " + block.block.principal
-          + " after block " + block.block.rangeEnd + ".";
-      return new Description(new Document(myLine), new Document(myLine), block, block.label);
+      return blockNode.renderDescription();
     }
 
     String intruderAction;

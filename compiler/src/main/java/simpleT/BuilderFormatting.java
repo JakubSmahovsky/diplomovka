@@ -8,7 +8,6 @@ import java.util.List;
 import simpleT.dataStructures.Principal;
 import simpleT.dataStructures.STBlock;
 import simpleT.dataStructures.term.*;
-import simpleT.groupedFunctions.BlockNames;
 
 /**
  * Part of Builder (see Builder) used to define methods working with strings.
@@ -51,18 +50,18 @@ public abstract class BuilderFormatting {
    * @param contextBlock is block whose body requires the state fact
    */
   public static String resultStateFact(STBlock sourceBlock, STBlock contextBlock) {
-    return fact(BlockNames.render(sourceBlock), sourceBlock.completeState(), contextBlock);
+    return fact(sourceBlock.render(), sourceBlock.completeState(), contextBlock);
   }
 
   public static String initStateFact(Principal principal) {
-    return persistentFact(principal.name + "_init", principal.composeInitState(), null);
+    return persistentFact(principal.render() + "_init", principal.composeInitState(), null);
   }
 
   /**
    * @param block is null for init block
    */
   public static String ruleAliases(STBlock block, List<String> aliases) {
-    String label = block == null ? BlockNames.renderInit() : BlockNames.render(block);
+    String label = block == null ? Constants.INIT : block.render();
     StringBuilder result = new StringBuilder("rule " + label + ":\r\n");
     if (aliases.isEmpty()) {
       return result.toString();
@@ -111,7 +110,7 @@ public abstract class BuilderFormatting {
   }
 
   public static String lemmaResultStateFact(STBlock block, Variable temporal) {
-    return lemmaFact(BlockNames.render(block), block.completeState(), temporal);
+    return lemmaFact(block.render(), block.completeState(), temporal);
   }
 
   public static String lemmaFact(String name, List<? extends Term> terms, Variable temporal) {

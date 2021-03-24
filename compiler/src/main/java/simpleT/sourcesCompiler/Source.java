@@ -28,4 +28,8 @@ public class Source {
     doc.append(graphDoc);
     return doc;
   }
+
+  public String renderLabel() {
+    return printLabel;
+  }
 }

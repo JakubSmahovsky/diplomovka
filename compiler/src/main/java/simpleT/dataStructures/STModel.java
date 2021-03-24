@@ -44,7 +44,7 @@ public class STModel {
    */
   public Principal findPrincipal(String name){
     for (Principal principal : principals) {
-      if (principal.name.equals(name)) {
+      if (principal.nameEquals(name)) {
         return principal;
       }
     }

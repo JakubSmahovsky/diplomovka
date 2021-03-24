@@ -6,6 +6,7 @@ import java.util.Queue;
 
 import simpleT.Constants;
 import simpleT.dataStructures.STModel;
+import simpleT.dataStructures.document.Document;
 import simpleT.dataStructures.outputTerm.*;
 import simpleT.errors.Errors;
 import simpleT.loggingParser.LoggingParser.*;
@@ -40,8 +41,10 @@ public class LoggingCompilerVisitor {
         return;
       }
       goal.findSource(source);
-      System.out.println(goal);
-      System.out.println(source);
+      System.out.println(goal.render());
+      Document sourceDoc = source.render();
+      sourceDoc.indent();
+      System.out.println(sourceDoc);
     }
   }
 

@@ -150,6 +150,13 @@ public class Variable extends Term {
     return BuilderFormatting.alias(this.render(), block == null ? subterm.render() : subterm.render(block));
   }
 
+  /**
+   * Render as a (part of a) fact label for use in principal state facts and rule names.
+   */
+  public String renderFactName() {
+    return Constants.FACT_NAME + id;
+  }
+
   public void addFresh() {
     if (sort != VariableSort.NOSORT && sort != VariableSort.FRESH) {
       Errors.DebugUnexpectedCall("addFresh", render());

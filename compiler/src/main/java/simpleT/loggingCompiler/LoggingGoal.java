@@ -1,6 +1,7 @@
 package simpleT.loggingCompiler;
 
 import simpleT.dataStructures.STModel;
+import simpleT.dataStructures.document.Document;
 import simpleT.errors.Errors;
 import simpleT.sourcesCompiler.Goal;
 import simpleT.sourcesCompiler.SourceGroup;
@@ -33,7 +34,7 @@ public class LoggingGoal {
     }
   }
 
-  @Override public String toString() {
-    return "Solved (" + number + ") " + goal;
+  public Document render() {
+    return new Document("Solved (" + number + ") " + goal);
   }
 }
