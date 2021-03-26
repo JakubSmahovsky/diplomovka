@@ -98,7 +98,7 @@ lemma authentication:
       KSReveal(B) @#j)
     "
 /* I was having problem with a cycle, where a key was being found
-by decoding a message containig a nonce. I made a rule forbiding
+by decrypting a message containig a nonce. I made a rule forbiding
 the use of that nonce as that key. It din't help.*/
 
 end

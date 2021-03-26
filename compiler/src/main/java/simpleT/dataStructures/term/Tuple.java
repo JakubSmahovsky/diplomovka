@@ -119,7 +119,7 @@ public class Tuple extends Term{
    * When assigning a value to a tuple we avoid using aliases. Instead we "spread" the tuple
    * in place of the term that's being assigned to it.
    * A Tuple may be assigned the result of a deconstructon Term in which case we substitute
-   * it for the value that was deconstructed (for the encoded one, not the result).
+   * it for the value that was deconstructed (for the encrypted one, not the result).
    * Otherwise a tuple is being assigned a Variable or another Tuple in which case we
    * want to substitute this Tuple for the entire Term on the right.
    * Afterwards we want to recursively assign subterms.

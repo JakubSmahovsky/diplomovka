@@ -10,13 +10,13 @@ import simpleT.errors.Errors;
 
 public class FunctionAdec extends Term{
   private final Term key;
-  private final Term encodedValue; // v in ADEC(k, v) 
+  private final Term encryptedValue; // v in ADEC(k, v) 
   private final Term normalForm;
 
-  public FunctionAdec(Term key, Term encodedValue, Term decodedValue) {
+  public FunctionAdec(Term key, Term encryptedValue, Term decryptedValue) {
     this.key = key;
-    this.encodedValue = encodedValue;
-    this.normalForm = decodedValue.getNormalForm();
+    this.encryptedValue = encryptedValue;
+    this.normalForm = decryptedValue.getNormalForm();
   }
 
   @Override public NormalFormTypeOrder getTypeOrder() {
@@ -44,11 +44,11 @@ public class FunctionAdec extends Term{
   }
 
   @Override public String render(){
-    return BuilderFormatting.fact(Constants.SDEC, Arrays.asList(encodedValue, key), null);
+    return BuilderFormatting.fact(Constants.SDEC, Arrays.asList(encryptedValue, key), null);
   }
 
   @Override public String render(STBlock block){
-    return BuilderFormatting.fact(Constants.SDEC, Arrays.asList(encodedValue, key), block);
+    return BuilderFormatting.fact(Constants.SDEC, Arrays.asList(encryptedValue, key), block);
   }
 
   @Override public boolean isDeconstructionTerm() {
@@ -56,6 +56,6 @@ public class FunctionAdec extends Term{
   }
 
   @Override public Deconstruction createDeconstruction(Term assignedTo) {
-    return new Deconstruction(encodedValue, new FunctionAenc(new FunctionPk(key), assignedTo));
+    return new Deconstruction(encryptedValue, new FunctionAenc(new FunctionPk(key), assignedTo));
   }
 }

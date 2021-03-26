@@ -3,7 +3,7 @@ package simpleT.dataStructures;
 import simpleT.dataStructures.term.Term;
 
 /**
- * When deconstructing a non-transparent Term, for example when decoding an encoded value,
+ * When deconstructing a non-transparent Term, for example when decrypting an encrypted value,
  * we spread the Term in Tamarin code instead of deconstructing using aliases.
  * To do this we create a decondtruction object in the corresponding block:
  *   The substituted is the term that was deconstructed e.g. in "v2 = sdec(senc(v1, k1), k2)" it is "senc(v1, k1)"

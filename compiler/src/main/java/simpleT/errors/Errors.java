@@ -20,7 +20,7 @@ public final class Errors{
   private Errors(){};
 
   public static void ErrorWrongKey(TermContext got) {
-    String message = "Key \"" + got.getText() + "\" does not match the key used for encoding!";
+    String message = "Key \"" + got.getText() + "\" does not match the key used for encryption!";
     error(got.start, message);
   }
 
@@ -44,13 +44,13 @@ public final class Errors{
     error(got.start, message);
   }
 
-  public static void ErrorDecodingNotSymmetricallyEncoded(TermContext value){
-    String message = "Attempting to symmetrically decode value \"" + value.getText() + "\" which is not symmetrically encoded!";
+  public static void ErrorDecryptingNotSymmetricallyEncrypted(TermContext value){
+    String message = "Attempting to symmetrically decrypt value \"" + value.getText() + "\" which is not symmetrically encrypted!";
     error(value.start, message);
   }
 
-  public static void ErrorDecodingNotAsymmetricallyEncoded(TermContext value){
-    String message = "Attempting to asymmetrically decode value \"" + value.getText() + "\" which is not asymmetrically encoded!";
+  public static void ErrorDecryptingNotAsymmetricallyEncrypted(TermContext value){
+    String message = "Attempting to asymmetrically decrypt value \"" + value.getText() + "\" which is not asymmetrically encrypted!";
     error(value.start, message);
   }
 

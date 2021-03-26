@@ -443,8 +443,6 @@ public class Builder extends BuilderFormatting{
     ArrayList<Variable> senderVariables = new ArrayList<>();
     senderVariables.add(query.senderBlock.principal.principalID);
     if (query.sent != query.received) {
-      System.out.println(senderVariables);
-      System.out.println(query.sent);
       senderVariables.add(query.sent);
     }
     Variable senderTemporal = Variable.nextTemporal();

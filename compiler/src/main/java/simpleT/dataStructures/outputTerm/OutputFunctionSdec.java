@@ -7,11 +7,11 @@ import simpleT.OutputFormatting;
 
 public class OutputFunctionSdec extends OutputTerm{
   private final OutputTerm key;
-  private final OutputTerm encodedValue;
+  private final OutputTerm encryptedValue;
 
   public OutputFunctionSdec(OutputTerm key, OutputTerm value) {
     this.key = key;
-    this.encodedValue = value;
+    this.encryptedValue = value;
   }
 
   @Override
@@ -20,11 +20,11 @@ public class OutputFunctionSdec extends OutputTerm{
       return false;
     }
     OutputFunctionSdec sdec = (OutputFunctionSdec)term;
-    return (key.unify(sdec.key) && encodedValue.unify(sdec.encodedValue)); 
+    return (key.unify(sdec.key) && encryptedValue.unify(sdec.encryptedValue)); 
   }
 
   @Override
   public String render(){
-    return OutputFormatting.term(Constants.VPSDEC, Arrays.asList(encodedValue, key));
+    return OutputFormatting.term(Constants.VPSDEC, Arrays.asList(encryptedValue, key));
   }
 }

@@ -136,22 +136,18 @@ public abstract class Term implements Comparable<Term>{
   }
 
   /**
-   * Decode a symmetrically encoded term.
-   * Should be extended by an enum to indicate type of encoding function
-   * once there is more than 1 encoding function.
+   * Decrypt a symmetrically encrypted term.
    */
   public Term symmetric_decrypt(Term key, TermContext keyCtx, TermContext valueCtx) {
-    Errors.ErrorDecodingNotSymmetricallyEncoded(valueCtx);
+    Errors.ErrorDecryptingNotSymmetricallyEncrypted(valueCtx);
     return null;
   }
   
   /**
-   * Decode an asymmetrically encoded term.
-   * Should be extended by an enum to indicate type of encoding function
-   * once there is more than 1 encoding function.
+   * Decrypt an asymmetrically encrypted term.
    */
   public Term asymmetric_decrypt(Term key, TermContext keyCtx, TermContext valueCtx) {
-    Errors.ErrorDecodingNotAsymmetricallyEncoded(valueCtx);
+    Errors.ErrorDecryptingNotAsymmetricallyEncrypted(valueCtx);
     return null;
   }
 

@@ -502,8 +502,8 @@ public class CompilerVisitor {
 				}
 				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
 				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
-				Term decoded = value.getNormalForm().symmetric_decrypt(key, ctx.argument.get(0), ctx.argument.get(1));
-				return new FunctionSdec(key, value, decoded);
+				Term decrypted = value.getNormalForm().symmetric_decrypt(key, ctx.argument.get(0), ctx.argument.get(1));
+				return new FunctionSdec(key, value, decrypted);
 			}
 			case Constants.VPAENC: {
 				model.builtins.asymmetric_cryptography = true;
@@ -521,8 +521,8 @@ public class CompilerVisitor {
 				}
 				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
 				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
-				Term decoded = value.getNormalForm().asymmetric_decrypt(key, ctx.argument.get(0), ctx.argument.get(1));
-				return new FunctionAdec(key, value, decoded);
+				Term decrypted = value.getNormalForm().asymmetric_decrypt(key, ctx.argument.get(0), ctx.argument.get(1));
+				return new FunctionAdec(key, value, decrypted);
 			}
 			case Constants.VPHASH: {
 				model.builtins.hashing = true;

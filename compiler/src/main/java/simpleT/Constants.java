@@ -48,14 +48,15 @@ public final class Constants{
     }
   }
 
-  // restrictions and prefabs; put an empty line in Tamarin code after every on of these
+  // prefabs
   public static final String RESTRICTION_EQUALITY = 
     "restriction Equality:\r\n" +
     Constants.INDENT + "\"All x y #i. " + Constants.EQUALITY + "(x,y) @i ==> x = y\"\r\n" +
     "\r\n";
 
+  public static final String PREFAB_PRIVATE_REVEAL_NAME = "privateReveal";
   public static final String PREFAB_PRIVATE_REVEAL =
-    "rule "+ Constants.PREFAB_PRIVATE_REVEAL_NAME +": [\r\n" +
+    "rule " + Constants.PREFAB_PRIVATE_REVEAL_NAME + ": [\r\n" +
     Constants.INDENT + "!" + Constants.PRINCIPAL_PRIVATE + "(Principal, Private)\r\n" +
     "]--[\r\n" +
     Constants.INDENT + Constants.FACT_DISHONEST + "(Principal)\r\n" +
@@ -64,19 +65,18 @@ public final class Constants{
     + "]\r\n" +
     "\r\n";
 
-  // builtins and prefabs
+  // builtin names
   public static final String BUILTIN_SYMMETRIC_ENCRYPTION = "symmetric-encryption";
   public static final String BUILTIN_ASYMMETRIC_ENCRYPTION = "asymmetric-encryption";
   public static final String BUILTIN_SIGNING = "signing";
   public static final String BUILTIN_HASHING = "hashing";
   public static final String BUILTIN_DH = "diffie-hellman";
-  public static final String PREFAB_PRIVATE_REVEAL_NAME = "privateReveal";
-  public static final String FACT_DISHONEST= "Dishonest";
-  // custom fact names (restriction and prefab sources)
+  // custom fact names
   public static final String EQUALITY = "Eq";
   public static final String PRINCIPAL_PRIVATE = "PrincipalPrivate";
   public static final String AUTH_SENT = "Sent";
   public static final String FACT_PRINCIPALS = "Principals";
+  public static final String FACT_DISHONEST= "Dishonest";
   // Tamarin functions
   public static final String COMMAND_IN = "In";
   public static final String COMMAND_OUT = "Out";

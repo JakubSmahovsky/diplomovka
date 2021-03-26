@@ -119,9 +119,9 @@ public class SourcesCompilerVisitor {
         return new OutputFunctionSenc(key, value);
       }
       case Constants.SDEC: {
-        OutputTerm encodedValue = visitTerm(ctx.term(0));
+        OutputTerm encryptedValue = visitTerm(ctx.term(0));
         OutputTerm key = visitTerm(ctx.term(1));
-        return new OutputFunctionSdec(key, encodedValue);
+        return new OutputFunctionSdec(key, encryptedValue);
       }
       case Constants.AENC: {
         OutputTerm value = visitTerm(ctx.term(0));
@@ -129,9 +129,9 @@ public class SourcesCompilerVisitor {
         return new OutputFunctionAenc(key, value);
       }
       case Constants.ADEC: {
-        OutputTerm encodedValue = visitTerm(ctx.term(0));
+        OutputTerm encryptedValue = visitTerm(ctx.term(0));
         OutputTerm key = visitTerm(ctx.term(1));
-        return new OutputFunctionAdec(key, encodedValue);
+        return new OutputFunctionAdec(key, encryptedValue);
       }
       case Constants.HASH: {
         OutputTerm subterm = visitTerm(ctx.term(0));
