@@ -1,4 +1,5 @@
 principals: Alice, Bob, Server
+unary-equals: implicit
 
 Alice [
   knows private Kas

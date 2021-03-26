@@ -14,4 +14,6 @@ public class Builtins {
   public boolean prefab_private_reveal = false;
   // other flags
   public boolean principalsWereDeclared = false;
+  public boolean unaryEqualsExplicit = false;
+  public boolean unaryEqualsImplicit = false;
 }

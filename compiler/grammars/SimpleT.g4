@@ -3,9 +3,12 @@ grammar SimpleT;
 
 model: declaration* specificationSegment+ queriesBlock?;
 
-declaration: decPrincipals;
+declaration:
+  decPrincipals |
+  decUnaryEquals;
 
 decPrincipals: 'principals' ':' principal+=IDENTIFIER (',' principal+=IDENTIFIER)*;
+decUnaryEquals: 'unary-equals' ':' value=('implicit' | 'explicit');
 
 specificationSegment:
   principalBlock | 

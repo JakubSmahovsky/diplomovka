@@ -124,6 +124,11 @@ public final class Errors{
     error(start, message);
   }
 
+  public static void ErrorUnaryEquals(Token block, ArrayList<String> pendingVariables) {
+    String message = "Block performs implicit equality checks on variable(s) " + String.join(", ", pendingVariables) + "! Add unary EQUALS to explicitly mark these checks!";
+    error(block, message);
+  }
+
   public static void ErrorUnaryEqualsNotVariable(Token start, String term) {
     String message = "Unexpected term " + term + " in unary EQUALS! Only variables make sense in this check!";
     error(start, message);

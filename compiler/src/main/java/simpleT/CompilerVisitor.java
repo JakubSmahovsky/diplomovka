@@ -77,6 +77,10 @@ public class CompilerVisitor {
 			visitDecPrincipals(ctx.decPrincipals());
 			return;
 		}
+		if (ctx.decUnaryEquals() != null) {
+			visitDecUnaryEquals(ctx.decUnaryEquals());
+			return;
+		}
 	}
 
 	private void visitDecPrincipals(DecPrincipalsContext decPrincipals) {
@@ -92,6 +96,16 @@ public class CompilerVisitor {
 
 			model.addPrincipal(principalName);
 			model.builtins.principalsWereDeclared = true;
+		}
+	}
+
+	private void visitDecUnaryEquals(DecUnaryEqualsContext ctx) {
+		if (ctx.value.getText().equals("explicit")) {
+			model.builtins.unaryEqualsExplicit = true;
+			return;
+		}
+		if (ctx.value.getText().equals("implicit")) {
+			model.builtins.unaryEqualsImplicit = true;
 		}
 	}
 
@@ -125,7 +139,11 @@ public class CompilerVisitor {
 			for (Variable variable : curBlock.unaryEqualsPending) {
 				varnames.add(variable.renderOutput());
 			}
-			Errors.InfoUnaryEquals(ctx.stop, varnames);
+			if (model.builtins.unaryEqualsExplicit) {
+				Errors.ErrorUnaryEquals(ctx.stop, varnames);
+			}	else if (!model.builtins.unaryEqualsImplicit) {
+				Errors.InfoUnaryEquals(ctx.stop, varnames);
+			}
 		}
 	}
 
