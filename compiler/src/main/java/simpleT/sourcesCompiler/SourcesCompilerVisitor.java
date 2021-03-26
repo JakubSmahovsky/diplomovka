@@ -123,6 +123,16 @@ public class SourcesCompilerVisitor {
         OutputTerm key = visitTerm(ctx.term(1));
         return new OutputFunctionSdec(key, encodedValue);
       }
+      case Constants.AENC: {
+        OutputTerm value = visitTerm(ctx.term(0));
+        OutputTerm key = visitTerm(ctx.term(1));
+        return new OutputFunctionAenc(key, value);
+      }
+      case Constants.ADEC: {
+        OutputTerm encodedValue = visitTerm(ctx.term(0));
+        OutputTerm key = visitTerm(ctx.term(1));
+        return new OutputFunctionAdec(key, encodedValue);
+      }
       case Constants.HASH: {
         OutputTerm subterm = visitTerm(ctx.term(0));
         return new OutputFunctionHash(subterm);

@@ -62,6 +62,16 @@ public class FunctionNode extends Node{
         return Constants.VPSENC;
       case (Constants.SDEC):
         return Constants.VPSDEC;
+      case (Constants.AENC):
+        return Constants.VPAENC;
+      case (Constants.ADEC):
+        return Constants.VPADEC;
+      case (Constants.PK):
+        return Constants.VPPK;
+      case (Constants.SIGN):
+        return Constants.VPSIGN;
+      case (Constants.VERIFY):
+        return Constants.VPSIGNVERIF;
       case (Constants.HASH):
         return Constants.HASH;
       case (Constants.FIRST):
@@ -70,6 +80,8 @@ public class FunctionNode extends Node{
         return Constants.VPSECOND;
       case (Constants.EXP_WORD):
         return Constants.EXP;
+      case (Constants.INVERSE):
+        return Constants.VPINVERSE;
     }
     Errors.DebugUnexpectedValueType("function", function, " tamarinToVP in FunctionNode");
     return null;

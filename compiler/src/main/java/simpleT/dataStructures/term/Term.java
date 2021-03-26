@@ -17,6 +17,7 @@ public abstract class Term implements Comparable<Term>{
     FunctionPk,
     FunctionSign,
     FunctionSenc,
+    FunctionAenc,
     FunctionHash,
     Exponentiation,
     ValueTrue,
@@ -135,12 +136,22 @@ public abstract class Term implements Comparable<Term>{
   }
 
   /**
-   * Decode an encoded term.
+   * Decode a symmetrically encoded term.
    * Should be extended by an enum to indicate type of encoding function
    * once there is more than 1 encoding function.
    */
-  public Term decode(Term key, TermContext keyCtx, TermContext valueCtx) {
-    Errors.ErrorDecodingNotEncoded(valueCtx);
+  public Term symmetric_decrypt(Term key, TermContext keyCtx, TermContext valueCtx) {
+    Errors.ErrorDecodingNotSymmetricallyEncoded(valueCtx);
+    return null;
+  }
+  
+  /**
+   * Decode an asymmetrically encoded term.
+   * Should be extended by an enum to indicate type of encoding function
+   * once there is more than 1 encoding function.
+   */
+  public Term asymmetric_decrypt(Term key, TermContext keyCtx, TermContext valueCtx) {
+    Errors.ErrorDecodingNotAsymmetricallyEncoded(valueCtx);
     return null;
   }
 
@@ -153,11 +164,20 @@ public abstract class Term implements Comparable<Term>{
   }
 
   /**
-   * Verify this pk. (chceck that sk fits).
+   * Verify the provied secret key against "this" public key.
    * Should only be used on a normal form.
    */
   public boolean verifyPk(Term sk, TermContext pkCtx) {
     Errors.ErrorKeyNotPublicKey(pkCtx);
+    return false;
+  }
+
+  /**
+   * Verify the provied secret key against "this" public key.
+   * Should only be used on a normal form.
+   */
+  public boolean verifyPk(Term sk) {
+    Errors.DebugUnexpectedCall("verifyPk", "Term");
     return false;
   }
 }

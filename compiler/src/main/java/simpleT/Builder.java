@@ -51,8 +51,9 @@ public class Builder extends BuilderFormatting{
     if (model.builtins.symmetric_encryption) {
       builtins.add(Constants.BUILTIN_SYMMETRIC_ENCRYPTION);
     }
-    if (model.builtins.signing) {
+    if (model.builtins.asymmetric_cryptography) {
       builtins.add(Constants.BUILTIN_SIGNING);
+      builtins.add(Constants.BUILTIN_ASYMMETRIC_ENCRYPTION);
     }
     if (model.builtins.hashing) {
       builtins.add(Constants.BUILTIN_HASHING);

@@ -34,13 +34,23 @@ public final class Errors{
     error(got.start, message);
   }
 
+  public static void ErrorWrongSecretKeyAdec(TermContext got) {
+    String message = "Secret key \"" + got.getText() + "\" does not match the key used for encrypting!";
+    error(got.start, message);
+  }
+
   public static void ErrorWrongMessageSigning(TermContext got) {
     String message = "Message \"" + got.getText() + "\" does not match the message used for signing!";
     error(got.start, message);
   }
 
-  public static void ErrorDecodingNotEncoded(TermContext value){
-    String message = "Attempting to decode value \"" + value.getText() + "\" which is not symmetrically encoded!";
+  public static void ErrorDecodingNotSymmetricallyEncoded(TermContext value){
+    String message = "Attempting to symmetrically decode value \"" + value.getText() + "\" which is not symmetrically encoded!";
+    error(value.start, message);
+  }
+
+  public static void ErrorDecodingNotAsymmetricallyEncoded(TermContext value){
+    String message = "Attempting to asymmetrically decode value \"" + value.getText() + "\" which is not asymmetrically encoded!";
     error(value.start, message);
   }
 

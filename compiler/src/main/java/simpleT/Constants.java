@@ -66,6 +66,7 @@ public final class Constants{
 
   // builtins and prefabs
   public static final String BUILTIN_SYMMETRIC_ENCRYPTION = "symmetric-encryption";
+  public static final String BUILTIN_ASYMMETRIC_ENCRYPTION = "asymmetric-encryption";
   public static final String BUILTIN_SIGNING = "signing";
   public static final String BUILTIN_HASHING = "hashing";
   public static final String BUILTIN_DH = "diffie-hellman";
@@ -87,6 +88,8 @@ public final class Constants{
   public static final String VERIFY = "verify";
   public static final String SENC = "senc";
   public static final String SDEC = "sdec";
+  public static final String AENC = "aenc";
+  public static final String ADEC = "adec";
   public static final String HASH = "h";
   public static final String EXP = "^";
   public static final String MUL = "*";
@@ -97,6 +100,8 @@ public final class Constants{
   public static final String VPSIGN = "SIGN";
   public static final String VPSENC = "ENC";
   public static final String VPSDEC = "DEC";
+  public static final String VPAENC = "AENC";
+  public static final String VPADEC = "ADEC";
   public static final String VPHASH = "HASH";
   // VP checks
   public static final String VPEQUALS = "EQUALS";

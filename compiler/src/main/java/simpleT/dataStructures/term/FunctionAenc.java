@@ -11,28 +11,28 @@ import simpleT.dataStructures.STBlock;
 import simpleT.errors.Errors;
 import simpleT.stParser.SimpleTParser.TermContext;
 
-public class FunctionSenc extends Term {
+public class FunctionAenc extends Term {
   private final Term key;
   private final Term value;
-  private final FunctionSenc normalForm;
+  private final FunctionAenc normalForm;
 
-  public FunctionSenc(Term key, Term value) {
+  public FunctionAenc(Term key, Term value) {
     this.key = key;
     this.value = value;
-    this.normalForm = new FunctionSenc(this);
+    this.normalForm = new FunctionAenc(this);
   }
 
   /**
    * normal form constructor
    */
-  private FunctionSenc(FunctionSenc original) {
+  private FunctionAenc(FunctionAenc original) {
     this.normalForm = this;
     this.key = original.key.getNormalForm();
     this.value = original.value.getNormalForm();
   }
 
   @Override public NormalFormTypeOrder getTypeOrder() {
-    return NormalFormTypeOrder.FunctionSenc;
+    return NormalFormTypeOrder.FunctionAenc;
   }
 
   @Override public int normalFormCompareTo(Term term) {
@@ -40,13 +40,13 @@ public class FunctionSenc extends Term {
     if (result != 0) {
       return result;
     }
-    // both have to be FunctionSenc, compare based on subterms
-    FunctionSenc functionSenc = (FunctionSenc)term;  
-    result = key.compareTo(functionSenc.key);
+    // both have to be FunctionAenc, compare based on subterms
+    FunctionAenc functionAenc = (FunctionAenc)term;  
+    result = key.compareTo(functionAenc.key);
     if (result != 0) {
       return result;
     }
-    return value.compareTo(functionSenc.value);
+    return value.compareTo(functionAenc.value);
   }
 
   @Override public Term getNormalForm() {
@@ -61,14 +61,14 @@ public class FunctionSenc extends Term {
       return false;
     }
     Term term = ((Term)obj).getNormalForm();
-    if (!(term instanceof FunctionSenc)) {
+    if (!(term instanceof FunctionAenc)) {
       return false;
     }
-    return (key.equals(((FunctionSenc)term).key) && value.equals(((FunctionSenc)term).value));
+    return (key.equals(((FunctionAenc)term).key) && value.equals(((FunctionAenc)term).value));
   }
 
   @Override public String render(){
-    return BuilderFormatting.fact(Constants.SENC, Arrays.asList(value, key), null);
+    return BuilderFormatting.fact(Constants.AENC, Arrays.asList(value, key), null);
   }
 
   @Override public String render(STBlock block){
@@ -78,7 +78,7 @@ public class FunctionSenc extends Term {
       }
     }
 
-    return BuilderFormatting.fact(Constants.SENC, Arrays.asList(value, key), block);
+    return BuilderFormatting.fact(Constants.AENC, Arrays.asList(value, key), block);
   }
 
   @Override public boolean isDeconstructionTerm() {
@@ -92,9 +92,9 @@ public class FunctionSenc extends Term {
     return result;
   }
 
-  @Override public Term symmetric_decrypt(Term key, TermContext keyCtx, TermContext valueCtx) {
-    if (!this.key.equals(key)) {
-      Errors.ErrorWrongKey(keyCtx);
+  @Override public Term asymmetric_decrypt(Term sk, TermContext skCtx, TermContext valueCtx) {
+    if (!this.key.verifyPk(sk)) {
+      Errors.ErrorWrongSecretKeyAdec(skCtx);
     }
     return value;
   }

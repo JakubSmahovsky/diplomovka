@@ -1,0 +1,22 @@
+principals: Alice, Bob
+
+Alice [
+  knows private sk
+  distributed pk = PK(sk)
+]
+
+Bob [
+  knows public pk
+  generates payload
+  m = AENC(pk, payload)
+]
+Bob -> Alice: m
+
+Alice [
+  payload = ADEC(sk, m)
+]
+
+queries [
+  confidentiality? Bob's payload
+  confidentiality? Alice's payload
+]

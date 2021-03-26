@@ -502,8 +502,27 @@ public class CompilerVisitor {
 				}
 				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
 				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
-				Term decoded = value.getNormalForm().decode(key, ctx.argument.get(0), ctx.argument.get(1));
+				Term decoded = value.getNormalForm().symmetric_decrypt(key, ctx.argument.get(0), ctx.argument.get(1));
 				return new FunctionSdec(key, value, decoded);
+			}
+			case Constants.VPAENC: {
+				model.builtins.asymmetric_cryptography = true;
+				if (ctx.argument.size() != 2) {
+					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
+				}
+				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
+				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
+				return new FunctionAenc(key, value);
+			}
+			case Constants.VPADEC: {
+				model.builtins.asymmetric_cryptography = true;
+				if (ctx.argument.size() != 2) {
+					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
+				}
+				Term key = visitTerm(ctx.argument.get(0), principal, block, expectVD);
+				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
+				Term decoded = value.getNormalForm().asymmetric_decrypt(key, ctx.argument.get(0), ctx.argument.get(1));
+				return new FunctionAdec(key, value, decoded);
 			}
 			case Constants.VPHASH: {
 				model.builtins.hashing = true;
@@ -521,14 +540,14 @@ public class CompilerVisitor {
 				return new FunctionHash(new Tuple(subterms));
 			}
 			case Constants.VPPK: {
-				model.builtins.signing = true;
+				model.builtins.asymmetric_cryptography = true;
 				if (ctx.argument.size() != 1) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 1, ctx.argument.size());
 				}
 				return new FunctionPk(visitTerm(ctx.argument.get(0), principal, block, expectVD));
 			}
 			case Constants.VPSIGN: {
-				model.builtins.signing = true;
+				model.builtins.asymmetric_cryptography = true;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
 				}

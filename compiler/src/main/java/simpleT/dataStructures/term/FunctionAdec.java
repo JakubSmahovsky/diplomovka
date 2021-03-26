@@ -8,12 +8,12 @@ import simpleT.dataStructures.Deconstruction;
 import simpleT.dataStructures.STBlock;
 import simpleT.errors.Errors;
 
-public class FunctionSdec extends Term{
+public class FunctionAdec extends Term{
   private final Term key;
-  private final Term encodedValue; // v in DEC(k, v) 
+  private final Term encodedValue; // v in ADEC(k, v) 
   private final Term normalForm;
 
-  public FunctionSdec(Term key, Term encodedValue, Term decodedValue) {
+  public FunctionAdec(Term key, Term encodedValue, Term decodedValue) {
     this.key = key;
     this.encodedValue = encodedValue;
     this.normalForm = decodedValue.getNormalForm();
@@ -56,6 +56,6 @@ public class FunctionSdec extends Term{
   }
 
   @Override public Deconstruction createDeconstruction(Term assignedTo) {
-    return new Deconstruction(encodedValue, new FunctionSenc(key, assignedTo));
+    return new Deconstruction(encodedValue, new FunctionAenc(new FunctionPk(key), assignedTo));
   }
 }

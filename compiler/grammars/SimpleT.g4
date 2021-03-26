@@ -63,6 +63,8 @@ FUNCTION:
   'SIGN' |
   'ENC' |
   'DEC' |
+  'AENC' |
+  'ADEC' |
   'HASH';
 
 CHECKED:

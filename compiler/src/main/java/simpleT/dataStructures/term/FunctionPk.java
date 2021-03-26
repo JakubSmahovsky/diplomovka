@@ -75,4 +75,8 @@ public class FunctionPk extends Term {
   @Override public boolean verifyPk(Term sk, TermContext pkCtx) {
     return this.sk.equals(sk);
   }
+
+  @Override public boolean verifyPk(Term sk) {
+    return this.sk.equals(sk);
+  }
 }

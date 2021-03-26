@@ -120,6 +120,16 @@ public class LoggingCompilerVisitor {
         OutputTerm key = visitTerm(ctx.term(1));
         return new OutputFunctionSdec(key, value);
       }
+      case Constants.AENC: {
+        OutputTerm value = visitTerm(ctx.term(0));
+        OutputTerm key = visitTerm(ctx.term(1));
+        return new OutputFunctionAenc(key, value);
+      }
+      case Constants.ADEC: {
+        OutputTerm value = visitTerm(ctx.term(0));
+        OutputTerm key = visitTerm(ctx.term(1));
+        return new OutputFunctionAdec(key, value);
+      }
       case Constants.HASH: {
         OutputTerm subterm = visitTerm(ctx.term(0));
         return new OutputFunctionHash(subterm);
