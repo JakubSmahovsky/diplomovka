@@ -37,4 +37,6 @@ Alice [
 
 queries [
   confidentiality? Alice's Kab
+  authentication? Bob->Alice: m4
+  injective-authentication? Bob->Server: m2
 ]

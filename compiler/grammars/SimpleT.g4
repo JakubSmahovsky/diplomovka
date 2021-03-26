@@ -48,11 +48,15 @@ checkedCall: CHECKED '(' (argument+=term)? (',' argument+=term)* ')';
 query: 
   executable |
   confidentiality |
-  forwardSecrecy;
+  forwardSecrecy |
+  authentication |
+  injAuthentication;
 
 executable: 'executable?';
 confidentiality: 'confidentiality?' principal=IDENTIFIER '\'s' variable;
 forwardSecrecy: 'forward-secrecy?' principal=IDENTIFIER '\'s' variable;
+authentication: 'authentication?' sender=IDENTIFIER '->' receiver=IDENTIFIER ':' variable;
+injAuthentication: 'injective-authentication?' sender=IDENTIFIER '->' receiver=IDENTIFIER ':' variable;
 
 FUNCTION:
   'PK' |

@@ -7,6 +7,7 @@ import java.util.List;
 import simpleT.BuilderFormatting;
 import simpleT.Constants;
 import simpleT.dataStructures.term.Term;
+import simpleT.dataStructures.term.Variable;
 
 /**
  * Used to store information needed to render a fact in Tamarin
@@ -36,5 +37,12 @@ public class Fact {
    */
   public static Fact equality(Term term1, Term term2) {
     return new Fact(false, Constants.EQUALITY, Arrays.asList(term1, term2));
+  }
+
+  /**
+   * Create a classic fact for use in authentication declaring a principal has sent a variable
+   */
+  public static Fact authSent(Principal sender, Variable variable) {
+    return new Fact(false, Constants.AUTH_SENT, Arrays.asList(sender.principalID, variable));
   }
 }

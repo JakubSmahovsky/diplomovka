@@ -9,8 +9,10 @@ import org.antlr.v4.runtime.Token;
 import simpleT.Constants.*;
 import simpleT.dataStructures.*;
 import simpleT.dataStructures.command.*;
+import simpleT.dataStructures.query.Authentication;
 import simpleT.dataStructures.query.Confidentiality;
 import simpleT.dataStructures.query.ForwardSecrecy;
+import simpleT.dataStructures.query.InjAuthentication;
 import simpleT.dataStructures.term.*;
 import simpleT.errors.Errors;
 import simpleT.errors.STException;
@@ -562,6 +564,10 @@ public class CompilerVisitor {
 			visitConfidentiality(ctx.confidentiality());			
 		} else if (ctx.forwardSecrecy() != null) {
 			visitForwardSecrecy(ctx.forwardSecrecy());			
+		} else if (ctx.authentication() != null) {
+			visitAuthentication(ctx.authentication().sender, ctx.authentication().receiver, ctx.authentication().variable(), false);
+		} else if (ctx.injAuthentication() != null) {
+			visitAuthentication(ctx.injAuthentication().sender, ctx.injAuthentication().receiver, ctx.injAuthentication().variable(), true);
 		}
 	}
 
@@ -601,6 +607,58 @@ public class CompilerVisitor {
 			}
 		}
 		model.queries.forwardSecrecy.add(new ForwardSecrecy(principal, variable));
+	}
+
+	public void visitAuthentication(Token senderToken, Token receiverToken, VariableContext vctx, boolean injective) {
+		Principal sender = model.findPrincipal(senderToken.getText());
+		if (sender == null) {
+			Errors.ErrorPrincipalDoesNotExist(senderToken);
+		}
+		Principal receiver = model.findPrincipal(receiverToken.getText());
+		if (receiver == null) {
+			Errors.ErrorPrincipalDoesNotExist(receiverToken);
+		}
+		Variable sent = visitVariable(vctx, sender, null, VariableDefined.QUERY);
+		Variable received = visitVariable(vctx, receiver, null, VariableDefined.QUERY);
+		
+		STBlock senderBlock = null;
+		for (STBlock block : sender.getBlocks()) {
+			for (CommandOut out : block.resultOutputs) {
+				if (out.sentVariable(sent)) {
+					senderBlock = block;
+					break;
+				}
+			}
+			if (senderBlock != null) {
+				break;
+			}
+		}
+		if (senderBlock == null) {
+			Errors.ErrorQueryVariableNotSent(vctx.start, senderToken.getText(), vctx.getText());
+		}
+
+		STBlock receiverBlock = null;
+		for (STBlock block : receiver.getBlocks()) {
+			for (CommandIn in : block.premiseInputs) {
+				if (in.receivedVariable(received)) {
+					receiverBlock = block;
+					break;
+				}
+			}
+			if (receiverBlock != null) {
+				break;
+			}
+		}
+		if (receiverBlock == null) {
+			Errors.ErrorQueryVariableNotReceived(vctx.start, receiverToken.getText(), vctx.getText());	
+		}
+
+		if (injective) {
+			model.queries.injAuthentication.add(new InjAuthentication(senderBlock, receiverBlock, sent, received));	
+		} else {
+			model.queries.authentication.add(new Authentication(senderBlock, receiverBlock, sent, received));
+			senderBlock.actions.add(Fact.authSent(sender, sent));
+		}
 	}
 
 	private boolean identifierNameValid(String id) {

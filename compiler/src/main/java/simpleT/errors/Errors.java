@@ -129,6 +129,16 @@ public final class Errors{
     error(start, message);
   }
 
+  public static void ErrorQueryVariableNotSent(Token start, String principal, String variable) {
+    String message = "Principal " + principal + " never sent the variable " + variable + "!";
+    error(start, message);
+  }
+
+  public static void ErrorQueryVariableNotReceived(Token start, String principal, String variable) {
+    String message = "Principal " + principal + " never received the variable " + variable + "!";
+    error(start, message);
+  }
+
   public static void WarningUndeclaredPrincipal(Token principal) {
     String message = "Principal \"" + principal.getText() + "\" was not declared even though some principals were declared!";
     warning(principal, message);

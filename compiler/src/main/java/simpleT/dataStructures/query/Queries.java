@@ -9,4 +9,6 @@ public class Queries {
   public boolean executable = false;
   public ArrayList<Confidentiality> confidentiality = new ArrayList<>();
   public ArrayList<ForwardSecrecy> forwardSecrecy = new ArrayList<>();
+  public ArrayList<Authentication> authentication = new ArrayList<>();
+  public ArrayList<InjAuthentication> injAuthentication = new ArrayList<>();
 }

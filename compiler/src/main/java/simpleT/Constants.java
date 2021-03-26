@@ -74,6 +74,7 @@ public final class Constants{
   // custom fact names (restriction and prefab sources)
   public static final String EQUALITY = "Eq";
   public static final String PRINCIPAL_PRIVATE = "PrincipalPrivate";
+  public static final String AUTH_SENT = "Sent";
   public static final String FACT_PRINCIPALS = "Principals";
   // Tamarin functions
   public static final String COMMAND_IN = "In";
@@ -127,6 +128,8 @@ public final class Constants{
   public static final String EXECUTABLE = "executable";
   public static final String CONFIDENTIALITY = "secrecy";
   public static final String FORWARD_SECRECY = "forwardSecrecy";
+  public static final String AUTHENTICATION = "authentication";
+  public static final String INJ_AUTHENTICATION = "injAuthentication";
   // miscelaneous
   public static final String OUTPUT_SEPARATOR = "==============================================================================";
   public static final String SOURCES_HEADER = OUTPUT_SEPARATOR + "SOURCES" + OUTPUT_SEPARATOR;

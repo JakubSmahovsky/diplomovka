@@ -150,6 +150,10 @@ public abstract class BuilderFormatting {
     return temporalBefore.render() + "<" + temporalAfter.render();
   }
 
+  public static String lemmaEquals(Variable v1, Variable v2) {
+    return v1.render() + "=" + v2.render();
+  }
+
   public static String lemmaEnd() {
     return "\"\r\n";
   }
