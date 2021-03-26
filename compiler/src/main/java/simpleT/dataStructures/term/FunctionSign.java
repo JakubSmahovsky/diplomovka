@@ -88,10 +88,10 @@ public class FunctionSign extends Term {
 
   @Override public void verifySignature(Term pk, Term message, TermContext pkCtx, TermContext messageCtx, TermContext signatureCtx) {
     if (!pk.getNormalForm().verifyPk(key, pkCtx)) {
-      Errors.ErrorWrongPublicKeySigning(pkCtx);
+      Errors.ErrorSignVerifKeyNotMatch(pkCtx);
     }
     if (!this.message.equals(message)) {
-      Errors.ErrorWrongMessageSigning(messageCtx);
+      Errors.ErrorSignVerifMessageNotMatch(messageCtx);
     }
   }
 }

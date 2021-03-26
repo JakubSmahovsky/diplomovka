@@ -118,7 +118,7 @@ public class CompilerVisitor {
 		Principal principal = model.findPrincipal(principalName);
 		if (principal == null) {
 			if (model.builtins.principalsWereDeclared) {
-				Errors.WarningUndeclaredPrincipal(ctx.principal);
+				Errors.ErrorUndeclaredPrincipal(ctx.principal);
 			} else {
 				Errors.InfoDeclarePrincipal(ctx.principal);
 			}
@@ -140,7 +140,7 @@ public class CompilerVisitor {
 				varnames.add(variable.renderOutput());
 			}
 			if (model.builtins.unaryEqualsExplicit) {
-				Errors.ErrorUnaryEquals(ctx.stop, varnames);
+				Errors.ErrorUnaryEqualsMissing(ctx.stop, varnames);
 			}	else if (!model.builtins.unaryEqualsImplicit) {
 				Errors.InfoUnaryEquals(ctx.stop, varnames);
 			}
@@ -468,7 +468,7 @@ public class CompilerVisitor {
 					Term term1 = visitTerm(ctx.argument.get(0), principal, block, expectVD);
 					Term term2 = visitTerm(ctx.argument.get(1), principal, block, expectVD);
 					if (!(term1.equals(term2))) {
-						Errors.ErrorEqualsNeverTrue(ctx.start);
+						Errors.ErrorNotEqual(ctx.start);
 					}
 					block.actions.add(Fact.equality(term1, term2));
 					return;

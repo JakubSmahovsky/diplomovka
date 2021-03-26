@@ -19,7 +19,12 @@ public final class Errors{
   public static boolean quitOnWarning = Constants.quitOnWarning;
   private Errors(){};
 
-  public static void ErrorWrongKey(TermContext got) {
+  public static void ErrorSymmetricNotEncrypted(TermContext value){
+    String message = "Attempting to symmetrically decrypt value \"" + value.getText() + "\" which is not symmetrically encrypted!";
+    error(value.start, message);
+  }
+
+  public static void ErrorSymmetricKeyNotMatch(TermContext got) {
     String message = "Key \"" + got.getText() + "\" does not match the key used for encryption!";
     error(got.start, message);
   }
@@ -29,43 +34,38 @@ public final class Errors{
     error(got.start, message);
   }
 
-  public static void ErrorWrongPublicKeySigning(TermContext got) {
-    String message = "Public key \"" + got.getText() + "\" does not match the key used for signing!";
-    error(got.start, message);
-  }
-
-  public static void ErrorWrongSecretKeyAdec(TermContext got) {
-    String message = "Secret key \"" + got.getText() + "\" does not match the key used for encrypting!";
-    error(got.start, message);
-  }
-
-  public static void ErrorWrongMessageSigning(TermContext got) {
-    String message = "Message \"" + got.getText() + "\" does not match the message used for signing!";
-    error(got.start, message);
-  }
-
-  public static void ErrorDecryptingNotSymmetricallyEncrypted(TermContext value){
-    String message = "Attempting to symmetrically decrypt value \"" + value.getText() + "\" which is not symmetrically encrypted!";
-    error(value.start, message);
-  }
-
-  public static void ErrorDecryptingNotAsymmetricallyEncrypted(TermContext value){
-    String message = "Attempting to asymmetrically decrypt value \"" + value.getText() + "\" which is not asymmetrically encrypted!";
-    error(value.start, message);
-  }
-
-  public static void ErrorVerifyingNotSigned(TermContext value){
+  public static void ErrorSignVerifNotSigned(TermContext value){
     String message = "Attempting to verify signature \"" + value.getText() + "\" which is not actually a signature!";
     error(value.start, message);
   }
 
+  public static void ErrorSignVerifKeyNotMatch(TermContext got) {
+    String message = "Public key \"" + got.getText() + "\" does not match the key used for signing!";
+    error(got.start, message);
+  }
+
+  public static void ErrorSignVerifMessageNotMatch(TermContext got) {
+    String message = "Message \"" + got.getText() + "\" does not match the message used for signing!";
+    error(got.start, message);
+  }
+
+  public static void ErrorAsymmetricNotEncrypted(TermContext value){
+    String message = "Attempting to asymmetrically decrypt value \"" + value.getText() + "\" which is not asymmetrically encrypted!";
+    error(value.start, message);
+  }
+
+  public static void ErrorAsymmetricKeyNotMatch(TermContext got) {
+    String message = "Secret key \"" + got.getText() + "\" does not match the key used for encryption!";
+    error(got.start, message);
+  }
+
   public static void ErrorArgumentsCount(Token function, int expected, int got) {
-    String message = "Wrong number of arguments for function \"" + function.getText() + "\" expected " + expected + ", but got " + got + "!";
+    String message = "Wrong number of arguments for function \"" + function.getText() + "\"! Expected " + expected + ", but got " + got + "!";
     error(function, message);
   }
 
   public static void ErrorArgumentsMinCount(Token function, int expected, int got) {
-    String message = "Insufficient number of arguments for function \"" + function.getText() + "\" expected at least" + expected + ", but got " + got + "!";
+    String message = "Insufficient number of arguments for function \"" + function.getText() + "\"! Expected at least" + expected + ", but got " + got + "!";
     error(function, message);
   }
 
@@ -124,7 +124,7 @@ public final class Errors{
     error(start, message);
   }
 
-  public static void ErrorUnaryEquals(Token block, ArrayList<String> pendingVariables) {
+  public static void ErrorUnaryEqualsMissing(Token block, ArrayList<String> pendingVariables) {
     String message = "Block performs implicit equality checks on variable(s) " + String.join(", ", pendingVariables) + "! Add unary EQUALS to explicitly mark these checks!";
     error(block, message);
   }
@@ -139,8 +139,8 @@ public final class Errors{
     error(start, message);
   }
 
-  public static void ErrorEqualsNeverTrue(Token start) {
-    String message = "The terms being compared can never be equal! This likely means the model will not be executable!";
+  public static void ErrorNotEqual(Token start) {
+    String message = "The terms being compared are not expected to be equal!";
     error(start, message);
   }
 
@@ -154,8 +154,8 @@ public final class Errors{
     error(start, message);
   }
 
-  public static void WarningUndeclaredPrincipal(Token principal) {
-    String message = "Principal \"" + principal.getText() + "\" was not declared even though some principals were declared!";
+  public static void ErrorUndeclaredPrincipal(Token principal) {
+    String message = "Principal \"" + principal.getText() + "\" was not declared!";
     warning(principal, message);
   }
 

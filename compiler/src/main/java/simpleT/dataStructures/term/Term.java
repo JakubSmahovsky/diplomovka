@@ -139,7 +139,7 @@ public abstract class Term implements Comparable<Term>{
    * Decrypt a symmetrically encrypted term.
    */
   public Term symmetric_decrypt(Term key, TermContext keyCtx, TermContext valueCtx) {
-    Errors.ErrorDecryptingNotSymmetricallyEncrypted(valueCtx);
+    Errors.ErrorSymmetricNotEncrypted(valueCtx);
     return null;
   }
   
@@ -147,7 +147,7 @@ public abstract class Term implements Comparable<Term>{
    * Decrypt an asymmetrically encrypted term.
    */
   public Term asymmetric_decrypt(Term key, TermContext keyCtx, TermContext valueCtx) {
-    Errors.ErrorDecryptingNotAsymmetricallyEncrypted(valueCtx);
+    Errors.ErrorAsymmetricNotEncrypted(valueCtx);
     return null;
   }
 
@@ -156,7 +156,7 @@ public abstract class Term implements Comparable<Term>{
    * Should only be used on a nornal form.
    */
   public void verifySignature(Term pk, Term message, TermContext pkCtx, TermContext messageCtx, TermContext signatureCtx) {
-    Errors.ErrorVerifyingNotSigned(signatureCtx);
+    Errors.ErrorSignVerifNotSigned(signatureCtx);
   }
 
   /**

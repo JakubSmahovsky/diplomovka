@@ -94,7 +94,7 @@ public class FunctionSenc extends Term {
 
   @Override public Term symmetric_decrypt(Term key, TermContext keyCtx, TermContext valueCtx) {
     if (!this.key.equals(key)) {
-      Errors.ErrorWrongKey(keyCtx);
+      Errors.ErrorSymmetricKeyNotMatch(keyCtx);
     }
     return value;
   }

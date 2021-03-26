@@ -94,7 +94,7 @@ public class FunctionAenc extends Term {
 
   @Override public Term asymmetric_decrypt(Term sk, TermContext skCtx, TermContext valueCtx) {
     if (!this.key.verifyPk(sk)) {
-      Errors.ErrorWrongSecretKeyAdec(skCtx);
+      Errors.ErrorAsymmetricKeyNotMatch(skCtx);
     }
     return value;
   }
