@@ -5,10 +5,14 @@ model: declaration* specificationSegment+ queriesBlock?;
 
 declaration:
   decPrincipals |
-  decUnaryEquals;
+  decUnaryEquals |
+  decHideInfo |
+  decQuitOnWarning;
 
 decPrincipals: 'principals' ':' principal+=IDENTIFIER (',' principal+=IDENTIFIER)*;
-decUnaryEquals: 'unary-equals' ':' value=('implicit' | 'explicit');
+decUnaryEquals: 'unary-equals' ':' value=('implicit'|'explicit'|'default');
+decHideInfo: 'hide-info' ':' value=('true'|'false');
+decQuitOnWarning: 'quit-on-warning' ':' value=('true'|'false');
 
 specificationSegment:
   principalBlock | 

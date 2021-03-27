@@ -81,6 +81,12 @@ public class CompilerVisitor {
 			visitDecUnaryEquals(ctx.decUnaryEquals());
 			return;
 		}
+		if (ctx.decHideInfo() != null) {
+			visitDecHideInfo(ctx.decHideInfo());
+		}
+		if (ctx.decQuitOnWarning() != null) {
+			visitDecQuitOnWarning(ctx.decQuitOnWarning());
+		}
 	}
 
 	private void visitDecPrincipals(DecPrincipalsContext decPrincipals) {
@@ -102,12 +108,43 @@ public class CompilerVisitor {
 	private void visitDecUnaryEquals(DecUnaryEqualsContext ctx) {
 		if (ctx.value.getText().equals("explicit")) {
 			model.builtins.unaryEqualsExplicit = true;
+			model.builtins.unaryEqualsImplicit = false;
 			return;
 		}
 		if (ctx.value.getText().equals("implicit")) {
 			model.builtins.unaryEqualsImplicit = true;
+			model.builtins.unaryEqualsExplicit = false;
+			return;
+		}
+		if (ctx.value.getText().equals("default")) {
+			model.builtins.unaryEqualsImplicit = false;
+			model.builtins.unaryEqualsExplicit = false;
+			return;
 		}
 	}
+
+	public void visitDecHideInfo(DecHideInfoContext ctx) {
+		if (ctx.value.getText().equals("true")) {
+			Errors.showInfo = false;
+			return;
+		}
+		if (ctx.value.getText().equals("false")) {
+			Errors.showInfo = true;
+			return;
+		}
+	}
+
+	public void visitDecQuitOnWarning(DecQuitOnWarningContext ctx) {
+		if (ctx.value.getText().equals("true")) {
+			Errors.quitOnWarning = true;
+			return;
+		}
+		if (ctx.value.getText().equals("false")) {
+			Errors.quitOnWarning = false;
+			return;
+		}
+	}
+
 
 	public void visitPrincipalBlock(PrincipalBlockContext ctx) {
 		String principalName = ctx.principal.getText();
