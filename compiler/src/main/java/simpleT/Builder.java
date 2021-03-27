@@ -417,6 +417,20 @@ public class Builder extends BuilderFormatting{
    *    the receiver is dishonest
    */
   private void authentication(Authentication query) {
+    // find the receiver block
+		STBlock receiverBlock = null;
+		for (STBlock block : query.receiver.getBlocks()) {
+			for (CommandIn in : block.premiseInputs) {
+				if (in.receivedVariable(query.received)) {
+					receiverBlock = block;
+					break;
+				}
+			}
+			if (receiverBlock != null) {
+				break;
+			}
+		}
+
     // gather all Variables before implication
     ArrayList<Variable> principalIDs = new ArrayList<>();
     
@@ -426,7 +440,7 @@ public class Builder extends BuilderFormatting{
     }
     
     ArrayList<Variable> presumptionVariables = new ArrayList<>(principalIDs);
-    for (Term term : query.receiverBlock.completeState()) {
+    for (Term term : receiverBlock.completeState()) {
       for (Variable variable : term.freeVariables()) {
         if (!Term.containsByObjectEquality(presumptionVariables, variable)) {
           presumptionVariables.add(variable);
@@ -441,7 +455,7 @@ public class Builder extends BuilderFormatting{
 
     // gather sender variables
     ArrayList<Variable> senderVariables = new ArrayList<>();
-    senderVariables.add(query.senderBlock.principal.principalID);
+    senderVariables.add(query.sender.principalID);
     if (query.sent != query.received) {
       senderVariables.add(query.sent);
     }
@@ -454,16 +468,16 @@ public class Builder extends BuilderFormatting{
     output.append(lineBreak());
 
     String principalsFact = lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal);
-    String receiverFact = lemmaResultStateFact(query.receiverBlock, receiverTemporal);
+    String receiverFact = lemmaResultStateFact(receiverBlock, receiverTemporal);
     String presumption = conjunction(Arrays.asList(principalsFact, receiverFact));
     
-    String senderFact = lemmaFact(Constants.AUTH_SENT, Arrays.asList(query.senderBlock.principal.principalID, query.sent), senderTemporal);
+    String senderFact = lemmaFact(Constants.AUTH_SENT, Arrays.asList(query.sender.principalID, query.sent), senderTemporal);
     String equalsClause = lemmaEquals(query.sent, query.received);
     String senderClause = lemmaVariables(senderVariables, true) + lineBreak() + senderFact;
     senderClause = bracket(conjunction(Arrays.asList(senderClause, equalsClause)));
 
-    String dishonestSender = bracket(dishonest(query.senderBlock.principal, Variable.nextTemporal()));
-    String dishonestReceiver = bracket(dishonest(query.receiverBlock.principal, Variable.nextTemporal()));
+    String dishonestSender = bracket(dishonest(query.sender, Variable.nextTemporal()));
+    String dishonestReceiver = bracket(dishonest(query.receiver, Variable.nextTemporal()));
     String result = disjunction(Arrays.asList(senderClause, dishonestSender, dishonestReceiver));
     output.append(implication(presumption, result));
     output.append(lineBreak());
@@ -479,6 +493,32 @@ public class Builder extends BuilderFormatting{
    *    the receiver is dishonest
    */
   private void injAuthentication(InjAuthentication query) {
+    // find the sender and receiver blocks
+    STBlock senderBlock = null;
+		for (STBlock block : query.sender.getBlocks()) {
+			for (CommandOut out : block.resultOutputs) {
+				if (out.sentVariable(query.sent)) {
+					senderBlock = block;
+					break;
+				}
+			}
+			if (senderBlock != null) {
+				break;
+			}
+		}
+		STBlock receiverBlock = null;
+		for (STBlock block : query.receiver.getBlocks()) {
+			for (CommandIn in : block.premiseInputs) {
+				if (in.receivedVariable(query.received)) {
+					receiverBlock = block;
+					break;
+				}
+			}
+			if (receiverBlock != null) {
+				break;
+			}
+		}
+
     // gather all Variables before implication
     ArrayList<Variable> principalIDs = new ArrayList<>();
     
@@ -488,7 +528,7 @@ public class Builder extends BuilderFormatting{
     }
     
     ArrayList<Variable> presumptionVariables = new ArrayList<>(principalIDs);
-    for (Term term : query.receiverBlock.completeState()) {
+    for (Term term : receiverBlock.completeState()) {
       for (Variable variable : term.freeVariables()) {
         if (!Term.containsByObjectEquality(presumptionVariables, variable)) {
           presumptionVariables.add(variable);
@@ -504,7 +544,7 @@ public class Builder extends BuilderFormatting{
     // garther all Variables variables in the sender clause (that do not yet occur in the presumption)
     ArrayList<Variable> senderVariables = new ArrayList<>();
     
-    for (Term term : query.senderBlock.completeState()) {
+    for (Term term : senderBlock.completeState()) {
       for (Variable variable : term.freeVariables()) {
         if (!Term.containsByObjectEquality(senderVariables, variable) && 
             !Term.containsByObjectEquality(presumptionVariables, variable)) {
@@ -522,16 +562,16 @@ public class Builder extends BuilderFormatting{
     output.append(lineBreak());
 
     String principalsFact = lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal);
-    String receiverFact = lemmaResultStateFact(query.receiverBlock, receiverTemporal);
+    String receiverFact = lemmaResultStateFact(receiverBlock, receiverTemporal);
     String presumption = conjunction(Arrays.asList(principalsFact, receiverFact));
     
-    String senderFact = lemmaResultStateFact(query.senderBlock, senderTemporal);
+    String senderFact = lemmaResultStateFact(senderBlock, senderTemporal);
     String equalsClause = lemmaEquals(query.sent, query.received);
     String senderClause = lemmaVariables(senderVariables, true) + lineBreak() + senderFact;
     senderClause = bracket(conjunction(Arrays.asList(senderClause, equalsClause)));
 
-    String dishonestSender = bracket(dishonest(query.senderBlock.principal, Variable.nextTemporal()));
-    String dishonestReceiver = bracket(dishonest(query.receiverBlock.principal, Variable.nextTemporal()));
+    String dishonestSender = bracket(dishonest(query.sender, Variable.nextTemporal()));
+    String dishonestReceiver = bracket(dishonest(query.receiver, Variable.nextTemporal()));
     String result = disjunction(Arrays.asList(senderClause, dishonestSender, dishonestReceiver));
     output.append(implication(presumption, result));
     output.append(lineBreak());

@@ -175,8 +175,7 @@ public class Principal {
     while (it.hasNext()) {
       STBlock following = it.next();
       boolean sends = !last.resultOutputs.isEmpty();
-      boolean receives = !following.premiseInputs.isEmpty();
-      if (sends || receives) {
+      if (sends) {
         newBlocks.add(last);
         last = following;
       } else { // merge
@@ -184,7 +183,9 @@ public class Principal {
       }
     }
     
-    newBlocks.add(last);
+    if (!last.isEmptyBlock()) {
+      newBlocks.add(last);
+    }
     blocks = newBlocks;
   }
 

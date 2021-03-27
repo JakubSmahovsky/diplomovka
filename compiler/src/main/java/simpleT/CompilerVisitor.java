@@ -728,9 +728,9 @@ public class CompilerVisitor {
 		}
 
 		if (injective) {
-			model.queries.injAuthentication.add(new InjAuthentication(senderBlock, receiverBlock, sent, received));	
+			model.queries.injAuthentication.add(new InjAuthentication(sender, receiver, sent, received));	
 		} else {
-			model.queries.authentication.add(new Authentication(senderBlock, receiverBlock, sent, received));
+			model.queries.authentication.add(new Authentication(sender, receiver, sent, received));
 			senderBlock.actions.add(Fact.authSent(sender, sent));
 		}
 	}

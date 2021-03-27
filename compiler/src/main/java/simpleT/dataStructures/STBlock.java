@@ -50,7 +50,6 @@ public class STBlock {
 
   /**
   * Render the label of this block.
-  * Must be consistent with read().
   */
   public String render() {
     return principal.render() + Constants.NAMES_SEPARATOR + indexInModel;
@@ -87,5 +86,12 @@ public class STBlock {
     if (!Term.containsByObjectEquality(state, term)) {
       state.add(term);
     }
+  }
+
+  public boolean isEmptyBlock() {
+    return (premiseFresh.isEmpty() && 
+            premiseInputs.isEmpty() && 
+            actions.isEmpty() && 
+            resultOutputs.isEmpty());
   }
 }
