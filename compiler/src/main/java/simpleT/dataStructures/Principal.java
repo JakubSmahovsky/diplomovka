@@ -163,7 +163,7 @@ public class Principal {
   }
 
   /**
-   * Squishes blocks that don't send or don't receive any messages, merging them with neighbouging blocks.
+   * Squishes blocks that don't send or receive any messages, merging them with neighbouring blocks.
    */
   public void squishBlocks(){
     if (blocks.isEmpty()) {
@@ -176,7 +176,7 @@ public class Principal {
       STBlock following = it.next();
       boolean sends = !last.resultOutputs.isEmpty();
       boolean receives = !following.premiseInputs.isEmpty();
-      if (sends && receives) {
+      if (sends || receives) {
         newBlocks.add(last);
         last = following;
       } else { // merge
