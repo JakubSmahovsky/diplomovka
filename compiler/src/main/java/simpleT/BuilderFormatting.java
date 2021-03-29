@@ -53,15 +53,24 @@ public abstract class BuilderFormatting {
     return fact(sourceBlock.render(), sourceBlock.completeState(), contextBlock);
   }
 
-  public static String initStateFact(Principal principal) {
-    return persistentFact(principal.render() + "_init", principal.composeInitState(), null);
+  public static String instanceStateFact(Principal principal) {
+    return persistentFact(principal.render() + "_instance", principal.composeInstanceState(), null);
   }
 
-  /**
-   * @param block is null for init block
-   */
-  public static String ruleAliases(STBlock block, List<String> aliases) {
-    String label = block == null ? Constants.INIT : block.render();
+
+  public static String sessionStateFact(Principal principal) {
+    return fact(principal.render() + "_session", principal.composeSessionState(), null);
+  }
+
+  public static String ruleAliases(STBlock block, List<String> aliases, boolean instance_init, boolean session_init) {
+    String label;
+    if (instance_init == true) {
+      label = Constants.INSTANCE;
+    } else if (session_init == true) {
+      label = Constants.SESSION;
+    } else {
+      label = block.render();
+    }
     StringBuilder result = new StringBuilder("rule " + label + ":\r\n");
     if (aliases.isEmpty()) {
       return result.toString();

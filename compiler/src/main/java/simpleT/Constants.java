@@ -143,7 +143,8 @@ public final class Constants{
   public static final String MANDATORY_THEORY_EXTENSION = ".spthy";
   public static final String DEFAULT_THEORY_PATH = "theory";
   public static final String DEFAULT_SOURCES_OUTPUT_PATH = "sources.txt";
-  public static final String INIT = "INIT";
+  public static final String INSTANCE = "INSTANCE";
+  public static final String SESSION = "SESSION";
   public static final String VARIABLE_NAME = "qq";
   public static final String FACT_NAME = "QQ";
   public static final String TEMPORAL_NAME = "t";
@@ -151,5 +152,6 @@ public final class Constants{
   public static final String INTRUDER_KNOWS_OUTPUT = "KU";
   public static final String INTRUDER_KNOWS_LEMMA = "K";
   public static final String SOLVEDHOW_DIRECTLY = "(directly)";
-  public static final String VARIABLE_INSTANCEID = "instanceid";
+  public static final String VARIABLE_INSTANCEID = "instanceID";
+  public static final String VARIABLE_SESSIONID = "sessionID";
 }

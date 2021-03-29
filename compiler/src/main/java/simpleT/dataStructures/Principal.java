@@ -23,7 +23,6 @@ public class Principal {
     this.name = name;
     knownEphemeralPrivate = new ArrayList<>();
     knownLongTermPrivate = new ArrayList<>();
-    knownLongTermPrivate.add(model.instanceID);
     knownPublic = new ArrayList<>();
     knownPublic.add(principalID);
     blocks = new ArrayList<>();
@@ -138,8 +137,18 @@ public class Principal {
     }
   }
 
-  public ArrayList<Variable> composeInitState() {
+  public ArrayList<Variable> composeInstanceState() {
     ArrayList<Variable> result = new ArrayList<>();
+    result.add(model.instanceID);
+    result.addAll(knownPublic);
+    result.addAll(knownLongTermPrivate);
+    return result;
+  }
+
+  public ArrayList<Variable> composeSessionState() {
+    ArrayList<Variable> result = new ArrayList<>();
+    result.add(model.instanceID);
+    result.add(model.sessionID);
     result.addAll(knownPublic);
     result.addAll(knownLongTermPrivate);
     return result;

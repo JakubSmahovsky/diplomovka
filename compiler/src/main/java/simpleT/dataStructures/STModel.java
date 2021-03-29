@@ -17,6 +17,7 @@ public class STModel {
   public Queries queries;
   public Builtins builtins;
   public final Variable instanceID;
+  public final Variable sessionID;
 
   public ArrayList<SourceGroup> sourceGroups;
 
@@ -37,6 +38,7 @@ public class STModel {
     this.sources = new ArrayList<>();
 
     instanceID = new Variable(this, Constants.VARIABLE_INSTANCEID);
+    sessionID = new Variable(this, Constants.VARIABLE_SESSIONID);
   }
 
   /**

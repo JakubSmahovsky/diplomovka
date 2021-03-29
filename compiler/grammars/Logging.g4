@@ -24,7 +24,7 @@ tuple: '<' term? (',' term)* '>';
 variable: ('$' | '~' | '#')? IDENTIFIER ('.' NUMBER)?;
 
 
-ATTIMEPOINT: '▶₀' | '@';
+ATTIMEPOINT: ('▶' [₀-₉]+) | '@';
 PERSISTENT: '!';
 SOLVEDHOW: '(precomputed)' | '(directly)';
 NUMBER: [0-9]+;

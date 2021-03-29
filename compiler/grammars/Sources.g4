@@ -63,7 +63,7 @@ jsonString: (jsonChars | IDENTIFIER | NUMBER)*;
 
 
 SEPARATOR: '------------------------------------------------------------------------------';
-ATTIMEPOINT: '▶₀' | '@';
+ATTIMEPOINT:  ('▶' [₀-₉]+) | '@';
 PARTIAL_DECONSTRUCTIONS: '(partial deconstructions)';
 USEFUL: '" (useful2)"' | '" (currently deducible)"' | '" (probably constructible)"';
 NUMBER: [0-9]+;

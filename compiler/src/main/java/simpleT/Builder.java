@@ -29,7 +29,7 @@ public class Builder extends BuilderFormatting{
     this.model = model;
     
     initProtocol();
-    initRule();
+    initRules();
     blocks();
     prefabs();
     restrictions();
@@ -65,10 +65,9 @@ public class Builder extends BuilderFormatting{
   }
 
   /**
-   * Create a rule that initialises the state of all principals.
-   * Initialises long term variables.
+   * Create rules for instance and session initialization
    */
-  private void initRule() {
+  private void initRules() {
     // gather fresh variables
     HashSet<Variable> toGenerate = new HashSet<>();
     for (Principal principal : model.getPrincipals()) {
@@ -111,7 +110,7 @@ public class Builder extends BuilderFormatting{
     for (Variable variable : toConstruct) {
       facts.add(variable.renderAlias(null));
     }
-    output.append(ruleAliases(null, facts));
+    output.append(ruleAliases(null, facts, true, false));
 
     // render fresh facts
     facts = new ArrayList<>();
@@ -125,10 +124,10 @@ public class Builder extends BuilderFormatting{
     facts.add(fact(Constants.FACT_PRINCIPALS, principalIDs, null));
     output.append(ruleAction(facts));
 
-    // render init states of principals
+    // render instance states of principals
     facts = new ArrayList<>();
     for (Principal principal : model.getPrincipals()) {
-      facts.add(initStateFact(principal));
+      facts.add(instanceStateFact(principal));
       // add fact binding a long-term private variable to pricipal (for use in reveal)
       for (Variable variable : principal.getLongTermPrivate()) {
         facts.add(persistentFact(Constants.PRINCIPAL_PRIVATE, Arrays.asList(principal.principalID, variable), null));
@@ -152,6 +151,20 @@ public class Builder extends BuilderFormatting{
         }
       }
     }
+
+    // render session init rule
+    facts = new ArrayList<>();
+    output.append(ruleAliases(null, facts, false, true));
+    for (Principal principal : model.getPrincipals()) {
+      facts.add(instanceStateFact(principal));
+    }
+    output.append(rulePremise(facts));
+    facts = new ArrayList<>();
+    for (Principal principal : model.getPrincipals()) {
+      facts.add(sessionStateFact(principal));
+    }
+    output.append(ruleAction(facts));
+    output.append(ruleResult(facts));
   }
 
   /**
@@ -171,7 +184,7 @@ public class Builder extends BuilderFormatting{
     // premises
     ArrayList<String> premises = new ArrayList<>();
     if (previousBlock == null) {
-      premises.add(initStateFact(block.principal));
+      premises.add(sessionStateFact(block.principal));
     } else {
       premises.add(resultStateFact(previousBlock, block));
     }
@@ -204,7 +217,7 @@ public class Builder extends BuilderFormatting{
       aliases.add(alias.renderAlias(block));
     }
 
-    output.append(ruleAliases(block, aliases));
+    output.append(ruleAliases(block, aliases, false, false));
     output.append(rulePremise(premises));
     output.append(ruleAction(actions));
     output.append(ruleResult(results));
