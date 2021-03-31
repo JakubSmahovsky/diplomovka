@@ -54,17 +54,6 @@ public final class Constants{
     Constants.INDENT + "\"All x y #i. " + Constants.EQUALITY + "(x,y) @i ==> x = y\"\r\n" +
     "\r\n";
 
-  public static final String PREFAB_PRIVATE_REVEAL_NAME = "privateReveal";
-  public static final String PREFAB_PRIVATE_REVEAL =
-    "rule " + Constants.PREFAB_PRIVATE_REVEAL_NAME + ": [\r\n" +
-    Constants.INDENT + "!" + Constants.PRINCIPAL_PRIVATE + "(Principal, Private)\r\n" +
-    "]--[\r\n" +
-    Constants.INDENT + Constants.FACT_DISHONEST + "(Principal)\r\n" +
-    "]->[\r\n" +
-    Constants.INDENT + "Out(Private)\r\n"
-    + "]\r\n" +
-    "\r\n";
-
   // builtin names
   public static final String BUILTIN_SYMMETRIC_ENCRYPTION = "symmetric-encryption";
   public static final String BUILTIN_ASYMMETRIC_ENCRYPTION = "asymmetric-encryption";
@@ -73,7 +62,8 @@ public final class Constants{
   public static final String BUILTIN_DH = "diffie-hellman";
   // custom fact names
   public static final String EQUALITY = "Eq";
-  public static final String PRINCIPAL_PRIVATE = "PrincipalPrivate";
+  public static final String LONG_TERM_PRIVATE = "LTP";
+  public static final String LONG_TERM_REVEAL = "RevealLT";
   public static final String AUTH_SENT = "Sent";
   public static final String FACT_PRINCIPALS = "Principals";
   public static final String FACT_DISHONEST= "Dishonest";

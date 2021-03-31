@@ -57,18 +57,20 @@ public abstract class BuilderFormatting {
     return persistentFact(principal.render() + "_instance", principal.composeInstanceState(), null);
   }
 
-
   public static String sessionStateFact(Principal principal) {
     return fact(principal.render() + "_session", principal.composeSessionState(), null);
   }
 
-  public static String ruleAliases(STBlock block, List<String> aliases, boolean instance_init, boolean session_init) {
-    String label;
-    if (instance_init == true) {
-      label = Constants.INSTANCE;
-    } else if (session_init == true) {
-      label = Constants.SESSION;
-    } else {
+  public static String LongTermPrivateListFact(Principal principal) {
+    String factName = principal.render() + Constants.NAMES_SEPARATOR + Constants.LONG_TERM_PRIVATE;
+    ArrayList<Variable> LTP = new ArrayList<>();
+    LTP.add(principal.principalID);
+    LTP.addAll(principal.getLongTermPrivate());
+    return persistentFact(factName, LTP, null);
+  }
+
+  public static String ruleAliases(STBlock block, List<String> aliases, String label) {
+    if (label == null){
       label = block.render();
     }
     StringBuilder result = new StringBuilder("rule " + label + ":\r\n");
@@ -95,6 +97,26 @@ public abstract class BuilderFormatting {
 
   public static String ruleBody(List<String> facts) {
     return String.join(",\r\n", indent(facts)) + "\r\n";
+  }
+
+  public static String revealRule(Principal principal) {
+    String ruleName = principal.render() + Constants.NAMES_SEPARATOR + Constants.LONG_TERM_REVEAL;
+    String factName = principal.render() + Constants.NAMES_SEPARATOR + Constants.LONG_TERM_PRIVATE;
+
+    ArrayList<Variable> ltp = new ArrayList<>();
+    ltp.add(principal.principalID);
+    ltp.addAll(principal.getLongTermPrivate());
+    String LTPListFact = persistentFact(factName, ltp, null);
+
+    ArrayList<String> outputs = new ArrayList<>();
+    for (Variable variable : principal.getLongTermPrivate()) {
+      outputs.add(fact(Constants.COMMAND_OUT, variable, null));
+    }
+    return
+      ruleAliases(null, new ArrayList<>(), ruleName) +
+      rulePremise(Arrays.asList(LTPListFact)) +
+      ruleAction(Arrays.asList(fact(Constants.FACT_DISHONEST, principal.principalID, null))) +
+      ruleResult(outputs);
   }
 
   public static String theoryHeader(String name) {

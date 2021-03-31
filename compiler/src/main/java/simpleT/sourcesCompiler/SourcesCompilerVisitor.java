@@ -25,9 +25,9 @@ public class SourcesCompilerVisitor {
     for (GroupContext gctx : ctx.group()) {
       visitGroup(gctx);
     }
-
+    
     model.sortSourceGroups();
-
+    
     try {
       for (SourceGroup group : model.sourceGroups) {
         writer.write(group.render().toString() + "\r\n" + "\r\n");
@@ -202,8 +202,15 @@ public class SourcesCompilerVisitor {
     }
     // TODO assert values aren't null
     switch (nodeType) {
-      case (Constants.JSON_NODE_BLOCK):
-        return new BlockNode(nodeID, nodeLabel, model);
+      case (Constants.JSON_NODE_BLOCK): {
+        if (nodeLabel.matches(Constants.FACT_NAME + "[0-9]+" + Constants.NAMES_SEPARATOR + "[0-9]+")) {
+          return new PrincipalRuleNode(nodeID, nodeLabel, model);
+        } else if (nodeLabel.matches(Constants.FACT_NAME + "[0-9]+" + Constants.NAMES_SEPARATOR + Constants.LONG_TERM_REVEAL)) {
+          return new RevealRuleNode(nodeID, nodeLabel, model);
+        } else {
+          return new CustomRuleNode(nodeID, nodeLabel);
+        }
+      }
       case (Constants.JSON_NODE_FUNCTION):
         return new FunctionNode(nodeID, nodeLabel);
       case (Constants.JSON_NODE_UNSOLVED):

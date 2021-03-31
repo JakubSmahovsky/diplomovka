@@ -31,7 +31,7 @@ public class Builder extends BuilderFormatting{
     initProtocol();
     initRules();
     blocks();
-    prefabs();
+    reveals();
     restrictions();
     queries();
     output.append(endProtocol());
@@ -110,7 +110,7 @@ public class Builder extends BuilderFormatting{
     for (Variable variable : toConstruct) {
       facts.add(variable.renderAlias(null));
     }
-    output.append(ruleAliases(null, facts, true, false));
+    output.append(ruleAliases(null, facts, Constants.INSTANCE));
 
     // render fresh facts
     facts = new ArrayList<>();
@@ -125,13 +125,11 @@ public class Builder extends BuilderFormatting{
     output.append(ruleAction(facts));
 
     // render instance states of principals
+    // render facts listing all long-term private variables of each pricipal (for use in reveals)
     facts = new ArrayList<>();
     for (Principal principal : model.getPrincipals()) {
       facts.add(instanceStateFact(principal));
-      // add fact binding a long-term private variable to pricipal (for use in reveal)
-      for (Variable variable : principal.getLongTermPrivate()) {
-        facts.add(persistentFact(Constants.PRINCIPAL_PRIVATE, Arrays.asList(principal.principalID, variable), null));
-      }
+      facts.add(LongTermPrivateListFact(principal));
     }
     // render output of distributed variables
     for (Variable variable : toConstruct) {
@@ -154,7 +152,8 @@ public class Builder extends BuilderFormatting{
 
     // render session init rule
     facts = new ArrayList<>();
-    output.append(ruleAliases(null, facts, false, true));
+    output.append(ruleAliases(null, facts, Constants.SESSION));
+    facts.add(fact(Constants.COMMAND_FRESH, model.sessionID, null));
     for (Principal principal : model.getPrincipals()) {
       facts.add(instanceStateFact(principal));
     }
@@ -217,7 +216,7 @@ public class Builder extends BuilderFormatting{
       aliases.add(alias.renderAlias(block));
     }
 
-    output.append(ruleAliases(block, aliases, false, false));
+    output.append(ruleAliases(block, aliases, null));
     output.append(rulePremise(premises));
     output.append(ruleAction(actions));
     output.append(ruleResult(results));
@@ -228,9 +227,9 @@ public class Builder extends BuilderFormatting{
     }
   }
 
-  private void prefabs() {
-    if (model.builtins.prefab_private_reveal) {
-      output.append(Constants.PREFAB_PRIVATE_REVEAL);
+  private void reveals() {
+    for (Principal principal : model.getPrincipals()) {
+      output.append(revealRule(principal));
     }
   }
 

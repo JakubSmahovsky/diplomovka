@@ -105,12 +105,8 @@ public class FunctionNode extends Node{
       if (parents.size() != 1) {
         Errors.debug("FunctionNode of Receive has " + parents.size() + " parents!");
       }
-      if (!(parents.get(0) instanceof BlockNode)) {
-        Errors.debug("FunctionNode of Receive has a parent that is not a block rule!");
-      }
-      BlockNode blockNode = (BlockNode)parents.get(0);
-
-      return blockNode.renderDescription();
+      
+      return parents.get(0).renderDescription();
     }
 
     String intruderAction;
