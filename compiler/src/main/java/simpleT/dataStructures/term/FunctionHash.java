@@ -60,11 +60,11 @@ public class FunctionHash extends Term {
   }
 
   @Override public String render() {
-    return BuilderFormatting.fact(Constants.HASH, subterm, null);
+    return BuilderFormatting.fact(Constants.T_HASH, subterm, null);
   }
 
   @Override public String render(STBlock block) {
-    return BuilderFormatting.fact(Constants.HASH, subterm, block);
+    return BuilderFormatting.fact(Constants.T_HASH, subterm, block);
   }
 
   @Override public boolean isDeconstructionTerm() {

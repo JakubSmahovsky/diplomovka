@@ -3,6 +3,7 @@ package simpleT.dataStructures.term;
 import java.util.ArrayList;
 import java.util.List;
 
+import simpleT.Constants;
 import simpleT.dataStructures.Fact;
 import simpleT.dataStructures.STBlock;
 
@@ -56,7 +57,7 @@ public class Constant extends Term {
   };
 
   @Override public String render() {
-    return "'" + word + "'";
+    return Constants.CONSTANT_OPEN + word + Constants.CONSTANT_CLOSE;
   }
 
   @Override public String render(STBlock block) {

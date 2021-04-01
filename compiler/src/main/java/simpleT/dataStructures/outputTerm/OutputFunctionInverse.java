@@ -18,6 +18,6 @@ public class OutputFunctionInverse extends OutputTerm{
 
   @Override
   public String render() {
-    return OutputFormatting.term(Constants.VPINVERSE, base);
+    return OutputFormatting.term(Constants.ST_INVERSE, base);
   }
 }

@@ -2,6 +2,8 @@ package simpleT.dataStructures.outputTerm;
 
 import java.util.ArrayList;
 
+import simpleT.Constants;
+
 public class OutputTuple extends OutputTerm{
   private final ArrayList<OutputTerm> subterms;
 
@@ -32,7 +34,7 @@ public class OutputTuple extends OutputTerm{
     for (OutputTerm subterm : subterms) {
       renders.add(subterm.render());
     }
-    return "{" + String.join(", ", renders) + "}";
+    return Constants.ST_TUPLE_OPEN + String.join(Constants.COMMA_SEPARATOR, renders) + Constants.ST_TUPLE_CLOSE;
   }
 
    

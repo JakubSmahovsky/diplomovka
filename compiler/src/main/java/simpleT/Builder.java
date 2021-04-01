@@ -34,7 +34,7 @@ public class Builder extends BuilderFormatting{
     reveals();
     restrictions();
     queries();
-    output.append(endProtocol());
+    output.append(Constants.THEORY_CLOSE);
   }
 
   public String output(){
@@ -45,7 +45,7 @@ public class Builder extends BuilderFormatting{
    * Render the protocol header and declarations.
    */
   private void initProtocol() {
-    output.append(theoryHeader(Constants.DEFAULT_THEORY_NAME));
+    output.append(Constants.THEORY_OPEN);
 
     ArrayList<String> builtins = new ArrayList<>();
     if (model.builtins.symmetric_encryption) {
@@ -110,7 +110,7 @@ public class Builder extends BuilderFormatting{
     for (Variable variable : toConstruct) {
       facts.add(variable.renderAlias(null));
     }
-    output.append(ruleAliases(null, facts, Constants.INSTANCE));
+    output.append(ruleAliases(null, facts, Constants.RULE_INSTANCE));
 
     // render fresh facts
     facts = new ArrayList<>();
@@ -152,7 +152,7 @@ public class Builder extends BuilderFormatting{
 
     // render session init rule
     facts = new ArrayList<>();
-    output.append(ruleAliases(null, facts, Constants.SESSION));
+    output.append(ruleAliases(null, facts, Constants.RULE_SESSION));
     facts.add(fact(Constants.COMMAND_FRESH, model.sessionID, null));
     for (Principal principal : model.getPrincipals()) {
       facts.add(instanceStateFact(principal));
@@ -242,26 +242,26 @@ public class Builder extends BuilderFormatting{
   private void queries() {
     if (model.queries.executable) {
       executable();
-      output.append(lineBreak());
+      output.append(Constants.LINE_BREAK);
     }
     for (Confidentiality query : model.queries.confidentiality) {
       confidentiality(query);
-      output.append(lineBreak());
+      output.append(Constants.LINE_BREAK);
     }
 
     for (ForwardSecrecy query : model.queries.forwardSecrecy) {
       forwardSecrecy(query);
-      output.append(lineBreak());
+      output.append(Constants.LINE_BREAK);
     }
 
     for (Authentication query : model.queries.authentication) {
       authentication(query);
-      output.append(lineBreak());
+      output.append(Constants.LINE_BREAK);
     }
 
     for (InjAuthentication query : model.queries.injAuthentication) {
       injAuthentication(query);
-      output.append(lineBreak());
+      output.append(Constants.LINE_BREAK);
     }
   }
 
@@ -288,8 +288,8 @@ public class Builder extends BuilderFormatting{
       allVariables.add(t);
       temporals.add(t);
     }
-    output.append(lemmaVariables(allVariables, true));
-    output.append(lineBreak());
+    output.append(lemmaQuatification(allVariables, true));
+    output.append(Constants.LINE_BREAK);
 
     ArrayList<String> facts = new ArrayList<>();
     Iterator<Variable> tempIt = temporals.iterator();
@@ -299,8 +299,8 @@ public class Builder extends BuilderFormatting{
       facts.add(negation(dishonest(principal, temporal)));
     }
 
-    output.append(conjunction(facts) + lineBreak());
-    output.append(lemmaEnd());
+    output.append(conjunction(facts) + Constants.LINE_BREAK);
+    output.append(Constants.LEMMA_CLOSE);
   }
 
   /**
@@ -345,8 +345,8 @@ public class Builder extends BuilderFormatting{
     allVariables.add(intruderTemporal);
 
     output.append(lemma(query.renderName(), false));
-    output.append(lemmaVariables(allVariables, false));
-    output.append(lineBreak());
+    output.append(lemmaQuatification(allVariables, false));
+    output.append(Constants.LINE_BREAK);
 
     ArrayList<String> presumptionClauses = new ArrayList<>();
     presumptionClauses.add(lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal));
@@ -359,8 +359,8 @@ public class Builder extends BuilderFormatting{
     }
     
     output.append(implication(conjunction(presumptionClauses), disjunction(dishonestClauses)));
-    output.append(lineBreak());
-    output.append(lemmaEnd());
+    output.append(Constants.LINE_BREAK);
+    output.append(Constants.LEMMA_CLOSE);
   }
 
 
@@ -400,8 +400,8 @@ public class Builder extends BuilderFormatting{
     allVariables.add(intruderTemporal);
 
     output.append(lemma(query.renderName(), false));
-    output.append(lemmaVariables(allVariables, false));
-    output.append(lineBreak());
+    output.append(lemmaQuatification(allVariables, false));
+    output.append(Constants.LINE_BREAK);
 
     ArrayList<String> presumptionClauses = new ArrayList<>();
     presumptionClauses.add(lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal));
@@ -416,8 +416,8 @@ public class Builder extends BuilderFormatting{
     }
     
     output.append(implication(conjunction(presumptionClauses), disjunction(dishonestClauses)));
-    output.append(lineBreak());
-    output.append(lemmaEnd());
+    output.append(Constants.LINE_BREAK);
+    output.append(Constants.LEMMA_CLOSE);
   }
 
   /** Create an authentication query saying that if
@@ -476,24 +476,24 @@ public class Builder extends BuilderFormatting{
 
     // build the lemma
     output.append(lemma(query.renderName(), false));
-    output.append(lemmaVariables(presumptionVariables, false));
-    output.append(lineBreak());
+    output.append(lemmaQuatification(presumptionVariables, false));
+    output.append(Constants.LINE_BREAK);
 
     String principalsFact = lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal);
     String receiverFact = lemmaResultStateFact(receiverBlock, receiverTemporal);
     String presumption = conjunction(Arrays.asList(principalsFact, receiverFact));
     
-    String senderFact = lemmaFact(Constants.AUTH_SENT, Arrays.asList(query.sender.principalID, query.sent), senderTemporal);
+    String senderFact = lemmaFact(Constants.FACT_AUTHENTICATION_SENT, Arrays.asList(query.sender.principalID, query.sent), senderTemporal);
     String equalsClause = lemmaEquals(query.sent, query.received);
-    String senderClause = lemmaVariables(senderVariables, true) + lineBreak() + senderFact;
+    String senderClause = lemmaQuatification(senderVariables, true) + Constants.LINE_BREAK + senderFact;
     senderClause = bracket(conjunction(Arrays.asList(senderClause, equalsClause)));
 
     String dishonestSender = bracket(dishonest(query.sender, Variable.nextTemporal()));
     String dishonestReceiver = bracket(dishonest(query.receiver, Variable.nextTemporal()));
     String result = disjunction(Arrays.asList(senderClause, dishonestSender, dishonestReceiver));
     output.append(implication(presumption, result));
-    output.append(lineBreak());
-    output.append(lemmaEnd());
+    output.append(Constants.LINE_BREAK);
+    output.append(Constants.LEMMA_CLOSE);
   }
 
   /** Create an injective authentication query saying that if
@@ -570,8 +570,8 @@ public class Builder extends BuilderFormatting{
 
     // build the lemma
     output.append(lemma(query.renderName(), false));
-    output.append(lemmaVariables(presumptionVariables, false));
-    output.append(lineBreak());
+    output.append(lemmaQuatification(presumptionVariables, false));
+    output.append(Constants.LINE_BREAK);
 
     String principalsFact = lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal);
     String receiverFact = lemmaResultStateFact(receiverBlock, receiverTemporal);
@@ -579,14 +579,14 @@ public class Builder extends BuilderFormatting{
     
     String senderFact = lemmaResultStateFact(senderBlock, senderTemporal);
     String equalsClause = lemmaEquals(query.sent, query.received);
-    String senderClause = lemmaVariables(senderVariables, true) + lineBreak() + senderFact;
+    String senderClause = lemmaQuatification(senderVariables, true) + Constants.LINE_BREAK + senderFact;
     senderClause = bracket(conjunction(Arrays.asList(senderClause, equalsClause)));
 
     String dishonestSender = bracket(dishonest(query.sender, Variable.nextTemporal()));
     String dishonestReceiver = bracket(dishonest(query.receiver, Variable.nextTemporal()));
     String result = disjunction(Arrays.asList(senderClause, dishonestSender, dishonestReceiver));
     output.append(implication(presumption, result));
-    output.append(lineBreak());
-    output.append(lemmaEnd());
+    output.append(Constants.LINE_BREAK);
+    output.append(Constants.LEMMA_CLOSE);
   }
 }

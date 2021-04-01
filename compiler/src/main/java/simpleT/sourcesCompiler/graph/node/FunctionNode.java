@@ -58,30 +58,30 @@ public class FunctionNode extends Node{
 
   public static String tamarinToVP(String function) {
     switch (function) {
-      case (Constants.SENC):
-        return Constants.VPSENC;
-      case (Constants.SDEC):
-        return Constants.VPSDEC;
-      case (Constants.AENC):
-        return Constants.VPAENC;
-      case (Constants.ADEC):
-        return Constants.VPADEC;
-      case (Constants.PK):
-        return Constants.VPPK;
-      case (Constants.SIGN):
-        return Constants.VPSIGN;
-      case (Constants.VERIFY):
-        return Constants.VPSIGNVERIF;
-      case (Constants.HASH):
-        return Constants.HASH;
-      case (Constants.FIRST):
-        return Constants.VPFIRST;
-      case (Constants.SECOND):
-        return Constants.VPSECOND;
-      case (Constants.EXP_WORD):
-        return Constants.EXP;
-      case (Constants.INVERSE):
-        return Constants.VPINVERSE;
+      case (Constants.T_SENC):
+        return Constants.ST_SENC;
+      case (Constants.T_SDEC):
+        return Constants.ST_SDEC;
+      case (Constants.T_AENC):
+        return Constants.ST_AENC;
+      case (Constants.T_ADEC):
+        return Constants.ST_ADEC;
+      case (Constants.T_PK):
+        return Constants.ST_PK;
+      case (Constants.T_SIGN):
+        return Constants.ST_SIGN;
+      case (Constants.T_VERIFY):
+        return Constants.ST_SIGNVERIF;
+      case (Constants.T_HASH):
+        return Constants.T_HASH;
+      case (Constants.T_FIRST):
+        return Constants.ST_FIRST;
+      case (Constants.T_SECOND):
+        return Constants.ST_SECOND;
+      case (Constants.T_EXP_WORD):
+        return Constants.T_EXP;
+      case (Constants.T_INVERSE):
+        return Constants.ST_INVERSE;
     }
     Errors.DebugUnexpectedValueType("function", function, " tamarinToVP in FunctionNode");
     return null;

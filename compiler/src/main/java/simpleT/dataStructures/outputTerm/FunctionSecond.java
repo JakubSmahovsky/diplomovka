@@ -21,6 +21,6 @@ public class FunctionSecond extends OutputTerm{
 
   @Override
   public String render() {
-    return OutputFormatting.term(Constants.SECOND, subterm);
+    return OutputFormatting.term(Constants.T_SECOND, subterm);
   }
 }

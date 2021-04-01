@@ -23,6 +23,6 @@ public class OutputFunctionAenc extends OutputTerm {
 
   @Override
   public String render() {
-    return OutputFormatting.term(Constants.VPAENC, Arrays.asList(key, value));
+    return OutputFormatting.term(Constants.ST_AENC, Arrays.asList(key, value));
   }
 }

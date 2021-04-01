@@ -11,7 +11,7 @@ public class RevealRuleNode extends Node{
 
   public RevealRuleNode(String nodeID, String nodeLabel, STModel model) {
     super(nodeID, nodeLabel);
-    int principalID = Integer.parseInt(label.split(Constants.NAMES_SEPARATOR)[0].substring(Constants.FACT_NAME.length()));
+    int principalID = Integer.parseInt(label.split(Constants.NAME_SEPARATOR)[0].substring(Constants.FACT_PREFIX_PRINCIPALID.length()));
     for (Principal principal : model.getPrincipals()) {
       if (model.getVariable(principalID) == principal.principalID) {
         this.principal = principal;

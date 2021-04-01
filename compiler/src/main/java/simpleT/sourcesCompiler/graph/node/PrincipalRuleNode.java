@@ -11,7 +11,7 @@ public class PrincipalRuleNode extends Node {
 
   public PrincipalRuleNode(String id, String label, STModel model) {
     super(id, label);
-    int blockID = Integer.parseInt(label.split(Constants.NAMES_SEPARATOR)[1]);
+    int blockID = Integer.parseInt(label.split(Constants.NAME_SEPARATOR)[1]);
     this.block = model.blocks.get(blockID);
   }
 

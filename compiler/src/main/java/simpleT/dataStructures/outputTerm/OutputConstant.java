@@ -1,5 +1,7 @@
 package simpleT.dataStructures.outputTerm;
 
+import simpleT.Constants;
+
 public class OutputConstant extends OutputTerm{
   private final String word;
 
@@ -14,7 +16,7 @@ public class OutputConstant extends OutputTerm{
 
   @Override
   public String render() {
-    return "\'" + word + "\'";
+    return Constants.CONSTANT_OPEN + word + Constants.CONSTANT_CLOSE;
   }
   
 }

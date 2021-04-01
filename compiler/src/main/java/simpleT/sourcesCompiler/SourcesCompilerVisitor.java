@@ -84,10 +84,10 @@ public class SourcesCompilerVisitor {
       return visitTuple(ctx.tuple());
     }
     if (ctx.infixOp != null) {
-      if (ctx.infixOp.getText().equals(Constants.EXP)) {
+      if (ctx.infixOp.getText().equals(Constants.T_EXP)) {
         return new OutputExponentiation(visitTerm(ctx.term(0)), visitTerm(ctx.term(1)));
       }
-      if (ctx.infixOp.getText().equals(Constants.MUL)) {
+      if (ctx.infixOp.getText().equals(Constants.T_MUL)) {
         return new OutputMultiplication(visitTerm(ctx.term(0)), visitTerm(ctx.term(1)));
       }
     }
@@ -113,35 +113,35 @@ public class SourcesCompilerVisitor {
   public OutputTerm visitFunction(FunctionContext ctx) {
     String functionName = ctx.IDENTIFIER().getText();
     switch (functionName) {
-      case Constants.SENC: {
+      case Constants.T_SENC: {
         OutputTerm value = visitTerm(ctx.term(0));
         OutputTerm key = visitTerm(ctx.term(1));
         return new OutputFunctionSenc(key, value);
       }
-      case Constants.SDEC: {
+      case Constants.T_SDEC: {
         OutputTerm encryptedValue = visitTerm(ctx.term(0));
         OutputTerm key = visitTerm(ctx.term(1));
         return new OutputFunctionSdec(key, encryptedValue);
       }
-      case Constants.AENC: {
+      case Constants.T_AENC: {
         OutputTerm value = visitTerm(ctx.term(0));
         OutputTerm key = visitTerm(ctx.term(1));
         return new OutputFunctionAenc(key, value);
       }
-      case Constants.ADEC: {
+      case Constants.T_ADEC: {
         OutputTerm encryptedValue = visitTerm(ctx.term(0));
         OutputTerm key = visitTerm(ctx.term(1));
         return new OutputFunctionAdec(key, encryptedValue);
       }
-      case Constants.HASH: {
+      case Constants.T_HASH: {
         OutputTerm subterm = visitTerm(ctx.term(0));
         return new OutputFunctionHash(subterm);
       }
-      case Constants.FIRST: {
+      case Constants.T_FIRST: {
         OutputTerm subterm = visitTerm(ctx.term(0));
         return new FunctionFirst(subterm);
       }
-      case Constants.SECOND: {
+      case Constants.T_SECOND: {
         OutputTerm subterm = visitTerm(ctx.term(0));
         return new FunctionSecond(subterm);
       }
@@ -203,9 +203,9 @@ public class SourcesCompilerVisitor {
     // TODO assert values aren't null
     switch (nodeType) {
       case (Constants.JSON_NODE_BLOCK): {
-        if (nodeLabel.matches(Constants.FACT_NAME + "[0-9]+" + Constants.NAMES_SEPARATOR + "[0-9]+")) {
+        if (nodeLabel.matches(Constants.FACT_PREFIX_PRINCIPALID + "[0-9]+" + Constants.NAME_SEPARATOR + "[0-9]+")) {
           return new PrincipalRuleNode(nodeID, nodeLabel, model);
-        } else if (nodeLabel.matches(Constants.FACT_NAME + "[0-9]+" + Constants.NAMES_SEPARATOR + Constants.LONG_TERM_REVEAL)) {
+        } else if (nodeLabel.matches(Constants.FACT_PREFIX_PRINCIPALID + "[0-9]+" + Constants.NAME_SEPARATOR + Constants.RULE_LONG_TERM_REVEAL)) {
           return new RevealRuleNode(nodeID, nodeLabel, model);
         } else {
           return new CustomRuleNode(nodeID, nodeLabel);

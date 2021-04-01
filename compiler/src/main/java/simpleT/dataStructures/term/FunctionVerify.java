@@ -45,11 +45,11 @@ public class FunctionVerify extends Term {
   }
 
   @Override public String render(){
-    return BuilderFormatting.fact(Constants.VERIFY, Arrays.asList(signature , message, key), null);
+    return BuilderFormatting.fact(Constants.T_VERIFY, Arrays.asList(signature , message, key), null);
   }
 
   @Override public String render(STBlock block){
-    return BuilderFormatting.fact(Constants.VERIFY, Arrays.asList(signature, message, key), block);
+    return BuilderFormatting.fact(Constants.T_VERIFY, Arrays.asList(signature, message, key), block);
   }
 
   @Override public boolean isDeconstructionTerm() {

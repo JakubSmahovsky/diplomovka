@@ -27,7 +27,7 @@ public class Document {
 
   public void indent() {
     for (int i = 0; i < doc.size(); i++) {
-      doc.get(i).insert(0, Constants.INDENT);
+      doc.get(i).insert(0, Constants.INDENTATION);
     }
   }
 
@@ -46,6 +46,6 @@ public class Document {
   }
 
   @Override public String toString() {
-    return String.join("\r\n", doc);
+    return String.join(Constants.LINE_BREAK, doc);
   }
 }

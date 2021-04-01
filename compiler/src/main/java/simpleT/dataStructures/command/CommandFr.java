@@ -6,7 +6,7 @@ import simpleT.dataStructures.STBlock;
 import simpleT.dataStructures.term.Variable;
 
 /**
- * A class holding information about a use of Tamarin's command function "Fr(..)".
+ * A class holding information about a use of Tamarin's command Fr(..).
  */
 public class CommandFr {
   private final Variable variable;

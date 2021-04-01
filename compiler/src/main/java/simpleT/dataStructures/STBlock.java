@@ -52,7 +52,7 @@ public class STBlock {
   * Render the label of this block.
   */
   public String render() {
-    return principal.render() + Constants.NAMES_SEPARATOR + indexInModel;
+    return principal.render() + Constants.NAME_SEPARATOR + indexInModel;
   }
 
   /**

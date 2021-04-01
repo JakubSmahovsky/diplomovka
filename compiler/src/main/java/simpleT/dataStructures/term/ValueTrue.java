@@ -1,5 +1,6 @@
 package simpleT.dataStructures.term;
 
+import simpleT.Constants;
 import simpleT.dataStructures.STBlock;
 
 public class ValueTrue extends Term {
@@ -27,7 +28,7 @@ public class ValueTrue extends Term {
   }
 
   @Override public String render() {
-    return "true";
+    return Constants.ST_TRUE;
   }
 
   @Override public String render(STBlock block) {

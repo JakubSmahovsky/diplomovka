@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.antlr.v4.runtime.Token;
 
-import simpleT.Constants;
 import simpleT.dataStructures.Principal;
 import simpleT.stParser.SimpleTParser.TermContext;
 
@@ -15,8 +14,8 @@ import simpleT.stParser.SimpleTParser.TermContext;
  */
 
 public final class Errors{
-  public static boolean showInfo = Constants.showInfo;
-  public static boolean quitOnWarning = Constants.quitOnWarning;
+  public static boolean showInfo = true;
+  public static boolean quitOnWarning = false;
   private Errors(){};
 
   public static void ErrorSymmetricNotEncrypted(TermContext value){
@@ -67,11 +66,6 @@ public final class Errors{
   public static void ErrorArgumentsMinCount(Token function, int expected, int got) {
     String message = "Insufficient number of arguments for function \"" + function.getText() + "\"! Expected at least" + expected + ", but got " + got + "!";
     error(function, message);
-  }
-
-  public static void ErrorReservedName(Token name) {
-    String message = "Name \"" + name.getText() + "\" is reserved!";
-    error(name, message);
   }
 
   public static void ErrorPrincipalNameCollision(Token principal) {

@@ -37,8 +37,8 @@ public class STModel {
     this.blocks = new ArrayList<>();
     this.sources = new ArrayList<>();
 
-    instanceID = new Variable(this, Constants.VARIABLE_INSTANCEID);
-    sessionID = new Variable(this, Constants.VARIABLE_SESSIONID);
+    instanceID = new Variable(this, Constants.ST_INSTANCEID);
+    sessionID = new Variable(this, Constants.ST_SESSIONID);
   }
 
   /**

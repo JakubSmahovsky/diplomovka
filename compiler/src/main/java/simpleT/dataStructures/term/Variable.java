@@ -43,7 +43,7 @@ public class Variable extends Term {
   private Variable() {
     this.id = -1;
 
-    this.name = Constants.TEMPORAL_NAME + (temporals++);
+    this.name = Constants.PREFIX_TEMPORALID + (temporals++);
     this.sort = VariableSort.TEMPORAL;
   }
 
@@ -126,7 +126,7 @@ public class Variable extends Term {
 
   @Override public String render(){
     // rename variables but not temporals
-    String renderedName = sort == VariableSort.TEMPORAL ? name : Constants.VARIABLE_NAME + id;
+    String renderedName = sort == VariableSort.TEMPORAL ? name : Constants.PREFIX_VARIABLEID + id;
     return Constants.sortString(sort) + renderedName;
   }
 
@@ -154,7 +154,7 @@ public class Variable extends Term {
    * Render as a (part of a) fact label for use in principal state facts and rule names.
    */
   public String renderFactName() {
-    return Constants.FACT_NAME + id;
+    return Constants.FACT_PREFIX_PRINCIPALID + id;
   }
 
   public void addFresh() {

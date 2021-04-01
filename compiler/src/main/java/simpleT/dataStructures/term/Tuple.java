@@ -3,6 +3,7 @@ package simpleT.dataStructures.term;
 import java.util.ArrayList;
 import java.util.List;
 
+import simpleT.Constants;
 import simpleT.dataStructures.Deconstruction;
 import simpleT.dataStructures.Principal;
 import simpleT.dataStructures.STBlock;
@@ -86,7 +87,7 @@ public class Tuple extends Term{
     for (Term subterm : subterms) {
       renderedSubterms.add(subterm.render());
     }
-    return "<" + String.join(", ", renderedSubterms) + ">";
+    return Constants.T_TUPLE_OPEN + String.join(Constants.COMMA_SEPARATOR, renderedSubterms) + Constants.T_TUPLE_CLOSE;
   }
 
   @Override public String render(STBlock block) {
@@ -100,7 +101,7 @@ public class Tuple extends Term{
     for (Term subterm : subterms) {
       renderedSubterms.add(subterm.render(block));
     }
-    return "<" + String.join(", ", renderedSubterms) + ">";
+    return Constants.T_TUPLE_OPEN + String.join(Constants.COMMA_SEPARATOR, renderedSubterms) + Constants.T_TUPLE_CLOSE;
   }
 
   @Override public boolean isDeconstructionTerm() {

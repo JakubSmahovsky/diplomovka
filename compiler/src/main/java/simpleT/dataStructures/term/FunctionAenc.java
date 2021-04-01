@@ -68,7 +68,7 @@ public class FunctionAenc extends Term {
   }
 
   @Override public String render(){
-    return BuilderFormatting.fact(Constants.AENC, Arrays.asList(value, key), null);
+    return BuilderFormatting.fact(Constants.T_AENC, Arrays.asList(value, key), null);
   }
 
   @Override public String render(STBlock block){
@@ -78,7 +78,7 @@ public class FunctionAenc extends Term {
       }
     }
 
-    return BuilderFormatting.fact(Constants.AENC, Arrays.asList(value, key), block);
+    return BuilderFormatting.fact(Constants.T_AENC, Arrays.asList(value, key), block);
   }
 
   @Override public boolean isDeconstructionTerm() {

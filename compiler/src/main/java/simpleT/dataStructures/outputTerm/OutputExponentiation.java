@@ -19,6 +19,6 @@ public class OutputExponentiation extends OutputTerm{
   }
   @Override
   public String render() {
-    return base.render() + Constants.EXP + exponent.render();
+    return base.render() + Constants.T_EXP + exponent.render();
   }
 }

@@ -57,11 +57,11 @@ public class FunctionPk extends Term {
   }
 
   @Override public String render() {
-    return BuilderFormatting.fact(Constants.PK, sk, null);
+    return BuilderFormatting.fact(Constants.T_PK, sk, null);
   }
 
   @Override public String render(STBlock block) {
-    return BuilderFormatting.fact(Constants.PK, sk, block);
+    return BuilderFormatting.fact(Constants.T_PK, sk, block);
   }
 
   @Override public boolean isDeconstructionTerm() {

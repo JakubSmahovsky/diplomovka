@@ -96,7 +96,7 @@ public class Exponentiation extends Term {
       }
       substrings.add(substring);
     }
-    return String.join(Constants.EXP, substrings);
+    return String.join(Constants.T_EXP, substrings);
   }
 
   @Override public String render(STBlock block) {
@@ -111,7 +111,7 @@ public class Exponentiation extends Term {
       }
       substrings.add(substring);
     }
-    return String.join(Constants.EXP, substrings);
+    return String.join(Constants.T_EXP, substrings);
   }
 
   @Override public boolean isDeconstructionTerm() {

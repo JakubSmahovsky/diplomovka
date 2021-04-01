@@ -28,21 +28,24 @@ public class Fact {
    * @param block to take substitutions from, pass null if no substitutions are needed
    */
   public String render(STBlock block){
-    String persMark = persistent ? "!" : "";
-    return BuilderFormatting.fact(persMark + name, terms, block);
+    if (persistent) {
+      return BuilderFormatting.persistentFact(name, terms, block);
+    } else {
+      return BuilderFormatting.fact(name, terms, block);
+    }
   }
 
   /**
    * Create a classic fact to declare equality of 2 terms
    */
   public static Fact equality(Term term1, Term term2) {
-    return new Fact(false, Constants.EQUALITY, Arrays.asList(term1, term2));
+    return new Fact(false, Constants.FACT_EQUALITY, Arrays.asList(term1, term2));
   }
 
   /**
    * Create a classic fact for use in authentication declaring a principal has sent a variable
    */
   public static Fact authSent(Principal sender, Variable variable) {
-    return new Fact(false, Constants.AUTH_SENT, Arrays.asList(sender.principalID, variable));
+    return new Fact(false, Constants.FACT_AUTHENTICATION_SENT, Arrays.asList(sender.principalID, variable));
   }
 }

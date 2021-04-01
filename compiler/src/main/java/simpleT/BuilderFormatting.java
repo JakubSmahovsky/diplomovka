@@ -22,11 +22,11 @@ public abstract class BuilderFormatting {
     if (builtins.isEmpty()) {
       return "";
     }
-    return "builtins: " + String.join(", ", builtins) + "\r\n\r\n";
+    return Constants.CLAUSE_BUILTINS + String.join(Constants.COMMA_SEPARATOR, builtins) + Constants.LINE_BREAK + Constants.LINE_BREAK;
   }
 
   public static String alias(String left, String right) {
-    return left + " = " + right;
+    return left + Constants.ALIAS_OPERATOR + right;
   }
 
   public static String fact(String name, List<? extends Term> terms, STBlock block) {
@@ -34,15 +34,19 @@ public abstract class BuilderFormatting {
     for (Term term : terms) {
       renders.add(block == null ? term.render() : term.render(block));
     }
-    return name + "(" + String.join(", ", renders) + ")";
+    return name + Constants.OPEN_BR + String.join(Constants.COMMA_SEPARATOR, renders) + Constants.CLOSE_BR;
   }
 
   public static String fact(String name, Term term, STBlock block) {
     return fact(name, Arrays.asList(term), block);
   }
 
-  public static String persistentFact(String name, List<Variable> variables, STBlock block) {
-    return "!" + fact(name, variables, block);
+  public static String persistentFact(String name, List<? extends Term> terms, STBlock block) {
+    return Constants.PERSISTENT + fact(name, terms, block);
+  }
+
+  public static String persistentFact(String name, Term term, STBlock block) {
+    return Constants.PERSISTENT + fact(name, Arrays.asList(term), block);
   }
 
   /**
@@ -54,15 +58,17 @@ public abstract class BuilderFormatting {
   }
 
   public static String instanceStateFact(Principal principal) {
-    return persistentFact(principal.render() + "_instance", principal.composeInstanceState(), null);
+    String factName = principal.render() + Constants.NAME_SEPARATOR + Constants.RULE_INSTANCE;
+    return persistentFact(factName , principal.composeInstanceState(), null);
   }
 
   public static String sessionStateFact(Principal principal) {
-    return fact(principal.render() + "_session", principal.composeSessionState(), null);
+    String factName = principal.render() + Constants.NAME_SEPARATOR + Constants.RULE_SESSION;
+    return fact(factName, principal.composeSessionState(), null);
   }
 
   public static String LongTermPrivateListFact(Principal principal) {
-    String factName = principal.render() + Constants.NAMES_SEPARATOR + Constants.LONG_TERM_PRIVATE;
+    String factName = principal.render() + Constants.NAME_SEPARATOR + Constants.FACT_LONG_TERM_PRIVATE;
     ArrayList<Variable> LTP = new ArrayList<>();
     LTP.add(principal.principalID);
     LTP.addAll(principal.getLongTermPrivate());
@@ -73,35 +79,35 @@ public abstract class BuilderFormatting {
     if (label == null){
       label = block.render();
     }
-    StringBuilder result = new StringBuilder("rule " + label + ":\r\n");
+    StringBuilder result = new StringBuilder(Constants.CLAUSE_RULE + label + Constants.COLON + Constants.LINE_BREAK);
     if (aliases.isEmpty()) {
       return result.toString();
     }
-    result.append("let\r\n");
-    result.append(String.join("\r\n", indent(aliases)) + "\r\n");
-    result.append("in\r\n");
+    result.append(Constants.ALIASES_OPEN);
+    result.append(String.join(Constants.LINE_BREAK, indent(aliases)) + Constants.LINE_BREAK);
+    result.append(Constants.ALIASES_CLOSE);
     return result.toString();
   }
 
   public static String rulePremise(List<String> facts) {
-    return "[\r\n" + ruleBody(facts) + "]-";
+    return Constants.PREMISES_OPEN + ruleBody(facts) + Constants.PREMISES_CLOSE;
   }
   
   public static String ruleAction(List<String> facts){
-    return "-[\r\n" + ruleBody(facts) + "]";
+    return Constants.ACTIONS_OPEN + ruleBody(facts) + Constants.ACTIONS_CLOSE;
   }
 
   public static String ruleResult(List<String> facts){
-    return "->[\r\n" + ruleBody(facts) + "]\r\n" + "\r\n"; // empty line after end of each rule
+    return Constants.CONCLUSIONS_OPEN + ruleBody(facts) + Constants.CONCLUSIONS_CLOSE;
   }
 
   public static String ruleBody(List<String> facts) {
-    return String.join(",\r\n", indent(facts)) + "\r\n";
+    return String.join(Constants.FACT_SEPARATOR, indent(facts)) + Constants.LINE_BREAK;
   }
 
   public static String revealRule(Principal principal) {
-    String ruleName = principal.render() + Constants.NAMES_SEPARATOR + Constants.LONG_TERM_REVEAL;
-    String factName = principal.render() + Constants.NAMES_SEPARATOR + Constants.LONG_TERM_PRIVATE;
+    String ruleName = principal.render() + Constants.NAME_SEPARATOR + Constants.RULE_LONG_TERM_REVEAL;
+    String factName = principal.render() + Constants.NAME_SEPARATOR + Constants.FACT_LONG_TERM_PRIVATE;
 
     ArrayList<Variable> ltp = new ArrayList<>();
     ltp.add(principal.principalID);
@@ -119,25 +125,18 @@ public abstract class BuilderFormatting {
       ruleResult(outputs);
   }
 
-  public static String theoryHeader(String name) {
-    return "theory " + name + "\r\nbegin\r\n\r\n";
-  }
-  
-  public static String endProtocol() {
-    return "end\r\n";
-  }
-
   public static String lemma(String name, boolean existsTrace) {
-    return "lemma " + name + ":\r\n" + (existsTrace ? "exists-trace" : "all-traces") + " \"\r\n";
+    return Constants.CLAUSE_LEMMA + name + Constants.COLON + Constants.LINE_BREAK
+    + (existsTrace ? Constants.QUANTIFIER_TRACE_EXISTS : Constants.QUANTIFIER_TRACE_FORALL) + Constants.LEMMA_OPEN;
   }
 
-  public static String lemmaVariables(Collection<Variable> variables, boolean exQuantifier){
-    StringBuilder result = new StringBuilder(exQuantifier ? "Ex" : "All");
+  public static String lemmaQuatification(Collection<Variable> variables, boolean exQuantifier){
+    ArrayList<String> identifiers = new ArrayList<>();
     for (Variable variable : variables) {
-      result.append(" " + variable.render());
+      identifiers.add(variable.render());
     }
-    result.append(".");
-    return result.toString();
+    return (exQuantifier ? Constants.QUANTIFIER_EXISTS : Constants.QUANTIFIER_FORALL) + 
+      String.join(Constants.QUANTIFICATION_SEPARATOR, identifiers) + Constants.QUANTIFICATION_CLOSE;
   }
 
   public static String lemmaResultStateFact(STBlock block, Variable temporal) {
@@ -145,7 +144,7 @@ public abstract class BuilderFormatting {
   }
 
   public static String lemmaFact(String name, List<? extends Term> terms, Variable temporal) {
-    return fact(name, terms, null) + " " + atTemporal(temporal);
+    return fact(name, terms, null) + atTemporal(temporal);
   }
 
   public static String lemmaFact(String name, Term term, Variable temporal) {
@@ -153,55 +152,47 @@ public abstract class BuilderFormatting {
   }
 
   public static String negation(String fact) {
-    return "not " + fact;
+    return Constants.LEMMA_NEGAION + fact;
   }
 
   public static String conjunction(List<String> facts) {
-    return String.join(" &\r\n", facts);
+    return String.join(Constants.LEMMA_CONJUNCTION, facts);
   }
 
   public static String disjunction(List<String> facts) {
-    return String.join(" |\r\n", facts);
+    return String.join(Constants.LEMMA_DISJUNCTION, facts);
   }
 
   public static String implication(String from, String to) {
-    return from + "\r\n" + "==>\r\n" + to;
+    return from + Constants.LEMMA_IMPLICATION + to;
   }
 
   public static String dishonest(Principal principal, Variable temporal) {
     String dishonest = lemmaFact(Constants.FACT_DISHONEST, principal.principalID, temporal);
-    return lemmaVariables(Arrays.asList(temporal), true) + dishonest;
+    return lemmaQuatification(Arrays.asList(temporal), true) + dishonest;
   }
 
   public static String bracket(String statement) {
-    return "(" + statement + ")";
+    return Constants.OPEN_BR + statement + Constants.CLOSE_BR;
   }
 
   public static String beforeAfter(Variable temporalBefore, Variable temporalAfter) {
-    return temporalBefore.render() + "<" + temporalAfter.render();
+    return temporalBefore.render() + Constants.LEMMA_BEFORE + temporalAfter.render();
   }
 
   public static String lemmaEquals(Variable v1, Variable v2) {
-    return v1.render() + "=" + v2.render();
-  }
-
-  public static String lemmaEnd() {
-    return "\"\r\n";
+    return v1.render() + Constants.LEMMA_EQUALS + v2.render();
   }
 
   public static String atTemporal(Variable temporal) {
-    return "@ " + temporal.render();
+    return Constants.LEMMA_ATTEMPORAL + temporal.render();
   }
 
   public static List<String> indent(List<String> strings) {
     ArrayList<String> result = new ArrayList<>();
     for (String string : strings) {
-      result.add(Constants.INDENT + string);
+      result.add(Constants.INDENTATION + string);
     }
     return result;
-  }
-
-  public static String lineBreak() {
-    return "\r\n";
   }
 }

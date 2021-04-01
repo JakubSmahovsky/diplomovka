@@ -25,7 +25,7 @@ public class LoggingCompilerVisitor {
 
   public void visitMessage(MessageContext ctx) {
     // discard directly solved
-    if (ctx.solved() != null && !ctx.solved().SOLVEDHOW().getText().equals(Constants.SOLVEDHOW_DIRECTLY)) {
+    if (ctx.solved() != null && !ctx.solved().SOLVEDHOW().getText().equals(Constants.LOGGING_SOLVEDHOW_DIRECTLY)) {
       solved.add(visitSolved(ctx.solved()));
     } else if (ctx.by() != null) {
       by.add(visitBy(ctx.by()));
@@ -37,14 +37,14 @@ public class LoggingCompilerVisitor {
       LoggingGoal goal = solved.remove();
       LoggingSource source = by.remove();
       if (goal.number != source.goalNr) {
-        System.out.println("Discarded goal " + goal.goal + " and source " + source.name + "!");
+        System.err.println("Discarded goal " + goal.goal + " and source " + source.name + "!");
         return;
       }
       goal.findSource(source);
-      System.out.println(goal.render());
+      System.err.println(goal.render());
       Document sourceDoc = source.render();
       sourceDoc.indent();
-      System.out.println(sourceDoc);
+      System.err.println(sourceDoc);
     }
   }
 
@@ -87,10 +87,10 @@ public class LoggingCompilerVisitor {
       return visitTuple(ctx.tuple());
     }
     if (ctx.infixOp != null) {
-      if (ctx.infixOp.getText().equals(Constants.EXP)) {
+      if (ctx.infixOp.getText().equals(Constants.T_EXP)) {
         return new OutputExponentiation(visitTerm(ctx.term(0)), visitTerm(ctx.term(1)));
       }
-      if (ctx.infixOp.getText().equals(Constants.MUL)) {
+      if (ctx.infixOp.getText().equals(Constants.T_MUL)) {
         return new OutputMultiplication(visitTerm(ctx.term(0)), visitTerm(ctx.term(1)));
       }
     }
@@ -110,39 +110,39 @@ public class LoggingCompilerVisitor {
   public OutputTerm visitFunction(FunctionContext ctx) {
     String functionName = ctx.IDENTIFIER().getText();
     switch (functionName) {
-      case Constants.SENC: {
+      case Constants.T_SENC: {
         OutputTerm value = visitTerm(ctx.term(0));
         OutputTerm key = visitTerm(ctx.term(1));
         return new OutputFunctionSenc(key, value);
       }
-      case Constants.SDEC: {
+      case Constants.T_SDEC: {
         OutputTerm value = visitTerm(ctx.term(0));
         OutputTerm key = visitTerm(ctx.term(1));
         return new OutputFunctionSdec(key, value);
       }
-      case Constants.AENC: {
+      case Constants.T_AENC: {
         OutputTerm value = visitTerm(ctx.term(0));
         OutputTerm key = visitTerm(ctx.term(1));
         return new OutputFunctionAenc(key, value);
       }
-      case Constants.ADEC: {
+      case Constants.T_ADEC: {
         OutputTerm value = visitTerm(ctx.term(0));
         OutputTerm key = visitTerm(ctx.term(1));
         return new OutputFunctionAdec(key, value);
       }
-      case Constants.HASH: {
+      case Constants.T_HASH: {
         OutputTerm subterm = visitTerm(ctx.term(0));
         return new OutputFunctionHash(subterm);
       }
-      case Constants.FIRST: {
+      case Constants.T_FIRST: {
         OutputTerm subterm = visitTerm(ctx.term(0));
         return new FunctionFirst(subterm);
       }
-      case Constants.SECOND: {
+      case Constants.T_SECOND: {
         OutputTerm subterm = visitTerm(ctx.term(0));
         return new FunctionSecond(subterm);
       }
-      case Constants.INVERSE: {
+      case Constants.T_INVERSE: {
         OutputTerm subterm = visitTerm(ctx.term(0));
         return new OutputFunctionInverse(subterm);
       }

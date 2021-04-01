@@ -21,13 +21,13 @@ public class SimpleT {
     String inputFilePath = args[args.length-1];
     boolean quitOnWarning = false;
     boolean showInfo = true;
-    String tamarinTheoryFilePath = Constants.DEFAULT_THEORY_PATH + Constants.MANDATORY_THEORY_EXTENSION;
+    String tamarinTheoryFilePath = Constants.DEFAULT_THEORY_PATH + Constants.THEORY_FILE_EXTENSION;
     String tamarinExecutablePath = System.getProperty("user.home") + "/.local/bin/tamarin-prover";
 
     
     try {
       STModel model = compileInput(inputFilePath, tamarinTheoryFilePath, quitOnWarning, showInfo);
-      compileSources(tamarinExecutablePath, tamarinTheoryFilePath, Constants.DEFAULT_SOURCES_OUTPUT_PATH, model);
+      compileSources(tamarinExecutablePath, tamarinTheoryFilePath, Constants.DEFAULT_SOURCES_PATH, model);
       BufferedReader resultStdReader = compileLogging(tamarinExecutablePath, tamarinTheoryFilePath, "secrecy0", model);
       compileResult(resultStdReader);
     } catch (STException e) {

@@ -7,7 +7,7 @@ import simpleT.dataStructures.term.Term;
 import simpleT.dataStructures.term.Variable;
 
 /**
- * A class holding information about a use of Tamarin's command function "In(..)".
+ * A class holding information about a use of Tamarin's command In(..).
  */
 public class CommandIn {
   private final Term term;

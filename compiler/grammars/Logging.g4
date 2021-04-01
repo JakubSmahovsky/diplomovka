@@ -23,7 +23,6 @@ function: IDENTIFIER '(' term? (',' term)* ')';
 tuple: '<' term? (',' term)* '>';
 variable: ('$' | '~' | '#')? IDENTIFIER ('.' NUMBER)?;
 
-
 ATTIMEPOINT: ('▶' [₀-₉]+) | '@';
 PERSISTENT: '!';
 SOLVEDHOW: '(precomputed)' | '(directly)';

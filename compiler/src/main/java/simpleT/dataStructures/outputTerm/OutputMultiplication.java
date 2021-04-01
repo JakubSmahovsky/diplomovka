@@ -18,6 +18,6 @@ public class OutputMultiplication extends OutputTerm{
   }
   @Override
   public String render() {
-    return left.render() + Constants.MUL + right.render();
+    return left.render() + Constants.T_MUL + right.render();
   }
 }

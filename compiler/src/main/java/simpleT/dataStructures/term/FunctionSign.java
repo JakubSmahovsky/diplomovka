@@ -68,11 +68,11 @@ public class FunctionSign extends Term {
   }
 
   @Override public String render(){
-    return BuilderFormatting.fact(Constants.SIGN, Arrays.asList(message, key), null);
+    return BuilderFormatting.fact(Constants.T_SIGN, Arrays.asList(message, key), null);
   }
 
   @Override public String render(STBlock block){
-    return BuilderFormatting.fact(Constants.SIGN, Arrays.asList(message, key), block);
+    return BuilderFormatting.fact(Constants.T_SIGN, Arrays.asList(message, key), block);
   }
 
   @Override public boolean isDeconstructionTerm() {

@@ -23,6 +23,6 @@ public class OutputFunctionSenc extends OutputTerm {
 
   @Override
   public String render() {
-    return OutputFormatting.term(Constants.VPSENC, Arrays.asList(key, value));
+    return OutputFormatting.term(Constants.ST_SENC, Arrays.asList(key, value));
   }
 }

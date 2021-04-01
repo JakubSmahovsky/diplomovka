@@ -17,6 +17,6 @@ public class OutputFunctionHash extends OutputTerm{
 
   @Override
   public String render() {
-    return OutputFormatting.term(Constants.VPHASH, subterm);
+    return OutputFormatting.term(Constants.ST_HASH, subterm);
   }
 }

@@ -12,7 +12,7 @@ public class OutputFormatting {
     for (OutputTerm term : subterms) {
       renders.add(term.render());
     }
-    return symbol + "(" + String.join(", ", renders) + ")";
+    return symbol + Constants.OPEN_BR + String.join(Constants.COMMA_SEPARATOR, renders) + Constants.CLOSE_BR;
   }
 
   public static String term(String symbol, OutputTerm term) {

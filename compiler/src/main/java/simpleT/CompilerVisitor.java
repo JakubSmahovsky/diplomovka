@@ -92,9 +92,6 @@ public class CompilerVisitor {
 	private void visitDecPrincipals(DecPrincipalsContext decPrincipals) {
 		for (Token pctx : decPrincipals.principal) {
 			String principalName = pctx.getText();
-			if (!identifierNameValid(principalName)) {
-				Errors.ErrorReservedName(pctx);
-			}
 			// check for name collision, allso covers duplicite principals
 			if (model.findPublic(principalName) != null) {
 				Errors.ErrorPrincipalNameCollision(pctx);
@@ -106,17 +103,17 @@ public class CompilerVisitor {
 	}
 
 	private void visitDecUnaryEquals(DecUnaryEqualsContext ctx) {
-		if (ctx.value.getText().equals("explicit")) {
+		if (ctx.value.getText().equals(Constants.ST_EXPLICIT)) {
 			model.builtins.unaryEqualsExplicit = true;
 			model.builtins.unaryEqualsImplicit = false;
 			return;
 		}
-		if (ctx.value.getText().equals("implicit")) {
+		if (ctx.value.getText().equals(Constants.ST_IMPLICIT)) {
 			model.builtins.unaryEqualsImplicit = true;
 			model.builtins.unaryEqualsExplicit = false;
 			return;
 		}
-		if (ctx.value.getText().equals("default")) {
+		if (ctx.value.getText().equals(Constants.ST_DEFAULT)) {
 			model.builtins.unaryEqualsImplicit = false;
 			model.builtins.unaryEqualsExplicit = false;
 			return;
@@ -124,22 +121,22 @@ public class CompilerVisitor {
 	}
 
 	public void visitDecHideInfo(DecHideInfoContext ctx) {
-		if (ctx.value.getText().equals("true")) {
+		if (ctx.value.getText().equals(Constants.ST_TRUE)) {
 			Errors.showInfo = false;
 			return;
 		}
-		if (ctx.value.getText().equals("false")) {
+		if (ctx.value.getText().equals(Constants.ST_FALSE)) {
 			Errors.showInfo = true;
 			return;
 		}
 	}
 
 	public void visitDecQuitOnWarning(DecQuitOnWarningContext ctx) {
-		if (ctx.value.getText().equals("true")) {
+		if (ctx.value.getText().equals(Constants.ST_TRUE)) {
 			Errors.quitOnWarning = true;
 			return;
 		}
-		if (ctx.value.getText().equals("false")) {
+		if (ctx.value.getText().equals(Constants.ST_FALSE)) {
 			Errors.quitOnWarning = false;
 			return;
 		}
@@ -148,9 +145,6 @@ public class CompilerVisitor {
 
 	public void visitPrincipalBlock(PrincipalBlockContext ctx) {
 		String principalName = ctx.principal.getText();
-		if (!identifierNameValid(principalName)) {
-			Errors.ErrorReservedName(ctx.principal);
-		}
 		
 		Principal principal = model.findPrincipal(principalName);
 		if (principal == null) {
@@ -216,8 +210,15 @@ public class CompilerVisitor {
 	}
 
 	public void visitKnows(KnowsContext ctx, Principal principal, STBlock block) {
-		String modifier = ctx.modifier.getText();
-		boolean pub = modifier.equals("public");
+		boolean pub = false;
+		if (ctx.modifier.getText().equals(Constants.ST_PUBLIC)) {
+			pub = true;
+		} else if (ctx.modifier.getText().equals(Constants.ST_PRIVATE)) {
+			pub = false;
+		} else {
+			Errors.DebugUnexpectedTokenType(ctx.modifier.getText(), "visitKnows");
+		}
+		
 
 		VariableDefined expectVD = pub ? VariableDefined.KNOWS_PUBLIC : VariableDefined.KNOWS_PRIVATE;
 		for (VariableContext vctx : ctx.variable()) {
@@ -326,7 +327,7 @@ public class CompilerVisitor {
 			return new Exponentiation(base, exponent);
 		}
 
-		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitTerm()");
+		Errors.DebugUnexpectedTokenType(ctx.getText(), "visitTerm");
 		return null;
 	}
 
@@ -460,9 +461,6 @@ public class CompilerVisitor {
 		}
 
 		// it does not exist (or at least principal doesn't know it and we don't care if someone else does)
-		if (!identifierNameValid(name)) {
-			Errors.ErrorReservedName(ctx.start);
-		}
 		switch (expectVD) {
 			case DISTRIBUTED_LEFT:
 				return Variable.placeholder(model, name);
@@ -480,7 +478,7 @@ public class CompilerVisitor {
 
 	public void visitCheckedCall(CheckedCallContext ctx, Principal principal, STBlock block, VariableDefined expectVD) {
 		switch (ctx.CHECKED().getText()) {
-			case Constants.VPEQUALS: {
+			case Constants.ST_EQUALS: {
 				if (ctx.argument.size() == 1) {
 					if (ctx.argument.get(0).variable() == null) {
 						Errors.ErrorUnaryEqualsNotVariable(ctx.argument.get(0).start, ctx.argument.get(0).getText());
@@ -512,7 +510,7 @@ public class CompilerVisitor {
 				}
 				Errors.ErrorArgumentsCount(ctx.CHECKED().getSymbol(), 2, ctx.argument.size());
 			}
-			case Constants.VPSIGNVERIF: {
+			case Constants.ST_SIGNVERIF: {
 				model.builtins.restriction_eq = true;
 				if (ctx.argument.size() != 3) {
 					Errors.ErrorArgumentsCount(ctx.CHECKED().getSymbol(), 3, ctx.argument.size());
@@ -541,7 +539,7 @@ public class CompilerVisitor {
 			Errors.ErrorMessageNontransparent(ctx.start);
 		}
 		switch (ctx.FUNCTION().getText()) {
-			case Constants.VPSENC: {
+			case Constants.ST_SENC: {
 				model.builtins.symmetric_encryption = true;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
@@ -550,7 +548,7 @@ public class CompilerVisitor {
 				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
 				return new FunctionSenc(key, value);
 			}
-			case Constants.VPSDEC: {
+			case Constants.ST_SDEC: {
 				model.builtins.symmetric_encryption = true;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
@@ -560,7 +558,7 @@ public class CompilerVisitor {
 				Term decrypted = value.getNormalForm().symmetric_decrypt(key, ctx.argument.get(0), ctx.argument.get(1));
 				return new FunctionSdec(key, value, decrypted);
 			}
-			case Constants.VPAENC: {
+			case Constants.ST_AENC: {
 				model.builtins.asymmetric_cryptography = true;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
@@ -569,7 +567,7 @@ public class CompilerVisitor {
 				Term value = visitTerm(ctx.argument.get(1), principal, block, expectVD);
 				return new FunctionAenc(key, value);
 			}
-			case Constants.VPADEC: {
+			case Constants.ST_ADEC: {
 				model.builtins.asymmetric_cryptography = true;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
@@ -579,7 +577,7 @@ public class CompilerVisitor {
 				Term decrypted = value.getNormalForm().asymmetric_decrypt(key, ctx.argument.get(0), ctx.argument.get(1));
 				return new FunctionAdec(key, value, decrypted);
 			}
-			case Constants.VPHASH: {
+			case Constants.ST_HASH: {
 				model.builtins.hashing = true;
 				if (ctx.argument.size() < 1) {
 					Errors.ErrorArgumentsMinCount(ctx.FUNCTION().getSymbol(), 1, ctx.argument.size());
@@ -594,14 +592,14 @@ public class CompilerVisitor {
 				}
 				return new FunctionHash(new Tuple(subterms));
 			}
-			case Constants.VPPK: {
+			case Constants.ST_PK: {
 				model.builtins.asymmetric_cryptography = true;
 				if (ctx.argument.size() != 1) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 1, ctx.argument.size());
 				}
 				return new FunctionPk(visitTerm(ctx.argument.get(0), principal, block, expectVD));
 			}
-			case Constants.VPSIGN: {
+			case Constants.ST_SIGN: {
 				model.builtins.asymmetric_cryptography = true;
 				if (ctx.argument.size() != 2) {
 					Errors.ErrorArgumentsCount(ctx.FUNCTION().getSymbol(), 2, ctx.argument.size());
@@ -733,14 +731,5 @@ public class CompilerVisitor {
 			model.queries.authentication.add(new Authentication(sender, receiver, sent, received));
 			senderBlock.actions.add(Fact.authSent(sender, sent));
 		}
-	}
-
-	private boolean identifierNameValid(String id) {
-		for (String name : Constants.reservedNames) {
-			if (name.equals(id)) {
-				return false;
-			}
-		}
-		return true;
 	}
 }

@@ -13,8 +13,8 @@ public class OutputVariable extends OutputTerm {
     this.name = name;
     this.number = number;
 
-    if (name.matches(Constants.VARIABLE_NAME + "[0-9]+")) {
-      int id = Integer.parseInt(name.substring(Constants.VARIABLE_NAME.length()));
+    if (name.matches(Constants.PREFIX_VARIABLEID + "[0-9]+")) {
+      int id = Integer.parseInt(name.substring(Constants.PREFIX_VARIABLEID.length()));
       original = model.getVariable(id);
     } else {
       original = null;
