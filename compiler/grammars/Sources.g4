@@ -41,7 +41,8 @@ term:
 constant: '\'' word=IDENTIFIER '\'';
 function: IDENTIFIER '(' term? (',' term)* ')';
 tuple: '<' term? (',' term)* '>';
-variable: ('$' | '~' | '#')? IDENTIFIER ('.' NUMBER)?;
+variable: ('$' | '~' | '#')? IDENTIFIER nameID?;
+nameID: '.' NUMBER;
 
 subst: term '<' '~' '{' variable (',' variable)* '}';
 formula: term '=' term;

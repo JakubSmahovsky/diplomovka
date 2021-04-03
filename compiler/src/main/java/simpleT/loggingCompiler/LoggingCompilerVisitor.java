@@ -165,7 +165,7 @@ public class LoggingCompilerVisitor {
 
   public OutputVariable visitVariable(VariableContext ctx) {
     String name = ctx.IDENTIFIER().getText();
-    String number = (ctx.NUMBER() != null) ? ("." + ctx.NUMBER().getText()) : "";
+    String number = ctx.nameID() == null ? "" : ctx.nameID().getText();
     return new OutputVariable(model, name, number);
   }
 }
