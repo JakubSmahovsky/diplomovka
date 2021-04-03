@@ -153,6 +153,11 @@ public final class Errors{
     warning(principal, message);
   }
 
+  public static void ErrorPrincipalDoesNothing(Principal principal, Token protocol) {
+    String message = "Principal \"" + principal.renderOutput() + "\" performed no actions in the protocol!";
+    error(protocol, message);
+  }
+
   public static void WarningShadowedPublic(Token variable) {
     String message = "A public variable \"" + variable.getText() + "\" already exists, this will declare a different private variable!";
     warning(variable, message);

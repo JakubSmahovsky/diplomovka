@@ -43,10 +43,12 @@ public class CompilerVisitor {
 			visitQueriesBlock(ctx.queriesBlock());
 		}
 
-		// TODO: check that each principal has at least one block
 		for (Principal principal : model.getPrincipals()) {
 			principal.nextBlock(); // add last nextBlock to blocks list
 			principal.squishBlocks();
+			if (principal.doesNothing()) {
+				Errors.ErrorPrincipalDoesNothing(principal, ctx.start);
+			}
 		}
 
 		Builder builder = new Builder(model);

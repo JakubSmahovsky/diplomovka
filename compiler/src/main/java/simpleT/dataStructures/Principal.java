@@ -224,4 +224,13 @@ public class Principal {
   public STBlock getLastBlock() {
     return blocks.get(blocks.size()-1);
   }
+
+  public boolean doesNothing() {
+    for (STBlock block : blocks) {
+      if (!block.isEmptyBlock()) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
