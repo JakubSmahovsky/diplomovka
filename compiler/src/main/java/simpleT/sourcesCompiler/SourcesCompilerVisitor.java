@@ -30,7 +30,7 @@ public class SourcesCompilerVisitor {
     
     try {
       for (SourceGroup group : model.sourceGroups) {
-        writer.write(group.render().toString() + "\r\n" + "\r\n");
+        writer.write(group.render().toString());
       }
       writer.close();
     } catch (IOException e) {

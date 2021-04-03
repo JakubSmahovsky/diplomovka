@@ -17,11 +17,9 @@ public class SourceGroup implements Comparable<SourceGroup>{
   public Document render(){
     Document doc = new Document("Group: " + goal);
     for (Source source : sources) {
-      Document sourceDoc = source.render();
-      sourceDoc.indent();
-      doc.append(sourceDoc);
+      doc.append((source.render().indent()));
     }
-    return doc;
+    return doc.endl().endl();
   }
 
   @Override
