@@ -33,7 +33,7 @@ generates: 'generates' variable (',' variable)*;
 assignment: left=term '=' right=term;
 check: checkedCall '?';
 
-message: sender=IDENTIFIER '->' receiver=IDENTIFIER ':' term (',' term)*;
+message: sender=IDENTIFIER '->' recipient=IDENTIFIER ':' term (',' term)*;
 
 queriesBlock: 'queries' '[' query* ']';
 
@@ -62,8 +62,8 @@ query:
 executable: 'executable?';
 confidentiality: 'confidentiality?' principal=IDENTIFIER '\'s' variable;
 forwardSecrecy: 'forward-secrecy?' principal=IDENTIFIER '\'s' variable;
-authentication: 'authentication?' sender=IDENTIFIER '->' receiver=IDENTIFIER ':' variable;
-injAuthentication: 'injective-authentication?' sender=IDENTIFIER '->' receiver=IDENTIFIER ':' variable;
+authentication: 'authentication?' sender=IDENTIFIER '->' recipient=IDENTIFIER ':' variable;
+injAuthentication: 'injective-authentication?' sender=IDENTIFIER '->' recipient=IDENTIFIER ':' variable;
 
 FUNCTION:
   'PK' |

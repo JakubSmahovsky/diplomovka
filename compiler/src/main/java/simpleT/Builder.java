@@ -422,23 +422,23 @@ public class Builder extends BuilderFormatting{
 
   /** Create an authentication query saying that if
    *    all principals are such and such
-   *    receiver received the variable (got to state)
+   *    recipient received the variable (got to state)
    *  then
    *    sender sent the variable or (there is a special fact Sent(principal, variable))
    *    the sender is dishonest or 
-   *    the receiver is dishonest
+   *    the recipient is dishonest
    */
   private void authentication(Authentication query) {
-    // find the receiver block
-		STBlock receiverBlock = null;
-		for (STBlock block : query.receiver.getBlocks()) {
+    // find the recipient block
+		STBlock recipientBlock = null;
+		for (STBlock block : query.recipient.getBlocks()) {
 			for (CommandIn in : block.premiseInputs) {
 				if (in.receivedVariable(query.received)) {
-					receiverBlock = block;
+					recipientBlock = block;
 					break;
 				}
 			}
-			if (receiverBlock != null) {
+			if (recipientBlock != null) {
 				break;
 			}
 		}
@@ -452,7 +452,7 @@ public class Builder extends BuilderFormatting{
     }
     
     ArrayList<Variable> presumptionVariables = new ArrayList<>(principalIDs);
-    for (Term term : receiverBlock.completeState()) {
+    for (Term term : recipientBlock.completeState()) {
       for (Variable variable : term.freeVariables()) {
         if (!Term.containsByObjectEquality(presumptionVariables, variable)) {
           presumptionVariables.add(variable);
@@ -462,8 +462,8 @@ public class Builder extends BuilderFormatting{
     
     Variable principalsTemporal = Variable.nextTemporal();
     presumptionVariables.add(principalsTemporal);
-    Variable receiverTemporal = Variable.nextTemporal();
-    presumptionVariables.add(receiverTemporal);
+    Variable recipientTemporal = Variable.nextTemporal();
+    presumptionVariables.add(recipientTemporal);
 
     // gather sender variables
     ArrayList<Variable> senderVariables = new ArrayList<>();
@@ -480,8 +480,8 @@ public class Builder extends BuilderFormatting{
     output.append(Constants.LINE_BREAK);
 
     String principalsFact = lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal);
-    String receiverFact = lemmaResultStateFact(receiverBlock, receiverTemporal);
-    String presumption = conjunction(Arrays.asList(principalsFact, receiverFact));
+    String recipientFact = lemmaResultStateFact(recipientBlock, recipientTemporal);
+    String presumption = conjunction(Arrays.asList(principalsFact, recipientFact));
     
     String senderFact = lemmaFact(Constants.FACT_AUTHENTICATION_SENT, Arrays.asList(query.sender.principalID, query.sent), senderTemporal);
     String equalsClause = lemmaEquals(query.sent, query.received);
@@ -489,8 +489,8 @@ public class Builder extends BuilderFormatting{
     senderClause = bracket(conjunction(Arrays.asList(senderClause, equalsClause)));
 
     String dishonestSender = bracket(dishonest(query.sender, Variable.nextTemporal()));
-    String dishonestReceiver = bracket(dishonest(query.receiver, Variable.nextTemporal()));
-    String result = disjunction(Arrays.asList(senderClause, dishonestSender, dishonestReceiver));
+    String dishonestRecipient = bracket(dishonest(query.recipient, Variable.nextTemporal()));
+    String result = disjunction(Arrays.asList(senderClause, dishonestSender, dishonestRecipient));
     output.append(implication(presumption, result));
     output.append(Constants.LINE_BREAK);
     output.append(Constants.LEMMA_CLOSE);
@@ -498,14 +498,14 @@ public class Builder extends BuilderFormatting{
 
   /** Create an injective authentication query saying that if
    *    all principals are such and such
-   *    receiver received the variable (got to state after)
+   *    recipient received the variable (got to state after)
    *  then
    *    sender sent the variable or (got to state before)
    *    the sender is dishonest or
-   *    the receiver is dishonest
+   *    the recipient is dishonest
    */
   private void injAuthentication(InjAuthentication query) {
-    // find the sender and receiver blocks
+    // find the sender and recipient blocks
     STBlock senderBlock = null;
 		for (STBlock block : query.sender.getBlocks()) {
 			for (CommandOut out : block.resultOutputs) {
@@ -518,15 +518,15 @@ public class Builder extends BuilderFormatting{
 				break;
 			}
 		}
-		STBlock receiverBlock = null;
-		for (STBlock block : query.receiver.getBlocks()) {
+		STBlock recipientBlock = null;
+		for (STBlock block : query.recipient.getBlocks()) {
 			for (CommandIn in : block.premiseInputs) {
 				if (in.receivedVariable(query.received)) {
-					receiverBlock = block;
+					recipientBlock = block;
 					break;
 				}
 			}
-			if (receiverBlock != null) {
+			if (recipientBlock != null) {
 				break;
 			}
 		}
@@ -540,7 +540,7 @@ public class Builder extends BuilderFormatting{
     }
     
     ArrayList<Variable> presumptionVariables = new ArrayList<>(principalIDs);
-    for (Term term : receiverBlock.completeState()) {
+    for (Term term : recipientBlock.completeState()) {
       for (Variable variable : term.freeVariables()) {
         if (!Term.containsByObjectEquality(presumptionVariables, variable)) {
           presumptionVariables.add(variable);
@@ -550,8 +550,8 @@ public class Builder extends BuilderFormatting{
     
     Variable principalsTemporal = Variable.nextTemporal();
     presumptionVariables.add(principalsTemporal);
-    Variable receiverTemporal = Variable.nextTemporal();
-    presumptionVariables.add(receiverTemporal);
+    Variable recipientTemporal = Variable.nextTemporal();
+    presumptionVariables.add(recipientTemporal);
 
     // garther all Variables variables in the sender clause (that do not yet occur in the presumption)
     ArrayList<Variable> senderVariables = new ArrayList<>();
@@ -574,8 +574,8 @@ public class Builder extends BuilderFormatting{
     output.append(Constants.LINE_BREAK);
 
     String principalsFact = lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal);
-    String receiverFact = lemmaResultStateFact(receiverBlock, receiverTemporal);
-    String presumption = conjunction(Arrays.asList(principalsFact, receiverFact));
+    String recipientFact = lemmaResultStateFact(recipientBlock, recipientTemporal);
+    String presumption = conjunction(Arrays.asList(principalsFact, recipientFact));
     
     String senderFact = lemmaResultStateFact(senderBlock, senderTemporal);
     String equalsClause = lemmaEquals(query.sent, query.received);
@@ -583,8 +583,8 @@ public class Builder extends BuilderFormatting{
     senderClause = bracket(conjunction(Arrays.asList(senderClause, equalsClause)));
 
     String dishonestSender = bracket(dishonest(query.sender, Variable.nextTemporal()));
-    String dishonestReceiver = bracket(dishonest(query.receiver, Variable.nextTemporal()));
-    String result = disjunction(Arrays.asList(senderClause, dishonestSender, dishonestReceiver));
+    String dishonestRecipient = bracket(dishonest(query.recipient, Variable.nextTemporal()));
+    String result = disjunction(Arrays.asList(senderClause, dishonestSender, dishonestRecipient));
     output.append(implication(presumption, result));
     output.append(Constants.LINE_BREAK);
     output.append(Constants.LEMMA_CLOSE);

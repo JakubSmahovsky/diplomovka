@@ -255,29 +255,29 @@ public class CompilerVisitor {
 		if (sender == null) {
 			Errors.ErrorPrincipalDoesNotExist(ctx.sender);
 		}
-		Principal receiver = model.findPrincipal(ctx.receiver.getText());
-		if (receiver == null) {
-			Errors.ErrorPrincipalDoesNotExist(ctx.receiver);
+		Principal recipient = model.findPrincipal(ctx.recipient.getText());
+		if (recipient == null) {
+			Errors.ErrorPrincipalDoesNotExist(ctx.recipient);
 		}
 
 		for (TermContext message : ctx.term()) {
 			// visitTerm verifies that message is transparent (when expectVD is USE_MESSAGE)
 			Term term = visitTerm(message, sender, null, VariableDefined.MESSAGE);
-			Term receivedTerm = term.sentToReceived(model, receiver, message);
+			Term receivedTerm = term.sentToReceived(model, recipient, message);
 
-			// add all new variables to receiver's knowledge
+			// add all new variables to recipient's knowledge
 			for (Variable variable : receivedTerm.extractKnowledge()) {
 				// do not learn a variable again if you aleady know it (it is implicitly compared, because it's in the state)
-				if (receiver.knowsAnyVariableByName(variable) == null) {
-					receiver.learnEphemeralPrivate(variable);
+				if (recipient.knowsAnyVariableByName(variable) == null) {
+					recipient.learnEphemeralPrivate(variable);
 				} else {
-					receiver.nextBlock.unaryEqualsPending.add(variable);
+					recipient.nextBlock.unaryEqualsPending.add(variable);
 				}
 			}
 
 			sender.getLastBlock().resultOutputs.add(new CommandOut(term, sender.getLastBlock()));
-			receiver.nextBlock.premiseInputs.add(new CommandIn(receivedTerm, receiver.nextBlock));
-			receiver.nextBlock.addToState(receivedTerm);
+			recipient.nextBlock.premiseInputs.add(new CommandIn(receivedTerm, recipient.nextBlock));
+			recipient.nextBlock.addToState(receivedTerm);
 		}
 	}
 
@@ -637,9 +637,9 @@ public class CompilerVisitor {
 		} else if (ctx.forwardSecrecy() != null) {
 			visitForwardSecrecy(ctx.forwardSecrecy());			
 		} else if (ctx.authentication() != null) {
-			visitAuthentication(ctx.authentication().sender, ctx.authentication().receiver, ctx.authentication().variable(), false);
+			visitAuthentication(ctx.authentication().sender, ctx.authentication().recipient, ctx.authentication().variable(), false);
 		} else if (ctx.injAuthentication() != null) {
-			visitAuthentication(ctx.injAuthentication().sender, ctx.injAuthentication().receiver, ctx.injAuthentication().variable(), true);
+			visitAuthentication(ctx.injAuthentication().sender, ctx.injAuthentication().recipient, ctx.injAuthentication().variable(), true);
 		}
 	}
 
@@ -681,17 +681,17 @@ public class CompilerVisitor {
 		model.queries.forwardSecrecy.add(new ForwardSecrecy(principal, variable));
 	}
 
-	public void visitAuthentication(Token senderToken, Token receiverToken, VariableContext vctx, boolean injective) {
+	public void visitAuthentication(Token senderToken, Token recipientToken, VariableContext vctx, boolean injective) {
 		Principal sender = model.findPrincipal(senderToken.getText());
 		if (sender == null) {
 			Errors.ErrorPrincipalDoesNotExist(senderToken);
 		}
-		Principal receiver = model.findPrincipal(receiverToken.getText());
-		if (receiver == null) {
-			Errors.ErrorPrincipalDoesNotExist(receiverToken);
+		Principal recipient = model.findPrincipal(recipientToken.getText());
+		if (recipient == null) {
+			Errors.ErrorPrincipalDoesNotExist(recipientToken);
 		}
 		Variable sent = visitVariable(vctx, sender, null, VariableDefined.QUERY);
-		Variable received = visitVariable(vctx, receiver, null, VariableDefined.QUERY);
+		Variable received = visitVariable(vctx, recipient, null, VariableDefined.QUERY);
 		
 		STBlock senderBlock = null;
 		for (STBlock block : sender.getBlocks()) {
@@ -709,26 +709,26 @@ public class CompilerVisitor {
 			Errors.ErrorQueryVariableNotSent(vctx.start, senderToken.getText(), vctx.getText());
 		}
 
-		STBlock receiverBlock = null;
-		for (STBlock block : receiver.getBlocks()) {
+		STBlock recipientBlock = null;
+		for (STBlock block : recipient.getBlocks()) {
 			for (CommandIn in : block.premiseInputs) {
 				if (in.receivedVariable(received)) {
-					receiverBlock = block;
+					recipientBlock = block;
 					break;
 				}
 			}
-			if (receiverBlock != null) {
+			if (recipientBlock != null) {
 				break;
 			}
 		}
-		if (receiverBlock == null) {
-			Errors.ErrorQueryVariableNotReceived(vctx.start, receiverToken.getText(), vctx.getText());	
+		if (recipientBlock == null) {
+			Errors.ErrorQueryVariableNotReceived(vctx.start, recipientToken.getText(), vctx.getText());	
 		}
 
 		if (injective) {
-			model.queries.injAuthentication.add(new InjAuthentication(sender, receiver, sent, received));	
+			model.queries.injAuthentication.add(new InjAuthentication(sender, recipient, sent, received));	
 		} else {
-			model.queries.authentication.add(new Authentication(sender, receiver, sent, received));
+			model.queries.authentication.add(new Authentication(sender, recipient, sent, received));
 			senderBlock.actions.add(Fact.authSent(sender, sent));
 		}
 	}

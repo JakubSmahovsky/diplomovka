@@ -8,14 +8,14 @@ public class InjAuthentication {
   private static int queries = 0;
   private final int queryID;
   public final Principal sender;
-  public final Principal receiver;
+  public final Principal recipient;
   public final Variable sent;
   public final Variable received;
 
-  public InjAuthentication(Principal sender, Principal receiver, Variable sent, Variable received) {
+  public InjAuthentication(Principal sender, Principal recipient, Variable sent, Variable received) {
     this.queryID = nextInjAuthenticationQuery();
     this.sender = sender;
-    this.receiver = receiver;
+    this.recipient = recipient;
     this.sent = sent;
     this.received = received;
   }
