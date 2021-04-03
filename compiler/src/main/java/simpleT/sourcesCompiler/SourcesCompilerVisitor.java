@@ -8,6 +8,7 @@ import simpleT.Constants;
 import simpleT.dataStructures.STModel;
 import simpleT.dataStructures.outputTerm.*;
 import simpleT.errors.Errors;
+import simpleT.sourcesCompiler.goal.*;
 import simpleT.sourcesCompiler.graph.*;
 import simpleT.sourcesCompiler.graph.node.*;
 import simpleT.sourcesParser.SourcesParser.*;
@@ -57,13 +58,17 @@ public class SourcesCompilerVisitor {
 
   public Goal visitFact(FactContext ctx) {
     boolean persistent = ctx.persistent != null;
-    String factName = ctx.IDENTIFIER().getText();
+    String symbol = ctx.IDENTIFIER().getText();
     ArrayList<OutputTerm> terms = new ArrayList<>();
     for (TermContext tctx : ctx.term()) {
       terms.add(visitTerm(tctx));
     }
+    if (persistent && symbol.equals(Constants.INTRUDER_KNOWS_OUTPUT)) {
+      return new IntruderGoal(terms.get(0)); // intruder goal fact contains exactly 1 term
+    } else {
+      return new FactGoal(persistent, symbol, terms);
+    }
     
-    return new Goal(persistent, factName, terms);
   }
 
   public OutputTerm visitTerm(TermContext ctx) {

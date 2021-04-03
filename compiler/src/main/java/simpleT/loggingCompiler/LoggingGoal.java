@@ -3,7 +3,7 @@ package simpleT.loggingCompiler;
 import simpleT.dataStructures.STModel;
 import simpleT.dataStructures.document.Document;
 import simpleT.errors.Errors;
-import simpleT.sourcesCompiler.Goal;
+import simpleT.sourcesCompiler.goal.*;
 import simpleT.sourcesCompiler.SourceGroup;
 
 public class LoggingGoal {
@@ -35,6 +35,6 @@ public class LoggingGoal {
   }
 
   public Document render() {
-    return new Document("Solved (" + number + ") " + goal);
+    return new Document("Solved (" + number + ") " + goal.render());
   }
 }

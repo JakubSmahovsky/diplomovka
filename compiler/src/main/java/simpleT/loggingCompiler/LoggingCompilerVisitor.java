@@ -10,7 +10,7 @@ import simpleT.dataStructures.document.Document;
 import simpleT.dataStructures.outputTerm.*;
 import simpleT.errors.Errors;
 import simpleT.loggingParser.LoggingParser.*;
-import simpleT.sourcesCompiler.Goal;
+import simpleT.sourcesCompiler.goal.*;
 
 public class LoggingCompilerVisitor {
   private STModel model;
@@ -37,7 +37,7 @@ public class LoggingCompilerVisitor {
       LoggingGoal goal = solved.remove();
       LoggingSource source = by.remove();
       if (goal.number != source.goalNr) {
-        System.err.println("Discarded goal " + goal.goal + " and source " + source.name + "!");
+        System.err.println("Discarded goal " + goal.goal.render() + " and source " + source.name + "!");
         return;
       }
       goal.findSource(source);
@@ -60,13 +60,17 @@ public class LoggingCompilerVisitor {
 
   public Goal visitFact(FactContext ctx) {
     boolean persistent = ctx.PERSISTENT() != null;
-    String factName = ctx.IDENTIFIER().getText();
+    String symbol = ctx.IDENTIFIER().getText();
     ArrayList<OutputTerm> terms = new ArrayList<>();
     for (TermContext tctx : ctx.term()) {
       terms.add(visitTerm(tctx));
     }
     
-    return new Goal(persistent, factName, terms);
+    if (persistent && symbol.equals(Constants.INTRUDER_KNOWS_OUTPUT)) {
+      return new IntruderGoal(terms.get(0)); // intruder goal fact contains exactly 1 term
+    } else {
+      return new FactGoal(persistent, symbol, terms);
+    }
   }
 
   public OutputTerm visitTerm(TermContext ctx) {

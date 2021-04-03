@@ -3,6 +3,7 @@ package simpleT.sourcesCompiler;
 import java.util.ArrayList;
 
 import simpleT.dataStructures.document.Document;
+import simpleT.sourcesCompiler.goal.Goal;
 
 public class SourceGroup implements Comparable<SourceGroup>{
   public Goal goal;
@@ -14,7 +15,7 @@ public class SourceGroup implements Comparable<SourceGroup>{
   }
 
   public Document render(){
-    Document doc = new Document("Group: " + goal);
+    Document doc = new Document("Group: " + goal.render());
     for (Source source : sources) {
       doc.append((source.render().indent()));
     }
