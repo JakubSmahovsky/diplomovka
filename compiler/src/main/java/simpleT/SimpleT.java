@@ -16,17 +16,15 @@ import simpleT.stParser.*;
 import org.antlr.v4.runtime.CharStreams;
 
 public class SimpleT {
-  public static void main(String[] args) throws IOException { // TODO: catch IOException
+  public static void main(String[] args) throws IOException {
     // TODO: parse arguments properly
     String inputFilePath = args[args.length-1];
-    boolean quitOnWarning = false;
-    boolean showInfo = true;
     String tamarinTheoryFilePath = Constants.DEFAULT_THEORY_PATH + Constants.THEORY_FILE_EXTENSION;
     String tamarinExecutablePath = System.getProperty("user.home") + "/.local/bin/tamarin-prover";
 
     
     try {
-      STModel model = compileInput(inputFilePath, tamarinTheoryFilePath, quitOnWarning, showInfo);
+      STModel model = compileInput(inputFilePath, tamarinTheoryFilePath);
       compileSources(tamarinExecutablePath, tamarinTheoryFilePath, Constants.DEFAULT_SOURCES_PATH, model);
       BufferedReader resultStdReader = compileLogging(tamarinExecutablePath, tamarinTheoryFilePath, "secrecy0", model);
       compileResult(resultStdReader);
@@ -35,15 +33,14 @@ public class SimpleT {
     }
   }
 
-  private static STModel compileInput(String inputFilePath, String tamarinTheoryFilePath,
-        boolean quitOnWarning, boolean showInfo) throws IOException, STException{
+  private static STModel compileInput(String inputFilePath, String tamarinTheoryFilePath) throws IOException, STException{
     File out = new File(tamarinTheoryFilePath);
     FileWriter writer = new FileWriter(out);
     FileInputStream inputStream = new FileInputStream(inputFilePath);
     SimpleTLexer lexer = new SimpleTLexer(CharStreams.fromStream(inputStream));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     SimpleTParser parser = new SimpleTParser(tokens);
-    CompilerVisitor visitor = new CompilerVisitor(writer, quitOnWarning, showInfo);
+    CompilerVisitor visitor = new CompilerVisitor(writer);
     return visitor.visitModel(parser.model());
   }
 

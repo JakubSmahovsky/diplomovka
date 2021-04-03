@@ -25,10 +25,8 @@ public class CompilerVisitor {
 	private FileWriter writer;
 	private STModel model;
 
-	public CompilerVisitor(FileWriter writer, boolean quitOnWarning, boolean showInfo) {
+	public CompilerVisitor(FileWriter writer) {
 		this.writer = writer;
-		Errors.quitOnWarning = quitOnWarning;
-		Errors.showInfo = showInfo;
 	}
 
 	public STModel visitModel(ModelContext ctx) {
