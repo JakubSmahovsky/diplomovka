@@ -183,7 +183,7 @@ public class Principal {
     STBlock last = it.next();
     while (it.hasNext()) {
       STBlock following = it.next();
-      boolean sends = !last.resultOutputs.isEmpty();
+      boolean sends = !last.outputs.isEmpty();
       if (sends) {
         newBlocks.add(last);
         last = following;

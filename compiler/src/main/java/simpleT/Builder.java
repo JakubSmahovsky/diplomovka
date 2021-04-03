@@ -135,7 +135,7 @@ public class Builder extends BuilderFormatting{
     for (Variable variable : toConstruct) {
       facts.add((new CommandOut(variable, null)).render());
     }
-    output.append(ruleResult(facts));
+    output.append(ruleConclusions(facts));
 
     // remove fresh and public sort from variables
     for (Variable variable : toGenerate) {
@@ -163,7 +163,7 @@ public class Builder extends BuilderFormatting{
       facts.add(sessionStateFact(principal));
     }
     output.append(ruleAction(facts));
-    output.append(ruleResult(facts));
+    output.append(ruleConclusions(facts));
   }
 
   /**
@@ -185,30 +185,30 @@ public class Builder extends BuilderFormatting{
     if (previousBlock == null) {
       premises.add(sessionStateFact(block.principal));
     } else {
-      premises.add(resultStateFact(previousBlock, block));
+      premises.add(blockStateFact(previousBlock, block));
     }
-    for (CommandIn in : block.premiseInputs) {
+    for (CommandIn in : block.inputs) {
       premises.add(in.render());
     }
-    for (CommandFr fr : block.premiseFresh) {
+    for (CommandFr fr : block.fresh) {
       fr.addFresh();
       premises.add(fr.render());
     }
 
     // actions
     ArrayList<String> actions = new ArrayList<>();
-    String resultStateFact = resultStateFact(block, block);
-    actions.add(resultStateFact);
+    String blockStateFact = blockStateFact(block, block);
+    actions.add(blockStateFact);
     for (Fact fact : block.actions) {
       actions.add(fact.render(block));
     }
 
-    // results
-    ArrayList<String> results = new ArrayList<>();
-    for (CommandOut out : block.resultOutputs) {
-      results.add(out.render());
+    // conclusions
+    ArrayList<String> conclusions = new ArrayList<>();
+    for (CommandOut out : block.outputs) {
+      conclusions.add(out.render());
     }
-    results.add(resultStateFact);
+    conclusions.add(blockStateFact);
 
     // aliases; we render them last, because they are affected by fresh rules
     ArrayList<String> aliases = new ArrayList<>();
@@ -219,10 +219,10 @@ public class Builder extends BuilderFormatting{
     output.append(ruleAliases(block, aliases, null));
     output.append(rulePremise(premises));
     output.append(ruleAction(actions));
-    output.append(ruleResult(results));
+    output.append(ruleConclusions(conclusions));
     
     // remove fresh sort from generated variables
-    for (CommandFr fr : block.premiseFresh) {
+    for (CommandFr fr : block.fresh) {
       fr.removeFresh();
     }
   }
@@ -294,7 +294,7 @@ public class Builder extends BuilderFormatting{
     ArrayList<String> facts = new ArrayList<>();
     Iterator<Variable> tempIt = temporals.iterator();
     for (Principal principal : model.getPrincipals()) {
-      facts.add(lemmaResultStateFact(principal.getLastBlock(), tempIt.next()));
+      facts.add(lemmaBlockStateFact(principal.getLastBlock(), tempIt.next()));
       Variable temporal = Variable.nextTemporal();
       facts.add(negation(dishonest(principal, temporal)));
     }
@@ -350,7 +350,7 @@ public class Builder extends BuilderFormatting{
 
     ArrayList<String> presumptionClauses = new ArrayList<>();
     presumptionClauses.add(lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal));
-    presumptionClauses.add(lemmaResultStateFact(originalBlock, stateTemporal));
+    presumptionClauses.add(lemmaBlockStateFact(originalBlock, stateTemporal));
     presumptionClauses.add(lemmaFact(Constants.INTRUDER_KNOWS_LEMMA, query.variable, intruderTemporal));
     ArrayList<String> dishonestClauses = new ArrayList<>();
     for (Principal principal : model.getPrincipals()) {
@@ -405,7 +405,7 @@ public class Builder extends BuilderFormatting{
 
     ArrayList<String> presumptionClauses = new ArrayList<>();
     presumptionClauses.add(lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal));
-    presumptionClauses.add(lemmaResultStateFact(finalBlock, stateTemporal));
+    presumptionClauses.add(lemmaBlockStateFact(finalBlock, stateTemporal));
     presumptionClauses.add(lemmaFact(Constants.INTRUDER_KNOWS_LEMMA, query.variable, intruderTemporal));
     ArrayList<String> dishonestClauses = new ArrayList<>();
     for (Principal principal : model.getPrincipals()) {
@@ -432,7 +432,7 @@ public class Builder extends BuilderFormatting{
     // find the recipient block
 		STBlock recipientBlock = null;
 		for (STBlock block : query.recipient.getBlocks()) {
-			for (CommandIn in : block.premiseInputs) {
+			for (CommandIn in : block.inputs) {
 				if (in.receivedVariable(query.received)) {
 					recipientBlock = block;
 					break;
@@ -480,7 +480,7 @@ public class Builder extends BuilderFormatting{
     output.append(Constants.LINE_BREAK);
 
     String principalsFact = lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal);
-    String recipientFact = lemmaResultStateFact(recipientBlock, recipientTemporal);
+    String recipientFact = lemmaBlockStateFact(recipientBlock, recipientTemporal);
     String presumption = conjunction(Arrays.asList(principalsFact, recipientFact));
     
     String senderFact = lemmaFact(Constants.FACT_AUTHENTICATION_SENT, Arrays.asList(query.sender.principalID, query.sent), senderTemporal);
@@ -508,7 +508,7 @@ public class Builder extends BuilderFormatting{
     // find the sender and recipient blocks
     STBlock senderBlock = null;
 		for (STBlock block : query.sender.getBlocks()) {
-			for (CommandOut out : block.resultOutputs) {
+			for (CommandOut out : block.outputs) {
 				if (out.sentVariable(query.sent)) {
 					senderBlock = block;
 					break;
@@ -520,7 +520,7 @@ public class Builder extends BuilderFormatting{
 		}
 		STBlock recipientBlock = null;
 		for (STBlock block : query.recipient.getBlocks()) {
-			for (CommandIn in : block.premiseInputs) {
+			for (CommandIn in : block.inputs) {
 				if (in.receivedVariable(query.received)) {
 					recipientBlock = block;
 					break;
@@ -574,10 +574,10 @@ public class Builder extends BuilderFormatting{
     output.append(Constants.LINE_BREAK);
 
     String principalsFact = lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal);
-    String recipientFact = lemmaResultStateFact(recipientBlock, recipientTemporal);
+    String recipientFact = lemmaBlockStateFact(recipientBlock, recipientTemporal);
     String presumption = conjunction(Arrays.asList(principalsFact, recipientFact));
     
-    String senderFact = lemmaResultStateFact(senderBlock, senderTemporal);
+    String senderFact = lemmaBlockStateFact(senderBlock, senderTemporal);
     String equalsClause = lemmaEquals(query.sent, query.received);
     String senderClause = lemmaQuatification(senderVariables, true) + Constants.LINE_BREAK + senderFact;
     senderClause = bracket(conjunction(Arrays.asList(senderClause, equalsClause)));

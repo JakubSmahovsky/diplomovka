@@ -18,10 +18,10 @@ public class STBlock {
   public ArrayList<Variable> unaryEqualsPending;
   public ArrayList<Variable> aliases;
   public ArrayList<Deconstruction> deconstructed;
-  public ArrayList<CommandFr> premiseFresh;
-  public ArrayList<CommandIn> premiseInputs;
+  public ArrayList<CommandFr> fresh;
+  public ArrayList<CommandIn> inputs;
   public ArrayList<Fact> actions;
-  public ArrayList<CommandOut> resultOutputs;
+  public ArrayList<CommandOut> outputs;
   private final ArrayList<Term> state;
   public int rangeBegin;
   public int rangeEnd;
@@ -34,10 +34,10 @@ public class STBlock {
     this.unaryEqualsPending = new ArrayList<>();
     this.aliases = new ArrayList<>();
     this.deconstructed = new ArrayList<>();
-    this.premiseFresh = new ArrayList<>();
-    this.premiseInputs = new ArrayList<>();
+    this.fresh = new ArrayList<>();
+    this.inputs = new ArrayList<>();
     this.actions = new ArrayList<>();
-    this.resultOutputs = new ArrayList<>();
+    this.outputs = new ArrayList<>();
     this.state = new ArrayList<>();
     this.rangeBegin = index;
     this.rangeEnd = index;
@@ -61,10 +61,10 @@ public class STBlock {
   public void merge(STBlock block) {
     aliases.addAll(block.aliases);
     deconstructed.addAll(block.deconstructed);
-    premiseFresh.addAll(block.premiseFresh);
-    premiseInputs.addAll(block.premiseInputs);
+    fresh.addAll(block.fresh);
+    inputs.addAll(block.inputs);
     actions.addAll(block.actions);
-    resultOutputs.addAll(block.resultOutputs);
+    outputs.addAll(block.outputs);
     for (Term term : block.state) {
       addToState(term);
     }
@@ -89,9 +89,9 @@ public class STBlock {
   }
 
   public boolean isEmptyBlock() {
-    return (premiseFresh.isEmpty() && 
-            premiseInputs.isEmpty() && 
+    return (fresh.isEmpty() && 
+            inputs.isEmpty() && 
             actions.isEmpty() && 
-            resultOutputs.isEmpty());
+            outputs.isEmpty());
   }
 }

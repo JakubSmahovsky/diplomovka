@@ -241,7 +241,7 @@ public class CompilerVisitor {
 		for (VariableContext vctx : ctx.variable()) {
 			Variable variable = visitVariable(vctx, principal, block, VariableDefined.GENERATES);
 			principal.learnEphemeralPrivate(variable);
-			block.premiseFresh.add(new CommandFr(variable, block));
+			block.fresh.add(new CommandFr(variable, block));
 			block.addToState(variable);
 		}
 	}
@@ -275,8 +275,8 @@ public class CompilerVisitor {
 				}
 			}
 
-			sender.getLastBlock().resultOutputs.add(new CommandOut(term, sender.getLastBlock()));
-			recipient.nextBlock.premiseInputs.add(new CommandIn(receivedTerm, recipient.nextBlock));
+			sender.getLastBlock().outputs.add(new CommandOut(term, sender.getLastBlock()));
+			recipient.nextBlock.inputs.add(new CommandIn(receivedTerm, recipient.nextBlock));
 			recipient.nextBlock.addToState(receivedTerm);
 		}
 	}
@@ -695,7 +695,7 @@ public class CompilerVisitor {
 		
 		STBlock senderBlock = null;
 		for (STBlock block : sender.getBlocks()) {
-			for (CommandOut out : block.resultOutputs) {
+			for (CommandOut out : block.outputs) {
 				if (out.sentVariable(sent)) {
 					senderBlock = block;
 					break;
@@ -711,7 +711,7 @@ public class CompilerVisitor {
 
 		STBlock recipientBlock = null;
 		for (STBlock block : recipient.getBlocks()) {
-			for (CommandIn in : block.premiseInputs) {
+			for (CommandIn in : block.inputs) {
 				if (in.receivedVariable(received)) {
 					recipientBlock = block;
 					break;

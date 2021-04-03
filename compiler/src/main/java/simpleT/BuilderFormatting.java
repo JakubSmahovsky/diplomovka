@@ -53,7 +53,7 @@ public abstract class BuilderFormatting {
    * @param sourceBlock is block whose state we are rendering
    * @param contextBlock is block whose body requires the state fact
    */
-  public static String resultStateFact(STBlock sourceBlock, STBlock contextBlock) {
+  public static String blockStateFact(STBlock sourceBlock, STBlock contextBlock) {
     return fact(sourceBlock.render(), sourceBlock.completeState(), contextBlock);
   }
 
@@ -97,7 +97,7 @@ public abstract class BuilderFormatting {
     return Constants.ACTIONS_OPEN + ruleBody(facts) + Constants.ACTIONS_CLOSE;
   }
 
-  public static String ruleResult(List<String> facts){
+  public static String ruleConclusions(List<String> facts){
     return Constants.CONCLUSIONS_OPEN + ruleBody(facts) + Constants.CONCLUSIONS_CLOSE;
   }
 
@@ -122,7 +122,7 @@ public abstract class BuilderFormatting {
       ruleAliases(null, new ArrayList<>(), ruleName) +
       rulePremise(Arrays.asList(LTPListFact)) +
       ruleAction(Arrays.asList(fact(Constants.FACT_DISHONEST, principal.principalID, null))) +
-      ruleResult(outputs);
+      ruleConclusions(outputs);
   }
 
   public static String lemma(String name, boolean existsTrace) {
@@ -139,7 +139,7 @@ public abstract class BuilderFormatting {
       String.join(Constants.QUANTIFICATION_SEPARATOR, identifiers) + Constants.QUANTIFICATION_CLOSE;
   }
 
-  public static String lemmaResultStateFact(STBlock block, Variable temporal) {
+  public static String lemmaBlockStateFact(STBlock block, Variable temporal) {
     return lemmaFact(block.render(), block.completeState(), temporal);
   }
 
