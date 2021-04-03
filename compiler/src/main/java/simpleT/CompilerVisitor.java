@@ -29,7 +29,7 @@ public class CompilerVisitor {
 		this.writer = writer;
 	}
 
-	public STModel visitModel(ModelContext ctx) {
+	public STModel visitProtocol(ProtocolContext ctx) {
 		this.model = new STModel();
 		for (DeclarationContext dctx : ctx.declaration()) {
 			visitDeclaration(dctx);

@@ -1,7 +1,7 @@
 
 grammar SimpleT;
 
-model: declaration* specificationSegment+ queriesBlock?;
+protocol: declaration* specificationSegment+ queriesBlock?;
 
 declaration:
   decPrincipals |

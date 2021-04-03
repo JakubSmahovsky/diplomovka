@@ -41,7 +41,7 @@ public class SimpleT {
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     SimpleTParser parser = new SimpleTParser(tokens);
     CompilerVisitor visitor = new CompilerVisitor(writer);
-    return visitor.visitModel(parser.model());
+    return visitor.visitProtocol(parser.protocol());
   }
 
   private static void compileSources(String tamarinExecutablePath, String tamarinTheoryFilePath,
