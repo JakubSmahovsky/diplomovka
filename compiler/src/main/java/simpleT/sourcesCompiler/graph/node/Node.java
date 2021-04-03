@@ -10,7 +10,7 @@ import simpleT.sourcesCompiler.graph.Description;
  * Instances of this node are still used for stub nodes
  * that Tamarin created when goal is a custon fact.
  */
-public class Node {
+public abstract class Node {
   public String id;
   public String label;
   public ArrayList<Node> children; // outgoing edges 
@@ -23,17 +23,14 @@ public class Node {
     this.parents = new ArrayList<>();
   }
 
-  @Override
-  public String toString(){
-    return label.isEmpty() ? "Stub" : label;
-  }
+  public abstract String render();
 
   /**
    * Search depth-first throught parents and collect rendered
    * printout of nodes' meaning. Do not search past protocol rules.
    */
   public Description renderDescription() {
-    Errors.DebugMissingImplementation("renderDescription", this.toString());
+    Errors.DebugMissingImplementation("renderDescription", this.render());
     return null;
   };
 
@@ -43,5 +40,9 @@ public class Node {
    */
   public static String ArrowEndpointToNode(String endpoint) {
     return endpoint.split(":")[0];
+  }
+
+  @Override public String toString(){
+    return "";
   }
 }

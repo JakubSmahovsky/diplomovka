@@ -28,7 +28,7 @@ public class RevealRuleNode extends Node{
   }
   
   @Override
-  public String toString(){
-    return "Reveal(" + super.toString() + ")";
+  public String render(){
+    return "Reveal(" + this.label + ")";
   }
 }

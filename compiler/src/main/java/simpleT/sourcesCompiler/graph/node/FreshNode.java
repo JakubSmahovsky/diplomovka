@@ -8,4 +8,9 @@ public class FreshNode extends Node{
   public FreshNode(String id) {
     super(id, "Fresh");
   }
+
+  @Override
+  public String render(){
+    return this.label;
+  }
 }

@@ -23,7 +23,7 @@ public class PrincipalRuleNode extends Node {
   }
 
   @Override
-  public String toString(){
-    return "Block(" + super.toString() + ")";
+  public String render(){
+    return "Block(" + this.label + ")";
   }
 }

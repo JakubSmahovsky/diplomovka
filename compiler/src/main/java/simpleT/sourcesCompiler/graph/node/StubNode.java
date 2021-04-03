@@ -17,4 +17,9 @@ public class StubNode extends Node{
     StringBuilder myLine = new StringBuilder("TODO (unimportant, we will likely be hiding fact sources.)");
     return new Description(new Document(myLine), new Document(new StringBuilder(myLine)), null, null);
   }
+
+  @Override
+  public String render(){
+    return "Stub";
+  }
 }

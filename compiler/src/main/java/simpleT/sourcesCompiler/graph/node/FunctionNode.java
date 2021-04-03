@@ -34,7 +34,7 @@ public class FunctionNode extends Node{
    * return only function name and assign construnction and deconstruction flags.
    */
   public String parseLabel(String label) {
-    String[] parts = label.split("_");
+    String[] parts = label.split(Constants.NAME_SEPARATOR);
     switch (parts[0]) {
       case (Constants.JSON_FUNCTION_PREFIX_CONSTRUCT):
         construction = true;
@@ -141,7 +141,7 @@ public class FunctionNode extends Node{
   }
 
   @Override
-  public String toString(){
-    return "Function(" + printLabel + ")";
+  public String render(){
+    return this.label;
   }
 }

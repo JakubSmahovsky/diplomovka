@@ -26,7 +26,7 @@ public class UnsolvedNode extends Node {
   }
 
   @Override
-  public String toString(){
+  public String render(){
     return "Unsolved(" + term + ")";
   }
 }
