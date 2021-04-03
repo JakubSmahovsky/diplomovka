@@ -12,7 +12,7 @@ public class OutputTuple extends OutputTerm{
   }
 
   @Override
-  public boolean unify(OutputTerm term) {
+  public boolean match(OutputTerm term) {
     if (!(term instanceof OutputTuple)) {
       return false;
     }
@@ -21,7 +21,7 @@ public class OutputTuple extends OutputTerm{
       return false;
     }
     for (int i = 0; i < subterms.size(); i++) {
-      if (!subterms.get(i).unify(oTuple.subterms.get(i))) {
+      if (!subterms.get(i).match(oTuple.subterms.get(i))) {
         return false;
       }
     }

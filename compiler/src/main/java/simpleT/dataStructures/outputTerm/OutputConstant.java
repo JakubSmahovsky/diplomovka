@@ -10,7 +10,7 @@ public class OutputConstant extends OutputTerm{
   }
 
   @Override
-  public boolean unify(OutputTerm term) {
+  public boolean match(OutputTerm term) {
     return (term instanceof OutputConstant) && word.equals(((OutputConstant)term).word);
   }
 

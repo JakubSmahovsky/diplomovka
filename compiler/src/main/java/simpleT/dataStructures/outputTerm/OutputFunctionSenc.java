@@ -15,10 +15,10 @@ public class OutputFunctionSenc extends OutputTerm {
   }
 
   @Override
-  public boolean unify(OutputTerm term) {
+  public boolean match(OutputTerm term) {
     return (term instanceof OutputFunctionSenc) &&
-      key.unify(((OutputFunctionSenc)term).key) &&
-      value.unify(((OutputFunctionSenc)term).value);
+      key.match(((OutputFunctionSenc)term).key) &&
+      value.match(((OutputFunctionSenc)term).value);
   }
 
   @Override

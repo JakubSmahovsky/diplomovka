@@ -21,7 +21,7 @@ public class LoggingGoal {
 
   public void findSource(LoggingSource source) {
     for (SourceGroup group : model.sourceGroups) {
-      if (group.goal.unify(goal)) {
+      if (group.goal.match(goal)) {
         this.group = group;
         source.findSource(this);
         if (source.source != null){

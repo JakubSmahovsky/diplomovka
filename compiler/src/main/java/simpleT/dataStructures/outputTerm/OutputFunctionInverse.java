@@ -11,9 +11,9 @@ public class OutputFunctionInverse extends OutputTerm{
   }
 
   @Override
-  public boolean unify(OutputTerm term) {
+  public boolean match(OutputTerm term) {
     return (term instanceof OutputFunctionInverse) && 
-           (base.unify(((OutputFunctionInverse)term).base));
+           (base.match(((OutputFunctionInverse)term).base));
   }
 
   @Override

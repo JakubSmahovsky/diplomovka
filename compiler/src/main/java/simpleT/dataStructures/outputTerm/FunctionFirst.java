@@ -15,8 +15,8 @@ public class FunctionFirst extends OutputTerm {
   }
 
   @Override
-  public boolean unify(OutputTerm term) {
-    return (term instanceof FunctionFirst && subterm.unify(((FunctionFirst)term).subterm));
+  public boolean match(OutputTerm term) {
+    return (term instanceof FunctionFirst && subterm.match(((FunctionFirst)term).subterm));
   }
 
   @Override

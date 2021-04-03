@@ -11,10 +11,10 @@ public class OutputMultiplication extends OutputTerm{
   }
   
   @Override
-  public boolean unify(OutputTerm term) {
+  public boolean match(OutputTerm term) {
     return (term instanceof OutputMultiplication) && 
-           (left.unify(((OutputMultiplication)term).left)) &&
-           (right.unify(((OutputMultiplication)term).right));
+           (left.match(((OutputMultiplication)term).left)) &&
+           (right.match(((OutputMultiplication)term).right));
   }
   @Override
   public String render() {

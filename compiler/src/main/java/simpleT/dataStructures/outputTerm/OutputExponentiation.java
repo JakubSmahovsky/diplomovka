@@ -12,10 +12,10 @@ public class OutputExponentiation extends OutputTerm{
   }
   
   @Override
-  public boolean unify(OutputTerm term) {
+  public boolean match(OutputTerm term) {
     return (term instanceof OutputExponentiation) && 
-           (base.unify(((OutputExponentiation)term).base)) &&
-           (exponent.unify(((OutputExponentiation)term).exponent));
+           (base.match(((OutputExponentiation)term).base)) &&
+           (exponent.match(((OutputExponentiation)term).exponent));
   }
   @Override
   public String render() {

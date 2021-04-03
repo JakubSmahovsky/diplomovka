@@ -24,7 +24,7 @@ public class SourceGroup implements Comparable<SourceGroup>{
 
   @Override
   public int compareTo(SourceGroup group) {
-    if (goal.unify(group.goal)) {
+    if (goal.match(group.goal)) {
       return 1;
     }
     return -1;

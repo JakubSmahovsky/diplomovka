@@ -15,12 +15,12 @@ public class OutputFunctionSdec extends OutputTerm{
   }
 
   @Override
-  public boolean unify(OutputTerm term) {
+  public boolean match(OutputTerm term) {
     if (!(term instanceof OutputFunctionSdec)) {
       return false;
     }
     OutputFunctionSdec sdec = (OutputFunctionSdec)term;
-    return (key.unify(sdec.key) && encryptedValue.unify(sdec.encryptedValue)); 
+    return (key.match(sdec.key) && encryptedValue.match(sdec.encryptedValue)); 
   }
 
   @Override

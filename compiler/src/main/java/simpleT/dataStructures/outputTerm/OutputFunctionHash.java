@@ -11,8 +11,8 @@ public class OutputFunctionHash extends OutputTerm{
   }
 
   @Override
-  public boolean unify(OutputTerm term) {
-    return (term instanceof OutputFunctionHash) && subterm.unify(((OutputFunctionHash)term).subterm);
+  public boolean match(OutputTerm term) {
+    return (term instanceof OutputFunctionHash) && subterm.match(((OutputFunctionHash)term).subterm);
   }
 
   @Override

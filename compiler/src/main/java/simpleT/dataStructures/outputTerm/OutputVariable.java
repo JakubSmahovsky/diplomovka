@@ -22,7 +22,7 @@ public class OutputVariable extends OutputTerm {
   }
 
   @Override
-  public boolean unify(OutputTerm term) {
+  public boolean match(OutputTerm term) {
     return true;
   }
 
