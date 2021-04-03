@@ -151,7 +151,8 @@ public class SourcesCompilerVisitor {
         return new FunctionSecond(subterm);
       }
     }
-    return new OutputVariable(model, "Function ph", ""); // TODO debug
+    Errors.DebugUnexpectedTokenType(ctx.IDENTIFIER().getText(), "visitFunction in sources compiler");
+    return null;
   }
 
   public OutputTuple visitTuple(TupleContext ctx) {
@@ -163,13 +164,12 @@ public class SourcesCompilerVisitor {
   }
 
   public Graph visitGraph(JsonObjContext ctx, String sourceName) {
-    // { "graph" : [ { graph } ] } // TODO assertions
+    // { "graph" : [ { graph } ] }
     JsonObjContext graph = ctx.jsonKeyValue(0).jsonValue().jsonArray().jsonValue(0).jsonObj();
     
     JsonArrayContext edgectxs = null;
     JsonArrayContext nodectxs = null;
     for (JsonKeyValueContext kvctx : graph.jsonKeyValue()) {
-      // TODO assert edges and nodes are only assigned once
       switch (kvctx.jsonKey().jsonString().getText()) {
         case Constants.JSON_EDGES:
           edgectxs = kvctx.jsonValue().jsonArray();
@@ -177,7 +177,12 @@ public class SourcesCompilerVisitor {
           nodectxs = kvctx.jsonValue().jsonArray();
       }
     }
-    // TODO assert edges and nodes aren't null
+    if (edgectxs == null) {
+      Errors.DebugUnexpectedTokenType("graph without edges", "visitGraph in source compiler");
+    }
+    if (nodectxs == null) {
+      Errors.DebugUnexpectedTokenType("graph without nodes", "visitGraph in source compiler");
+    }
 
     ArrayList<Node> nodes = new ArrayList<>();
     for (JsonValueContext nodectx : nodectxs.jsonValue()) {
@@ -195,7 +200,6 @@ public class SourcesCompilerVisitor {
     String nodeLabel = null;
     String nodeType = null;
     for (JsonKeyValueContext kvctx : ctx.jsonKeyValue()) {
-      // TODO assert values are only assigned once
       switch (kvctx.jsonKey().jsonString().getText()) {
         case (Constants.JSON_NODEID):
           nodeID = kvctx.jsonValue().jsonString().getText();
@@ -205,7 +209,16 @@ public class SourcesCompilerVisitor {
           nodeType = kvctx.jsonValue().jsonString().getText();
       }
     }
-    // TODO assert values aren't null
+    if (nodeID == null) {
+      Errors.DebugUnexpectedTokenType("node without id", "visitGraphNode in source compiler");
+    }
+    if (nodeLabel == null) {
+      Errors.DebugUnexpectedTokenType("node without label", "visitGraphNode in source compiler");
+    }
+    if (nodeType == null) {
+      Errors.DebugUnexpectedTokenType("node without type", "visitGraphNode in source compiler");
+    }
+
     switch (nodeType) {
       case (Constants.JSON_NODE_BLOCK): {
         if (nodeLabel.matches(Constants.FACT_PREFIX_PRINCIPALID + "[0-9]+" + Constants.NAME_SEPARATOR + "[0-9]+")) {
@@ -225,9 +238,8 @@ public class SourcesCompilerVisitor {
       case (Constants.JSON_NODE_MISSING):
         return new StubNode(nodeID);
       default:
-        System.out.println("unrecognized node type:" + nodeType);
+        Errors.DebugUnexpectedTokenType(nodeType, "visitGraphNode in sources compiler");
     }
-    Errors.DebugUnexpectedTokenType(nodeType, "visitGraphNode");
     return null;
   }
 
@@ -235,7 +247,6 @@ public class SourcesCompilerVisitor {
     String fromID = null;
     String toID = null;
     for (JsonKeyValueContext kvctx : ctx.jsonKeyValue()) {
-      // TODO assert IDs are only assigned once
       switch (kvctx.jsonKey().jsonString().getText()) {
         case (Constants.JSON_EDGEFROM):
           fromID = Node.ArrowEndpointToNode(kvctx.jsonValue().jsonString().getText());
@@ -243,7 +254,13 @@ public class SourcesCompilerVisitor {
           toID = Node.ArrowEndpointToNode(kvctx.jsonValue().jsonString().getText());
       }
     }
-    // TODO assert IDs aren't null
+    if (fromID == null) {
+      Errors.DebugUnexpectedTokenType("edge without origin", "visitGraphEdge in source compiler");
+    }
+    if (toID == null) {
+      Errors.DebugUnexpectedTokenType("edge without target", "visitGraphEdge in source compiler");
+    }
+    
     Node from = null;
     Node to = null;
     for (Node node : nodes) {
@@ -258,7 +275,12 @@ public class SourcesCompilerVisitor {
         break;
       }
     }
-    // TODO assert from and to aren't null
+    if (from == null) {
+      Errors.DebugUnexpectedTokenType("edge with wrong origin", "visitGraphEdge in source compiler");
+    }
+    if (to == null) {
+      Errors.DebugUnexpectedTokenType("edge with wrong target", "visitGraphEdge in source compiler");
+    }
     
     return new Edge(from, to);
   }
