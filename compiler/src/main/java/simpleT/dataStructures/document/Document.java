@@ -4,6 +4,11 @@ import java.util.LinkedList;
 
 import simpleT.Constants;
 
+/**
+ * A class used to manipulte text somewhat efficiently.
+ * All methods change the original document but also return it,
+ * so that they can be chaned nicely, for example "doc.indent().endl()"
+ */
 public class Document {
   public LinkedList<StringBuilder> doc;
   
@@ -21,20 +26,36 @@ public class Document {
     doc.add(new StringBuilder(s));
   }
 
-  public void append(Document doc2) {
+  public Document append(Document doc2) {
     doc.addAll(doc2.doc);
+    return this;
   }
 
-  public void indent() {
+  public Document indent() {
     for (int i = 0; i < doc.size(); i++) {
       doc.get(i).insert(0, Constants.INDENTATION);
     }
+    return this;
   }
 
-  public void indent(int n) {
+  public Document indent(int n) {
     for (int i = 0; i < n; i++) {
       indent();
     }
+    return this;
+  }
+
+  public Document endl() {
+    append(new Document(Constants.LINE_BREAK));
+    return this;
+  }
+
+
+  public Document endl(int n) {
+    for (int i = 0; i < n; i++) {
+      endl();
+    }
+    return this;
   }
 
   public Document clone() {
