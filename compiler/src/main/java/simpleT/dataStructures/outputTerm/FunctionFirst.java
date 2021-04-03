@@ -21,6 +21,6 @@ public class FunctionFirst extends OutputTerm {
 
   @Override
   public String render() {
-    return OutputFormatting.term(Constants.T_FIRST, subterm);
+    return OutputFormatting.term(Constants.ST_FIRST, subterm);
   }
 }

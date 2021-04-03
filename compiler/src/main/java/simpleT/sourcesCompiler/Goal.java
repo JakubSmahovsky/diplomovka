@@ -8,7 +8,7 @@ import simpleT.dataStructures.outputTerm.OutputTerm;
 
 public class Goal {
   public boolean persistent;
-  public String name; 
+  public String name;
   public ArrayList<OutputTerm> terms;
   public boolean intruderGoal;
 
@@ -48,13 +48,10 @@ public class Goal {
 
   @Override
   public String toString() {
-    String description = intruderGoal ? "intruder learns " : "establish fact ";
-    String fact;
     if (intruderGoal) {
-      fact = terms.get(0).render();
+      return "intruder learns " + terms.get(0).render();
     } else {
-      fact = (persistent ? "!" : "") + OutputFormatting.term(name, terms);
+      return "establish fact " + OutputFormatting.fact(persistent, name, terms);
     }
-    return description + fact;
   }
 }

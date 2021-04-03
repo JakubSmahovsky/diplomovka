@@ -13,7 +13,6 @@ public class SourceGroup implements Comparable<SourceGroup>{
     this.sources = sources;
   }
 
-
   public Document render(){
     Document doc = new Document("Group: " + goal);
     for (Source source : sources) {

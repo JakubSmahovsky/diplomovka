@@ -18,4 +18,20 @@ public class OutputFormatting {
   public static String term(String symbol, OutputTerm term) {
     return term(symbol, Arrays.asList(term));
   }
+
+  public static String fact(boolean persistent, String symbol, List<? extends OutputTerm> terms) {
+    if (persistent) {
+      return Constants.PERSISTENT + term(symbol, terms);
+    } else {
+      return term(symbol, terms);
+    }
+  }
+
+  public static String fact(boolean persistent, String symbol, OutputTerm term) {
+    if (persistent) {
+      return Constants.PERSISTENT + term(symbol, term);
+    } else {
+      return term(symbol, term);
+    }
+  }
 }
