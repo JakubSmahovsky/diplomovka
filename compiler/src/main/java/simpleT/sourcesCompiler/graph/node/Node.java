@@ -23,7 +23,8 @@ public class Node {
     this.parents = new ArrayList<>();
   }
 
-  @Override public String toString(){
+  @Override
+  public String toString(){
     return label.isEmpty() ? "Stub" : label;
   }
 

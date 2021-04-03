@@ -30,11 +30,13 @@ public class FunctionSign extends Term {
     this.message = original.message.getNormalForm();
   }
 
-  @Override public NormalFormTypeOrder getTypeOrder() {
+  @Override
+  public NormalFormTypeOrder getTypeOrder() {
     return NormalFormTypeOrder.FunctionSign;
   }
 
-  @Override public int normalFormCompareTo(Term term){
+  @Override
+  public int normalFormCompareTo(Term term){
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
@@ -48,11 +50,13 @@ public class FunctionSign extends Term {
     return message.compareTo(functionSign.message);
   }
 
-  @Override public Term getNormalForm() {
+  @Override
+  public Term getNormalForm() {
     return normalForm;
   }
 
-  @Override public boolean equals(Object obj) {
+  @Override
+  public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
@@ -67,26 +71,31 @@ public class FunctionSign extends Term {
     return key.equals(functionSign.key) && message.equals(functionSign.message);
   }
 
-  @Override public String render(){
+  @Override
+  public String render(){
     return BuilderFormatting.fact(Constants.T_SIGN, Arrays.asList(message, key), null);
   }
 
-  @Override public String render(STBlock block){
+  @Override
+  public String render(STBlock block){
     return BuilderFormatting.fact(Constants.T_SIGN, Arrays.asList(message, key), block);
   }
 
-  @Override public boolean isDeconstructionTerm() {
+  @Override
+  public boolean isDeconstructionTerm() {
     return false;
   }
 
-  @Override public List<Variable> freeVariables(){
+  @Override
+  public List<Variable> freeVariables(){
     ArrayList<Variable> result = new ArrayList<>();
     result.addAll(key.freeVariables());
     result.addAll(message.freeVariables());
     return result;
   }
 
-  @Override public void verifySignature(Term pk, Term message, TermContext pkCtx, TermContext messageCtx, TermContext signatureCtx) {
+  @Override
+  public void verifySignature(Term pk, Term message, TermContext pkCtx, TermContext messageCtx, TermContext signatureCtx) {
     if (!pk.getNormalForm().verifyPk(key, pkCtx)) {
       Errors.ErrorSignVerifKeyNotMatch(pkCtx);
     }

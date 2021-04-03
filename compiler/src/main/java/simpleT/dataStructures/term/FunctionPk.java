@@ -24,11 +24,13 @@ public class FunctionPk extends Term {
     this.sk = original.sk.getNormalForm();
   }
 
-  @Override public NormalFormTypeOrder getTypeOrder(){
+  @Override
+  public NormalFormTypeOrder getTypeOrder(){
     return NormalFormTypeOrder.FunctionPk;
   }
 
-  @Override public int normalFormCompareTo(Term term) {
+  @Override
+  public int normalFormCompareTo(Term term) {
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
@@ -38,11 +40,13 @@ public class FunctionPk extends Term {
     return sk.normalFormCompareTo(functionPk.sk);
   }
 
-  @Override public Term getNormalForm() {
+  @Override
+  public Term getNormalForm() {
     return normalForm;
   }
 
-  @Override public boolean equals(Object obj) {
+  @Override
+  public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
@@ -56,27 +60,33 @@ public class FunctionPk extends Term {
     return sk.equals(((FunctionPk)term).sk);
   }
 
-  @Override public String render() {
+  @Override
+  public String render() {
     return BuilderFormatting.fact(Constants.T_PK, sk, null);
   }
 
-  @Override public String render(STBlock block) {
+  @Override
+  public String render(STBlock block) {
     return BuilderFormatting.fact(Constants.T_PK, sk, block);
   }
 
-  @Override public boolean isDeconstructionTerm() {
+  @Override
+  public boolean isDeconstructionTerm() {
     return false;
   }
 
-  @Override public List<Variable> freeVariables(){
+  @Override
+  public List<Variable> freeVariables(){
     return sk.freeVariables();
   }
 
-  @Override public boolean verifyPk(Term sk, TermContext pkCtx) {
+  @Override
+  public boolean verifyPk(Term sk, TermContext pkCtx) {
     return this.sk.equals(sk);
   }
 
-  @Override public boolean verifyPk(Term sk) {
+  @Override
+  public boolean verifyPk(Term sk) {
     return this.sk.equals(sk);
   }
 }

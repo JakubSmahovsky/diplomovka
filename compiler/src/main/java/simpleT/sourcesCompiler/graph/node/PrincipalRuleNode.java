@@ -15,13 +15,15 @@ public class PrincipalRuleNode extends Node {
     this.block = model.blocks.get(blockID);
   }
 
-  @Override public Description renderDescription() {
+  @Override
+  public Description renderDescription() {
     String printLabel = block.principal.renderOutput() + "'s block nr. " + block.rangeEnd;
     String docLine = "Intruder may receive it in messages after " + printLabel + ".";
     return new Description(new Document(docLine), new Document(docLine), this, printLabel);
   }
 
-  @Override public String toString(){
+  @Override
+  public String toString(){
     return "Block(" + super.toString() + ")";
   }
 }

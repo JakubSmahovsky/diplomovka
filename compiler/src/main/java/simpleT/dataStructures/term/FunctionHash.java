@@ -27,11 +27,13 @@ public class FunctionHash extends Term {
     this.subterm = original.subterm.getNormalForm();
   }
 
-  @Override public NormalFormTypeOrder getTypeOrder() {
+  @Override
+  public NormalFormTypeOrder getTypeOrder() {
     return NormalFormTypeOrder.FunctionHash;
   }
 
-  @Override public int normalFormCompareTo(Term term) {
+  @Override
+  public int normalFormCompareTo(Term term) {
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
@@ -41,11 +43,13 @@ public class FunctionHash extends Term {
     return subterm.normalFormCompareTo(functionHash.subterm);
   }
 
-  @Override public Term getNormalForm() {
+  @Override
+  public Term getNormalForm() {
     return normalForm;
   }
 
-  @Override public boolean equals(Object obj) {
+  @Override
+  public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
@@ -59,19 +63,23 @@ public class FunctionHash extends Term {
     return subterm.equals(((FunctionHash)term).subterm);
   }
 
-  @Override public String render() {
+  @Override
+  public String render() {
     return BuilderFormatting.fact(Constants.T_HASH, subterm, null);
   }
 
-  @Override public String render(STBlock block) {
+  @Override
+  public String render(STBlock block) {
     return BuilderFormatting.fact(Constants.T_HASH, subterm, block);
   }
 
-  @Override public boolean isDeconstructionTerm() {
+  @Override
+  public boolean isDeconstructionTerm() {
     return false;
   }
 
-  @Override public List<Variable> freeVariables() {
+  @Override
+  public List<Variable> freeVariables() {
     return subterm.freeVariables();
   }
 }

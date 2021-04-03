@@ -38,11 +38,13 @@ public class Exponentiation extends Term {
     Collections.sort(this.exponent);
   }
 
-  @Override public NormalFormTypeOrder getTypeOrder() {
+  @Override
+  public NormalFormTypeOrder getTypeOrder() {
     return NormalFormTypeOrder.Exponentiation;
   }
 
-  @Override public int normalFormCompareTo(Term term) {
+  @Override
+  public int normalFormCompareTo(Term term) {
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
@@ -59,11 +61,13 @@ public class Exponentiation extends Term {
     return Integer.compare(this.exponent.size(), exponentiation.exponent.size());
   }
 
-  @Override public Term getNormalForm() {
+  @Override
+  public Term getNormalForm() {
     return normalForm;
   }
 
-  @Override public boolean equals(Object obj) {
+  @Override
+  public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
@@ -84,7 +88,8 @@ public class Exponentiation extends Term {
     return true;
   }
 
-  @Override public String render() {
+  @Override
+  public String render() {
     ArrayList<Term> subterms = new ArrayList<>();
     subterms.add(base);
     subterms.addAll(exponent);
@@ -99,7 +104,8 @@ public class Exponentiation extends Term {
     return String.join(Constants.T_EXP, substrings);
   }
 
-  @Override public String render(STBlock block) {
+  @Override
+  public String render(STBlock block) {
     ArrayList<Term> subterms = new ArrayList<>();
     subterms.add(base);
     subterms.addAll(exponent);
@@ -114,11 +120,13 @@ public class Exponentiation extends Term {
     return String.join(Constants.T_EXP, substrings);
   }
 
-  @Override public boolean isDeconstructionTerm() {
+  @Override
+  public boolean isDeconstructionTerm() {
     return false;
   }
 
-  @Override public List<Variable> freeVariables(){
+  @Override
+  public List<Variable> freeVariables(){
     return new ArrayList<>();
   }
 }

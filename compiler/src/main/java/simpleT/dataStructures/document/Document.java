@@ -45,7 +45,8 @@ public class Document {
     return clone;
   }
 
-  @Override public String toString() {
+  @Override
+  public String toString() {
     return String.join(Constants.LINE_BREAK, doc);
   }
 }

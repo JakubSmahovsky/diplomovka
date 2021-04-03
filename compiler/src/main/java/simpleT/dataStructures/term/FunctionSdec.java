@@ -19,21 +19,25 @@ public class FunctionSdec extends Term{
     this.normalForm = decryptedValue.getNormalForm();
   }
 
-  @Override public NormalFormTypeOrder getTypeOrder() {
+  @Override
+  public NormalFormTypeOrder getTypeOrder() {
     return NormalFormTypeOrder.NON_NORMAL;
   }
 
-  @Override public int normalFormCompareTo(Term term) {
+  @Override
+  public int normalFormCompareTo(Term term) {
     // throw error, this is not a normal form
     Errors.DebugUnexpectedCall("normalFormCompareTo", "FunctionSdec");
     return 0;
   }
 
-  @Override public Term getNormalForm() {
+  @Override
+  public Term getNormalForm() {
     return normalForm;
   }
 
-  @Override public boolean equals(Object obj) {
+  @Override
+  public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
@@ -43,19 +47,23 @@ public class FunctionSdec extends Term{
     return this.getNormalForm().equals(((Term)obj).getNormalForm());
   }
 
-  @Override public String render(){
+  @Override
+  public String render(){
     return BuilderFormatting.fact(Constants.T_SDEC, Arrays.asList(encryptedValue, key), null);
   }
 
-  @Override public String render(STBlock block){
+  @Override
+  public String render(STBlock block){
     return BuilderFormatting.fact(Constants.T_SDEC, Arrays.asList(encryptedValue, key), block);
   }
 
-  @Override public boolean isDeconstructionTerm() {
+  @Override
+  public boolean isDeconstructionTerm() {
     return true;
   }
 
-  @Override public Deconstruction createDeconstruction(Term assignedTo) {
+  @Override
+  public Deconstruction createDeconstruction(Term assignedTo) {
     return new Deconstruction(encryptedValue, new FunctionSenc(key, assignedTo));
   }
 }

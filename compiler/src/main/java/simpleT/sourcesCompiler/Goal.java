@@ -46,7 +46,8 @@ public class Goal {
     return true;
   }
 
-  @Override public String toString() {
+  @Override
+  public String toString() {
     String description = intruderGoal ? "intruder learns " : "establish fact ";
     String fact;
     if (intruderGoal) {

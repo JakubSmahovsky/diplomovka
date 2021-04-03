@@ -24,39 +24,47 @@ public class FunctionVerify extends Term {
     this.signature = signature;
   }
 
-  @Override public NormalFormTypeOrder getTypeOrder() {
+  @Override
+  public NormalFormTypeOrder getTypeOrder() {
     return NormalFormTypeOrder.NON_NORMAL;
   }
 
-  @Override public int normalFormCompareTo(Term term){
+  @Override
+  public int normalFormCompareTo(Term term){
     // throw error, this is not a normal form
     Errors.DebugUnexpectedCall("normalFormCompareTo", "FunctionVerify");
     return 0;
   }
 
-  @Override public Term getNormalForm() {
+  @Override
+  public Term getNormalForm() {
     return null;
   }
 
-  @Override public boolean equals(Object obj) {
+  @Override
+  public boolean equals(Object obj) {
     // throw error, this does not have a valid normal form
     Errors.DebugUnexpectedCall("equals", "FunctionVerify");
     return false;
   }
 
-  @Override public String render(){
+  @Override
+  public String render(){
     return BuilderFormatting.fact(Constants.T_VERIFY, Arrays.asList(signature , message, key), null);
   }
 
-  @Override public String render(STBlock block){
+  @Override
+  public String render(STBlock block){
     return BuilderFormatting.fact(Constants.T_VERIFY, Arrays.asList(signature, message, key), block);
   }
 
-  @Override public boolean isDeconstructionTerm() {
+  @Override
+  public boolean isDeconstructionTerm() {
     return true;
   }
 
-  @Override public List<Variable> freeVariables(){
+  @Override
+  public List<Variable> freeVariables(){
     ArrayList<Variable> result = new ArrayList<>();
     result.addAll(key.freeVariables());
     result.addAll(message.freeVariables());

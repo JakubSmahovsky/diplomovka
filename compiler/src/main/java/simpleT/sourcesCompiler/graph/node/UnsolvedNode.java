@@ -19,12 +19,14 @@ public class UnsolvedNode extends Node {
     return label.substring(4, label.length()-1);
   }
 
-  @Override public Description renderDescription() {
+  @Override
+  public Description renderDescription() {
     StringBuilder myLine = new StringBuilder("Intruder gets it from unknown source (source endpoint).");
     return new Description(new Document(myLine), new Document(new StringBuilder(myLine)), null, null);
   }
 
-  @Override public String toString(){
+  @Override
+  public String toString(){
     return "Unsolved(" + term + ")";
   }
 }

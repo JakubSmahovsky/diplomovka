@@ -19,7 +19,8 @@ public class Deconstruction {
     this.substitution = substitution;
   }
 
-  @Override public boolean equals(Object obj) {
+  @Override
+  public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }

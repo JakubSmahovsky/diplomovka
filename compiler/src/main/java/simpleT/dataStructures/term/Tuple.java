@@ -30,11 +30,13 @@ public class Tuple extends Term{
     }
   }
 
-  @Override public NormalFormTypeOrder getTypeOrder() {
+  @Override
+  public NormalFormTypeOrder getTypeOrder() {
     return NormalFormTypeOrder.Tuple;
   }
 
-  @Override public int normalFormCompareTo(Term term) {
+  @Override
+  public int normalFormCompareTo(Term term) {
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
@@ -51,11 +53,13 @@ public class Tuple extends Term{
     return Integer.compare(this.subterms.size(), tuple.subterms.size());
   }
 
-  @Override public Term getNormalForm() {
+  @Override
+  public Term getNormalForm() {
     return normalForm;
   }
 
-  @Override public boolean equals(Object obj) {
+  @Override
+  public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
@@ -74,7 +78,8 @@ public class Tuple extends Term{
     return true;
   }
 
-  @Override public List<Variable> extractKnowledge() {
+  @Override
+  public List<Variable> extractKnowledge() {
     List<Variable> result = new ArrayList<>();
     for (Term term : subterms) {
       result.addAll(term.extractKnowledge());
@@ -82,7 +87,8 @@ public class Tuple extends Term{
     return result;
   }
 
-  @Override public String render() {
+  @Override
+  public String render() {
     ArrayList<String> renderedSubterms = new ArrayList<>();
     for (Term subterm : subterms) {
       renderedSubterms.add(subterm.render());
@@ -90,7 +96,8 @@ public class Tuple extends Term{
     return Constants.T_TUPLE_OPEN + String.join(Constants.COMMA_SEPARATOR, renderedSubterms) + Constants.T_TUPLE_CLOSE;
   }
 
-  @Override public String render(STBlock block) {
+  @Override
+  public String render(STBlock block) {
     for (Deconstruction dec : block.deconstructed) {
       if (dec.substituted.equals(this)) {
         return dec.substitution.render();
@@ -104,11 +111,13 @@ public class Tuple extends Term{
     return Constants.T_TUPLE_OPEN + String.join(Constants.COMMA_SEPARATOR, renderedSubterms) + Constants.T_TUPLE_CLOSE;
   }
 
-  @Override public boolean isDeconstructionTerm() {
+  @Override
+  public boolean isDeconstructionTerm() {
     return false;
   }
 
-  @Override public List<Variable> freeVariables() {
+  @Override
+  public List<Variable> freeVariables() {
     ArrayList<Variable> result = new ArrayList<>();
     for (Term subterm : subterms) {
       result.addAll(subterm.freeVariables());
@@ -125,7 +134,8 @@ public class Tuple extends Term{
    * want to substitute this Tuple for the entire Term on the right.
    * Afterwards we want to recursively assign subterms.
    */
-  @Override public boolean assign(Term right, boolean rightIndirection, STBlock block) {
+  @Override
+  public boolean assign(Term right, boolean rightIndirection, STBlock block) {
     // spread
     if (right.isDeconstructionTerm()) {
       Deconstruction dec = right.createDeconstruction(this);

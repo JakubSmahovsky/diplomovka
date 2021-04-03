@@ -61,7 +61,8 @@ public abstract class Term implements Comparable<Term>{
 
   public abstract Term getNormalForm();
 
-  @Override public abstract boolean equals(Object obj);
+  @Override
+  public abstract boolean equals(Object obj);
 
   /**
    * Extracts variables that can be learnt from a transparent Term.

@@ -79,11 +79,13 @@ public class Variable extends Term {
     return new Variable();
   }
 
-  @Override public NormalFormTypeOrder getTypeOrder() {
+  @Override
+  public NormalFormTypeOrder getTypeOrder() {
     return NormalFormTypeOrder.Variable;
   }
 
-  @Override public int normalFormCompareTo(Term term) {
+  @Override
+  public int normalFormCompareTo(Term term) {
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
@@ -92,11 +94,13 @@ public class Variable extends Term {
     return Integer.compare(this.id, ((Variable)term).id);
   }
 
-  @Override public Term getNormalForm() {
+  @Override
+  public Term getNormalForm() {
     return normalForm;
   }
 
-  @Override public boolean equals(Object obj) {
+  @Override
+  public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
@@ -120,17 +124,20 @@ public class Variable extends Term {
     return this.name.equals(variable.name);
   }
 
-  @Override public List<Variable> extractKnowledge() {
+  @Override
+  public List<Variable> extractKnowledge() {
     return Arrays.asList(this);
   }
 
-  @Override public String render(){
+  @Override
+  public String render(){
     // rename variables but not temporals
     String renderedName = sort == VariableSort.TEMPORAL ? name : Constants.PREFIX_VARIABLEID + id;
     return Constants.sortString(sort) + renderedName;
   }
 
-  @Override public String render(STBlock block) {
+  @Override
+  public String render(STBlock block) {
     for (Deconstruction dec : block.deconstructed) {
       if (dec.substituted.equals(this)) {
         return dec.substitution.render();
@@ -183,15 +190,18 @@ public class Variable extends Term {
     }
   }
 
-  @Override public boolean isDeconstructionTerm() {
+  @Override
+  public boolean isDeconstructionTerm() {
     return false;
   }
 
-  @Override public List<Variable> freeVariables() {
+  @Override
+  public List<Variable> freeVariables() {
     return Arrays.asList(this);    
   }
 
-  @Override public boolean assign(Term right, boolean rightIndirection, STBlock block) {
+  @Override
+  public boolean assign(Term right, boolean rightIndirection, STBlock block) {
     // if this is properly defined (principal already knew it) assert equality
     if (!this.placeholder) {
       block.unaryEqualsPending.add(this);

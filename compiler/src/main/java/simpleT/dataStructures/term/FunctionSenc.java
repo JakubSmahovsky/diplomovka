@@ -31,11 +31,13 @@ public class FunctionSenc extends Term {
     this.value = original.value.getNormalForm();
   }
 
-  @Override public NormalFormTypeOrder getTypeOrder() {
+  @Override
+  public NormalFormTypeOrder getTypeOrder() {
     return NormalFormTypeOrder.FunctionSenc;
   }
 
-  @Override public int normalFormCompareTo(Term term) {
+  @Override
+  public int normalFormCompareTo(Term term) {
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
@@ -49,11 +51,13 @@ public class FunctionSenc extends Term {
     return value.compareTo(functionSenc.value);
   }
 
-  @Override public Term getNormalForm() {
+  @Override
+  public Term getNormalForm() {
     return normalForm;
   }
 
-  @Override public boolean equals(Object obj) {
+  @Override
+  public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
@@ -67,11 +71,13 @@ public class FunctionSenc extends Term {
     return (key.equals(((FunctionSenc)term).key) && value.equals(((FunctionSenc)term).value));
   }
 
-  @Override public String render(){
+  @Override
+  public String render(){
     return BuilderFormatting.fact(Constants.T_SENC, Arrays.asList(value, key), null);
   }
 
-  @Override public String render(STBlock block){
+  @Override
+  public String render(STBlock block){
     for (Deconstruction dec : block.deconstructed) {
       if (dec.substituted.equals(this)) {
         return dec.substitution.render();
@@ -81,18 +87,21 @@ public class FunctionSenc extends Term {
     return BuilderFormatting.fact(Constants.T_SENC, Arrays.asList(value, key), block);
   }
 
-  @Override public boolean isDeconstructionTerm() {
+  @Override
+  public boolean isDeconstructionTerm() {
     return false;
   }
 
-  @Override public List<Variable> freeVariables() {
+  @Override
+  public List<Variable> freeVariables() {
     ArrayList<Variable> result = new ArrayList<>();
     result.addAll(key.freeVariables());
     result.addAll(value.freeVariables());
     return result;
   }
 
-  @Override public Term symmetric_decrypt(Term key, TermContext keyCtx, TermContext valueCtx) {
+  @Override
+  public Term symmetric_decrypt(Term key, TermContext keyCtx, TermContext valueCtx) {
     if (!this.key.equals(key)) {
       Errors.ErrorSymmetricKeyNotMatch(keyCtx);
     }

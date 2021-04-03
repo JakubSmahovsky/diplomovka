@@ -21,11 +21,13 @@ public class Constant extends Term {
     return constants++;
   }
 
-  @Override public NormalFormTypeOrder getTypeOrder() {
+  @Override
+  public NormalFormTypeOrder getTypeOrder() {
     return NormalFormTypeOrder.Constant;
   }
 
-  @Override public int normalFormCompareTo(Term term) {
+  @Override
+  public int normalFormCompareTo(Term term) {
     int result = this.getTypeOrder().compareTo(term.getTypeOrder());
     if (result != 0) {
       return result;
@@ -34,7 +36,8 @@ public class Constant extends Term {
     return Integer.compare(this.id, ((Constant)term).id);
   }
 
-  @Override public boolean equals(Object obj) {
+  @Override
+  public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
@@ -48,23 +51,28 @@ public class Constant extends Term {
     return false;
   }
 
-  @Override public Term getNormalForm() {
+  @Override
+  public Term getNormalForm() {
     return this;
   }
 
-  @Override public List<Variable> extractKnowledge() {
+  @Override
+  public List<Variable> extractKnowledge() {
     return new ArrayList<>();
   };
 
-  @Override public String render() {
+  @Override
+  public String render() {
     return Constants.CONSTANT_OPEN + word + Constants.CONSTANT_CLOSE;
   }
 
-  @Override public String render(STBlock block) {
+  @Override
+  public String render(STBlock block) {
     return render();
   }
 
-  @Override public boolean isDeconstructionTerm(){
+  @Override
+  public boolean isDeconstructionTerm(){
     return false;
   }
 
@@ -72,7 +80,8 @@ public class Constant extends Term {
     return new ArrayList<>(); 
   }
 
-  @Override public boolean assign(Term right, boolean rightIndirection, STBlock block) {
+  @Override
+  public boolean assign(Term right, boolean rightIndirection, STBlock block) {
     if (!rightIndirection) {
       block.principal.model.builtins.restriction_eq = true;
       block.actions.add(Fact.equality(this, right));

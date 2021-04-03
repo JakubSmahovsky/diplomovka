@@ -11,31 +11,38 @@ public class ValueTrue extends Term {
     return instance;
   }
 
-  @Override public NormalFormTypeOrder getTypeOrder() {
+  @Override
+  public NormalFormTypeOrder getTypeOrder() {
     return NormalFormTypeOrder.ValueTrue;
   }
 
-  @Override public int normalFormCompareTo(Term term) {
+  @Override
+  public int normalFormCompareTo(Term term) {
     return this.getTypeOrder().compareTo(term.getTypeOrder());
   }
 
-  @Override public Term getNormalForm() {
+  @Override
+  public Term getNormalForm() {
     return this;
   }
 
-  @Override public boolean equals(Object obj) {
+  @Override
+  public boolean equals(Object obj) {
     return this == obj;
   }
 
-  @Override public String render() {
+  @Override
+  public String render() {
     return Constants.ST_TRUE;
   }
 
-  @Override public String render(STBlock block) {
+  @Override
+  public String render(STBlock block) {
     return render();
   }
 
-  @Override public boolean isDeconstructionTerm() {
+  @Override
+  public boolean isDeconstructionTerm() {
     return false;
   }
 }

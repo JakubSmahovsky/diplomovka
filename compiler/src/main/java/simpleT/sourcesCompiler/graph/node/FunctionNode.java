@@ -87,7 +87,8 @@ public class FunctionNode extends Node{
     return null;
   }
 
-  @Override public Description renderDescription() {
+  @Override
+  public Description renderDescription() {
     if (function.equals(Constants.JSON_FUNCTION_LABEL_FRESH)) {
       Document doc = new Document();
       doc.doc.add(new StringBuilder("Intruder may generate it."));
@@ -139,7 +140,8 @@ public class FunctionNode extends Node{
     return new Description(shortDoc, longDoc, rule, intruderAction);
   }
 
-  @Override public String toString(){
+  @Override
+  public String toString(){
     return "Function(" + printLabel + ")";
   }
 }
