@@ -6,11 +6,11 @@ import simpleT.sourcesCompiler.graph.node.Node;
 public class Description {
   // documentation of path from goal to rule
   public final Document shortDoc;
-  // documentation of entire tree including unknown sources (not going past rule)
+  // documentation of entire tree including unknown sources !! use doc.clone() if it's the same as shortDoc !!
   public final Document longDoc;
-  // first rule encountered going up from goal (should hopefully only be one and not cause collisions)
+  // first rule encountered going up from goal
   public final Node rule;
-  // a tag we will use to describe source, conatins name of rule or most important function
+  // tag we use to describe source: rule name or the most important function
   public String sourceDescription;
 
   public Description(Document shortDoc, Document longDoc, Node rule, String sourceDescription) {

@@ -123,7 +123,7 @@ public final class Constants{
   public static final String JSON_EDGETO = "jgeTarget";
   public static final String JSON_NODE_BLOCK = "isProtocolRule";
   public static final String JSON_NODE_MISSING = "missingNodePrem";
-  public static final String JSON_NODE_FUNCTION = "isIntruderRule";
+  public static final String JSON_NODE_ADVERSARY = "isIntruderRule";
   public static final String JSON_NODE_FRESH = "isFreshRule";
   public static final String JSON_NODE_UNSOLVED = "unsolvedActionAtom";
   public static final String JSON_FUNCTION_LABEL_SEND = "Send";

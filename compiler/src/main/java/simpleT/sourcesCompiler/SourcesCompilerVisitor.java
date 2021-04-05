@@ -11,6 +11,8 @@ import simpleT.errors.Errors;
 import simpleT.sourcesCompiler.goal.*;
 import simpleT.sourcesCompiler.graph.*;
 import simpleT.sourcesCompiler.graph.node.*;
+import simpleT.sourcesCompiler.graph.node.adversaryRuleNode.*;
+import simpleT.sourcesCompiler.graph.node.functionNode.*;
 import simpleT.sourcesParser.SourcesParser.*;
 
 public class SourcesCompilerVisitor {
@@ -229,8 +231,31 @@ public class SourcesCompilerVisitor {
           return new CustomRuleNode(nodeID, nodeLabel);
         }
       }
-      case (Constants.JSON_NODE_FUNCTION):
-        return new FunctionNode(nodeID, nodeLabel);
+      case (Constants.JSON_NODE_ADVERSARY): {
+        switch (nodeLabel) {
+          case Constants.JSON_FUNCTION_LABEL_COERCE:
+            return new CoerceRuleNode(nodeID, nodeLabel);
+          case Constants.JSON_FUNCTION_LABEL_FRESH:
+            return new FreshRuleNode(nodeID, nodeLabel);
+          case Constants.JSON_FUNCTION_LABEL_RECEIVE:
+            return new ReceiveRuleNode(nodeID, nodeLabel);
+          case Constants.JSON_FUNCTION_LABEL_SEND:
+            return new SendRuleNode(nodeID, nodeLabel);
+          default: {
+            // function application
+            // first name is the construction/deconstruction modifier, last name is the function symbol
+            String[] labelParts = nodeLabel.split(Constants.NAME_SEPARATOR);
+            if (labelParts[0].equals(Constants.JSON_FUNCTION_PREFIX_CONSTRUCT)) {
+              return new ConstructionNode(nodeID, labelParts[labelParts.length-1]);
+            } else if (labelParts[0].equals(Constants.JSON_FUNCTION_PREFIX_DECONSTRUCT)) {
+              return new DeconstructionNode(nodeID, labelParts[labelParts.length-1]);
+            } else {
+              Errors.DebugUnexpectedValueType("function prefix", labelParts[0], "parseLabel in FunctionNode");
+              return null;
+            }
+          }
+        }
+      }
       case (Constants.JSON_NODE_UNSOLVED):
         return new UnsolvedNode(nodeID, nodeLabel);
       case (Constants.JSON_NODE_FRESH):

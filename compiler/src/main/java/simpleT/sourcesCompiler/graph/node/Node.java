@@ -2,7 +2,6 @@ package simpleT.sourcesCompiler.graph.node;
 
 import java.util.ArrayList;
 
-import simpleT.errors.Errors;
 import simpleT.sourcesCompiler.graph.Description;
 
 /**
@@ -26,13 +25,9 @@ public abstract class Node {
   public abstract String render();
 
   /**
-   * Search depth-first throught parents and collect rendered
-   * printout of nodes' meaning. Do not search past protocol rules.
+   * Search depth-first throught parents and collect rendered printout of nodes' meaning.
    */
-  public Description renderDescription() {
-    Errors.DebugMissingImplementation("renderDescription", this.render());
-    return null;
-  };
+  public abstract Description renderDescription();
 
   /**
    * Speciffically for compiling edges, take a Source node or 
