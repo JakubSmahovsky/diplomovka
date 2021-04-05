@@ -1,13 +1,16 @@
 package simpleT.sourcesCompiler.graph.node.functionNode;
 
 import simpleT.Constants;
+import simpleT.dataStructures.outputTerm.OutputTerm;
 import simpleT.errors.Errors;
 import simpleT.sourcesCompiler.graph.node.Node;
 
 public abstract class FunctionNode extends Node{
+  protected final OutputTerm term;
   protected final String printLabel;
-  public FunctionNode(String id, String label) {
+  public FunctionNode(String id, String label, OutputTerm term) {
     super(id, label);
+    this.term = term;
     this.printLabel = tamarinToVP(label);
   }
 

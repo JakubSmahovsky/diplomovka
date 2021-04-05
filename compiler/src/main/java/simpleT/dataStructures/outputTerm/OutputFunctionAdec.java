@@ -25,6 +25,11 @@ public class OutputFunctionAdec extends OutputTerm{
 
   @Override
   public String render(){
-    return OutputFormatting.term(Constants.ST_ADEC, Arrays.asList(encryptedValue, key));
+    return OutputFormatting.term(Constants.ST_ADEC, Arrays.asList(key, encryptedValue));
+  }
+
+  @Override
+  public boolean reversedArguments() {
+    return true;
   }
 }

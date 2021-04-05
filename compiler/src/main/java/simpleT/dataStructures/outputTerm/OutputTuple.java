@@ -11,6 +11,20 @@ public class OutputTuple extends OutputTerm{
     this.subterms = subterms;
   }
 
+  public OutputTuple(OutputTerm fst, OutputTerm snd) {
+    this.subterms = new ArrayList<>();
+    if (fst instanceof OutputTuple) {
+      subterms.addAll(((OutputTuple)fst).subterms);
+    } else {
+      subterms.add(fst);
+    }
+    if (snd instanceof OutputTuple) {
+      subterms.addAll(((OutputTuple)snd).subterms);
+    } else {
+      subterms.add(snd);
+    }
+  }
+
   @Override
   public boolean match(OutputTerm term) {
     if (!(term instanceof OutputTuple)) {
@@ -36,6 +50,4 @@ public class OutputTuple extends OutputTerm{
     }
     return Constants.ST_TUPLE_OPEN + String.join(Constants.COMMA_SEPARATOR, renders) + Constants.ST_TUPLE_CLOSE;
   }
-
-   
 }

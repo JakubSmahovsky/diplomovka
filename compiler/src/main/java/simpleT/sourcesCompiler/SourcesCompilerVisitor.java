@@ -66,7 +66,7 @@ public class SourcesCompilerVisitor {
       terms.add(visitTerm(tctx));
     }
     if (persistent && symbol.equals(Constants.INTRUDER_KNOWS_OUTPUT)) {
-      return new IntruderGoal(terms.get(0)); // intruder goal fact contains exactly 1 term
+      return new AdversaryGoal(terms.get(0)); // intruder goal fact contains exactly 1 term
     } else {
       return new FactGoal(persistent, symbol, terms);
     }
@@ -120,6 +120,29 @@ public class SourcesCompilerVisitor {
   public OutputTerm visitFunction(FunctionContext ctx) {
     String functionName = ctx.IDENTIFIER().getText();
     switch (functionName) {
+      case Constants.T_FIRST: {
+        OutputTerm subterm = visitTerm(ctx.term(0));
+        return new FunctionFirst(subterm);
+      }
+      case Constants.T_SECOND: {
+        OutputTerm subterm = visitTerm(ctx.term(0));
+        return new FunctionSecond(subterm);
+      }
+      case Constants.T_PK: {
+        OutputTerm sk = visitTerm(ctx.term(0));
+        return new OutputFunctionPk(sk);
+      }
+      case Constants.T_SIGN: {
+        OutputTerm message = visitTerm(ctx.term(0));
+        OutputTerm key = visitTerm(ctx.term(1));
+        return new OutputFunctionSign(key, message);
+      }
+      case Constants.T_VERIFY: {
+        OutputTerm signature = visitTerm(ctx.term(0));
+        OutputTerm message = visitTerm(ctx.term(1));
+        OutputTerm key = visitTerm(ctx.term(2));
+        return new OutputFunctionVerify(key, message, signature);
+      }
       case Constants.T_SENC: {
         OutputTerm value = visitTerm(ctx.term(0));
         OutputTerm key = visitTerm(ctx.term(1));
@@ -144,13 +167,24 @@ public class SourcesCompilerVisitor {
         OutputTerm subterm = visitTerm(ctx.term(0));
         return new OutputFunctionHash(subterm);
       }
-      case Constants.T_FIRST: {
-        OutputTerm subterm = visitTerm(ctx.term(0));
-        return new FunctionFirst(subterm);
+      case Constants.T_EXP_WORD: {
+        OutputTerm base = visitTerm(ctx.term(0));
+        OutputTerm exponent = visitTerm(ctx.term(1));
+        return new OutputExponentiation(base, exponent);
       }
-      case Constants.T_SECOND: {
-        OutputTerm subterm = visitTerm(ctx.term(0));
-        return new FunctionSecond(subterm);
+      case Constants.T_MUL_WORD: {
+        OutputTerm left = visitTerm(ctx.term(0));
+        OutputTerm right = visitTerm(ctx.term(1));
+        return new OutputMultiplication(left, right);
+      }
+      case Constants.T_INVERSE: {
+        OutputTerm base = visitTerm(ctx.term(0));
+        return new OutputFunctionInverse(base);
+      }
+      case Constants.T_TUPLE_WORD: {
+        OutputTerm fst = visitTerm(ctx.term(0));
+        OutputTerm snd = visitTerm(ctx.term(1));
+        return new OutputTuple(fst, snd);
       }
     }
     Errors.DebugUnexpectedTokenType(ctx.IDENTIFIER().getText(), "visitFunction in sources compiler");
@@ -201,14 +235,21 @@ public class SourcesCompilerVisitor {
     String nodeID = null;
     String nodeLabel = null;
     String nodeType = null;
+    OutputTerm metaTerm = null;
     for (JsonKeyValueContext kvctx : ctx.jsonKeyValue()) {
       switch (kvctx.jsonKey().jsonString().getText()) {
         case (Constants.JSON_NODEID):
           nodeID = kvctx.jsonValue().jsonString().getText();
+          break;
         case (Constants.JSON_NODELABEL):
           nodeLabel = kvctx.jsonValue().jsonString().getText();
+          break;
         case (Constants.JSON_NODETYPE):
           nodeType = kvctx.jsonValue().jsonString().getText();
+          break;
+        case (Constants.JSON_NODEMETA):
+          metaTerm = visitGraphMetadata(kvctx.jsonValue().jsonObj());
+          break;
       }
     }
     if (nodeID == null) {
@@ -234,21 +275,21 @@ public class SourcesCompilerVisitor {
       case (Constants.JSON_NODE_ADVERSARY): {
         switch (nodeLabel) {
           case Constants.JSON_FUNCTION_LABEL_COERCE:
-            return new CoerceRuleNode(nodeID, nodeLabel);
+            return new CoerceRuleNode(nodeID, nodeLabel, metaTerm);
           case Constants.JSON_FUNCTION_LABEL_FRESH:
-            return new FreshRuleNode(nodeID, nodeLabel);
+            return new FreshRuleNode(nodeID, nodeLabel, metaTerm);
           case Constants.JSON_FUNCTION_LABEL_RECEIVE:
-            return new ReceiveRuleNode(nodeID, nodeLabel);
+            return new ReceiveRuleNode(nodeID, nodeLabel, metaTerm);
           case Constants.JSON_FUNCTION_LABEL_SEND:
-            return new SendRuleNode(nodeID, nodeLabel);
+            return new SendRuleNode(nodeID, nodeLabel, metaTerm);
           default: {
             // function application
             // first name is the construction/deconstruction modifier, last name is the function symbol
             String[] labelParts = nodeLabel.split(Constants.NAME_SEPARATOR);
             if (labelParts[0].equals(Constants.JSON_FUNCTION_PREFIX_CONSTRUCT)) {
-              return new ConstructionNode(nodeID, labelParts[labelParts.length-1]);
+              return new ConstructionNode(nodeID, labelParts[labelParts.length-1], metaTerm);
             } else if (labelParts[0].equals(Constants.JSON_FUNCTION_PREFIX_DECONSTRUCT)) {
-              return new DeconstructionNode(nodeID, labelParts[labelParts.length-1]);
+              return new DeconstructionNode(nodeID, labelParts[labelParts.length-1], metaTerm);
             } else {
               Errors.DebugUnexpectedValueType("function prefix", labelParts[0], "parseLabel in FunctionNode");
               return null;
@@ -257,13 +298,64 @@ public class SourcesCompilerVisitor {
         }
       }
       case (Constants.JSON_NODE_UNSOLVED):
-        return new UnsolvedNode(nodeID, nodeLabel);
+        return new UnsolvedNode(nodeID, nodeLabel, metaTerm);
       case (Constants.JSON_NODE_FRESH):
         return new FreshNode(nodeID);
       case (Constants.JSON_NODE_MISSING):
         return new StubNode(nodeID);
       default:
         Errors.DebugUnexpectedTokenType(nodeType, "visitGraphNode in sources compiler");
+    }
+    return null;
+  }
+
+  /**
+   * If there is exactly one conclusion with exactly one term, then return this term
+   * otherwise try action too
+   */
+  public OutputTerm visitGraphMetadata(JsonObjContext ctx) {
+    JsonObjContext block = null;
+    for (JsonKeyValueContext kvctx : ctx.jsonKeyValue()) {
+      if (kvctx.jsonKey().jsonString().getText().equals(Constants.JSON_NODEMETA_CONCLUSIONS)) {
+        if (kvctx.jsonValue().jsonArray().jsonValue().size() == 1) {
+          block = kvctx.jsonValue().jsonArray().jsonValue(0).jsonObj();
+        }
+        break;
+      }
+    }
+
+    if (block == null) {
+      for (JsonKeyValueContext kvctx : ctx.jsonKeyValue()) {
+        if (kvctx.jsonKey().jsonString().getText().equals(Constants.JSON_NODEMETA_ACTIONS)) {
+          if (kvctx.jsonValue().jsonArray().jsonValue().size() == 1) {
+            block = kvctx.jsonValue().jsonArray().jsonValue(0).jsonObj();
+          }
+          break;
+        }
+      }
+    }
+    if (block == null) {
+      return null;
+    }
+
+    JsonObjContext term = null;
+    for (JsonKeyValueContext kvctx : block.jsonKeyValue()) {
+      if (kvctx.jsonKey().jsonString().getText().equals(Constants.JSON_NODEMETA_TERMS)) {
+        if (kvctx.jsonValue().jsonArray().jsonValue().size() != 1) {
+          return null;
+        }
+        term = kvctx.jsonValue().jsonArray().jsonValue(0).jsonObj();
+      }
+    }
+
+    for (JsonKeyValueContext kvctx : term.jsonKeyValue()) {
+      if (kvctx.jsonKey().jsonString().getText().equals(Constants.JSON_NODEMETA_FULLTERM) ||
+          kvctx.jsonKey().jsonString().getText().equals(Constants.JSON_NODEMETA_CONSTANT)) {
+        if (kvctx.jsonValue().jsonString().term() == null) {
+          return null;
+        }
+        return visitTerm(kvctx.jsonValue().jsonString().term());
+      }
     }
     return null;
   }

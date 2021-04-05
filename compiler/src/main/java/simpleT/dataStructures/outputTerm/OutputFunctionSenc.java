@@ -25,4 +25,9 @@ public class OutputFunctionSenc extends OutputTerm {
   public String render() {
     return OutputFormatting.term(Constants.ST_SENC, Arrays.asList(key, value));
   }
+
+  @Override
+  public boolean reversedArguments() {
+    return true;
+  }
 }

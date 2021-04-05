@@ -25,4 +25,9 @@ public class OutputFunctionAenc extends OutputTerm {
   public String render() {
     return OutputFormatting.term(Constants.ST_AENC, Arrays.asList(key, value));
   }
+
+  @Override
+  public boolean reversedArguments() {
+    return true;
+  }
 }

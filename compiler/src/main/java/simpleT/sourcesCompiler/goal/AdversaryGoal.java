@@ -5,23 +5,23 @@ import simpleT.dataStructures.outputTerm.OutputTerm;
 /**
  * Goal stating that intruder needs to learn some term.
  */
-public class IntruderGoal extends Goal{
+public class AdversaryGoal extends Goal{
   public OutputTerm term;
 
-  public IntruderGoal(OutputTerm term) {
+  public AdversaryGoal(OutputTerm term) {
     this.term = term;
   }
 
   @Override
   public boolean match(Goal goal) {
-    if (!(goal instanceof IntruderGoal)){
+    if (!(goal instanceof AdversaryGoal)){
       return false;
     }
-    return this.term.match(((IntruderGoal)goal).term);
+    return this.term.match(((AdversaryGoal)goal).term);
   }
 
   @Override
   public String render() {
-    return "intruder learns " + term.render();
+    return "adversary learns " + term.render();
   }
 }

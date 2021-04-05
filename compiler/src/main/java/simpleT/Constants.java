@@ -111,14 +111,17 @@ public final class Constants{
   public static final String T_MUL = "*";
   public static final String T_INVERSE = "inv";
   public static final String T_EXP_WORD = "exp";
+  public static final String T_MUL_WORD = "Mult";
   public static final String T_TUPLE_OPEN = "<";
   public static final String T_TUPLE_CLOSE = ">";
+  public static final String T_TUPLE_WORD = "pair";
   // JSON Graph keys
   public static final String JSON_EDGES = "jgEdges";
   public static final String JSON_NODES = "jgNodes";
   public static final String JSON_NODEID = "jgnId";
   public static final String JSON_NODELABEL = "jgnLabel";
   public static final String JSON_NODETYPE = "jgnType";
+  public static final String JSON_NODEMETA = "jgnMetadata";
   public static final String JSON_EDGEFROM = "jgeSource";
   public static final String JSON_EDGETO = "jgeTarget";
   public static final String JSON_NODE_BLOCK = "isProtocolRule";
@@ -126,6 +129,11 @@ public final class Constants{
   public static final String JSON_NODE_ADVERSARY = "isIntruderRule";
   public static final String JSON_NODE_FRESH = "isFreshRule";
   public static final String JSON_NODE_UNSOLVED = "unsolvedActionAtom";
+  public static final String JSON_NODEMETA_CONCLUSIONS = "jgnConcs";
+  public static final String JSON_NODEMETA_ACTIONS = "jgnActs";
+  public static final String JSON_NODEMETA_TERMS = "jgnFactTerms";
+  public static final String JSON_NODEMETA_FULLTERM = "jgnShow";
+  public static final String JSON_NODEMETA_CONSTANT = "jgnConst";
   public static final String JSON_FUNCTION_LABEL_SEND = "Send";
   public static final String JSON_FUNCTION_LABEL_RECEIVE = "Recv";
   public static final String JSON_FUNCTION_LABEL_COERCE = "Coerce";

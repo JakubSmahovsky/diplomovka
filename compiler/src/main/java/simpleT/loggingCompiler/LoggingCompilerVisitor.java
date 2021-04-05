@@ -67,7 +67,7 @@ public class LoggingCompilerVisitor {
     }
     
     if (persistent && symbol.equals(Constants.INTRUDER_KNOWS_OUTPUT)) {
-      return new IntruderGoal(terms.get(0)); // intruder goal fact contains exactly 1 term
+      return new AdversaryGoal(terms.get(0)); // intruder goal fact contains exactly 1 term
     } else {
       return new FactGoal(persistent, symbol, terms);
     }
@@ -114,30 +114,6 @@ public class LoggingCompilerVisitor {
   public OutputTerm visitFunction(FunctionContext ctx) {
     String functionName = ctx.IDENTIFIER().getText();
     switch (functionName) {
-      case Constants.T_SENC: {
-        OutputTerm value = visitTerm(ctx.term(0));
-        OutputTerm key = visitTerm(ctx.term(1));
-        return new OutputFunctionSenc(key, value);
-      }
-      case Constants.T_SDEC: {
-        OutputTerm value = visitTerm(ctx.term(0));
-        OutputTerm key = visitTerm(ctx.term(1));
-        return new OutputFunctionSdec(key, value);
-      }
-      case Constants.T_AENC: {
-        OutputTerm value = visitTerm(ctx.term(0));
-        OutputTerm key = visitTerm(ctx.term(1));
-        return new OutputFunctionAenc(key, value);
-      }
-      case Constants.T_ADEC: {
-        OutputTerm value = visitTerm(ctx.term(0));
-        OutputTerm key = visitTerm(ctx.term(1));
-        return new OutputFunctionAdec(key, value);
-      }
-      case Constants.T_HASH: {
-        OutputTerm subterm = visitTerm(ctx.term(0));
-        return new OutputFunctionHash(subterm);
-      }
       case Constants.T_FIRST: {
         OutputTerm subterm = visitTerm(ctx.term(0));
         return new FunctionFirst(subterm);
@@ -146,9 +122,63 @@ public class LoggingCompilerVisitor {
         OutputTerm subterm = visitTerm(ctx.term(0));
         return new FunctionSecond(subterm);
       }
-      case Constants.T_INVERSE: {
+      case Constants.T_PK: {
+        OutputTerm sk = visitTerm(ctx.term(0));
+        return new OutputFunctionPk(sk);
+      }
+      case Constants.T_SIGN: {
+        OutputTerm message = visitTerm(ctx.term(0));
+        OutputTerm key = visitTerm(ctx.term(1));
+        return new OutputFunctionSign(key, message);
+      }
+      case Constants.T_VERIFY: {
+        OutputTerm signature = visitTerm(ctx.term(0));
+        OutputTerm message = visitTerm(ctx.term(1));
+        OutputTerm key = visitTerm(ctx.term(2));
+        return new OutputFunctionVerify(key, message, signature);
+      }
+      case Constants.T_SENC: {
+        OutputTerm value = visitTerm(ctx.term(0));
+        OutputTerm key = visitTerm(ctx.term(1));
+        return new OutputFunctionSenc(key, value);
+      }
+      case Constants.T_SDEC: {
+        OutputTerm encryptedValue = visitTerm(ctx.term(0));
+        OutputTerm key = visitTerm(ctx.term(1));
+        return new OutputFunctionSdec(key, encryptedValue);
+      }
+      case Constants.T_AENC: {
+        OutputTerm value = visitTerm(ctx.term(0));
+        OutputTerm key = visitTerm(ctx.term(1));
+        return new OutputFunctionAenc(key, value);
+      }
+      case Constants.T_ADEC: {
+        OutputTerm encryptedValue = visitTerm(ctx.term(0));
+        OutputTerm key = visitTerm(ctx.term(1));
+        return new OutputFunctionAdec(key, encryptedValue);
+      }
+      case Constants.T_HASH: {
         OutputTerm subterm = visitTerm(ctx.term(0));
-        return new OutputFunctionInverse(subterm);
+        return new OutputFunctionHash(subterm);
+      }
+      case Constants.T_EXP_WORD: {
+        OutputTerm base = visitTerm(ctx.term(0));
+        OutputTerm exponent = visitTerm(ctx.term(1));
+        return new OutputExponentiation(base, exponent);
+      }
+      case Constants.T_MUL_WORD: {
+        OutputTerm left = visitTerm(ctx.term(0));
+        OutputTerm right = visitTerm(ctx.term(1));
+        return new OutputMultiplication(left, right);
+      }
+      case Constants.T_INVERSE: {
+        OutputTerm base = visitTerm(ctx.term(0));
+        return new OutputFunctionInverse(base);
+      }
+      case Constants.T_TUPLE_WORD: {
+        OutputTerm fst = visitTerm(ctx.term(0));
+        OutputTerm snd = visitTerm(ctx.term(1));
+        return new OutputTuple(fst, snd);
       }
     }
     Errors.DebugUnexpectedTokenType(ctx.getText(), "logging compiler visitFunction");

@@ -10,12 +10,12 @@ public class CustomRuleNode extends Node{
 
   @Override
   public Description renderDescription() {
-    String docLine = "Intruder may receive it from a custom rule " + this.render() + ".";
+    String docLine = "Adversary learns it as a public value from initial assumptions.";
     return new Description(new Document(docLine), new Document(docLine), this, this.render());
   }
 
   @Override
   public String render(){
-    return this.label;
+    return "initial assumptions";
   }
 }

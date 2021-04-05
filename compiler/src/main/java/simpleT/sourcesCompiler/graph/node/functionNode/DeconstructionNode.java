@@ -1,17 +1,18 @@
 package simpleT.sourcesCompiler.graph.node.functionNode;
 
 import simpleT.dataStructures.document.Document;
+import simpleT.dataStructures.outputTerm.OutputTerm;
 import simpleT.sourcesCompiler.graph.Description;
 import simpleT.sourcesCompiler.graph.node.Node;
 
 public class DeconstructionNode extends FunctionNode {
-  public DeconstructionNode(String id, String label) {
-    super(id, label);
+  public DeconstructionNode(String id, String label, OutputTerm term) {
+    super(id, label, term);
   }
 
   @Override
   public Description renderDescription() {
-    Document shortDoc = new Document("Adversary deconstructs it using " + render() + " on messages from:");
+    Document shortDoc = new Document("Adversary deconstructs " + term.render() + " using " + render() + " on messages from:");
     Document longDoc = shortDoc.clone();
     Node rule = null;
     for (Node parent : parents) {

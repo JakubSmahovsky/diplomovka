@@ -57,10 +57,11 @@ jsonObj: '{' jsonKeyValue? (',' jsonKeyValue)* '}';
 jsonArray: '[' jsonValue? (',' jsonValue)* ']';
 jsonKeyValue: jsonKey ':' jsonValue;
 jsonKey: '"' jsonString '"';
-jsonValue: '"' jsonString '"' | jsonObj | jsonArray | 'true' | 'false'; // todo? number, null
+jsonValue: jsonObj | jsonArray | 'true' | 'false' |  '"' jsonString '"'; // todo? number, null
+
 
 jsonChars: '(' | ')' | '<' | '>' | '{' | '}' | '#' | ':' | '!' | '$' | '.' | ',' | '~' | '\'' | '*' | '^';
-jsonString: (jsonChars | IDENTIFIER | NUMBER)*;
+jsonString: term | (jsonChars | IDENTIFIER | NUMBER)*;
 
 
 SEPARATOR: '------------------------------------------------------------------------------';
