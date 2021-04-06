@@ -12,6 +12,6 @@ public class FreshRuleNode extends AdversaryRuleNode {
   @Override
   public Description renderDescription() {
     Document doc = new Document(new StringBuilder("Adversary generates " + term.render()));
-      return new Description(doc, doc.clone(), null, "by generation");
+      return new Description(doc, null, "generation");
   }
 }

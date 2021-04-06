@@ -24,7 +24,7 @@ public class RevealRuleNode extends Node{
   public Description renderDescription() {
     String printLabel = "long-term reveal on " + principal.renderOutput();
     String docLine = "Intruder may receive it by performing long-term reveal on a principal in the role of " + principal.renderOutput() + ".";
-    return new Description(new Document(docLine), new Document(docLine), this, printLabel);
+    return new Description(new Document(docLine), this, printLabel);
   }
   
   @Override

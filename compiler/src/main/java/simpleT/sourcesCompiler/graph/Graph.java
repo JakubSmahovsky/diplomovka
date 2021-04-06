@@ -47,6 +47,6 @@ public class Graph {
   }
 
   public Document render() {
-    return description.longDoc.clone();
+    return description.doc.clone();
   }
 }

@@ -20,7 +20,7 @@ public class PrincipalRuleNode extends Node {
   @Override
   public Description renderDescription() {
     String docLine = "which he receives after " + printLabel + ". He has to send messages (possibly none):";
-    return new Description(new Document(docLine), new Document(docLine), this, printLabel);
+    return new Description(new Document(docLine), this, printLabel);
   }
 
   @Override

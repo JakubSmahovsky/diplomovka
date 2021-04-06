@@ -12,12 +12,8 @@ public class ReceiveRuleNode extends AdversaryRuleNode {
 
   @Override
   public Description renderDescription() {
-    Document shortDoc = new Document("Adversary receives " + term.render() + " in a protocol message");
-    Document longDoc = shortDoc.clone();
+    Document doc = new Document("Adversary receives " + term.render() + " in a protocol message");
     Description parentDesc = parents.get(0).renderDescription();
-    return new Description(shortDoc.append(parentDesc.shortDoc),
-        longDoc.append(parentDesc.longDoc.indent()),
-        parentDesc.rule,
-        parentDesc.sourceDescription);
+    return new Description(doc.append(parentDesc.doc.indent()), parentDesc.rule, parentDesc.sourceDescription);
   }
 }

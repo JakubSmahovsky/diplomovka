@@ -12,18 +12,16 @@ public class DeconstructionNode extends FunctionNode {
 
   @Override
   public Description renderDescription() {
-    Document shortDoc = new Document("Adversary deconstructs " + term.render() + " using " + render() + " on messages from:");
-    Document longDoc = shortDoc.clone();
+    Document doc = new Document("Adversary deconstructs " + term.render() + " using " + render() + " on messages from:");
     Node rule = null;
     for (Node parent : parents) {
       Description parentDesc = parent.renderDescription();
       if (parentDesc.rule != null) {
         rule = parentDesc.rule;
-        shortDoc.doc.addAll(parentDesc.shortDoc.doc);
       }
-      parentDesc.longDoc.indent();
-      longDoc.doc.addAll(parentDesc.longDoc.doc);
+      parentDesc.doc.indent();
+      doc.append(parentDesc.doc);
     }
-    return new Description(shortDoc, longDoc, rule, "deconstruction");
+    return new Description(doc, rule, "deconstruction");
   }
 }

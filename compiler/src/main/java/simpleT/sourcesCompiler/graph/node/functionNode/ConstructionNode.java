@@ -14,8 +14,7 @@ public class ConstructionNode extends FunctionNode {
 
   @Override
   public Description renderDescription() {
-    Document shortDoc = new Document("Adversary constructs " + term.render() + " using " + render() + " on messages from:");
-    Document longDoc = shortDoc.clone();
+    Document doc = new Document("Adversary constructs " + term.render() + " using " + render() + " on messages from:");
     Node rule = null;
     
     // maybe reverse order of parents
@@ -33,12 +32,11 @@ public class ConstructionNode extends FunctionNode {
       Description parentDesc = parent.renderDescription();
       if (parentDesc.rule != null) {
         rule = parentDesc.rule;
-        shortDoc.doc.addAll(parentDesc.shortDoc.doc);
       }
-      parentDesc.longDoc.indent();
-      longDoc.doc.addAll(parentDesc.longDoc.doc);
+      parentDesc.doc.indent();
+      doc.append(parentDesc.doc);
     }
-    return new Description(shortDoc, longDoc, rule, "construction");
+    return new Description(doc, rule, "construction");
   }
   
 }
