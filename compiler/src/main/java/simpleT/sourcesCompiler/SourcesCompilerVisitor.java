@@ -300,7 +300,7 @@ public class SourcesCompilerVisitor {
       case (Constants.JSON_NODE_UNSOLVED):
         return new UnsolvedNode(nodeID, nodeLabel, metaTerm);
       case (Constants.JSON_NODE_FRESH):
-        return new FreshNode(nodeID);
+        return new FreshNode(nodeID, metaTerm);
       case (Constants.JSON_NODE_MISSING):
         return new StubNode(nodeID);
       default:

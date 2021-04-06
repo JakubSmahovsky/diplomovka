@@ -1,5 +1,6 @@
 package simpleT.sourcesCompiler.graph.node.adversaryRuleNode;
 
+import simpleT.dataStructures.document.Document;
 import simpleT.dataStructures.outputTerm.OutputTerm;
 import simpleT.sourcesCompiler.graph.Description;
 
@@ -10,7 +11,8 @@ public class SendRuleNode extends AdversaryRuleNode {
 
   @Override
   public Description renderDescription() {
-    return parents.get(0).renderDescription();
+    Description description = new Description(new Document("Adversary sends " + term.render()), null, null);
+    description.doc.append(parents.get(0).renderDescription().doc.indent());
+    return description;
   }
-
 }
