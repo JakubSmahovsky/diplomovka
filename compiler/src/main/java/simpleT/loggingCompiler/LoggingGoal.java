@@ -10,12 +10,14 @@ public class LoggingGoal {
   public final STModel model;
   public int number;
   public Goal goal;
+  public boolean shouldBeHidden;
   public SourceGroup group;
 
   public LoggingGoal(STModel model ,int number, Goal goal) {
     this.model = model;
     this.number = number;
     this.goal = goal;
+    this.shouldBeHidden = goal.shouldBeHidden();
     this.group = null;
   }
 

@@ -40,6 +40,9 @@ public class LoggingCompilerVisitor {
         System.err.println("Discarded goal " + goal.goal.render() + " and source " + source.name + "!");
         return;
       }
+      if (goal.shouldBeHidden) {
+        return;
+      }
       goal.findSource(source);
       System.err.println(goal.render());
       Document sourceDoc = source.render();

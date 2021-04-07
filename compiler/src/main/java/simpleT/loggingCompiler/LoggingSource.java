@@ -25,6 +25,6 @@ public class LoggingSource {
   }
 
   public Document render() {
-    return new Document("by (" + source.indexInModel + "): " + source.renderLabel());
+    return new Document("by (" + source.number + "): " + source.renderLabel());
   }
 }

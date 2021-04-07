@@ -6,7 +6,7 @@ import simpleT.sourcesCompiler.graph.*;
 
 public class Source {
   public final STModel model;
-  public final int indexInModel;
+  public int number; // assigned after sources are sorted
 
   public String name;
   public Graph graph;
@@ -14,7 +14,6 @@ public class Source {
 
   public Source(STModel model, String name, Graph graph) {
     this.model = model;
-    this.indexInModel = model.registerSource(this);
 
     this.name = name;
     this.graph = graph;
@@ -22,11 +21,8 @@ public class Source {
   }
 
   public Document render(){
-    Document doc = new Document("Source (" + indexInModel + ") " + printLabel);
-    Document graphDoc = graph.render();
-    graphDoc.indent();
-    doc.append(graphDoc);
-    return doc;
+    Document doc = new Document("Source (" + number + ") " + printLabel);
+    return doc.append(graph.render()).endl();
   }
 
   public String renderLabel() {

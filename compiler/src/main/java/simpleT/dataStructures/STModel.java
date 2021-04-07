@@ -90,6 +90,12 @@ public class STModel {
     SourceGroup array[] = sourceGroups.toArray(new SourceGroup[0]);
     Arrays.sort(array);
     sourceGroups = new ArrayList<>(Arrays.asList(array));
+    int sourceNo = 1;
+    for (SourceGroup group : sourceGroups) {
+      for (Source source : group.sources) {
+        source.number = sourceNo++;
+      }
+    } 
   }
 
   public int registerVariable(Variable variable) {
@@ -104,10 +110,8 @@ public class STModel {
     return index;
   }
 
-  public int registerSource(Source source) {
-    int index = sources.size();
+  public void registerSource(Source source) {
     sources.add(source);
-    return index;
   }
 
   public Variable getVariable(int id) {

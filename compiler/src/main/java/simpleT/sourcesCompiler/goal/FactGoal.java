@@ -42,4 +42,9 @@ public class FactGoal extends Goal{
   public String render() {
     return "establish fact " + OutputFormatting.fact(persistent, symbol, terms);
   }
+
+  @Override
+  public boolean shouldBeHidden() {
+    return true;
+  }
 }

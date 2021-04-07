@@ -8,4 +8,8 @@ public abstract class Goal {
   public abstract boolean match(Goal goal);
 
   public abstract String render();
+
+  public boolean shouldBeHidden() {
+    return false;
+  }
 }

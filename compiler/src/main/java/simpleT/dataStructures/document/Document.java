@@ -46,7 +46,7 @@ public class Document {
   }
 
   public Document endl() {
-    append(new Document(Constants.LINE_BREAK));
+    append(new Document(""));
     return this;
   }
 
