@@ -9,6 +9,8 @@ import simpleT.dataStructures.STModel;
 import simpleT.errors.STException;
 import simpleT.loggingCompiler.*;
 import simpleT.loggingParser.*;
+import simpleT.resultParser.ResultLexer;
+import simpleT.resultParser.ResultParser;
 import simpleT.sourcesCompiler.SourcesCompilerVisitor;
 import simpleT.sourcesParser.*;
 import simpleT.stParser.*;
@@ -147,6 +149,11 @@ public class SimpleT {
     System.out.println();
     System.out.println("TRACE:");
     System.out.println(resultTrace.toString());
+
+    ResultLexer lexer = new ResultLexer(CharStreams.fromString(resultTrace.toString()));
+    CommonTokenStream tokes = new CommonTokenStream(lexer);
+    ResultParser parser = new ResultParser(tokes);
+    parser.clause();
   }
 
   private static boolean resultWasPrinted(BufferedReader stdStreamReader) throws IOException {

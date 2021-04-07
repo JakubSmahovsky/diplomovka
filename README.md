@@ -12,3 +12,6 @@ Generate the sources parser:
 
 Generate the logging parser:
 `java -jar /path/to/binaries -no-listener -visitor -package simpleT.loggingParser -o compiler/src/main/java/simpleT/loggingParser -Xexact-output-dir compiler/grammars/Logging.g4`
+
+Generate the result parser:
+`java -jar /path/to/binaries -no-listener -visitor -package simpleT.resultParser -o compiler/src/main/java/simpleT/resultParser -Xexact-output-dir compiler/grammars/Result.g4`

@@ -32,3 +32,4 @@ compiler/target
 compiler/src/main/java/simpleT/stParser
 compiler/src/main/java/simpleT/sourcesParser
 compiler/src/main/java/simpleT/loggingParser
+compiler/src/main/java/simpleT/resultParser
