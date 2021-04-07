@@ -12,7 +12,7 @@ public class UnsolvedNode extends Node {
   }
 
   @Override
-  public Description renderDescription() {
+  public Description renderDescription(boolean protocolRuleParent) {
     StringBuilder myLine = new StringBuilder("Adversary gets " + term.render() + " from another source.");
     return new Description(new Document(new StringBuilder(myLine)), null, null);
   }

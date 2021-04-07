@@ -26,8 +26,10 @@ public abstract class Node {
 
   /**
    * Search depth-first throught parents and collect rendered printout of nodes' meaning.
+   * @param protocolRuleParent indicates that this is a direct parent of a protocol rule. 
+   * This means some actions above are executed by the protocol (fresh, other rules, ...)
    */
-  public abstract Description renderDescription();
+  public abstract Description renderDescription(boolean protocolRuleParent);
 
   /**
    * Speciffically for compiling edges, take a Source node or 

@@ -13,7 +13,7 @@ public class ConstructionNode extends FunctionNode {
   }
 
   @Override
-  public Description renderDescription() {
+  public Description renderDescription(boolean protocolRuleParent) {
     Document doc = new Document("Adversary constructs " + term.render() + " using " + render() + " on messages from:");
     Node rule = null;
     
@@ -28,15 +28,17 @@ public class ConstructionNode extends FunctionNode {
       orderedParents = parents;
     }
 
+    String sourceDescription = "construction";
     for (Node parent : orderedParents) {
-      Description parentDesc = parent.renderDescription();
+      Description parentDesc = parent.renderDescription(false);
       if (parentDesc.rule != null) {
         rule = parentDesc.rule;
+        sourceDescription = parentDesc.sourceDescription;
       }
       parentDesc.doc.indent();
       doc.append(parentDesc.doc);
     }
-    return new Description(doc, rule, "construction");
+    return new Description(doc, rule, sourceDescription);
   }
   
 }

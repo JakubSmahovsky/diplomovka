@@ -14,9 +14,10 @@ public class CoerceRuleNode extends AdversaryRuleNode{
   }
 
   @Override
-  public Description renderDescription() {
-    Description description = new Description(new Document("Adversary coerces the protocol to use " + term.render() + " instead of:"), null, null);
-    description.doc.append(parents.get(0).renderDescription().doc.indent());
+  public Description renderDescription(boolean protocolRuleParent) {
+    Document doc = new Document("Adversary coerces the protocol to use " + term.render() + " instead of:");
+    Description parentDescription = parents.get(0).renderDescription(false);
+    Description description = new Description(doc.append(parentDescription.doc.indent()), parentDescription.rule, parentDescription.sourceDescription);
     return description;
   }
 }

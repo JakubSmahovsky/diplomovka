@@ -10,7 +10,7 @@ public class FreshRuleNode extends AdversaryRuleNode {
   }
   
   @Override
-  public Description renderDescription() {
+  public Description renderDescription(boolean protocolRuleParent) {
     Document doc = new Document(new StringBuilder("Adversary generates " + term.render()));
       return new Description(doc, null, "generation");
   }

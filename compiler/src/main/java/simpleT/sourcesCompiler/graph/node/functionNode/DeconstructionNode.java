@@ -1,5 +1,7 @@
 package simpleT.sourcesCompiler.graph.node.functionNode;
 
+import java.util.ArrayList;
+
 import simpleT.dataStructures.document.Document;
 import simpleT.dataStructures.outputTerm.OutputTerm;
 import simpleT.sourcesCompiler.graph.Description;
@@ -11,17 +13,31 @@ public class DeconstructionNode extends FunctionNode {
   }
 
   @Override
-  public Description renderDescription() {
+  public Description renderDescription(boolean protocolRuleParent) {
     Document doc = new Document("Adversary deconstructs " + term.render() + " using " + render() + " on messages from:");
     Node rule = null;
-    for (Node parent : parents) {
-      Description parentDesc = parent.renderDescription();
+
+    // maybe reverse order of parents
+    ArrayList<Node> orderedParents;
+    if (term.reversedArguments()) {
+      orderedParents = new ArrayList<>();
+      for (int i = this.parents.size()-1; i >= 0; i--) {
+        orderedParents.add(this.parents.get(i));
+      }
+    } else {
+      orderedParents = parents;
+    }
+
+    String sourceDescription = "deconstruction";
+    for (Node parent : orderedParents) {
+      Description parentDesc = parent.renderDescription(false);
       if (parentDesc.rule != null) {
         rule = parentDesc.rule;
+        sourceDescription = parentDesc.sourceDescription;
       }
       parentDesc.doc.indent();
       doc.append(parentDesc.doc);
     }
-    return new Description(doc, rule, "deconstruction");
+    return new Description(doc, rule, sourceDescription);
   }
 }

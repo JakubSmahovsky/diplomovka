@@ -28,7 +28,7 @@ public class Graph {
       }
     }
     findGoal();
-    description = goal.renderDescription();
+    description = goal.renderDescription(false);
   }
 
   /**

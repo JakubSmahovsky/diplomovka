@@ -21,8 +21,9 @@ public class FreshNode extends Node{
   }
 
   @Override
-  public Description renderDescription() {
-    Document doc = new Document(new StringBuilder("Adversary generates " + term.render()));
+  public Description renderDescription(boolean protocolRuleParent) {
+    String docLine = (protocolRuleParent ? "Protocol" : "Adversary") + " generates " + term.render();
+    Document doc = new Document(new StringBuilder(docLine));
       return new Description(doc, null, "generation");
   }
 }

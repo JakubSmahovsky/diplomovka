@@ -18,11 +18,13 @@ public class PrincipalRuleNode extends Node {
   }
 
   @Override
-  public Description renderDescription() {
-    String docLine = "which he receives after " + printLabel + ". He has to send messages (possibly none):";
+  public Description renderDescription(boolean protocolRuleParent) {
+    // if this is before a rule, then it passes state, otherwise it sends a message
+    String docLine = protocolRuleParent ? (printLabel + " precedes it") : ("which he receives after " + printLabel);
+    docLine += ". He has to send messages (possibly none):";
     Description description = new Description(new Document(docLine), this, printLabel);
     for (Node parent : parents) {
-      Description parentDescription = parent.renderDescription();
+      Description parentDescription = parent.renderDescription(true);
       description.doc.append(parentDescription.doc.indent());
     }
     return description;

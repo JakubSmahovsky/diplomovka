@@ -10,9 +10,9 @@ public class SendRuleNode extends AdversaryRuleNode {
   }
 
   @Override
-  public Description renderDescription() {
+  public Description renderDescription(boolean protocolRuleParent) {
     Description description = new Description(new Document("Adversary sends " + term.render()), null, null);
-    description.doc.append(parents.get(0).renderDescription().doc.indent());
+    description.doc.append(parents.get(0).renderDescription(false).doc.indent());
     return description;
   }
 }
