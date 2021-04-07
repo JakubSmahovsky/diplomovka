@@ -227,7 +227,7 @@ public class Variable extends Term {
       }
     }
     block.addToState(this);
-    block.principal.learnEphemeralPrivate(this);
+    block.principal.learnEphemeralPrivate(this, false);
     return true;
   }
 

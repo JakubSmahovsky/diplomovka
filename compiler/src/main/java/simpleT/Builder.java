@@ -180,6 +180,9 @@ public class Builder extends BuilderFormatting{
   }
 
   private void block(STBlock previousBlock, STBlock block){
+    // add sort tags to base variables the principal declared himself
+    block.principal.addSorts();
+
     // premises
     ArrayList<String> premises = new ArrayList<>();
     if (previousBlock == null) {
@@ -191,7 +194,6 @@ public class Builder extends BuilderFormatting{
       premises.add(in.render());
     }
     for (CommandFr fr : block.fresh) {
-      fr.addFresh();
       premises.add(fr.render());
     }
 
@@ -221,10 +223,7 @@ public class Builder extends BuilderFormatting{
     output.append(ruleAction(actions));
     output.append(ruleConclusions(conclusions));
     
-    // remove fresh sort from generated variables
-    for (CommandFr fr : block.fresh) {
-      fr.removeFresh();
-    }
+    block.principal.removeSorts();
   }
 
   private void reveals() {

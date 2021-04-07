@@ -37,6 +37,7 @@ Alice [
 Alice -> Bob: gIKA, gEKA, gOPKB, message, MAC
 
 Bob [
+  EQUALS(gOPKB)?
   DH1 = gIKA^sSPKB
   DH2 = gEKA^sIKB
   DH3 = gEKA^sSPKB

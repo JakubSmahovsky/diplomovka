@@ -206,7 +206,7 @@ public class CompilerVisitor {
 		Variable left = visitVariable(ctx.variable(), principal, block, VariableDefined.DISTRIBUTED_LEFT);
 		Term right = visitTerm(ctx.term(), principal, block, VariableDefined.DISTRIBUTED_RIGHT);
 		left.distributedAssign(right);
-		principal.learnPublic(left);
+		principal.learnPublic(left, false);
 	}
 
 	public void visitKnows(KnowsContext ctx, Principal principal, STBlock block) {
@@ -229,7 +229,11 @@ public class CompilerVisitor {
 			}
 
 			if (pub) {
-				principal.learnPublic(variable);
+				if (variable.isConstructed()) {
+					principal.learnPublic(variable, false);
+				} else {
+					principal.learnPublic(variable, true);
+				}
 			} else {
 				principal.learnLongTermPrivate(variable);
 				model.builtins.prefab_private_reveal = true;
@@ -240,7 +244,7 @@ public class CompilerVisitor {
 	public void visitGenerates(GeneratesContext ctx, Principal principal, STBlock block) {
 		for (VariableContext vctx : ctx.variable()) {
 			Variable variable = visitVariable(vctx, principal, block, VariableDefined.GENERATES);
-			principal.learnEphemeralPrivate(variable);
+			principal.learnEphemeralPrivate(variable, true);
 			block.fresh.add(new CommandFr(variable, block));
 			block.addToState(variable);
 		}
@@ -269,7 +273,7 @@ public class CompilerVisitor {
 			for (Variable variable : receivedTerm.extractKnowledge()) {
 				// do not learn a variable again if you aleady know it (it is implicitly compared, because it's in the state)
 				if (recipient.knowsAnyVariableByName(variable) == null) {
-					recipient.learnEphemeralPrivate(variable);
+					recipient.learnEphemeralPrivate(variable, false);
 				} else {
 					recipient.nextBlock.unaryEqualsPending.add(variable);
 				}

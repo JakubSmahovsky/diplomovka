@@ -15,6 +15,9 @@ public class Principal {
   private final ArrayList<Variable> knownPublic;
   private ArrayList<STBlock> blocks;
   public STBlock nextBlock;
+  // list of variables that the principal delcared himself
+  private final ArrayList<Variable> declaredFresh;
+  private final ArrayList<Variable> declaredPublic;
 
   public Principal(STModel model, Variable principalID, String name){
     this.model = model;
@@ -27,6 +30,8 @@ public class Principal {
     knownPublic.add(principalID);
     blocks = new ArrayList<>();
     nextBlock();
+    declaredFresh = new ArrayList<>();
+    declaredPublic = new ArrayList<>();
   }
 
   /**
@@ -119,19 +124,26 @@ public class Principal {
     return null;
   }
 
-  public void learnEphemeralPrivate(Variable variable) {
+  public void learnEphemeralPrivate(Variable variable, boolean baseVariableFromGenerates) {
+    if (baseVariableFromGenerates) {
+      declaredFresh.add(variable);
+    }
     if (knowsEphemeralPrivateByName(variable) == null) {
       knownEphemeralPrivate.add(variable);
     }
   }
 
   public void learnLongTermPrivate(Variable variable) {
+    declaredFresh.add(variable);
     if (knowsLongTermPrivateByName(variable) == null) {
       knownLongTermPrivate.add(variable);
     }
   }
 
-  public void learnPublic(Variable variable) {
+  public void learnPublic(Variable variable, boolean baseVariableFromKnows) {
+    if (baseVariableFromKnows) {
+      declaredPublic.add(variable);
+    }
     if (knowsPublicByName(variable) == null) {
       knownPublic.add(variable);
     }
@@ -232,5 +244,26 @@ public class Principal {
       }
     }
     return true;
+  }
+
+  /**
+   * Add sorts, so that one of this principal's blocks can be rendered.
+   */
+  public void addSorts() {
+    for (Variable variable : declaredFresh) {
+      variable.addFresh();
+    }
+    for (Variable variable : declaredPublic) {
+      variable.addPublic();
+    }
+  }
+
+  public void removeSorts() {
+    for (Variable variable : declaredFresh) {
+      variable.removeFresh();
+    }
+    for (Variable variable : declaredPublic) {
+      variable.removePublic();
+    }
   }
 }
