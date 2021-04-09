@@ -18,11 +18,11 @@ public class SourceGroup implements Comparable<SourceGroup>{
     if (goal.shouldBeHidden()) {
       return new Document();
     }
-    Document doc = new Document("Group: " + goal.render());
+    Document doc = new Document("GROUP: " + goal.render());
     for (Source source : sources) {
       doc.append((source.render()));
     }
-    return doc.endl(2);
+    return doc.endl(4);
   }
 
   @Override

@@ -44,7 +44,7 @@ public class ResultCompilerVisitor {
     Goal goal = visitFact(ctx.goal().fact());
     ArrayList<SourceGroup> applicableGroups = new ArrayList<>();
     for (SourceGroup group : model.sourceGroups) {
-      if (goal.match(group.goal)) {
+      if (group.goal.match(goal)) {
         applicableGroups.add(group);
       }
     }
@@ -67,7 +67,7 @@ public class ResultCompilerVisitor {
       String[] parts = name.split("_");
       String caseIndexString = parts[parts.length-1];
       caseIndex = Integer.parseInt(caseIndexString)-1; // printed number = index + 1
-      int suffixLength = "case_".length() + caseIndexString.length();
+      int suffixLength = "_case_".length() + caseIndexString.length();
       name = name.substring(0, name.length()-suffixLength);
     }
     ArrayList<Source> applicableSources = new ArrayList<>();

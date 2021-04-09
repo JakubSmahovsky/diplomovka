@@ -22,6 +22,11 @@ public class OutputVariable extends OutputTerm {
   }
 
   @Override
+  public boolean isVariable() {
+    return true;
+  }
+
+  @Override
   public boolean match(OutputTerm term) {
     return true;
   }
