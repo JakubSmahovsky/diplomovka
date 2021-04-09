@@ -1,12 +1,10 @@
 grammar Result;
 
 clause:
-  solve source clause next* 'qed' |
+  'solve' '(' goal ')' source clause ('next' source clause)* 'qed' |
   success |
   contradiction;
-solve: 'solve' '(' goal ')';
 source: 'case' IDENTIFIER;
-next: 'next' source clause;
 
 goal:
   fact ATTIMEPOINT variable | 

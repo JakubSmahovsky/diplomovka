@@ -6,9 +6,11 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 
 import simpleT.dataStructures.STModel;
+import simpleT.dataStructures.query.Query;
 import simpleT.errors.STException;
 import simpleT.loggingCompiler.*;
 import simpleT.loggingParser.*;
+import simpleT.resultCompiler.ResultCompilerVisitor;
 import simpleT.resultParser.ResultLexer;
 import simpleT.resultParser.ResultParser;
 import simpleT.sourcesCompiler.SourcesCompilerVisitor;
@@ -28,8 +30,10 @@ public class SimpleT {
     try {
       STModel model = compileInput(inputFilePath, tamarinTheoryFilePath);
       compileSources(tamarinExecutablePath, tamarinTheoryFilePath, Constants.DEFAULT_SOURCES_PATH, model);
-      BufferedReader resultStdReader = compileLogging(tamarinExecutablePath, tamarinTheoryFilePath, model.queries.get(0).renderLabel(), model);
-      compileResult(resultStdReader);
+      for (Query query : model.queries) {
+        BufferedReader resultStdReader = compileLogging(tamarinExecutablePath, tamarinTheoryFilePath, query.renderLabel(), model);
+        compileResult(resultStdReader, model, query);
+      }
     } catch (STException e) {
       e.print();
     }
@@ -128,7 +132,7 @@ public class SimpleT {
     return stdStreamReader;
   }
 
-  private static void compileResult(BufferedReader stdReader) throws IOException, STException{
+  private static void compileResult(BufferedReader stdReader, STModel model, Query query) throws IOException, STException{
     StringBuilder resultTrace = new StringBuilder();
 
     // discard untill the proved lemma
@@ -153,7 +157,8 @@ public class SimpleT {
     ResultLexer lexer = new ResultLexer(CharStreams.fromString(resultTrace.toString()));
     CommonTokenStream tokes = new CommonTokenStream(lexer);
     ResultParser parser = new ResultParser(tokes);
-    parser.clause();
+    ResultCompilerVisitor compiler = new ResultCompilerVisitor(model, query);
+    compiler.compile(parser.clause());
   }
 
   private static boolean resultWasPrinted(BufferedReader stdStreamReader) throws IOException {

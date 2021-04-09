@@ -12,15 +12,20 @@ import simpleT.dataStructures.STBlock;
 import simpleT.dataStructures.STModel;
 import simpleT.dataStructures.document.Document;
 import simpleT.dataStructures.term.*;
+import simpleT.resultCompiler.ResultClause.ResultClause;
 
 public abstract class Query {
   private static int nextQueryID = 0;
   protected final STModel model;
   protected final int queryID;
+  // result
+  public boolean success;
+  public ResultClause trace;
 
   public Query(STModel model) {
     this.model = model;
     this.queryID = nextQueryID++;
+    this.success = false;
   }
 
   public abstract String renderLabel();
