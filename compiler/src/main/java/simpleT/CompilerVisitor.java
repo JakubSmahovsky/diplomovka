@@ -11,6 +11,7 @@ import simpleT.dataStructures.*;
 import simpleT.dataStructures.command.*;
 import simpleT.dataStructures.query.Authentication;
 import simpleT.dataStructures.query.Confidentiality;
+import simpleT.dataStructures.query.Executable;
 import simpleT.dataStructures.query.ForwardSecrecy;
 import simpleT.dataStructures.query.InjAuthentication;
 import simpleT.dataStructures.term.*;
@@ -648,11 +649,7 @@ public class CompilerVisitor {
 	}
 
 	public void visitExecutable(ExecutableContext ctx) {
-		if (model.queries.executable == true) {
-			Errors.WarningQueryExecutableDuplicite(ctx.start);
-		} else {
-			model.queries.executable = true;
-		}
+		model.queries.add(new Executable(model));
 	}
 
 	public void visitConfidentiality(ConfidentialityContext ctx) {
@@ -661,13 +658,7 @@ public class CompilerVisitor {
 			Errors.ErrorPrincipalDoesNotExist(ctx.principal);
 		}
 		Variable variable = visitVariable(ctx.variable(), principal, null, VariableDefined.QUERY);
-		for (Confidentiality query : model.queries.confidentiality) {
-			if (query.principal == principal && query.variable.equals(variable)) {
-				Errors.WarningQueryConfidentialityDuplicite(ctx.variable().start);
-				return;
-			}
-		}
-		model.queries.confidentiality.add(new Confidentiality(principal, variable));
+		model.queries.add(new Confidentiality(principal, variable, model));
 	}
 
 	public void visitForwardSecrecy(ForwardSecrecyContext ctx) {
@@ -676,13 +667,7 @@ public class CompilerVisitor {
 			Errors.ErrorPrincipalDoesNotExist(ctx.principal);
 		}
 		Variable variable = visitVariable(ctx.variable(), principal, null, VariableDefined.QUERY);
-		for (ForwardSecrecy query : model.queries.forwardSecrecy) {
-			if (query.principal == principal && query.variable.equals(variable)) {
-				Errors.WarningQueryConfidentialityDuplicite(ctx.variable().start);
-				return;
-			}
-		}
-		model.queries.forwardSecrecy.add(new ForwardSecrecy(principal, variable));
+		model.queries.add(new ForwardSecrecy(principal, variable, model));
 	}
 
 	public void visitAuthentication(Token senderToken, Token recipientToken, VariableContext vctx, boolean injective) {
@@ -730,10 +715,11 @@ public class CompilerVisitor {
 		}
 
 		if (injective) {
-			model.queries.injAuthentication.add(new InjAuthentication(sender, recipient, sent, received));	
+			model.queries.add(new InjAuthentication(sender, recipient, sent, received, model));
 		} else {
-			model.queries.authentication.add(new Authentication(sender, recipient, sent, received));
-			senderBlock.actions.add(Fact.authSent(sender, sent));
+			Fact fact = Fact.authSent(sender, sent);
+			model.queries.add(new Authentication(sender, recipient, sent, received, fact, model));
+			senderBlock.actions.add(fact);
 		}
 	}
 }

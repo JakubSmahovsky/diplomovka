@@ -162,18 +162,17 @@ public final class Constants{
   public static final String LINE_BREAK = "\r\n";
   public static final String QUANTIFIER_TRACE_EXISTS = "exists-trace";
   public static final String QUANTIFIER_TRACE_FORALL = "all-traces";
-  public static final String QUANTIFIER_EXISTS = "Ex";
-  public static final String QUANTIFIER_FORALL = "All";
+  public static final String QUANTIFIER_EXISTS = "Ex ";
+  public static final String QUANTIFIER_FORALL = "All ";
   public static final String QUANTIFICATION_CLOSE = ".";
   // Tamarin lemma operators
   public static final String LEMMA_EQUALS = " = ";
-  public static final String LEMMA_AFTER = " > ";
   public static final String LEMMA_BEFORE = " < ";
   public static final String LEMMA_ATTEMPORAL = " @ ";
   public static final String LEMMA_NEGAION = "not ";
-  public static final String LEMMA_CONJUNCTION = " &" + Constants.LINE_BREAK;
-  public static final String LEMMA_DISJUNCTION = " |" + Constants.LINE_BREAK;
-  public static final String LEMMA_IMPLICATION = Constants.LINE_BREAK + "==>" + Constants.LINE_BREAK;
+  public static final String LEMMA_CONJUNCTION = " &";
+  public static final String LEMMA_DISJUNCTION = " |";
+  public static final String LEMMA_IMPLICATION = "==>";
   // Tamarin clauses
   public static final String THEORY_OPEN = "theory SimpleTheory" + Constants.LINE_BREAK
       + "begin" + Constants.LINE_BREAK + Constants.LINE_BREAK; 
@@ -189,8 +188,8 @@ public final class Constants{
   public static final String CONCLUSIONS_OPEN = "->[" + Constants.LINE_BREAK;
   public static final String CONCLUSIONS_CLOSE = "]" + Constants.LINE_BREAK + Constants.LINE_BREAK;
   public static final String CLAUSE_LEMMA = "lemma ";
-  public static final String LEMMA_OPEN = " \"" + Constants.LINE_BREAK;
-  public static final String LEMMA_CLOSE = " \"" + Constants.LINE_BREAK;
+  public static final String LEMMA_OPEN = " \"";
+  public static final String LEMMA_CLOSE = "\"";
 
   // miscelaneous
   public static final String THEORY_FILE_EXTENSION = ".spthy";

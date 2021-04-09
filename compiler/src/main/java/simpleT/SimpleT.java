@@ -28,7 +28,7 @@ public class SimpleT {
     try {
       STModel model = compileInput(inputFilePath, tamarinTheoryFilePath);
       compileSources(tamarinExecutablePath, tamarinTheoryFilePath, Constants.DEFAULT_SOURCES_PATH, model);
-      BufferedReader resultStdReader = compileLogging(tamarinExecutablePath, tamarinTheoryFilePath, "secrecy0", model);
+      BufferedReader resultStdReader = compileLogging(tamarinExecutablePath, tamarinTheoryFilePath, model.queries.get(0).renderLabel(), model);
       compileResult(resultStdReader);
     } catch (STException e) {
       e.print();

@@ -168,15 +168,6 @@ public final class Errors{
     warning(variable, message);
   }
 
-  public static void WarningQueryExecutableDuplicite(Token query) {
-    String message = "Duplicite request for executable query. The query will only be verified once!";
-    warning(query, message);
-  }
-
-  public static void WarningQueryConfidentialityDuplicite(Token variable) {
-    String message = "Duplicite request for confidentiality query of variable " + variable.getText() + ". The query will only be verified once!";
-    warning(variable, message);
-  }
 
   public static void InfoDeclarePrincipal(Token principal) {
     String message = "Principal \"" + principal.getText() + "\" is not declared. It is recommended to declare all principals.";

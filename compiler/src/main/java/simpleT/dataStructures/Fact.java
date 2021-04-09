@@ -14,6 +14,7 @@ import simpleT.dataStructures.term.Variable;
  * e.g. special action fact or result fact like Eq(x,x) or PrincipalPrivate(p, v)
  */
 public class Fact {
+  private static int nextSentFactId;
   public boolean persistent;
   public String name;
   public ArrayList<Term> terms;
@@ -35,6 +36,16 @@ public class Fact {
     }
   }
 
+  /** render outside of a block
+   */
+  public String render(){
+    if (persistent) {
+      return BuilderFormatting.persistentFact(name, terms, null);
+    } else {
+      return BuilderFormatting.fact(name, terms, null);
+    }
+  }
+
   /**
    * Create a classic fact to declare equality of 2 terms
    */
@@ -46,6 +57,7 @@ public class Fact {
    * Create a classic fact for use in authentication declaring a principal has sent a variable
    */
   public static Fact authSent(Principal sender, Variable variable) {
-    return new Fact(false, Constants.FACT_AUTHENTICATION_SENT, Arrays.asList(sender.principalID, variable));
+    String label = Constants.FACT_AUTHENTICATION_SENT + Constants.NAME_SEPARATOR + nextSentFactId++;
+    return new Fact(false, label , Arrays.asList(sender.principalID, variable));
   }
 }

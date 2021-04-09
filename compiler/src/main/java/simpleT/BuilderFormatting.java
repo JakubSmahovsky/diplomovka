@@ -2,7 +2,6 @@ package simpleT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import simpleT.dataStructures.Principal;
@@ -123,69 +122,6 @@ public abstract class BuilderFormatting {
       rulePremise(Arrays.asList(LTPListFact)) +
       ruleAction(Arrays.asList(fact(Constants.FACT_DISHONEST, principal.principalID, null))) +
       ruleConclusions(outputs);
-  }
-
-  public static String lemma(String name, boolean existsTrace) {
-    return Constants.CLAUSE_LEMMA + name + Constants.COLON + Constants.LINE_BREAK
-    + (existsTrace ? Constants.QUANTIFIER_TRACE_EXISTS : Constants.QUANTIFIER_TRACE_FORALL) + Constants.LEMMA_OPEN;
-  }
-
-  public static String lemmaQuatification(Collection<Variable> variables, boolean exQuantifier){
-    ArrayList<String> identifiers = new ArrayList<>();
-    for (Variable variable : variables) {
-      identifiers.add(variable.render());
-    }
-    return (exQuantifier ? Constants.QUANTIFIER_EXISTS : Constants.QUANTIFIER_FORALL) + 
-      String.join(Constants.QUANTIFICATION_SEPARATOR, identifiers) + Constants.QUANTIFICATION_CLOSE;
-  }
-
-  public static String lemmaBlockStateFact(STBlock block, Variable temporal) {
-    return lemmaFact(block.render(), block.completeState(), temporal);
-  }
-
-  public static String lemmaFact(String name, List<? extends Term> terms, Variable temporal) {
-    return fact(name, terms, null) + atTemporal(temporal);
-  }
-
-  public static String lemmaFact(String name, Term term, Variable temporal) {
-    return lemmaFact(name, Arrays.asList(term), temporal);
-  }
-
-  public static String negation(String fact) {
-    return Constants.LEMMA_NEGAION + fact;
-  }
-
-  public static String conjunction(List<String> facts) {
-    return String.join(Constants.LEMMA_CONJUNCTION, facts);
-  }
-
-  public static String disjunction(List<String> facts) {
-    return String.join(Constants.LEMMA_DISJUNCTION, facts);
-  }
-
-  public static String implication(String from, String to) {
-    return from + Constants.LEMMA_IMPLICATION + to;
-  }
-
-  public static String dishonest(Principal principal, Variable temporal) {
-    String dishonest = lemmaFact(Constants.FACT_DISHONEST, principal.principalID, temporal);
-    return lemmaQuatification(Arrays.asList(temporal), true) + dishonest;
-  }
-
-  public static String bracket(String statement) {
-    return Constants.OPEN_BR + statement + Constants.CLOSE_BR;
-  }
-
-  public static String beforeAfter(Variable temporalBefore, Variable temporalAfter) {
-    return temporalBefore.render() + Constants.LEMMA_BEFORE + temporalAfter.render();
-  }
-
-  public static String lemmaEquals(Variable v1, Variable v2) {
-    return v1.render() + Constants.LEMMA_EQUALS + v2.render();
-  }
-
-  public static String atTemporal(Variable temporal) {
-    return Constants.LEMMA_ATTEMPORAL + temporal.render();
   }
 
   public static List<String> indent(List<String> strings) {

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import simpleT.Constants;
-import simpleT.dataStructures.query.Queries;
+import simpleT.dataStructures.query.Query;
 import simpleT.dataStructures.term.Variable;
 import simpleT.sourcesCompiler.Source;
 import simpleT.sourcesCompiler.SourceGroup;
@@ -14,7 +14,7 @@ import simpleT.sourcesCompiler.SourceGroup;
  */
 public class STModel {
   private final ArrayList<Principal> principals;
-  public Queries queries;
+  public final ArrayList<Query> queries;
   public Builtins builtins;
   public final Variable instanceID;
   public final Variable sessionID;
@@ -28,7 +28,7 @@ public class STModel {
 
   public STModel(){
     this.principals = new ArrayList<>();
-    this.queries = new Queries();
+    this.queries = new ArrayList<>();
     this.builtins = new Builtins();
 
     this.sourceGroups = new ArrayList<>();
