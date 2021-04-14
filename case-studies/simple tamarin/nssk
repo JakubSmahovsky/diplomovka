@@ -1,38 +1,55 @@
-principals: Alice, Bob
+principals: Alice, Bob, Server
+
+Alice [
+  knows public Bob
+  knows private Kas
+]
 
 Bob [
-  knows private Kab
+  knows public Alice
+  knows private Kbs
+]
+
+Server [
+  knows public Alice, Bob
+  knows private Kas, Kbs
 ]
 
 Alice [
-  knows private Kab
   generates Na
-  m1 = ENC(Kab, Na)
 ]
-Alice -> Bob: Alice, m1
+Alice -> Server: Alice, Bob, Na
 
-Bob [
-  Na = DEC(Kab, m1)
-  SuccNa = HASH(Na)
-  generates Nb
-  m2 = ENC(Kab, {SuccNa, Nb})
+Server [
+  generates Kab
+  ma = ENC(Kas, {Na, Bob, Kab, ENC(Kbs, {Kab, Alice})})
 ]
-Bob -> Alice: m2
+Server -> Alice: ma
 
 Alice [
-  {SuccNa, Nb} = DEC(Kab, m2)
-  EQUALS(SuccNa, HASH(Na))?
-  SuccNb = HASH(Nb)
-  m3 = ENC(Kab, SuccNb)
+  {Na, Bob, Kab, mb} = DEC(Kas, ma)
 ]
-Alice -> Bob: m3
+Alice -> Bob: mb
 
 Bob [
-  SuccNb = DEC(Kab, m3)
-  EQUALS(SuccNb, HASH(Nb))?
+  {Kab, Alice} = DEC(Kbs, mb)
+  generates Nb
+  ch = ENC(Kab, Nb)
 ]
+Bob -> Alice: ch
+
+Alice [
+  Nb = DEC(Kab, ch)
+  re = ENC(Kab, {Nb, '1'})
+]
+Alice -> Bob: re
+
+Bob [
+  {Nb, '1'} = DEC(Kab, re)
+]
+
+Alice -> Alice: Kab
 
 queries [
-  confidentiality? Bob's Nb
-  forward-secrecy? Bob's Nb
+  injective-authentication? Alice -> Bob: re
 ]

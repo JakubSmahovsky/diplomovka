@@ -21,7 +21,6 @@ import org.antlr.v4.runtime.CharStreams;
 
 public class SimpleT {
   public static void main(String[] args) throws IOException {
-    // TODO: parse arguments properly
     String inputFilePath = args[args.length-1];
     String tamarinTheoryFilePath = Constants.DEFAULT_THEORY_PATH + Constants.THEORY_FILE_EXTENSION;
     String tamarinExecutablePath = System.getProperty("user.home") + "/.local/bin/tamarin-prover";

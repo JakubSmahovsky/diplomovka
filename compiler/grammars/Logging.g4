@@ -18,7 +18,7 @@ term:
   tuple |
   constantFunction = (NUMBER | 'true');
 
-constant: '\'' word=IDENTIFIER '\'';
+constant: '\'' word=(IDENTIFIER|NUMBER) '\'';
 function: IDENTIFIER '(' term? (',' term)* ')';
 tuple: '<' term? (',' term)* '>';
 variable: ('$' | '~' | '#')? IDENTIFIER nameID?;

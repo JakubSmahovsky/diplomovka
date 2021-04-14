@@ -44,6 +44,10 @@ public class LoggingCompilerVisitor {
         return;
       }
       goal.findSource(source);
+      if (source.source == null) {
+        System.err.println("Could not find source for goal " + goal.goal.render() + " and source" + source.name + "!");
+        return;
+      }
       System.err.println(goal.render());
       Document sourceDoc = source.render();
       sourceDoc.indent();

@@ -32,15 +32,15 @@ fact: (persistent='!')? IDENTIFIER '(' term? (',' term)* ')';
 term:
   '(' term ')' |
   term infixOp=('^' | '*') term |
+  function |
   constant |
   variable |
-  function |
   tuple |
   constantFunction = (NUMBER | 'true');
 
-constant: '\'' word=IDENTIFIER '\'';
+constant: '\'' word=(IDENTIFIER|NUMBER) '\'';
 function: IDENTIFIER '(' term? (',' term)* ')';
-tuple: '<' term? (',' term)* '>';
+tuple: '<' term (',' term)* '>';
 variable: ('$' | '~' | '#')? IDENTIFIER nameID?;
 nameID: '.' NUMBER;
 

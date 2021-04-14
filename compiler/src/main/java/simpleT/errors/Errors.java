@@ -84,17 +84,17 @@ public final class Errors{
   }
 
   public static void ErrorVariableUnknown(Principal principal, Token variable) {
-    String message = "Principal \"" + principal + "\" is trying to use a variable \"" + variable.getText() + "\", which it doesn't know!";
+    String message = "Principal \"" + principal.renderOutput() + "\" is trying to use a variable \"" + variable.getText() + "\", which it doesn't know!";
     error(variable, message);
   }
 
   public static void ErrorVariableAlreadyKnown(Principal principal, Token variable, boolean pub) {
-    String message = "Principal \"" + principal + "\" already knows a variable with name \"" + variable.getText() + "\" as " + (pub ? "public" : "private") + "!";
+    String message = "Principal \"" + principal.renderOutput() + "\" already knows a variable with name \"" + variable.getText() + "\" as " + (pub ? "public" : "private") + "!";
     error(variable, message);
   }
 
   public static void ErrorVariableNotLongTerm(Token variable) {
-    String message = "Variable + \"" + variable + "\" is not long-term!";
+    String message = "Variable + \"" + variable.getText() + "\" is not long-term!";
     error(variable, message);
   }
 

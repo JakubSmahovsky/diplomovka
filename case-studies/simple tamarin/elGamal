@@ -1,25 +1,23 @@
 principals: Alice, Bob
-
 Alice [
-  knows private x
-  distributed h = 'g'^x
+	knows private as
+	distributed ap = 'g'^as
 ]
-
 Bob [
-  knows public h
-  generates y, m
-  s = h^y
-  c1 = 'g'^y
-  c2 = ENC(s, m)
+	knows public ap
 ]
-Bob -> Alice: {c1, c2}
-
+Bob [
+	generates bs, m
+	bp = 'g'^bs
+	s = ap^bs
+	c = ENC(s, m)
+]
+Bob -> Alice: bp, c
 Alice [
-  s = c1^x
-  m = DEC(s, c2)
+	s = bp^as
+	m = DEC(s, c)
 ]
-
 queries [
-  confidentiality? Alice's m
-  forward-secrecy? Alice's m
+	confidentiality? Bob's m
+	confidentiality? Alice's m
 ]

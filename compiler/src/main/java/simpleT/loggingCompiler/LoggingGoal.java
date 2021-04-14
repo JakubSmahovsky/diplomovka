@@ -2,7 +2,6 @@ package simpleT.loggingCompiler;
 
 import simpleT.dataStructures.STModel;
 import simpleT.dataStructures.document.Document;
-import simpleT.errors.Errors;
 import simpleT.sourcesCompiler.goal.*;
 import simpleT.sourcesCompiler.SourceGroup;
 
@@ -30,9 +29,6 @@ public class LoggingGoal {
           break;
         }
       }
-    }
-    if (source.source == null) {
-      Errors.debug("Could not find source for goal " + toString() + " and source " + source.name);
     }
   }
 
