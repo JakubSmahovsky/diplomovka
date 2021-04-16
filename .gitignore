@@ -29,7 +29,7 @@ client_session_key.aes
 compiler/target
 
 # antlr generated parsers
-compiler/src/main/java/simpleT/stParser
-compiler/src/main/java/simpleT/sourcesParser
-compiler/src/main/java/simpleT/loggingParser
-compiler/src/main/java/simpleT/resultParser
+compiler/src/main/java/dipl/inputParser
+compiler/src/main/java/dipl/sourcesParser
+compiler/src/main/java/dipl/loggingParser
+compiler/src/main/java/dipl/resultParser
