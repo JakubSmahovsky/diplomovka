@@ -2,6 +2,7 @@ package dipl.sourcesCompiler;
 
 import java.util.ArrayList;
 
+import dipl.Constants;
 import dipl.dataStructures.document.Document;
 import dipl.sourcesCompiler.goal.Goal;
 
@@ -18,11 +19,17 @@ public class SourceGroup implements Comparable<SourceGroup>{
     if (goal.shouldBeHidden()) {
       return new Document();
     }
-    Document doc = new Document("GROUP: " + goal.render());
+
+    Document doc = new Document()
+      .append(Constants.OUTPUT_SEPARATOR)
+      .append("GROUP: " + goal.render())
+      .append(Constants.OUTPUT_SEPARATOR);
+    
     for (Source source : sources) {
+      doc.append("solve: " + goal.render());
       doc.append((source.render()));
     }
-    return doc.endl(4);
+    return doc.endl(2);
   }
 
   @Override

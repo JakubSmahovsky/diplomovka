@@ -25,7 +25,7 @@ public class ResultCompilerVisitor {
   public void compile(ClauseContext ctx) {
     ResultClause trace = visitClause(ctx);
     query.trace = trace;
-    System.out.println(query.success ? "disproved" : "proved");
+    System.out.println(query.success ? "DISPROVED" : "PROVED");
     System.out.println(trace.render());
   }
 
