@@ -3,6 +3,7 @@ package dipl.resultCompiler;
 import java.util.ArrayList;
 
 import dipl.Constants;
+import dipl.dataStructures.Block;
 import dipl.dataStructures.Model;
 import dipl.dataStructures.outputTerm.*;
 import dipl.dataStructures.query.Query;
@@ -12,6 +13,7 @@ import dipl.resultParser.ResultParser.*;
 import dipl.sourcesCompiler.Source;
 import dipl.sourcesCompiler.SourceGroup;
 import dipl.sourcesCompiler.goal.*;
+import dipl.sourcesCompiler.goal.factGoal.*;
 
 public class ResultCompilerVisitor {
   private Model model;
@@ -36,6 +38,9 @@ public class ResultCompilerVisitor {
     }
     if (ctx.contradiction() != null) {
       return new ResultContradictionClause();
+    }
+    if (ctx.exhausted() != null) {
+      return new ResultExhaustedClause();
     }
     if (ctx.goal().function() != null) {
       // skip splitEqs() todo? we can't get anything from it
@@ -91,8 +96,11 @@ public class ResultCompilerVisitor {
     
     if (persistent && symbol.equals(Constants.INTRUDER_KNOWS_OUTPUT)) {
       return new AdversaryGoal(terms.get(0)); // intruder goal fact contains exactly 1 term
+    } else if (!persistent && symbol.matches(Constants.FACT_PREFIX_PRINCIPALID + "[0-9]+" + Constants.NAME_SEPARATOR + "[0-9]+")) {
+      Block block = model.blocks.get(Integer.parseInt(symbol.split(Constants.NAME_SEPARATOR)[1]));
+      return new PrincipalRuleGoal(block, persistent, symbol, terms);
     } else {
-      return new FactGoal(persistent, symbol, terms);
+      return new HiddenFactGoal(persistent, symbol, terms);
     }
   }
 

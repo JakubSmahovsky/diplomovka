@@ -1,14 +1,14 @@
-package dipl.sourcesCompiler.goal;
+package dipl.sourcesCompiler.goal.factGoal;
 
 import java.util.ArrayList;
 
-import dipl.OutputFormatting;
 import dipl.dataStructures.outputTerm.OutputTerm;
+import dipl.sourcesCompiler.goal.Goal;
 
 /**
  * Goal stating that some fact needs to be extablsihed.
  */
-public class FactGoal extends Goal{
+public abstract class FactGoal extends Goal{
   public boolean persistent;
   public String symbol;
   public ArrayList<OutputTerm> terms;
@@ -35,16 +35,6 @@ public class FactGoal extends Goal{
         return false;
       }
     }
-    return true;
-  }
-
-  @Override
-  public String render() {
-    return "establish fact " + OutputFormatting.fact(persistent, symbol, terms);
-  }
-
-  @Override
-  public boolean shouldBeHidden() {
     return true;
   }
 }

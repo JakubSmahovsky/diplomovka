@@ -4,11 +4,6 @@ import java.util.ArrayList;
 
 import dipl.sourcesCompiler.graph.Description;
 
-/**
- * Graph node superclass.
- * Instances of this node are still used for stub nodes
- * that Tamarin created when goal is a custon fact.
- */
 public abstract class Node {
   public String id;
   public String label;

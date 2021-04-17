@@ -3,7 +3,8 @@ grammar Result;
 clause:
   'solve' '(' goal ')' source clause ('next' source clause)* 'qed' |
   success |
-  contradiction;
+  contradiction |
+  exhausted;
 source: 'case' IDENTIFIER;
 
 goal:
@@ -27,7 +28,8 @@ variable: ('$' | '~' | '#')? IDENTIFIER nameID?;
 nameID: '.' NUMBER;
 
 success: 'SOLVED // trace found';
-contradiction: 'by contradiction' CONTRADICTION_REASON;
+contradiction: 'by' 'contradiction' CONTRADICTION_REASON;
+exhausted: 'by' 'solve' '(' goal ')';
 
 CONTRADICTION_REASON: '/*' [ a-zA-Z\-]+ '*/';
 ATTIMEPOINT: ('▶' [₀-₉]+) | '@';

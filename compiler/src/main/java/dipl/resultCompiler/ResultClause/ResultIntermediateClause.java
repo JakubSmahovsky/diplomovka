@@ -19,10 +19,18 @@ public class ResultIntermediateClause extends ResultClause{
 
   @Override
   public Document render() {
-    Document clause = new Document(goal.render());
+    // if the clause should be hidden then hide goal, hide every source and don't indent childern
+    Document clause = new Document();
+    if (!goal.hideEverywhere()) {
+      clause.append(goal.render());
+    }
     for (int i = 0; i < sources.size(); i++) {
-      clause.append(sources.get(i).render())
-        .append(children.get(i).render().indent());
+      Document childDoc = children.get(i).render();
+      if (!goal.hideEverywhere()) {
+        clause.append(sources.get(i).render());
+        childDoc.indent();
+      }
+      clause.append(childDoc);
     }
     return clause;
   }

@@ -16,7 +16,7 @@ public class SourceGroup implements Comparable<SourceGroup>{
   }
 
   public Document render(){
-    if (goal.shouldBeHidden()) {
+    if (goal.hideSourceGroup()) {
       return new Document();
     }
 

@@ -9,7 +9,11 @@ public abstract class Goal {
 
   public abstract String render();
 
-  public boolean shouldBeHidden() {
+  public boolean hideEverywhere() {
     return false;
+  }
+
+  public boolean hideSourceGroup() {
+    return hideEverywhere();
   }
 }

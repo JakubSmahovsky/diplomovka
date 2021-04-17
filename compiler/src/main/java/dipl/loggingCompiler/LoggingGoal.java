@@ -16,7 +16,7 @@ public class LoggingGoal {
     this.model = model;
     this.number = number;
     this.goal = goal;
-    this.shouldBeHidden = goal.shouldBeHidden();
+    this.shouldBeHidden = goal.hideEverywhere();
     this.group = null;
   }
 
