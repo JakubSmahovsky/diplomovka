@@ -18,6 +18,7 @@ Alice [
 	m = DEC(s, c)
 ]
 queries [
+	executable?
 	confidentiality? Bob's m
 	confidentiality? Alice's m
 ]

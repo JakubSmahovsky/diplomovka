@@ -14,8 +14,8 @@ import dipl.dataStructures.term.Variable;
  * can reach the end of the protocol.
  */
 public class Executable extends Query {
-  public Executable(Model model) {
-    super(model);
+  public Executable(Model model, String inputText) {
+    super(model, inputText);
   }
 
   @Override
@@ -42,7 +42,7 @@ public class Executable extends Query {
       Variable stateTemporal = Variable.nextTemporal();
       allVariables.add(stateTemporal);
       facts.add(lemmaBlockStateFact(principal.getLastBlock(), stateTemporal));
-      facts.add(negation(dishonest(principal, Variable.nextTemporal())));
+      facts.add(bracket(negation(dishonest(principal, Variable.nextTemporal()))));
     }
     
     return conjunction(facts)
@@ -51,5 +51,12 @@ public class Executable extends Query {
       .indent()
       .prepend(lemma(renderLabel(), true))
       .append(Constants.LEMMA_CLOSE).endl();
+  }
+
+  @Override
+  public Document renderOutput() {
+    return new Document("property: " + inputText)
+      .append(success ? "SUCCESS - EXECUTABLE" : "FAILED")
+      .endl();
   }
 }

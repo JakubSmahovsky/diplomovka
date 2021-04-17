@@ -16,14 +16,16 @@ import dipl.resultCompiler.ResultClause.ResultClause;
 
 public abstract class Query {
   private static int nextQueryID = 0;
+  protected final String inputText;
   protected final Model model;
   protected final int queryID;
   // result
   public boolean success;
   public ResultClause trace;
 
-  public Query(Model model) {
+  public Query(Model model, String inputText) {
     this.model = model;
+    this.inputText = inputText;
     this.queryID = nextQueryID++;
     this.success = false;
   }
@@ -31,6 +33,13 @@ public abstract class Query {
   public abstract String renderLabel();
 
   public abstract Document render();
+
+  public Document renderOutput() {
+    return new Document("property: " + inputText)
+      .append(success ? "DISPROVED" : "PROVED")
+      .append(trace.render())
+      .endl();
+  }
 
   public static Document lemma(String name, boolean existsTrace) {
     String quantifier = (existsTrace ? Constants.QUANTIFIER_TRACE_EXISTS : Constants.QUANTIFIER_TRACE_FORALL);

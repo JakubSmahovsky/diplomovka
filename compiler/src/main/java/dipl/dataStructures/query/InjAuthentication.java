@@ -27,8 +27,8 @@ public class InjAuthentication extends Query{
   public final Variable sent;
   public final Variable received;
 
-  public InjAuthentication(Principal sender, Principal recipient, Variable sent, Variable received, Model model) {
-    super(model);
+  public InjAuthentication(Principal sender, Principal recipient, Variable sent, Variable received, Model model, String inputText) {
+    super(model, inputText);
     this.sender = sender;
     this.recipient = recipient;
     this.sent = sent;

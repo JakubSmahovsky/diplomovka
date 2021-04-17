@@ -22,8 +22,8 @@ public class Confidentiality extends Query {
   public final Principal principal;
   public final Variable variable;
 
-  public Confidentiality(Principal principal, Variable variable, Model model) {
-    super(model);
+  public Confidentiality(Principal principal, Variable variable, Model model, String inputText) {
+    super(model, inputText);
     this.principal = principal;
     this.variable = variable;
   }

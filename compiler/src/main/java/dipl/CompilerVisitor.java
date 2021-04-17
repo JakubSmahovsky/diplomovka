@@ -639,14 +639,14 @@ public class CompilerVisitor {
 		} else if (ctx.forwardSecrecy() != null) {
 			visitForwardSecrecy(ctx.forwardSecrecy());			
 		} else if (ctx.authentication() != null) {
-			visitAuthentication(ctx.authentication().sender, ctx.authentication().recipient, ctx.authentication().variable(), false);
+			visitAuthentication(ctx.authentication().sender, ctx.authentication().recipient, ctx.authentication().variable(), false, ctx.getText());
 		} else if (ctx.injAuthentication() != null) {
-			visitAuthentication(ctx.injAuthentication().sender, ctx.injAuthentication().recipient, ctx.injAuthentication().variable(), true);
+			visitAuthentication(ctx.injAuthentication().sender, ctx.injAuthentication().recipient, ctx.injAuthentication().variable(), true, ctx.getText());
 		}
 	}
 
 	public void visitExecutable(ExecutableContext ctx) {
-		model.queries.add(new Executable(model));
+		model.queries.add(new Executable(model, ctx.getText()));
 	}
 
 	public void visitConfidentiality(ConfidentialityContext ctx) {
@@ -655,7 +655,7 @@ public class CompilerVisitor {
 			Errors.ErrorPrincipalDoesNotExist(ctx.principal);
 		}
 		Variable variable = visitVariable(ctx.variable(), principal, null, VariableDefined.QUERY);
-		model.queries.add(new Confidentiality(principal, variable, model));
+		model.queries.add(new Confidentiality(principal, variable, model, ctx.getText()));
 	}
 
 	public void visitForwardSecrecy(ForwardSecrecyContext ctx) {
@@ -664,10 +664,10 @@ public class CompilerVisitor {
 			Errors.ErrorPrincipalDoesNotExist(ctx.principal);
 		}
 		Variable variable = visitVariable(ctx.variable(), principal, null, VariableDefined.QUERY);
-		model.queries.add(new ForwardSecrecy(principal, variable, model));
+		model.queries.add(new ForwardSecrecy(principal, variable, model, ctx.getText()));
 	}
 
-	public void visitAuthentication(Token senderToken, Token recipientToken, VariableContext vctx, boolean injective) {
+	public void visitAuthentication(Token senderToken, Token recipientToken, VariableContext vctx, boolean injective, String inputText) {
 		Principal sender = model.findPrincipal(senderToken.getText());
 		if (sender == null) {
 			Errors.ErrorPrincipalDoesNotExist(senderToken);
@@ -712,10 +712,10 @@ public class CompilerVisitor {
 		}
 
 		if (injective) {
-			model.queries.add(new InjAuthentication(sender, recipient, sent, received, model));
+			model.queries.add(new InjAuthentication(sender, recipient, sent, received, model, inputText));
 		} else {
 			Fact fact = Fact.authSent(sender, sent);
-			model.queries.add(new Authentication(sender, recipient, sent, received, fact, model));
+			model.queries.add(new Authentication(sender, recipient, sent, received, fact, model, inputText));
 			senderBlock.actions.add(fact);
 		}
 	}

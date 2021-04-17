@@ -149,10 +149,6 @@ public class Dipl {
       resultTrace.append("\n");
     }
 
-    System.out.println();
-    System.out.println("TRACE:");
-    System.out.println(resultTrace.toString());
-
     ResultLexer lexer = new ResultLexer(CharStreams.fromString(resultTrace.toString()));
     CommonTokenStream tokes = new CommonTokenStream(lexer);
     ResultParser parser = new ResultParser(tokes);
