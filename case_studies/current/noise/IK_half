@@ -3,74 +3,94 @@
 // temp_k = tk
 // we ignore deterministic steps depening only on protocol_name or prologue
 //   instead we set ck0 to the constant 'ck0'
+// we represent an AEAD scheme as MAC + encyrption
+//   we name messages M and suffix them with lowercase content
+//   we prefix it with "mac" if it is the MAC of the message
+// we represent the outputs of HKDF(ck, input, 2) as
+//   output1 = HASH({ HASH({ck, input}) , '1' })
+//   output2 = HASH({ HASH({ck, input}) , output1, '2' })
+
+// PATTERN: IK
+
 principals: Alice, Bob
 
-// <- s
+// premessage "<- s"
+// Bob has distributed his static key
 Bob [
   knows private SSB
   distributed SPB = 'g'^SSB
 ]
 
+// initialization for Alice
+// local static (s) is {SSA, SPA}
+// remote static (rs) is SPB   
 Alice [
-  generates payload
+  generates payload1
   knows private SSA
   SPA = 'g'^SSA
   knows public SPB
-  // Initialize()
   // handshake pattern is IK
   // initiator is Alice
-  // s = {SSA, SPA}; rs = SPB
   // MixHash(s)
   h0 = HASH(SPB)
   ck0 = 'ck0'
-  // -> e, es, s, ss
+]
+
+// send -> e, es, s, ss
+Alice [
   // "e"; e = {ESA, EPA}
   generates ESA
   EPA = 'g'^ESA
   h1 = HASH({h0, EPA})
   // "es"
   DHes = SPB^ESA
-  ck1 = HASH({HASH({ck0, DHes})})
-  k1 = HASH({HASH({ck0, DHes}), ck1})
+  ck1 = HASH({HASH({ck0, DHes}), '1'})
+  k1 = HASH({HASH({ck0, DHes}), ck1, '2'})
   // "s"
   Mspa = ENC(HASH({k1, h1}), SPA)
   macMspa = HASH({k1, h1, SPA})
   h2 = HASH({h1, Mspa})
   // "ss"
   DHss = SPB^SSA
-  ck2 = HASH({HASH({ck1, DHss})})
-  k2 = HASH({HASH({ck1, DHss}), ck2})
-  // EncryptAndHash(payload)
-  M = ENC(HASH({k2, h2}), payload)
-  macM = HASH({k2, h2, payload})
+  ck2 = HASH({HASH({ck1, DHss}), '1'})
+  k2 = HASH({HASH({ck1, DHss}), ck2, '2'})
+  // EncryptAndHash(payload1)
+  M = ENC(HASH({k2, h2}), payload1)
+  macM = HASH({k2, h2, payload1})
 ]
 Alice -> Bob: EPA, {Mspa, macMspa}, {M, macM}
 
+// initialization for Bob
+// local static (s) is {SSB, SPB}
 Bob [
-  // Initialize()
   // MixHash(s)
   h0 = HASH(SPB)
   ck0 = 'ck0'
-  // -> e, es, s, ss
+]
+
+// receiving -> e, es, s, ss
+Bob [
   // "e"; re = EPA
   h1 = HASH({h0, EPA})
   // "es"
   DHes = EPA^SSB
-  ck1 = HASH({HASH({ck0, DHes})})
-  k1 = HASH({HASH({ck0, DHes}), ck1})
+  ck1 = HASH({HASH({ck0, DHes}), '1'})
+  k1 = HASH({HASH({ck0, DHes}), ck1, '2'})
   // "s"
   SPA = DEC(HASH({k1, h1}), Mspa)
   EQUALS(macMspa, HASH({k1, h1, SPA}))?
   h2 = HASH({h1, Mspa})
   // "ss"
   DHss = SPA^SSB
-  ck2 = HASH({HASH({ck1, DHss})})
-  k2 = HASH({HASH({ck1, DHss}), ck2})
+  ck2 = HASH({HASH({ck1, DHss}), '1'})
+  k2 = HASH({HASH({ck1, DHss}), ck2, '2'})
   // DecryptAndHash(M)
-  payload = DEC(HASH({k2, h2}), M)
-  EQUALS(macM, HASH({k2, h2, payload}))?
+  payload1 = DEC(HASH({k2, h2}), M)
+  EQUALS(macM, HASH({k2, h2, payload1}))?
 ]
 
 queries [
-  confidentiality? Alice's payload
+  executable?
+  confidentiality? Alice's payload1
+  forward-secrecy? Alice's payload1
 ]
