@@ -81,14 +81,14 @@ public final class Constants{
   public static final String FACT_AUTHENTICATION_SENT = "Sent";
   public static final String FACT_PRINCIPALS = "Principals";
   public static final String FACT_DISHONEST= "Dishonest";
-  public static final String FACT_PREFIX_PRINCIPALID = "QQ";
+  public static final String FACT_PREFIX_PRINCIPALID = "Pal";
   // custom rule names (Tamarin code)
   public static final String RULE_LONG_TERM_REVEAL = "RevealLT";
   public static final String RULE_INSTANCE = "INSTANCE";
   public static final String RULE_SESSION = "SESSION";
   // custom variable names (Tamarin code)
-  public static final String PREFIX_VARIABLEID = "qq";
-  public static final String PREFIX_TEMPORALID = "t";
+  public static final String PREFIX_VARIABLEID = "var";
+  public static final String PREFIX_TEMPORALID = "tmp";
 
   // Tamarin predefined fact names
   public static final String COMMAND_IN = "In";
