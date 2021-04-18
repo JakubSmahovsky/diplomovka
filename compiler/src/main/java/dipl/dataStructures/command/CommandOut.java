@@ -11,7 +11,7 @@ import dipl.dataStructures.term.Variable;
  */
 public class CommandOut {
   private final Term term;
-  private final Block block;
+  public Block block;
   
   public CommandOut(Term term, Block block){
     this.term = term;

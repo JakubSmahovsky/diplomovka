@@ -91,8 +91,52 @@ Bob [
   EQUALS(macM1, HASH({k2, h2, payload1}))?
 ]
 
+// sending <- e, ee, se
+Bob [
+  // "e"; e = {ESB, EPB}
+  generates ESB
+  EPB = 'g'^ESB
+  h3 = HASH({h0, EPB})
+  // "ee"
+  DHee = EPA^ESB
+  ck3 = HASH({HASH({ck2, DHee}), '1'})
+  k3 = HASH({HASH({ck2, DHee}), ck3, '2'})
+  // "se"
+  DHse = SPA^ESB
+  ck4 = HASH({HASH({ck3, DHse}), '1'})
+  k4 = HASH({HASH({ck3, DHse}), ck4, '2'})
+]
+Bob -> Alice: EPB
+
+// receiving <- e, ee, se
+Alice [
+  // "e"; re = EPB
+  h3 = HASH({h0, EPB})
+  // "ee"
+  DHee = EPB^ESA
+  ck3 = HASH({HASH({ck2, DHee}), '1'})
+  k3 = HASH({HASH({ck2, DHee}), ck3, '2'})
+  // "se"
+  DHse = EPB^SSA
+  ck4 = HASH({HASH({ck3, DHse}), '1'})
+  k4 = HASH({HASH({ck3, DHse}), ck4, '2'})
+]
+
+// send proper payload
+Alice [
+  // EncryptAndHash(payload2)
+  generates payload2
+  M2 = ENC(HASH({k4, h2}), payload2)
+  macM2 = HASH({k4, h2, payload2})
+]
+Alice -> Bob: {M2, macM2}
+
+Bob [
+  // DecryptAndHash(M2)
+  payload2 = DEC(HASH({k4, h2}), M2)
+  EQUALS(macM2, HASH({k4, h2, payload2}))?
+]
+
 queries [
-  executable?
-  confidentiality? Alice's payload1
-  forward-secrecy? Alice's payload1
+  forward-secrecy? Alice's payload2
 ]

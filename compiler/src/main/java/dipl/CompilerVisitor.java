@@ -271,6 +271,7 @@ public class CompilerVisitor {
 			for (Variable variable : receivedTerm.extractKnowledge()) {
 				// do not learn a variable again if you aleady know it (it is implicitly compared, because it's in the state)
 				if (recipient.knowsAnyVariableByName(variable) == null) {
+					recipient.nextBlock.addToState(variable);
 					recipient.learnEphemeralPrivate(variable, false);
 				} else {
 					recipient.nextBlock.unaryEqualsPending.add(variable);
@@ -279,7 +280,6 @@ public class CompilerVisitor {
 
 			sender.getLastBlock().outputs.add(new CommandOut(term, sender.getLastBlock()));
 			recipient.nextBlock.inputs.add(new CommandIn(receivedTerm, recipient.nextBlock));
-			recipient.nextBlock.addToState(receivedTerm);
 		}
 	}
 

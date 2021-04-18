@@ -19,7 +19,7 @@ public class Block {
   public ArrayList<CommandIn> inputs;
   public ArrayList<Fact> actions;
   public ArrayList<CommandOut> outputs;
-  private final ArrayList<Term> state;
+  public ArrayList<Term> state;
   public int rangeBegin;
   public int rangeEnd;
   
@@ -54,20 +54,31 @@ public class Block {
 
   /**
    * Merges the provided block AFTER this block.
+   * Some objects may be refecencing the provided block,
+   * that is why the provided block needs to "become" this block after merging.
    */
   public void merge(Block block) {
     aliases.addAll(block.aliases);
     deconstructed.addAll(block.deconstructed);
-    fresh.addAll(block.fresh);
-    inputs.addAll(block.inputs);
+    for (CommandFr fr : block.fresh) {
+      fr.block = this;
+      fresh.add(fr);
+    }
+    for (CommandIn in : block.inputs) {
+      in.block = this;
+      inputs.add(in);
+    }
     actions.addAll(block.actions);
-    outputs.addAll(block.outputs);
+    for (CommandOut out : block.outputs) {
+      out.block = this;
+      outputs.add(out);
+    }
     for (Term term : block.state) {
       addToState(term);
     }
     rangeEnd = block.rangeEnd;
   }
-
+  
   public ArrayList<Term> completeState() {
     ArrayList<Term> result = new ArrayList<>();
     result.addAll(principal.composeSessionState());

@@ -103,6 +103,7 @@ public class Dipl {
     LoggingCompilerVisitor loggingVisitor = new LoggingCompilerVisitor(model);
     String message = "";
     int storedUncompiledLines = 0;
+    boolean exceptionRecovery = false;
 
     while (true) {
       if (errStream.available() == 0) {
@@ -124,9 +125,15 @@ public class Dipl {
         loggingVisitor.visitMessage(loggingParser.message());
       } catch (ParseCancellationException e) {
         storedUncompiledLines++;
+        if (storedUncompiledLines >= 4 || exceptionRecovery) {
+          System.err.println("Unable to parse lines: \r\n" + message);
+          storedUncompiledLines = 0;
+          exceptionRecovery = true;
+        }
         continue;
       }
       storedUncompiledLines = 0;
+      exceptionRecovery = false;
     }
     return stdStreamReader;
   }

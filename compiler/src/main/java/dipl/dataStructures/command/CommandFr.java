@@ -10,7 +10,7 @@ import dipl.dataStructures.term.Variable;
  */
 public class CommandFr {
   private final Variable variable;
-  private final Block block;
+  public Block block;
   
   public CommandFr(Variable variable, Block block){
     this.variable = variable;
