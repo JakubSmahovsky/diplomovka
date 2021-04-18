@@ -22,8 +22,8 @@ public class ForwardSecrecy extends Query {
   public final Principal principal;
   public final Variable variable;
 
-  public ForwardSecrecy(Principal principal, Variable variable, Model model, String inputText) {
-    super(model, inputText);
+  public ForwardSecrecy(Principal principal, Variable variable, Model model) {
+    super(model);
     this.principal = principal;
     this.variable = variable;
   }
@@ -84,5 +84,13 @@ public class ForwardSecrecy extends Query {
       .indent()
       .prepend(lemma(renderLabel(), false))
       .append(Constants.LEMMA_CLOSE).endl();
+  }
+
+  @Override
+  public Document renderOutput() {
+    return new Document("property: forward-secrecy? " + principal.renderOutput() + "'s " + variable.renderOutput())
+      .append(success ? "DISPROVED" : "PROVED")
+      .append(trace.render())
+      .endl();
   }
 }

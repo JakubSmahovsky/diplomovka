@@ -27,8 +27,8 @@ public class InjAuthentication extends Query{
   public final Variable sent;
   public final Variable received;
 
-  public InjAuthentication(Principal sender, Principal recipient, Variable sent, Variable received, Model model, String inputText) {
-    super(model, inputText);
+  public InjAuthentication(Principal sender, Principal recipient, Variable sent, Variable received, Model model) {
+    super(model);
     this.sender = sender;
     this.recipient = recipient;
     this.sent = sent;
@@ -121,5 +121,13 @@ public class InjAuthentication extends Query{
       .indent()
       .prepend(lemma(renderLabel(), false))
       .append(Constants.LEMMA_CLOSE).endl();
+  }
+
+  @Override
+  public Document renderOutput() {
+    return new Document("property: injective-authentication? " + sender.renderOutput() + " -> " + recipient.renderOutput() + ": " + sent.renderOutput())
+      .append(success ? "DISPROVED" : "PROVED")
+      .append(trace.render())
+      .endl();
   }
 }

@@ -27,8 +27,8 @@ public class Authentication extends Query{
   public final Variable received;
   public final Fact fact;
 
-  public Authentication(Principal sender, Principal recipient, Variable sent, Variable received, Fact fact, Model model, String inputText) {
-    super(model, inputText);
+  public Authentication(Principal sender, Principal recipient, Variable sent, Variable received, Fact fact, Model model) {
+    super(model);
     this.sender = sender;
     this.recipient = recipient;
     this.sent = sent;
@@ -105,5 +105,13 @@ public class Authentication extends Query{
       .indent()
       .prepend(lemma(renderLabel(), false))
       .append(Constants.LEMMA_CLOSE).endl();
+  }
+
+  @Override
+  public Document renderOutput() {
+    return new Document("property: authentication? " + sender.renderOutput() + " -> " + recipient.renderOutput() + ": " + sent.renderOutput())
+      .append(success ? "DISPROVED" : "PROVED")
+      .append(trace.render())
+      .endl();
   }
 }

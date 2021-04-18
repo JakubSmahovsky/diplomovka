@@ -14,8 +14,8 @@ import dipl.dataStructures.term.Variable;
  * can reach the end of the protocol.
  */
 public class Executable extends Query {
-  public Executable(Model model, String inputText) {
-    super(model, inputText);
+  public Executable(Model model) {
+    super(model);
   }
 
   @Override
@@ -55,7 +55,7 @@ public class Executable extends Query {
 
   @Override
   public Document renderOutput() {
-    return new Document("property: " + inputText)
+    return new Document("property: executable?")
       .append(success ? "SUCCESS - EXECUTABLE" : "FAILED")
       .endl();
   }

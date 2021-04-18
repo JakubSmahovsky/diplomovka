@@ -22,8 +22,8 @@ public class Confidentiality extends Query {
   public final Principal principal;
   public final Variable variable;
 
-  public Confidentiality(Principal principal, Variable variable, Model model, String inputText) {
-    super(model, inputText);
+  public Confidentiality(Principal principal, Variable variable, Model model) {
+    super(model);
     this.principal = principal;
     this.variable = variable;
   }
@@ -81,5 +81,13 @@ public class Confidentiality extends Query {
       .indent()
       .prepend(lemma(renderLabel(), false))
       .append(Constants.LEMMA_CLOSE).endl();
+  }
+
+  @Override
+  public Document renderOutput() {
+    return new Document("property: confidentiality? " + principal.renderOutput() + "'s " + variable.renderOutput())
+      .append(success ? "DISPROVED" : "PROVED")
+      .append(trace.render())
+      .endl();
   }
 }
