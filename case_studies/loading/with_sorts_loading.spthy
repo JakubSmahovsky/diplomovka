@@ -1,0 +1,56 @@
+theory spthy
+begin
+
+builtins: symmetric-encryption, diffie-hellman
+
+// notation: key XYZ means
+// X: Static or Ephemeral
+// Y: Secret or Public
+// Z: Alice or Bob
+
+rule init:
+let
+  SPA = 'g'^~SSA
+  SPB = 'g'^~SSB
+in
+[
+  Fr(~SSA),
+  Fr(~SSB)
+]-->[
+  !Alice_init($Alice, SPA, SPB, ~SSA),
+  !Bob_init($Bob, SPA, SPB, ~SSB),
+  Out(SPA),
+  Out(SPB)
+]
+
+rule Alice_1_0:
+let
+  EPA = 'g'^~ESA
+  DHes = SPB^~ESA
+  DHss = SPB^~SSA
+  K = <DHes, DHss>
+  M = senc(~payload, K)
+in
+[
+  !Alice_init(Alice, SPA, SPB, ~SSA),
+  Fr(~payload),
+  Fr(~ESA)
+]-->[
+  Out(EPA),
+  Out(M)
+]
+
+rule Bob_2_1:
+let
+  DHes = EPA^~SSB
+  DHss = SPA^~SSB
+  K = <DHes, DHss>
+in
+[
+  !Bob_init(Bob, SPA, SPB, ~SSB),
+  In(EPA),
+  In(senc(payload, K))
+]-->[
+]
+
+end
