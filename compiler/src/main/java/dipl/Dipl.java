@@ -125,8 +125,8 @@ public class Dipl {
         loggingVisitor.visitMessage(loggingParser.message());
       } catch (ParseCancellationException e) {
         storedUncompiledLines++;
-        if (storedUncompiledLines >= 4 || exceptionRecovery) {
-          System.err.println("Unable to parse lines: \r\n" + message);
+        if (storedUncompiledLines >= 10 || exceptionRecovery) {
+          System.err.println("Unable to parse some lines \r\n");
           storedUncompiledLines = 0;
           exceptionRecovery = true;
         }
