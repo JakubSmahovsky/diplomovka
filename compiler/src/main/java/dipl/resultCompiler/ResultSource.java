@@ -16,16 +16,10 @@ public class ResultSource {
   }
 
   public Document render() {
-    int likely = 0; // 0 is invalid
-    ArrayList<String> other = new ArrayList<>();
-    for (int i = 0; i < applicable.size(); i++) {
-      if (i == caseIndex) {
-        likely = applicable.get(i).number;
-      } else {
-        other.add(String.valueOf(applicable.get(i).number));
-      }
+    ArrayList<String> numbers = new ArrayList<>();
+    for (Source source : applicable) {
+      numbers.add(String.valueOf(source.number));
     }
-    String possibly = ", possibly " + String.join(Constants.COMMA_SEPARATOR, other);
-    return new Document("likely " + likely + (other.isEmpty() ? "" : possibly));
+    return new Document("applicable: " + String.join(Constants.COMMA_SEPARATOR, numbers));
   }
 }
