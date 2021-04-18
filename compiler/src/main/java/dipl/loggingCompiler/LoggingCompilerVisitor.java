@@ -1,13 +1,13 @@
 package dipl.loggingCompiler;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
 import dipl.Constants;
 import dipl.dataStructures.Block;
 import dipl.dataStructures.Model;
-import dipl.dataStructures.document.Document;
 import dipl.dataStructures.outputTerm.*;
 import dipl.errors.Errors;
 import dipl.loggingParser.LoggingParser.*;
@@ -36,24 +36,34 @@ public class LoggingCompilerVisitor {
     }
 
     if (!solved.isEmpty() && !by.isEmpty()) {
-      LoggingGoal goal = solved.remove();
-      LoggingSource source = by.remove();
-      if (goal.number != source.goalNr) {
-        System.err.println("Discarded goal " + goal.goal.render() + " and source " + source.name + "!");
-        return;
+      Iterator<LoggingGoal> solvedIt = solved.iterator();
+      Iterator<LoggingSource> byIt = by.iterator();
+      
+      while (solvedIt.hasNext()) {
+        LoggingGoal goal = solvedIt.next();
+        boolean matched = false;
+        while (byIt.hasNext()) {
+          LoggingSource source = byIt.next();
+          if (goal.number != source.goalNr) {
+            continue;
+          }
+          byIt.remove();
+          matched = true;
+          if (goal.shouldBeHidden) {
+            return;
+          }
+          goal.findSource(source);
+          if (source.source == null) {
+            System.err.println("Could not find source for goal " + goal.goal.render() + " and source" + source.name + "!");
+            return;
+          }
+          System.err.println(goal.render());
+          System.err.println(source.render().indent());
+        }
+        if (matched) {
+          solvedIt.remove();
+        }
       }
-      if (goal.shouldBeHidden) {
-        return;
-      }
-      goal.findSource(source);
-      if (source.source == null) {
-        System.err.println("Could not find source for goal " + goal.goal.render() + " and source" + source.name + "!");
-        return;
-      }
-      System.err.println(goal.render());
-      Document sourceDoc = source.render();
-      sourceDoc.indent();
-      System.err.println(sourceDoc);
     }
   }
 
