@@ -46,7 +46,7 @@ Alice [
   ck1 = HASH({HASH({ck0, DHes}), '1'})
   k1 = HASH({HASH({ck0, DHes}), ck1, '2'})
   // "s"
-  Mspa = ENC(HASH({k1, h1}), SPA)
+  Mspa = ENC({k1, h1}, SPA)
   macMspa = HASH({k1, h1, SPA})
   h2 = HASH({h1, Mspa})
   // "ss"
@@ -56,7 +56,7 @@ Alice [
 
   // EncryptAndHash(payload1)
   generates payload1
-  M1 = ENC(HASH({k2, h2}), payload1)
+  M1 = ENC({k2, h2}, payload1)
   macM1 = HASH({k2, h2, payload1})
   h3 = HASH({h2, M1})
 ]
@@ -79,7 +79,7 @@ Bob [
   ck1 = HASH({HASH({ck0, DHes}), '1'})
   k1 = HASH({HASH({ck0, DHes}), ck1, '2'})
   // "s"
-  SPA = DEC(HASH({k1, h1}), Mspa)
+  SPA = DEC({k1, h1}, Mspa)
   EQUALS(macMspa, HASH({k1, h1, SPA}))?
   h2 = HASH({h1, Mspa})
   // "ss"
@@ -88,7 +88,7 @@ Bob [
   k2 = HASH({HASH({ck1, DHss}), ck2, '2'})
 
   // DecryptAndHash(M1)
-  payload1 = DEC(HASH({k2, h2}), M1)
+  payload1 = DEC({k2, h2}, M1)
   EQUALS(macM1, HASH({k2, h2, payload1}))?
   h3 = HASH({h2, M1})
 ]
@@ -110,7 +110,7 @@ Bob [
 
   // EncryptAndHash(payload2)
   generates payload2
-  M2 = ENC(HASH({k4, h4}), payload2)
+  M2 = ENC({k4, h4}, payload2)
   macM2 = HASH({k4, h4, payload2})
   h5 = HASH({h4, M2})
 ]
@@ -130,7 +130,7 @@ Alice [
   k4 = HASH({HASH({ck3, DHse}), ck4, '2'})
 
   // DecryptAndHash(M2)
-  payload2 = DEC(HASH({k4, h4}), M2)
+  payload2 = DEC({k4, h4}, M2)
   EQUALS(macM2, HASH({k4, h4, payload2}))?
   h5 = HASH({h4, M2})
 ]
@@ -139,17 +139,22 @@ Alice [
 Alice [
   // EncryptAndHash(payload3)
   generates payload3
-  M3 = ENC(HASH({k4, h5}), payload3)
+  M3 = ENC({k4, h5}, payload3)
   macM3 = HASH({k4, h5, payload3})
 ]
 Alice -> Bob: {M3, macM3}
 
 Bob [
   // DecryptAndHash(M3)
-  payload3 = DEC(HASH({k4, h5}), M3)
+  payload3 = DEC({k4, h5}, M3)
   EQUALS(macM3, HASH({k4, h5, payload3}))?
 ]
 
 queries [
+  // the most important property, sould succeed
   forward-secrecy? Alice's payload3
+
+  // SSB belongs to Bob as part of initial assumptions
+  // this verifies the authentication of Bob as well as SSB, should succeed
+  authentication? Bob -> Alice: M2
 ]

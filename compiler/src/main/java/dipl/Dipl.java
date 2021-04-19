@@ -1,6 +1,7 @@
 package dipl;
 
 import java.io.*;
+import java.util.LinkedList;
 
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
@@ -101,9 +102,8 @@ public class Dipl {
     BufferedReader stdStreamReader = new BufferedReader(new InputStreamReader(stdStream));
 
     LoggingCompilerVisitor loggingVisitor = new LoggingCompilerVisitor(model);
-    String message = "";
-    int storedUncompiledLines = 0;
-    boolean exceptionRecovery = false;
+    LinkedList<String> message = new LinkedList<>();
+    int unprocessedLines = 0;
 
     while (true) {
       if (errStream.available() == 0) {
@@ -115,25 +115,27 @@ public class Dipl {
         }
       }
       String line = errStreamReader.readLine();
-      message = storedUncompiledLines == 0 ? line : message + line;
-      LoggingLexer loggingLexer = new LoggingLexer(CharStreams.fromString(message));
+      message.addLast(line);
+      StringBuilder mergedMessage = new StringBuilder();
+      for (String part : message) {
+        mergedMessage.append(part);
+      }
+      LoggingLexer loggingLexer = new LoggingLexer(CharStreams.fromString(mergedMessage.toString()));
       CommonTokenStream loggingTokes = new CommonTokenStream(loggingLexer);
       LoggingParser loggingParser = new LoggingParser(loggingTokes);
       loggingParser.removeErrorListeners();
       loggingParser.addErrorListener(LoggingErrorListener.INSTANCE);
       try {
         loggingVisitor.visitMessage(loggingParser.message());
+        message = new LinkedList<>();
       } catch (ParseCancellationException e) {
-        storedUncompiledLines++;
-        if (storedUncompiledLines >= 10 || exceptionRecovery) {
-          System.err.println("Unable to parse some lines \r\n");
-          storedUncompiledLines = 0;
-          exceptionRecovery = true;
+        if (message.size() >= 5) {
+          unprocessedLines++;
+          System.err.println("Unable to parse " + unprocessedLines + " lines");
+          message.removeFirst();
         }
         continue;
       }
-      storedUncompiledLines = 0;
-      exceptionRecovery = false;
     }
     return stdStreamReader;
   }
