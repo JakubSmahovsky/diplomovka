@@ -712,11 +712,12 @@ public class CompilerVisitor {
 		}
 
 		if (injective) {
-			model.queries.add(new InjAuthentication(sender, recipient, sent, received, model));
+			Fact fact = Fact.injAuthSent(sender, sent, model.sessionID);
+			model.queries.add(new InjAuthentication(sender, recipient, sent, received, fact, model));
+			senderBlock.actions.add(fact);
 		} else {
 			Fact fact = Fact.authSent(sender, sent);
 			model.queries.add(new Authentication(sender, recipient, sent, received, fact, model));
-			senderBlock.actions.add(fact);
 		}
 	}
 }

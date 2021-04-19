@@ -79,6 +79,7 @@ public final class Constants{
   public static final String FACT_EQUALITY = "Eq";
   public static final String FACT_LONG_TERM_PRIVATE = "LTP";
   public static final String FACT_AUTHENTICATION_SENT = "Sent";
+  public static final String FACT_INJ_AUTHENTICATION_SENT = "InjSent";
   public static final String FACT_PRINCIPALS = "Principals";
   public static final String FACT_DISHONEST= "Dishonest";
   public static final String FACT_PREFIX_PRINCIPALID = "Pal";

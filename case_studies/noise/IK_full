@@ -135,12 +135,13 @@ Alice [
   h5 = HASH({h4, M2})
 ]
 
-// send a proper payload - payload3
+// send a proper payload from Alice - payload3
 Alice [
   // EncryptAndHash(payload3)
   generates payload3
   M3 = ENC({k4, h5}, payload3)
   macM3 = HASH({k4, h5, payload3})
+  h6 = HASH({h5, M3})
 ]
 Alice -> Bob: {M3, macM3}
 
@@ -148,6 +149,7 @@ Bob [
   // DecryptAndHash(M3)
   payload3 = DEC({k4, h5}, M3)
   EQUALS(macM3, HASH({k4, h5, payload3}))?
+  h6 = HASH({h5, M3})
 ]
 
 queries [

@@ -146,6 +146,7 @@ public class Builder extends BuilderFormatting{
     }
 
     // render session init rule
+    model.sessionID.addFresh();
     facts = new ArrayList<>();
     output.append(ruleAliases(null, facts, Constants.RULE_SESSION));
     facts.add(fact(Constants.COMMAND_FRESH, model.sessionID, null));

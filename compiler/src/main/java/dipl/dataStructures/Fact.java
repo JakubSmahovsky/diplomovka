@@ -53,6 +53,15 @@ public class Fact {
     return new Fact(false, Constants.FACT_EQUALITY, Arrays.asList(term1, term2));
   }
 
+
+  /**
+   * Create a classic fact for use in injective authentication declaring a principal has sent a variable in the correct session
+   */
+  public static Fact injAuthSent(Principal sender, Variable variable, Variable session) {
+    String label = Constants.FACT_INJ_AUTHENTICATION_SENT + Constants.NAME_SEPARATOR + nextSentFactId++;
+    return new Fact(false, label , Arrays.asList(sender.principalID, variable, session));
+  }
+
   /**
    * Create a classic fact for use in authentication declaring a principal has sent a variable
    */

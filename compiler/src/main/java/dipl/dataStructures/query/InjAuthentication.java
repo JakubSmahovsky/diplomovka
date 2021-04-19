@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import dipl.Constants;
 import dipl.dataStructures.Principal;
 import dipl.dataStructures.Block;
+import dipl.dataStructures.Fact;
 import dipl.dataStructures.Model;
 import dipl.dataStructures.command.CommandIn;
-import dipl.dataStructures.command.CommandOut;
 import dipl.dataStructures.document.Document;
 import dipl.dataStructures.term.Term;
 import dipl.dataStructures.term.Variable;
@@ -16,7 +16,7 @@ import dipl.dataStructures.term.Variable;
  *    principal identities are these ...,
  *    recipient received the variable (got to state after)
  *  then
- *    sender sent the variable (got to state before) or
+ *    sender sent the variable (there is a special fact InjSent(principal, variable, sessionID)) or
  *    the sender is dishonest or
  *    the recipient is dishonest
  * The injectiveness is guaranteed by the same session id in both states.
@@ -26,19 +26,22 @@ public class InjAuthentication extends Query{
   public final Principal recipient;
   public final Variable sent;
   public final Variable received;
+  public final Fact fact;
 
-  public InjAuthentication(Principal sender, Principal recipient, Variable sent, Variable received, Model model) {
+  public InjAuthentication(Principal sender, Principal recipient, Variable sent, Variable received, Fact fact, Model model) {
     super(model);
     this.sender = sender;
     this.recipient = recipient;
     this.sent = sent;
     this.received = received;
+    this.fact = fact;
   }
 
   @Override
   public String renderLabel() {
     return Constants.INJ_AUTHENTICATION + Constants.NAME_SEPARATOR + queryID;
   }
+
 
   @Override
   public Document render() {
@@ -76,31 +79,14 @@ public class InjAuthentication extends Query{
     String recipientState = lemmaBlockStateFact(recipientBlock, recipientTemporal);
     allVariables.add(recipientTemporal);
     // sender clause
-    Block senderBlock = null;
-    for (Block block : sender.getBlocks()) {
-			for (CommandOut out : block.outputs) {
-				if (out.sentVariable(sent)) {
-					senderBlock = block;
-					break;
-				}
-			}
-			if (senderBlock != null) {
-				break;
-			}
-		}
     ArrayList<Variable> senderVariables = new ArrayList<>();
-    for (Term term : senderBlock.completeState()) {
-      for (Variable variable : term.freeVariables()) {
-        if (!Term.containsByObjectEquality(senderVariables, variable) && 
-            !Term.containsByObjectEquality(allVariables, variable)) {
-          senderVariables.add(variable);
-        }
-      }
+    if (sent != received) {
+      senderVariables.add(sent);
     }
     Variable senderTemporal = Variable.nextTemporal();
     senderVariables.add(senderTemporal);
     Document senderClause = 
-      new Document(lemmaBlockStateFact(senderBlock, senderTemporal) + Constants.LEMMA_CONJUNCTION)
+      new Document(fact.render() + atTemporal(senderTemporal) + Constants.LEMMA_CONJUNCTION)
       .append(lemmaEquals(sent, received))
       .indent()
       .prepend(lemmaQuatification(senderVariables, true))
