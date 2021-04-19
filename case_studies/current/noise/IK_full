@@ -58,6 +58,7 @@ Alice [
   generates payload1
   M1 = ENC(HASH({k2, h2}), payload1)
   macM1 = HASH({k2, h2, payload1})
+  h3 = HASH({h2, M1})
 ]
 Alice -> Bob: EPA, {Mspa, macMspa}, {M1, macM1}
 
@@ -89,6 +90,7 @@ Bob [
   // DecryptAndHash(M1)
   payload1 = DEC(HASH({k2, h2}), M1)
   EQUALS(macM1, HASH({k2, h2, payload1}))?
+  h3 = HASH({h2, M1})
 ]
 
 // sending <- e, ee, se
@@ -96,7 +98,7 @@ Bob [
   // "e"; e = {ESB, EPB}
   generates ESB
   EPB = 'g'^ESB
-  h3 = HASH({h0, EPB})
+  h4 = HASH({h3, EPB})
   // "ee"
   DHee = EPA^ESB
   ck3 = HASH({HASH({ck2, DHee}), '1'})
@@ -105,13 +107,19 @@ Bob [
   DHse = SPA^ESB
   ck4 = HASH({HASH({ck3, DHse}), '1'})
   k4 = HASH({HASH({ck3, DHse}), ck4, '2'})
+
+  // EncryptAndHash(payload2)
+  generates payload2
+  M2 = ENC(HASH({k4, h4}), payload2)
+  macM2 = HASH({k4, h4, payload2})
+  h5 = HASH({h4, M2})
 ]
-Bob -> Alice: EPB
+Bob -> Alice: EPB, {M2, macM2}
 
 // receiving <- e, ee, se
 Alice [
   // "e"; re = EPB
-  h3 = HASH({h0, EPB})
+  h4 = HASH({h3, EPB})
   // "ee"
   DHee = EPB^ESA
   ck3 = HASH({HASH({ck2, DHee}), '1'})
@@ -120,23 +128,28 @@ Alice [
   DHse = EPB^SSA
   ck4 = HASH({HASH({ck3, DHse}), '1'})
   k4 = HASH({HASH({ck3, DHse}), ck4, '2'})
+
+  // DecryptAndHash(M2)
+  payload2 = DEC(HASH({k4, h4}), M2)
+  EQUALS(macM2, HASH({k4, h4, payload2}))?
+  h5 = HASH({h4, M2})
 ]
 
-// send proper payload
+// send a proper payload - payload3
 Alice [
-  // EncryptAndHash(payload2)
-  generates payload2
-  M2 = ENC(HASH({k4, h2}), payload2)
-  macM2 = HASH({k4, h2, payload2})
+  // EncryptAndHash(payload3)
+  generates payload3
+  M3 = ENC(HASH({k4, h5}), payload3)
+  macM3 = HASH({k4, h5, payload3})
 ]
-Alice -> Bob: {M2, macM2}
+Alice -> Bob: {M3, macM3}
 
 Bob [
-  // DecryptAndHash(M2)
-  payload2 = DEC(HASH({k4, h2}), M2)
-  EQUALS(macM2, HASH({k4, h2, payload2}))?
+  // DecryptAndHash(M3)
+  payload3 = DEC(HASH({k4, h5}), M3)
+  EQUALS(macM3, HASH({k4, h5, payload3}))?
 ]
 
 queries [
-  forward-secrecy? Alice's payload2
+  forward-secrecy? Alice's payload3
 ]
