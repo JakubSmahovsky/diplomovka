@@ -32,7 +32,7 @@ let
   M = senc(~payload, K)
 in
 [
-  !Alice_init(Alice, SPA, SPB, ~SSA),
+  !Alice_init($Alice, SPA, SPB, ~SSA),
   Fr(~payload),
   Fr(~ESA)
 ]-->[
@@ -47,7 +47,7 @@ let
   K = <DHes, DHss>
 in
 [
-  !Bob_init(Bob, SPA, SPB, ~SSB),
+  !Bob_init($Bob, SPA, SPB, ~SSB),
   In(EPA),
   In(senc(payload, K))
 ]-->[
