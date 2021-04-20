@@ -29,4 +29,6 @@ PERSISTENT: '!';
 SOLVEDHOW: '(precomputed)' | '(directly)';
 NUMBER: [0-9]+;
 IDENTIFIER: ([a-zA-Z_] | NUMBER)+;
+
+UNPARSED_TOKEN: '"' | '⊥';
 WHITESPACE: [ \t\r\n]+ -> skip;
