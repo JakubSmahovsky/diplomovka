@@ -4,28 +4,28 @@ unary-equals: implicit
 Alice [
   knows private Kas
   knows public Bob
-  generates M, Na
-  m1 = ENC(Kas, {Na, M, Alice, Bob})
+  generates N, Na
+  m1 = ENC(Kas, {Na, N, Alice, Bob})
 ]
-Alice -> Bob: M, Alice, Bob, m1
+Alice -> Bob: N, Alice, Bob, m1
 
 Bob [
   knows private Kbs
   generates Nb
-  m2 = ENC(Kbs, {Nb, M, Alice, Bob})
+  m2 = ENC(Kbs, {Nb, N, Alice, Bob})
 ]
-Bob -> Server: M, Alice, Bob, m1, m2
+Bob -> Server: N, Alice, Bob, m1, m2
 
 Server [
   knows private Kas, Kbs
-  {Na, M, Alice, Bob} = DEC(Kas, m1)
-  {Nb, M, Alice, Bob} = DEC(Kbs, m2)
+  {Na, N, Alice, Bob} = DEC(Kas, m1)
+  {Nb, N, Alice, Bob} = DEC(Kbs, m2)
   
   generates Kab
   m3 = ENC(Kbs, {Nb, Kab})
   m4 = ENC(Kas, {Na, Kab})
 ]
-Server -> Bob: M, m3, m4
+Server -> Bob: N, m3, m4
 
 Bob [
   {Nb, Kab} = DEC(Kbs, m3)
@@ -37,7 +37,7 @@ Alice [
 ]
 
 queries [
+  executable?
   confidentiality? Alice's Kab
   authentication? Bob->Alice: m4
-  injective-authentication? Bob->Server: m2
 ]
