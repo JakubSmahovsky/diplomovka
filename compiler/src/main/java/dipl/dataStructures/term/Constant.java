@@ -5,6 +5,9 @@ import java.util.List;
 
 import dipl.Constants;
 import dipl.dataStructures.Fact;
+import dipl.dataStructures.Model;
+import dipl.dataStructures.Principal;
+import dipl.inputParser.InputParser.TermContext;
 import dipl.dataStructures.Block;
 
 public class Constant extends Term {
@@ -87,5 +90,10 @@ public class Constant extends Term {
       block.actions.add(Fact.equality(this, right));
     }
     return this.equals(right);
+  }
+
+  @Override
+  public Term sentToReceived(Model model, Principal recipient, TermContext messageCtx) {
+    return this;
   }
 }

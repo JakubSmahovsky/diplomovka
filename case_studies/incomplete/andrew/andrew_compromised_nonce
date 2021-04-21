@@ -12,9 +12,8 @@ Bob [
   knows private Kab
   Na = DEC(Kab, m1)
 
-  succNa = {Na, '1'}
   generates Nb
-  m2 = ENC(Kab, {succNa, Nb})
+  m2 = ENC(Kab, {{Na, '1'}, Nb})
 ]
 Bob -> Alice: m2
 
@@ -35,9 +34,10 @@ Alice [
   {Kab2, Nb2} = DEC(Kab, m4)
 ]
 
-queries [
-  authentication? Bob -> Alice: m4
+// compromise Na
+Alice -> Alice: Na
 
-  // warning: proof of this query produces a VERY long result
-  // confidentiality? Alice's Kab2
+queries [
+  confidentiality? Alice's Kab2
+  authentication? Bob -> Alice: m4
 ]

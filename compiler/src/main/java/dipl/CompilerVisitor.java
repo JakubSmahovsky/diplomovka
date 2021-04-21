@@ -718,6 +718,7 @@ public class CompilerVisitor {
 		} else {
 			Fact fact = Fact.authSent(sender, sent);
 			model.queries.add(new Authentication(sender, recipient, sent, received, fact, model));
+			senderBlock.actions.add(fact);
 		}
 	}
 }

@@ -26,6 +26,8 @@ public class Builder extends BuilderFormatting{
     initProtocol();
     initRules();
     blocks();
+    model.sessionID.removeFresh();
+    
     reveals();
     restrictions();
     queries();
