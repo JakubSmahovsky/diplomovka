@@ -33,6 +33,6 @@ public class LoggingGoal {
   }
 
   public Document render() {
-    return new Document("Solved (" + number + ") " + goal.render());
+    return new Document("Solved: " + goal.render());
   }
 }

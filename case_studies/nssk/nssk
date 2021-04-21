@@ -1,0 +1,63 @@
+// The Needham Schroeder Symmetric Key protocol
+// The attack requires compromising Kab after the protocol finishes
+// which our implementation doesn't yet support.
+
+// The attack should still be found as an attack on injective-authentication of the mb message.
+// The message can be replayed in another session even if the adversary doesn't know the key inside.
+// Not interesting enough for a case-study in the thesis.
+// Also it's hard to explain the iproved injective authentication would also behave like this.
+
+principals: Alice, Bob, Server
+unary-equals: implicit
+
+Alice [
+  knows public Bob
+  knows private Kas
+]
+
+Bob [
+  knows public Alice
+  knows private Kbs
+]
+
+Server [
+  knows public Alice, Bob
+  knows private Kas, Kbs
+]
+
+Alice [
+  generates Na
+]
+Alice -> Server: Alice, Bob, Na
+
+Server [
+  generates Kab
+  ma = ENC(Kas, {Na, Bob, Kab, ENC(Kbs, {Kab, Alice})})
+]
+Server -> Alice: ma
+
+Alice [
+  {Na, Bob, Kab, mb} = DEC(Kas, ma)
+]
+Alice -> Bob: mb
+
+Bob [
+  {Kab, Alice} = DEC(Kbs, mb)
+  generates Nb
+  challenge = ENC(Kab, Nb)
+]
+Bob -> Alice: challenge
+
+Alice [
+  Nb = DEC(Kab, challenge)
+  response = ENC(Kab, {Nb, '1'})
+]
+Alice -> Bob: response
+
+Bob [
+  {Nb, '1'} = DEC(Kab, response)
+]
+
+queries [
+  injective-authentication? Alice -> Bob: mb
+]
