@@ -14,9 +14,10 @@ import dipl.dataStructures.term.Variable;
 
 /** An injective authentication query saying that if
  *    principal identities are these ...,
+ *    recipient started session
  *    recipient received the variable (got to state after)
  *  then
- *    sender sent the variable (there is a special fact InjSent(principal, variable, sessionID)) or
+ *    sender sent the variable (there is a special fact Sent(principal, variable)) AFTER recipient started the session or
  *    the sender is dishonest or
  *    the recipient is dishonest
  * The injectiveness is guaranteed by the same session id in both states.
@@ -56,6 +57,15 @@ public class InjAuthentication extends Query{
     String principals = lemmaFact(Constants.FACT_PRINCIPALS, principalIDs, principalsTemporal);
     allVariables.addAll(principalIDs);
     allVariables.add(principalsTemporal);
+    // recipient session state
+    Variable recipientSessionTemporal = Variable.nextTemporal();
+    for (Variable variable : recipient.composeSessionState()) {
+      if (!Term.containsByObjectEquality(allVariables, variable)) {
+        allVariables.add(variable);
+      }
+    }
+    String recipientSessionState = lemmaSessionStateFact(recipient, recipientSessionTemporal);
+    allVariables.add(recipientSessionTemporal);
     // recipient state
     Variable recipientTemporal = Variable.nextTemporal();
     Block recipientBlock = null;
@@ -87,6 +97,7 @@ public class InjAuthentication extends Query{
     senderVariables.add(senderTemporal);
     Document senderClause = 
       new Document(fact.render() + atTemporal(senderTemporal) + Constants.LEMMA_CONJUNCTION)
+      .append(beforeAfter(recipientSessionTemporal, senderTemporal) + Constants.LEMMA_CONJUNCTION)
       .append(lemmaEquals(sent, received))
       .indent()
       .prepend(lemmaQuatification(senderVariables, true))
@@ -94,6 +105,7 @@ public class InjAuthentication extends Query{
     // build the lemma
     Document presumption = 
       new Document(principals + Constants.LEMMA_CONJUNCTION)
+      .append(recipientSessionState + Constants.LEMMA_CONJUNCTION)
       .append(recipientState);
     Document conclusion = 
       senderClause.appendToLastLine(Constants.LEMMA_DISJUNCTION)

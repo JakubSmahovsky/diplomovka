@@ -50,6 +50,10 @@ public abstract class Query {
       String.join(Constants.QUANTIFICATION_SEPARATOR, identifiers) + Constants.QUANTIFICATION_CLOSE;
   }
 
+  public static String lemmaSessionStateFact(Principal principal, Variable temporal) {
+    return BuilderFormatting.sessionStateFact(principal) + atTemporal(temporal);
+  }
+
   public static String lemmaBlockStateFact(Block block, Variable temporal) {
     return lemmaFact(block.render(), block.completeState(), temporal);
   }

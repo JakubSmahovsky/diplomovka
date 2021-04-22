@@ -158,5 +158,5 @@ queries [
 
   // SSB belongs to Bob as part of initial assumptions
   // this verifies the authentication of Bob as well as SSB, should succeed
-  authentication? Bob -> Alice: M2
+  injective-authentication? Bob -> Alice: M2
 ]

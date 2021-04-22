@@ -711,14 +711,14 @@ public class CompilerVisitor {
 			Errors.ErrorQueryVariableNotReceived(vctx.start, recipientToken.getText(), vctx.getText());	
 		}
 
+
+		Fact fact = Fact.authSent(sender, sent);
+		senderBlock.actions.add(fact);
+
 		if (injective) {
-			Fact fact = Fact.injAuthSent(sender, sent, model.sessionID);
 			model.queries.add(new InjAuthentication(sender, recipient, sent, received, fact, model));
-			senderBlock.actions.add(fact);
 		} else {
-			Fact fact = Fact.authSent(sender, sent);
 			model.queries.add(new Authentication(sender, recipient, sent, received, fact, model));
-			senderBlock.actions.add(fact);
 		}
 	}
 }

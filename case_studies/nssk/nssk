@@ -5,7 +5,6 @@
 // The attack should still be found as an attack on injective-authentication of the mb message.
 // The message can be replayed in another session even if the adversary doesn't know the key inside.
 // Not interesting enough for a case-study in the thesis.
-// Also it's hard to explain the iproved injective authentication would also behave like this.
 
 principals: Alice, Bob, Server
 unary-equals: implicit
