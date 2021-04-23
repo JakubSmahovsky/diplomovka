@@ -107,10 +107,11 @@ public class InjAuthentication extends Query{
       new Document(principals + Constants.LEMMA_CONJUNCTION)
       .append(recipientSessionState + Constants.LEMMA_CONJUNCTION)
       .append(recipientState);
-    Document conclusion = 
-      senderClause.appendToLastLine(Constants.LEMMA_DISJUNCTION)
-      .append(bracket(dishonest(recipient, Variable.nextTemporal())) + Constants.LEMMA_DISJUNCTION)
-      .append(bracket(dishonest(sender, Variable.nextTemporal())));
+    Document conclusion = new Document();
+    for (Principal principal : model.getPrincipals()) {
+      conclusion.append(bracket(dishonest(principal, Variable.nextTemporal())) + Constants.LEMMA_DISJUNCTION);
+    }
+    conclusion.append(senderClause);
     return presumption.indent()
       .append(Constants.LEMMA_IMPLICATION)
       .append(conclusion.indent())

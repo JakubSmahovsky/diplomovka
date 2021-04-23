@@ -17,8 +17,7 @@ import dipl.dataStructures.term.Variable;
  *    recipient received the variable (got to state)
  *  then
  *    sender sent the variable (there is a special fact Sent(principal, variable)) or
- *    the sender is dishonest or 
- *    the recipient is dishonest
+ *    one of the principals is dishonest
  */
 public class Authentication extends Query{
   public final Principal sender;
@@ -93,10 +92,11 @@ public class Authentication extends Query{
     Document presumption = 
       new Document(principals + Constants.LEMMA_CONJUNCTION)
       .append(recipientState);
-    Document conclusion = 
-      senderClause.appendToLastLine(Constants.LEMMA_DISJUNCTION)
-      .append(bracket(dishonest(recipient, Variable.nextTemporal())) + Constants.LEMMA_DISJUNCTION)
-      .append(bracket(dishonest(sender, Variable.nextTemporal())));
+    Document conclusion = new Document();
+    for (Principal principal : model.getPrincipals()) {
+      conclusion.append(bracket(dishonest(principal, Variable.nextTemporal())) + Constants.LEMMA_DISJUNCTION);
+    }
+    conclusion.append(senderClause);
     return presumption.indent()
       .append(Constants.LEMMA_IMPLICATION)
       .append(conclusion.indent())
