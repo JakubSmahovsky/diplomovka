@@ -1,3 +1,11 @@
+// Andres Secure RPC protocol
+// The attack requires compromising Kab2 after the protocol finishes
+// which our implementation doesn't yet support.
+
+// Another attack is valid in our model, the adversary replays
+// ENC(Kab, {Nb, '1'}) instead of ENC(Kab, {Kab2, Nb2})
+// The adversary doesn't learn Nb, so confidentiality holds, but authentication doesn't.
+
 principals: Alice, Bob
 unary-equals: implicit
 

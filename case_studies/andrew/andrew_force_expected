@@ -1,3 +1,12 @@
+// See the original first...
+// We can force the expected attack if we can make message m4
+// verifiably different from m2 and m3.
+// We can do that by just adding some constant to it, eg. 'm4'
+
+// We should now find the expected attack as an attack on
+// injective-authentication (adversary replays m4, but doesn't learn Kab2)
+// Tamarin doesn't terminate... :(
+
 principals: Alice, Bob
 unary-equals: implicit
 
