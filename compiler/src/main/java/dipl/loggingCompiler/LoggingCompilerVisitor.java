@@ -42,6 +42,14 @@ public class LoggingCompilerVisitor {
     }
 
     if (!solved.isEmpty() && !by.isEmpty()) {
+      // if the unmatched lines bulk up too much, just reset it all
+      // so that we can at least parse something
+      if (solved.size() > 100 || by.size() > 100) {
+        solved = new LinkedList<>();
+        by = new LinkedList<>();
+        return;
+      }
+
       Iterator<LoggingGoal> solvedIt = solved.iterator();
       Iterator<LoggingSource> byIt = by.iterator();
       
