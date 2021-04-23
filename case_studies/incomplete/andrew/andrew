@@ -1,6 +1,11 @@
 principals: Alice, Bob
 unary-equals: implicit
 
+Bob [
+  knows private Kab
+  knows public Alice
+]
+
 Alice [
   knows private Kab
   generates Na
@@ -9,12 +14,9 @@ Alice [
 Alice -> Bob: Alice, m1
 
 Bob [
-  knows private Kab
   Na = DEC(Kab, m1)
-
-  succNa = {Na, '1'}
   generates Nb
-  m2 = ENC(Kab, {succNa, Nb})
+  m2 = ENC(Kab, {{Na, '1'}, Nb})
 ]
 Bob -> Alice: m2
 

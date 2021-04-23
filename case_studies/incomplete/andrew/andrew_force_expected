@@ -1,6 +1,11 @@
 principals: Alice, Bob
 unary-equals: implicit
 
+Bob [
+  knows private Kab
+  knows public Alice
+]
+
 Alice [
   knows private Kab
   generates Na
@@ -9,9 +14,7 @@ Alice [
 Alice -> Bob: Alice, m1
 
 Bob [
-  knows private Kab
   Na = DEC(Kab, m1)
-
   generates Nb
   m2 = ENC(Kab, {{Na, '1'}, Nb})
 ]
@@ -26,18 +29,17 @@ Alice -> Bob: m3
 Bob [
   {Nb, '1'} = DEC(Kab, m3)
   generates Kab2, Nb2
-  m4 = ENC(Kab, {Kab2, Nb2})
+  m4 = ENC(Kab, {Kab2, Nb2, 'm4'})
 ]
 Bob -> Alice: m4
 
 Alice [
-  {Kab2, Nb2} = DEC(Kab, m4)
+  {Kab2, Nb2, 'm4'} = DEC(Kab, m4)
 ]
 
-// compromise Na
-Alice -> Alice: Na
-
 queries [
-  confidentiality? Alice's Kab2
-  authentication? Bob -> Alice: m4
+  // does not terminate
+  // authentication? Bob -> Alice: m4
+
+  injective-authentication? Bob -> Alice: m4
 ]

@@ -26,6 +26,12 @@ public class LoggingCompilerVisitor {
   }
 
   public void visitMessage(MessageContext ctx) {
+    for (LineContext lctx : ctx.line()) {
+      visitLine(lctx);
+    }
+  }
+
+  public void visitLine(LineContext ctx) {
     // discard directly solved
     if (ctx.solved() != null && !ctx.solved().SOLVEDHOW().getText().equals(Constants.LOGGING_SOLVEDHOW_DIRECTLY)) {
       solved.add(visitSolved(ctx.solved()));
@@ -47,21 +53,22 @@ public class LoggingCompilerVisitor {
           if (goal.number != source.goalNr) {
             continue;
           }
-          byIt.remove();
           matched = true;
+          byIt.remove();
           if (goal.shouldBeHidden) {
-            return;
+            break;
           }
           goal.findSource(source);
           if (source.source == null) {
             System.err.println("Could not find source for goal " + goal.goal.render() + " and source" + source.name + "!");
-            return;
+            break;
           }
           System.err.println(goal.render());
           System.err.println(source.render().indent());
         }
         if (matched) {
           solvedIt.remove();
+          return;
         }
       }
     }

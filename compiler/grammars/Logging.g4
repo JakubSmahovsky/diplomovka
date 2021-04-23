@@ -1,6 +1,7 @@
 grammar Logging;
 
-message: solved | by;
+message: line+;
+line: solved | by;
 solved: 'solved goal nr.' NUMBER SOLVEDHOW ':' goal;
 by: NUMBER 'by:' IDENTIFIER;
 
