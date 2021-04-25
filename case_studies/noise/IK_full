@@ -152,6 +152,11 @@ Bob [
   h6 = HASH({h5, M3})
 ]
 
+// The analysis of the full protocol takes a long time.
+// The first property takes about on hour (stops at around 19000 unparsed lines).
+// The second takes much less time.
+// We tested all properties on this protocol as well,
+// but we provide a half protocol to test the properties of the first message. 
 queries [
   // the most important property, sould succeed
   forward-secrecy? Alice's payload3
