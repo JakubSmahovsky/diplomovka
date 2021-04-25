@@ -176,9 +176,9 @@ public class Principal {
   public void nextBlock() {
     if (nextBlock != null) {
       blocks.add(nextBlock);
-      nextBlock = new Block(model, this, blocks.size(), nextBlock.getState());
+      nextBlock = new Block(model, this, blocks.size() + 1, nextBlock.getState());
     } else {
-      nextBlock = new Block(model, this, 0);
+      nextBlock = new Block(model, this, 1);
     }
     return;
   }

@@ -23,7 +23,10 @@ public class Block {
   public int rangeBegin;
   public int rangeEnd;
   
-  public Block(Model model, Principal principal, int index){
+  /**
+   * @param blockNo the block's number for this principal counting from 1
+   */
+  public Block(Model model, Principal principal, int blockNo){
     this.model = model;
     this.indexInModel = model.registerBlock(this);
     this.principal = principal;
@@ -36,12 +39,15 @@ public class Block {
     this.actions = new ArrayList<>();
     this.outputs = new ArrayList<>();
     this.state = new ArrayList<>();
-    this.rangeBegin = index;
-    this.rangeEnd = index;
+    this.rangeBegin = blockNo;
+    this.rangeEnd = blockNo;
   }
 
-  public Block(Model model, Principal principal, int index, ArrayList<Term> state){
-    this(model, principal, index);
+  /**
+   * @param blockNo the block's number for this principal counting from 1
+   */
+  public Block(Model model, Principal principal, int blockNo, ArrayList<Term> state){
+    this(model, principal, blockNo);
     this.state.addAll(state);
   }
 

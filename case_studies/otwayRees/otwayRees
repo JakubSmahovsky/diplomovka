@@ -52,6 +52,6 @@ queries [
   confidentiality? Alice's Kab
   confidentiality? Bob's Kab
   
-  // no attack but doesn't terminate
-  confidentiality? Server's Kab
+  // no attack, but doesn't terminate
+  // confidentiality? Server's Kab
 ]
