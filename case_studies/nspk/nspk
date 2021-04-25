@@ -1,0 +1,75 @@
+// Needham Schroeder public key protocol
+// It is sussceptible to an attack where the adversary executes a session of between him and Alice
+// and pretends to be Alice in another session with Bob.
+// Does not terminate... typical
+
+principals: Alice, Bob, Server
+
+// initial assumptions
+Server [
+  knows private KSs
+  distributed KPs = PK(KSs)
+]
+
+Alice [
+  knows public Bob
+  knows public KPs
+  knows private KSa
+  distributed KPa = PK(KSa)
+]
+
+Bob [
+  knows public KPs
+  knows private KSb
+  distributed KPb = PK(KSb)
+]
+
+Server [
+  knows public KPa, KPb
+]
+
+// protocol
+Alice -> Server: Alice, Bob
+
+Server [
+  SIGb = SIGN(KSs, {KPb, Bob})
+]
+Server -> Alice: KPb, SIGb
+
+Alice [
+  SIGNVERIF(KPs, {KPb, Bob}, SIGb)?
+  generates Na
+  m1 = AENC(KPb, {Na, Alice})
+]
+Alice -> Bob: m1
+
+Bob [
+  {Na, Alice} = ADEC(KSb, m1)
+]
+Bob -> Server: Bob, Alice
+
+Server [
+  SIGa = SIGN(KSs, {KPa, Alice})
+]
+Server -> Bob: KPa, SIGa
+
+Bob [
+  SIGNVERIF(KPs, {KPa, Alice}, SIGa)?
+  generates Nb
+  m2 = AENC(KPa, {Na, Nb})
+]
+Bob -> Alice: m2
+
+Alice [
+  {Na, Nb} = ADEC(KSa, m2)
+  m3 = AENC(KPb, Nb)
+]
+Alice -> Bob: m3
+
+Bob [
+  Nb = ADEC(KSb, m3)
+]
+
+queries [
+  authentication? Alice->Bob: m3
+]

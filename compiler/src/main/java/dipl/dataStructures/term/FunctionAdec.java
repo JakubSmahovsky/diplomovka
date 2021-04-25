@@ -49,12 +49,12 @@ public class FunctionAdec extends Term{
 
   @Override
   public String render(){
-    return BuilderFormatting.fact(Constants.T_SDEC, Arrays.asList(encryptedValue, key), null);
+    return BuilderFormatting.fact(Constants.T_ADEC, Arrays.asList(encryptedValue, key), null);
   }
 
   @Override
   public String render(Block block){
-    return BuilderFormatting.fact(Constants.T_SDEC, Arrays.asList(encryptedValue, key), block);
+    return BuilderFormatting.fact(Constants.T_ADEC, Arrays.asList(encryptedValue, key), block);
   }
 
   @Override
