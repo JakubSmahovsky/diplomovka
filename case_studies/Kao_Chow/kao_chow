@@ -1,0 +1,56 @@
+// Kao Chow protocol
+// The attack is very similar to the one on Needham Schroeder Symmetric key (nssk)
+// We are trying to find it the same way, Tamarin doesn't terminate :(
+
+principals: Alice, Bob, Server
+
+// initial assumptions
+Alice [
+  knows private Kas
+  knows public Bob
+]
+
+Bob [
+  knows private Kbs
+  knows public Alice
+]
+
+Server [
+  knows private Kas, Kbs
+  knows public Alice, Bob
+]
+
+// session
+Alice [
+  generates Na
+]
+Alice -> Server: Alice, Bob, Na
+
+Server [
+  generates Kab
+  ma = ENC(Kas , {Alice, Bob, Na, Kab})
+  mb = ENC(Kbs , {Alice, Bob, Na, Kab})
+]
+Server -> Bob: ma, mb
+
+Bob [
+  {Alice, Bob, Na, Kab} = DEC(Kbs, mb)
+  generates Nb
+  authb = ENC(Kab, Na)
+]
+Bob -> Alice: ma, authb, Nb
+
+Alice [
+  {Alice, Bob, Na, Kab} = DEC(Kas, ma)
+  Na = DEC(Kab, authb)
+  autha = ENC(Kab, Nb)
+]
+Alice -> Bob: autha
+
+Bob [
+  Nb = DEC(Kab, autha)
+]
+
+queries [
+  injective-authentication? Alice -> Bob: autha
+]
