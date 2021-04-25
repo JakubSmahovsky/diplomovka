@@ -1,23 +1,34 @@
 principals: Alice, Bob, Server
 unary-equals: implicit
 
+// initial assumptions
 Alice [
   knows private Kas
   knows public Bob
+]
+
+Bob [
+  knows private Kbs
+]
+
+Server [
+  knows private Kas, Kbs
+]
+
+// session
+Alice [
   generates N, Na
   m1 = ENC(Kas, {Na, N, Alice, Bob})
 ]
 Alice -> Bob: N, Alice, Bob, m1
 
 Bob [
-  knows private Kbs
   generates Nb
   m2 = ENC(Kbs, {Nb, N, Alice, Bob})
 ]
 Bob -> Server: N, Alice, Bob, m1, m2
 
 Server [
-  knows private Kas, Kbs
   {Na, N, Alice, Bob} = DEC(Kas, m1)
   {Nb, N, Alice, Bob} = DEC(Kbs, m2)
   
@@ -30,7 +41,7 @@ Server -> Bob: N, m3, m4
 Bob [
   {Nb, Kab} = DEC(Kbs, m3)
 ]
-Bob -> Alice: m4
+Bob -> Alice: N, m4
 
 Alice [
   {Na, Kab} = DEC(Kas, m4)
@@ -39,5 +50,8 @@ Alice [
 queries [
   executable?
   confidentiality? Alice's Kab
-  authentication? Bob->Alice: m4
+  confidentiality? Bob's Kab
+  
+  // no attack but doesn't terminate
+  confidentiality? Server's Kab
 ]
