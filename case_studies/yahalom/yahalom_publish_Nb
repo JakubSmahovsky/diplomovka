@@ -1,4 +1,6 @@
 principals: Alice, Bob, Server
+unary-equals: implicit
+
 // initial assumptions
 Alice [
   knows private Kas
@@ -46,11 +48,14 @@ Bob [
 Bob -> Bob: Nb
 
 queries [
-  executable?
+  // warning: the second property requires about 15GB RAM
   authentication? Alice->Bob: auth
   confidentiality? Bob's Kab
   
-  // should suceed, do not terminate
+  // The rest should suceed, but they don't terminate.
+  // We made sure that the protocol is executable by finding the trace manually.
+  // The heuritics push the correct options quite low, so it's unsurprising that it's not found automatically.
+  // executable?
   // confidentiality? Alice's Kab
   // confidentiality? Server's Kab
 ]

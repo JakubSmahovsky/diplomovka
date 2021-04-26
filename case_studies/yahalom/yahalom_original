@@ -1,4 +1,6 @@
 principals: Alice, Bob, Server
+unary-equals: implicit
+
 // initial assumptions
 Alice [
   knows private Kas
@@ -20,34 +22,32 @@ Alice -> Bob: Alice, Na
 
 Bob [
   generates Nb
-  m1 = ENC(Kbs, {Alice, Na, Nb})
+  m1 = ENC(Kbs, {'m1', Alice, Na, Nb})
 ]
 Bob -> Server: Bob, m1
 
 Server [
-  {Alice, Na, Nb} = DEC(Kbs, m1)
+  {'m1', Alice, Na, Nb} = DEC(Kbs, m1)
   generates Kab
-  ma = ENC(Kas, {Kab, Na, Nb})
-  mb = ENC(Kbs, {Alice, Kab})
+  ma = ENC(Kas, {'ma', Kab, Na, Nb})
+  mb = ENC(Kbs, {'mb', Alice, Kab})
 ]
 Server -> Alice: ma, mb
 
 Alice [
-  {Kab, Na, Nb} = DEC(Kas, ma)
+  {'ma', Kab, Na, Nb} = DEC(Kas, ma)
   auth = ENC(Kab, Nb)
 ]
 Alice -> Bob: mb, auth
 
 Bob [
-  {Alice, Kab} = DEC(Kbs, mb)
+  {'mb', Alice, Kab} = DEC(Kbs, mb)
   Nb = DEC(Kab, auth)
 ]
 
 Bob -> Bob: Nb
 
-queries [
-  executable?
-  
+queries [  
   // should suceed, do not terminate
   // authentication? Alice->Bob: auth
   // confidentiality? Bob's Kab
