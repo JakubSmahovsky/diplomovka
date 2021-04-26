@@ -1,0 +1,56 @@
+principals: Alice, Bob, Server
+// initial assumptions
+Alice [
+  knows private Kas
+]
+
+Bob [
+  knows private Kbs
+]
+
+Server [
+  knows private Kas, Kbs
+]
+
+// session
+Alice [
+  generates Na
+]
+Alice -> Bob: Alice, Na
+
+Bob [
+  generates Nb
+  m1 = ENC(Kbs, {Alice, Na, Nb})
+]
+Bob -> Server: Bob, m1
+
+Server [
+  {Alice, Na, Nb} = DEC(Kbs, m1)
+  generates Kab
+  ma = ENC(Kas, {Kab, Na, Nb})
+  mb = ENC(Kbs, {Alice, Kab})
+]
+Server -> Alice: ma, mb
+
+Alice [
+  {Kab, Na, Nb} = DEC(Kas, ma)
+  auth = ENC(Kab, Nb)
+]
+Alice -> Bob: mb, auth
+
+Bob [
+  {Alice, Kab} = DEC(Kbs, mb)
+  Nb = DEC(Kab, auth)
+]
+
+Bob -> Bob: Nb
+
+queries [
+  executable?
+  
+  // should suceed, do not terminate
+  // authentication? Alice->Bob: auth
+  // confidentiality? Bob's Kab
+  // confidentiality? Alice's Kab
+  // confidentiality? Server's Kab
+]

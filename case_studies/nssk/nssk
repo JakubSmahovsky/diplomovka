@@ -1,10 +1,9 @@
 // The Needham Schroeder Symmetric Key protocol
-// The attack requires compromising Kab after the protocol finishes
-// which our implementation doesn't yet support.
-
-// The attack should still be found as an attack on injective-authentication of the mb message.
-// The message can be replayed in another session even if the adversary doesn't know the key inside.
-// Tamarin does't terminate... :(
+// The attack requires compromising Kab after the protocol finishes.
+// We can simulate this by having one of the principals send it to themselves.
+// The attack is based on the fact that messages from one session
+// can be replayed to Bob in another session.
+// The adversary makes Bob accept an old compromised key Kab.
 
 principals: Alice, Bob, Server
 unary-equals: implicit
@@ -57,6 +56,8 @@ Bob [
   {Nb, '1'} = DEC(Kab, response)
 ]
 
+Bob -> Bob: Kab
+
 queries [
-  injective-authentication? Alice -> Bob: mb
+  injective-authentication? Alice -> Bob: response
 ]

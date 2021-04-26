@@ -51,6 +51,9 @@ Bob [
   Nb = DEC(Kab, autha)
 ]
 
+// compromise Kab
+Bob->Bob: Kab
+
 queries [
   injective-authentication? Alice -> Bob: autha
 ]
