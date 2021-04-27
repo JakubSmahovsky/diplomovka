@@ -45,10 +45,9 @@ Bob [
   Nb = DEC(Kab, auth)
 ]
 
-Bob -> Bob: Nb
-
 queries [  
-  // should suceed, do not terminate
+  // all should suceed, none terminate
+  // executable?
   // authentication? Alice->Bob: auth
   // confidentiality? Bob's Kab
   // confidentiality? Alice's Kab

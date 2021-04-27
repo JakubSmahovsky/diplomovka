@@ -45,14 +45,12 @@ Bob [
   Nb = DEC(Kab, auth)
 ]
 
-Bob -> Bob: Nb
-
 queries [
   // warning: the second property requires about 15GB RAM
   authentication? Alice->Bob: auth
   confidentiality? Bob's Kab
   
-  // The rest should suceed, but they don't terminate.
+  // The rest should suceed, but none terminate.
   // We made sure that the protocol is executable by finding the trace manually.
   // The heuritics push the correct options quite low, so it's unsurprising that it's not found automatically.
   // executable?
