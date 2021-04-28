@@ -21,12 +21,11 @@ import dipl.inputParser.*;
 import org.antlr.v4.runtime.CharStreams;
 
 public class Dipl {
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOException, InterruptedException {
     String inputFilePath = args[args.length-1];
     String tamarinTheoryFilePath = Constants.DEFAULT_THEORY_PATH + Constants.THEORY_FILE_EXTENSION;
     String tamarinExecutablePath = System.getProperty("user.home") + "/.local/bin/tamarin-prover";
 
-    
     try {
       Model model = compileInput(inputFilePath, tamarinTheoryFilePath);
       compileSources(tamarinExecutablePath, tamarinTheoryFilePath, Constants.DEFAULT_SOURCES_PATH, model);
@@ -51,12 +50,13 @@ public class Dipl {
   }
 
   private static void compileSources(String tamarinExecutablePath, String tamarinTheoryFilePath,
-        String sourcesOutputFilePath, Model model) throws STException, IOException {
+        String sourcesOutputFilePath, Model model) throws STException, IOException, InterruptedException {
     String command = tamarinExecutablePath + " " + tamarinTheoryFilePath;
     Process process = Runtime.getRuntime().exec(command);
     InputStream stdStream = process.getInputStream();
     BufferedReader reader = new BufferedReader(new InputStreamReader(stdStream));
 
+    boolean tamarinError = true;
     StringBuilder sources = new StringBuilder();
 
     // discard untill sources header
@@ -64,18 +64,28 @@ public class Dipl {
       if (line.equals(Constants.OUTPUT_SEPARATOR)) {
         String maybeHeader = line + reader.readLine() + reader.readLine();
         if (maybeHeader.equals(Constants.SOURCES_HEADER)) {
+          tamarinError = false;
           break;
         }
         throw new STException("Unexpected lines in Tamarin output: \n" + maybeHeader);
       }
-    } 
+    }
+    if (tamarinError) {
+
+      BufferedReader err = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+      for (String line = err.readLine(); line != null; line = err.readLine()) {
+        System.err.println(line);
+      }
+      System.err.println();
+      throw new STException("Tamarin-Prover terminated with an error!");
+    }
+
     // read sources and discard the rest
     for (String line = reader.readLine(); line != null; line = reader.readLine()) {
       if (line.equals(Constants.OUTPUT_SEPARATOR)) {
         break;
       }
-      sources.append(line);
-      sources.append("\n");
+      sources.append(line + Constants.LINE_BREAK);
     }
 
     File outputFile = new File(sourcesOutputFilePath);
