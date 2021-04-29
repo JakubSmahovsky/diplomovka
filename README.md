@@ -18,7 +18,7 @@ Add user's private bin to PATH. This is where stack places binaries including Ta
 PATH="$HOME/.local/bin:$PATH"
 ```
 
-Enter the tamarin-prover directory and run:
+You will have to clone our fork of tamarin-prover from [github](https://github.com/JakubSmahovsky/tamarin-prover) (it did not fit into AiS2).  Enter the cloned repository and run:
 ```
 make default
 ```
@@ -36,7 +36,7 @@ The list of sources will be generated in `sources.txt`.
 We do not delete the tamarin input after completion, it remains in `theory.spthy`.
 
 ## Building from source
-Everything in the recommended installation still applies, but you can build the jar yourself. Since you are reading this, you have to build it from source unless you contact me to get the packages version. Instead of getting our fork of Tamarin-Prover in the package, you will have to clone it from [github](https://github.com/JakubSmahovsky/tamarin-prover).
+Everything in the recommended installation still applies, but you can build the jar yourself. Since you are reading this, you have to build it from source unless you contact me to get the packaged version.
 
 
 ### Generate ANTLR4 parsers
