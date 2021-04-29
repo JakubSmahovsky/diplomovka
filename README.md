@@ -1,14 +1,19 @@
-# Project setup
+# [Project](https://github.com/JakubSmahovsky/diplomovka) setup
+
+## Requirements
+The project only runs on linux because of Tamarin-Prover. We have done our testing on Ubuntu 20.04 LTS, but we see no reson why it shouldn't work on other linux distributions.
+
+RAM helps. Our setup has 16GB of memory and som tests exhaust almost all of it (Yahalom confidentiality). Some properties should run fine on 4GB, but that should be minimum. Whenever we say that a protocol "does not terminate", it actually runs out of memory and gets killed.
+
+Officially, you need java 11, but some older java versions might work too.
 
 ## Recommended installation
-You need to install maude, graphviz and haskell stack in order to build and use Tamarin.
-We HIGHLY recommend getting them using homebrew (it takes a while):
+You need to install maude, graphviz and haskell stack in order to build and use Tamarin. We HIGHLY recommend getting them using homebrew (it takes a while):
 ```
 brew install tamarin-prover/tap/maude graphviz haskell-stack
 ```
 
-Add user's private bin to PATH. This is where stack places binaries including Tamarin-Prover. Our tool also looks for the altered Tamarin-Prover binary here.
-For example, add the following line to your ~/.profile and restart:
+Add user's private bin to PATH. This is where stack places binaries including Tamarin-Prover. Our tool also looks for the altered Tamarin-Prover binary here. For example, add the following line to your ~/.profile and restart:
 ```
 PATH="$HOME/.local/bin:$PATH"
 ```
@@ -17,7 +22,7 @@ Enter the tamarin-prover directory and run:
 ```
 make default
 ```
-This will take a while, because it will download and install GHC and build the entire Tamarin-Prover project.
+This will take a while, because it downloads and installs GHC and builds the entire Tamarin-Prover project.
 
 Run the application (from the top directory) using the following command (replace `<case_study_to_verify>` with the path to a case study or your own protocol).
 ```
@@ -28,10 +33,11 @@ We also recommend redirrecting standard output to a file in order to separate it
 java -cp antlr.jar:dipl.jar dipl.Dipl <case_study_to_verify>  > out.txt
 ```
 The list of sources will be generated in `sources.txt`.
-We do not delete the tamarin input file after completion, it is `theory.spthy`.
+We do not delete the tamarin input after completion, it remains in `theory.spthy`.
 
 ## Building from source
-Everything in the recommended installation section still applies, but you can build the jar yourself.
+Everything in the recommended installation still applies, but you can build the jar yourself. Since you are reading this, you have to build it from source unless you contact me to get the packages version. Instead of getting our fork of Tamarin-Prover in the package, you will have to clone it from [github](https://github.com/JakubSmahovsky/tamarin-prover).
+
 
 ### Generate ANTLR4 parsers
 The parsers aren't tracked by the repository, because they are generated using the ANTLR4 tool.
