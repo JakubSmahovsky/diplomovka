@@ -1,11 +1,11 @@
 # [Project](https://github.com/JakubSmahovsky/diplomovka) setup
 
 ## Requirements
-The project only runs on linux because of Tamarin-Prover. We have done our testing on Ubuntu 20.04 LTS, but we see no reson why it shouldn't work on other linux distributions.
+The project only runs on linux because of Tamarin-Prover. We have done our testing on Ubuntu 20.04 LTS but we see no reson why it shouldn't work on other linux distributions.
 
-RAM helps. Our setup has 16GB of memory and som tests exhaust almost all of it (Yahalom confidentiality). Some properties should run fine on 4GB, but that should be minimum. Whenever we say that a protocol "does not terminate", it actually runs out of memory and gets killed.
+RAM helps. Our setup has 16GB of memory and som tests exhaust almost all of it (Yahalom confidentiality). Some properties should run fine on 4GB but that should be minimum. Whenever we say that a protocol "does not terminate", it actually runs out of memory and gets killed.
 
-Officially, you need java 11, but some older java versions might work too.
+Officially, you need java 11 but some older java versions should work too.
 
 ## Recommended installation
 You need to install maude, graphviz and haskell stack in order to build and use Tamarin. We HIGHLY recommend getting them using homebrew (it takes a while):
@@ -18,7 +18,7 @@ Add user's private bin to PATH. This is where stack places binaries including Ta
 PATH="$HOME/.local/bin:$PATH"
 ```
 
-You will have to clone our fork of tamarin-prover from [github](https://github.com/JakubSmahovsky/tamarin-prover) (it did not fit into AiS2).  Enter the cloned repository and run:
+You will have to clone our fork of [tamarin-prover](https://github.com/JakubSmahovsky/tamarin-prover). Enter the cloned repository and run:
 ```
 make default
 ```

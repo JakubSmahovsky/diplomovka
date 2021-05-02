@@ -22,6 +22,10 @@ import org.antlr.v4.runtime.CharStreams;
 
 public class Dipl {
   public static void main(String[] args) throws IOException, InterruptedException {
+    if (args.length < 1) {
+      System.err.println("No protocol specified!");
+      return;
+    }
     String inputFilePath = args[args.length-1];
     String tamarinTheoryFilePath = Constants.DEFAULT_THEORY_PATH + Constants.THEORY_FILE_EXTENSION;
     String tamarinExecutablePath = System.getProperty("user.home") + "/.local/bin/tamarin-prover";
